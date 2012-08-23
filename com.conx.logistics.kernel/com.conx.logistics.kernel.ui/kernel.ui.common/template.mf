@@ -4,7 +4,6 @@ Bundle-Name: ConX kernel UI MVP Common
 Bundle-SymbolicName: com.conx.logistics.kernel.ui.common
 Import-Template: com.conx.logistics.mdm.domain.application;version="[1.0.0,2.0.0)", 
   com.conx.logistics.mdm.domain;version="[1.0.0,2.0.0)",
-  com.conx.logistics.kernel.workspace.ui.*;version="[1.0.0,2.0.0)", 
   com.conx.logistics.kernel.ui.service;version="[1.0.0,2.0.0)",
   com.conx.logistics.kernel.ui.service.contribution;version="[1.0.0,2.0.0)",
   com.conx.logistics.mdm.dao.services;version="[1.0.0,2.0.0)",

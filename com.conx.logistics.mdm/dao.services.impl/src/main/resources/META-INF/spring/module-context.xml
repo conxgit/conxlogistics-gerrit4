@@ -19,11 +19,10 @@
 	</bean>
 	 -->
 	
-	<bean id="myTxManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+<!-- 	<bean id="myTxManager" class="org.springframework.orm.jpa.JpaTransactionManager">
     	<property name="entityManagerFactory" ref="conxLogisticsManagerFactory"/>
-  	</bean>
+  	</bean> -->
 	
-
 	<!-- ========================= BUSINESS OBJECT DEFINITIONS ========================= -->
 
 	<!--
@@ -38,7 +37,7 @@
 		Instruct Spring to perform declarative transaction management
 		automatically on annotated classes.
 	-->
-	<tx:annotation-driven mode="aspectj" transaction-manager="globalTransactionManager"/>
+	<tx:annotation-driven mode="aspectj" transaction-manager="globalJtaTransactionManager"/>
 
 	<!--
 		Post-processor to perform exception translation on @Repository classes (from native
@@ -68,7 +67,7 @@
 	<bean id="contactDao" class="com.conx.logistics.mdm.dao.services.impl.ContactDAOImpl"/>
 	<bean id="countryDao" class="com.conx.logistics.mdm.dao.services.impl.CountryDAOImpl"/>
 	<bean id="countryStateDao" class="com.conx.logistics.mdm.dao.services.impl.CountryStateDAOImpl"/>
-	<bean id="currencyDao" class="com.conx.logistics.mdm.dao.services.impl.currency.CurrencyUnitDAOImpl"/>
+	<bean id="currencyUnitDao" class="com.conx.logistics.mdm.dao.services.impl.currency.CurrencyUnitDAOImpl"/>
 	<bean id="dimUnitDao" class="com.conx.logistics.mdm.dao.services.impl.product.DimUnitDAOImpl"/>	
 	<bean id="docTypeDao" class="com.conx.logistics.mdm.dao.services.impl.documentlibrary.DocTypeDAOImpl"/>	
 	<bean id="entityMetadataDao" class="com.conx.logistics.mdm.dao.services.impl.EntityMetadataDAOImpl"/>

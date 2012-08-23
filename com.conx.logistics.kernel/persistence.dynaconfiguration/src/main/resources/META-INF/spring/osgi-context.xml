@@ -7,7 +7,7 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd"
 	xmlns:osgi="http://www.springframework.org/schema/osgi">
 
-	<osgi:reference id="btmConfig" interface="bitronix.tm.Configuration" filter="(module=KERNEL.BITRONIX.CONFIG)">
+	<osgi:reference id="globalBitronixTransactionManagerConfig" interface="bitronix.tm.Configuration" filter="(module=KERNEL.BITRONIX.CONFIG)">
 	</osgi:reference>
 	
 	<osgi:reference id="kernelPersistenceJpaDataSource" interface="javax.sql.DataSource" filter="(module=KERNEL.MAIN)">

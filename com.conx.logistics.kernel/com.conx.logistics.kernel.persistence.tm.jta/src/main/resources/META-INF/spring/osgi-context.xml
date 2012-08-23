@@ -11,28 +11,28 @@
 	<!-- export internal interfaces -->
 <!-- 	<osgi:service ref="applicationDao" interface="com.conx.logistics.kernel.system.dao.services.application.IApplicationDAOService"/> -->
 	<!-- KERNEL.TM.BITRONIX Transaction Manager -->
-	<osgi:service ref="btmConfig" interface="bitronix.tm.Configuration">
+	<osgi:service ref="globalBitronixTransactionManagerConfig" interface="bitronix.tm.Configuration">
 		<osgi:service-properties>
 		    <entry key="module" value="KERNEL.BITRONIX.CONFIG"/>
 		  </osgi:service-properties>	
 	</osgi:service>
 	
 	<!-- KERNEL.TM.JTA Transaction Manager -->
-	<osgi:service ref="JtaTransactionManager" interface="org.springframework.transaction.PlatformTransactionManager">
+	<osgi:service ref="globalJtaTransactionManager" interface="org.springframework.transaction.PlatformTransactionManager">
 		<osgi:service-properties>
 		    <entry key="module" value="KERNEL.TM.JTA"/>
 		  </osgi:service-properties>	
 	</osgi:service>	
 	
 	<!-- KERNEL.TM Transaction Manager -->
-	<osgi:service ref="BitronixTransactionManager" interface="javax.transaction.TransactionManager">
+	<osgi:service ref="globalBitronixTransactionManager" interface="javax.transaction.TransactionManager">
 		<osgi:service-properties>
 		    <entry key="module" value="KERNEL.TM"/>
 		  </osgi:service-properties>	
 	</osgi:service>	
 	
 	<!-- KERNEL.USER Transaction Manager -->
-	<osgi:service ref="BitronixTransactionManager" interface="javax.transaction.UserTransaction">
+	<osgi:service ref="globalBitronixTransactionManager" interface="javax.transaction.UserTransaction">
 		<osgi:service-properties>
 		    <entry key="module" value="KERNEL.UTM"/>
 		  </osgi:service-properties>	

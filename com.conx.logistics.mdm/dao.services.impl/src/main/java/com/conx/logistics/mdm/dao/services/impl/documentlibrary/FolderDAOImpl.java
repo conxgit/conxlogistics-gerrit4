@@ -32,7 +32,7 @@ public class FolderDAOImpl implements IFolderDAOService {
     /**
      * Spring will inject a managed JPA {@link EntityManager} into this field.
      */
-    @PersistenceContext(unitName="pu")
+    @PersistenceContext
     private EntityManager em;	
     
     

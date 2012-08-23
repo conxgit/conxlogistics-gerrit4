@@ -26,7 +26,7 @@ public class ProductTypeDAOImpl implements IProductTypeDAOService {
     /**
      * Spring will inject a managed JPA {@link EntityManager} into this field.
      */
-    @PersistenceContext(unitName="pu")
+    @PersistenceContext
     private EntityManager em;	
     
 	public void setEm(EntityManager em) {
