@@ -26,6 +26,7 @@ import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorCom
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorContainerComponent;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent;
 import com.conx.logistics.kernel.ui.components.domain.note.NoteEditorComponent;
+import com.conx.logistics.kernel.ui.components.domain.referencenumber.ReferenceNumberEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.table.ConXTable;
 
 public class UIComponentModelData {
@@ -108,6 +109,11 @@ public class UIComponentModelData {
 		rcvBaicFormLE = (LineEditorComponent) componentDAOService.update((AbstractConXComponent)rcvBaicFormLE);
 		
 		
+		//B. -- Notes
+		LineEditorComponent referenceNumbersLE = provideReferenceNumberEditor(
+				componentDAOService, entityTypeDAOService,
+				dataSourceDAOService, em, lecc);			
+		
 		//A. -- Attachments
 		LineEditorComponent attachmentsLE = provideAttachmentLineEditor(
 				componentDAOService, entityTypeDAOService,
@@ -119,6 +125,7 @@ public class UIComponentModelData {
 				dataSourceDAOService, em, lecc);		
 
 		//-- Update EE
+		lecc.getLineEditors().add(referenceNumbersLE);
 		lecc.getLineEditors().add(attachmentsLE);
 		lecc.getLineEditors().add(notesLE);
 		rcvSearchMLEE = (MasterDetailComponent) componentDAOService.update((AbstractConXComponent)rcvSearchMLEE);
@@ -147,6 +154,28 @@ public class UIComponentModelData {
 		notesLE = (LineEditorComponent) componentDAOService.update((AbstractConXComponent)notesLE);
 		return notesLE;
 	}
+	
+	private static LineEditorComponent provideReferenceNumberEditor(
+			IComponentDAOService componentDAOService,
+			IEntityTypeDAOService entityTypeDAOService,
+			IDataSourceDAOService dataSourceDAOService, EntityManager em,
+			LineEditorContainerComponent lecc) throws Exception {
+		LineEditorComponent rnsLE = new LineEditorComponent(lecc.getCode()+"-reference-nums","Reference Numbers",lecc);
+		rnsLE = (LineEditorComponent) componentDAOService.add((AbstractConXComponent)rnsLE);
+		lecc.getLineEditors().add(rnsLE);
+
+		
+		//--  NoteItem DS
+		DataSource referenceNumberDS = getReferenceNumberDS(entityTypeDAOService,dataSourceDAOService,em);
+		
+		//-- Notes Table
+		ReferenceNumberEditorComponent nec = new ReferenceNumberEditorComponent(referenceNumberDS);
+		nec = (ReferenceNumberEditorComponent) componentDAOService.update((AbstractConXComponent)nec);
+		rnsLE.setContent(nec);
+		rnsLE.setDataSource(referenceNumberDS);
+		rnsLE = (LineEditorComponent) componentDAOService.update((AbstractConXComponent)rnsLE);
+		return rnsLE;
+	}	
 
 	private static LineEditorComponent provideAttachmentLineEditor(
 			IComponentDAOService componentDAOService,
@@ -209,5 +238,14 @@ public class UIComponentModelData {
 		}
 		
 		return DataSourceData.NI_DS;
+	}	
+	
+	private static DataSource getReferenceNumberDS(IEntityTypeDAOService entityTypeDAOService,IDataSourceDAOService dataSourceDAOService,EntityManager em) throws Exception {
+		if (DataSourceData.RN_DS == null)
+		{
+			DataSourceData.provideReferenceNumberDS(entityTypeDAOService, dataSourceDAOService, em);
+		}
+		
+		return DataSourceData.RN_DS;
 	}	
 }

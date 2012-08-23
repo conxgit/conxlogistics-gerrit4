@@ -35,6 +35,7 @@ Import-Package:
   com.conx.logistics.kernel.documentlibrary.remote.services;version="1.0.0",
   com.conx.logistics.kernel.ui.components.domain.attachment;version="1.0.0",
   com.conx.logistics.kernel.ui.components.domain.note;version="1.0.0",
+  com.conx.logistics.kernel.ui.components.domain.referencenumber;version="1.0.0",
   com.conx.logistics.mdm.domain.note;version="1.0.0",
   com.conx.logistics.mdm.dao.services.note;version="1.0.0",
   com.conx.logistics.data.uat.sprint2.data;version="1.0.0",

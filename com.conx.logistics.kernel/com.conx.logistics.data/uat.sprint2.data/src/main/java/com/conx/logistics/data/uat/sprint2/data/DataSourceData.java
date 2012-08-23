@@ -14,6 +14,7 @@ import com.conx.logistics.kernel.datasource.domain.DataSourceField;
 import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
 import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.conx.logistics.mdm.domain.note.NoteItem;
+import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber;
 
 public class DataSourceData {
 	
@@ -22,6 +23,7 @@ public class DataSourceData {
 	
 	public static DataSource FE_DS = null;
 	public static DataSource NI_DS = null; 
+	public static DataSource RN_DS = null; 
 
 	
 	public final static DataSource provideDefaultReceiveDS(IEntityTypeDAOService entityTypeDAOService,IDataSourceDAOService dataSourceDAOService,EntityManager em) throws Exception
@@ -146,5 +148,32 @@ public class DataSourceData {
 		NI_DS = niDS;
 		
 		return niDS;
+	}	
+	
+	public final static DataSource provideReferenceNumberDS(IEntityTypeDAOService entityTypeDAOService,IDataSourceDAOService dataSourceDAOService,EntityManager em) throws Exception
+	{
+		com.conx.logistics.kernel.metamodel.domain.EntityType rnET = EntityTypeData.provide(entityTypeDAOService, em, ReferenceNumber.class);
+    	
+		DataSource rnDS = dataSourceDAOService.provide(rnET);
+		rnDS.setCode("referenceNumberDS");
+		rnDS.setName("referenceNumberDS");
+		rnDS = em.merge(rnDS);
+		
+		String[] visibleFieldNames = {"dateCreated","dateLastUpdated","value","type"};
+		List<String> visibleFieldNamesSet = Arrays.asList(visibleFieldNames);	
+		for ( DataSourceField fld : rnDS.getDSFields())
+		{
+			if (visibleFieldNamesSet.contains(fld.getName()))
+				fld.setHidden(false);
+			else
+				fld.setHidden(true);
+		}	
+		
+		rnDS = em.merge(rnDS);
+		em.flush();
+	
+		RN_DS = rnDS;
+		
+		return rnDS;
 	}		
 }

@@ -69,6 +69,8 @@ public class AttachmentForm extends Form {
 	private AbstractEntityEditorEventBus abstractEntityEditorEventBus;
 
 	private AttachmentEditorEventBus attachmentEditorEventBus;
+
+	private Button uploadToDocRepoButton;
 	
 	public AttachmentForm(
 			AttachmentEditorEventBus attachmentEditorEventBus, 
@@ -188,8 +190,8 @@ public class AttachmentForm extends Form {
 		description.setColumns(0);
 		description.setWidth("100%");
 		
-		Button save = new Button("Save");
-		save.addListener(new ClickListener() {
+		this.uploadToDocRepoButton = new Button("Upload");
+		this.uploadToDocRepoButton.addListener(new ClickListener() {
 			
 			@Override
 			public void buttonClick(ClickEvent event) {
@@ -231,7 +233,7 @@ public class AttachmentForm extends Form {
 		HorizontalLayout toolStrip = new HorizontalLayout();
 		toolStrip.setWidth("100%");
 		toolStrip.setHeight("30px");
-		toolStrip.addComponent(save);
+		toolStrip.addComponent(uploadToDocRepoButton);
         
         layout.addComponent(stateField);
 //        layout.addComponent(fileType);

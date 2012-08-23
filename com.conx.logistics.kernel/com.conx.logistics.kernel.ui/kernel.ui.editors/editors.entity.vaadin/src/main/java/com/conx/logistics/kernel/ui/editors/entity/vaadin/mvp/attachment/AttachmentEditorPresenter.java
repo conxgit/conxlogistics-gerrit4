@@ -89,6 +89,10 @@ public class AttachmentEditorPresenter
 
 	private ConfigurableBasePresenter mainEventBus;
 
+	private List<String> formVisibleFieldNames;
+
+	private EntityEditorToolStripButton attachButton;
+
 	public AttachmentEditorPresenter() {
 		super();
 	}
@@ -107,7 +111,6 @@ public class AttachmentEditorPresenter
 		grid.setSizeFull();
 		grid.setSelectable(true);
 		grid.setFilterDecorator(gridManager);
-		grid.setFilterGenerator(gridManager);
 		grid.setFiltersVisible(true);
 		// grid.setEditable(true);
 		// grid.setTableFieldFactory(new FieldFactory());
@@ -128,12 +131,19 @@ public class AttachmentEditorPresenter
 		uploadLayout.addComponent(form);
 
 		// - Toolstrip
-		EntityEditorToolStripButton newButton = new EntityEditorToolStripButton(
+		this.attachButton = new EntityEditorToolStripButton(
 				"toolstrip/img/new.png");
-		newButton.addListener(new ClickListener() {
+		attachButton.setEnabled(false);
+		attachButton.addListener(new ClickListener() {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				uploadLayout.setVisible(!uploadLayout.isVisible());
+				if (uploadLayout.isVisible())
+				{
+					//New FileEntry
+					EntityItem newFE = entityContainer.createEntityItem(new FileEntry());
+					form.setItemDataSource(newFE, AttachmentEditorPresenter.this.formVisibleFieldNames);					
+				}
 			}
 		});
 		EntityEditorToolStripButton deleteButton = new EntityEditorToolStripButton(
@@ -141,7 +151,7 @@ public class AttachmentEditorPresenter
 
 		HorizontalLayout innerToolStrip1 = new HorizontalLayout();
 		innerToolStrip1.setSpacing(true);
-		innerToolStrip1.addComponent(newButton);
+		innerToolStrip1.addComponent(attachButton);
 		innerToolStrip1.addComponent(deleteButton);
 
 		HorizontalLayout toolStrip1 = new HorizontalLayout();
@@ -171,7 +181,7 @@ public class AttachmentEditorPresenter
 
 		this.visibleFieldNames = attachmentComponent.getDataSource()
 				.getVisibleFieldNames();
-		final List<String> formVisibleFieldNames = Arrays.asList("title","docType","description");
+		this.formVisibleFieldNames = Arrays.asList("title","docType");
 		grid.setVisibleColumns(visibleFieldNames.toArray(new String[0]));
 		grid.addListener(new ItemClickListener() {
 			private static final long serialVersionUID = 7230326485331772539L;
@@ -204,6 +214,7 @@ public class AttachmentEditorPresenter
 			}
 		}	
 		this.form.setDocFolder(this.docFolder);
+		this.attachButton.setEnabled(true);
 		updateQueryFilter();				
 	}
 

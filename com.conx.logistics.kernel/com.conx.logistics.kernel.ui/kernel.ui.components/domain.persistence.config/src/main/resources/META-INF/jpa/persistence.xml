@@ -34,6 +34,8 @@
 		<class>com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent</class>
 		
 		<class>com.conx.logistics.kernel.ui.components.domain.note.NoteEditorComponent</class>
+		
+		<class>com.conx.logistics.kernel.ui.components.domain.referencenumber.ReferenceNumberEditorComponent</class>
 
 		<class>com.conx.logistics.kernel.ui.components.domain.tabbed.ConXTab</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.tabbed.ConXTabSheet</class>
