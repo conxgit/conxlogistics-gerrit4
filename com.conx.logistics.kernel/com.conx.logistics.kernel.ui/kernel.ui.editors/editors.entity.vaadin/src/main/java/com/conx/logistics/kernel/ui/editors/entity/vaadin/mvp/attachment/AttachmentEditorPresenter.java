@@ -4,7 +4,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -23,8 +22,8 @@ import com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocument
 import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
 import com.conx.logistics.kernel.ui.components.domain.attachment.AttachmentEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorComponent;
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.attachment.AttachmentEditorToolStrip;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.fieldfactory.ConXFieldFactory;
-import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.header.EntityEditorToolStripButton;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityGridFilterManager;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.upload.AttachmentForm;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.AbstractEntityEditorEventBus;
@@ -46,11 +45,11 @@ import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Layout;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.VerticalSplitPanel;
 
 @Presenter(view = EntityLineEditorSectionView.class)
 public class AttachmentEditorPresenter
@@ -91,13 +90,17 @@ public class AttachmentEditorPresenter
 
 	private List<String> formVisibleFieldNames;
 
-	private EntityEditorToolStripButton attachButton;
+	private AttachmentEditorToolStrip toolStrip;
+
+	private VerticalSplitPanel splitPanel;
+	
+	private EntityItem newFE;
 
 	public AttachmentEditorPresenter() {
 		super();
 	}
 
-	private void resetViewContentPanel(VerticalLayout panel) {
+	private void resetViewContentPanel(Layout panel) {
 		((IEntityLineEditorSectionView) getView()).getMainLayout()
 				.removeAllComponents();
 		((IEntityLineEditorSectionView) getView()).getMainLayout()
@@ -110,66 +113,62 @@ public class AttachmentEditorPresenter
 		FilterTable grid = new FilterTable();
 		grid.setSizeFull();
 		grid.setSelectable(true);
+		grid.setNullSelectionAllowed(false);
 		grid.setFilterDecorator(gridManager);
 		grid.setFiltersVisible(true);
-		// grid.setEditable(true);
-		// grid.setTableFieldFactory(new FieldFactory());
 
+		this.splitPanel = new VerticalSplitPanel();
 		this.form = new AttachmentForm(
 				(AttachmentEditorEventBus)this.getEventBus(),
 				(AbstractEntityEditorEventBus)this.mainEventBus.getEventBus(),
 				this.entityManager,
 				this.docRepo,
-				this.docFolderDAOService);
+				this.docFolderDAOService,
+				this.splitPanel);
 		form.setFormFieldFactory(new ConXFieldFactory());
 
 		// - Create upload form
 		final VerticalLayout uploadLayout = new VerticalLayout();
-		uploadLayout.setHeight("200px");
+		uploadLayout.setHeight("100%");
 		uploadLayout.setWidth("100%");
-		uploadLayout.setVisible(false);
 		uploadLayout.addComponent(form);
 
 		// - Toolstrip
-		this.attachButton = new EntityEditorToolStripButton(
-				"toolstrip/img/new.png");
-		attachButton.setEnabled(false);
-		attachButton.addListener(new ClickListener() {
+		this.toolStrip = new AttachmentEditorToolStrip();
+		this.toolStrip.setEditButtonEnabled(false);
+		this.toolStrip.setDeleteButtonEnabled(false);
+		this.toolStrip.addNewButtonClickListener(new ClickListener() {
+			private static final long serialVersionUID = -60083075517936436L;
+
 			@Override
 			public void buttonClick(ClickEvent event) {
-				uploadLayout.setVisible(!uploadLayout.isVisible());
-				if (uploadLayout.isVisible())
-				{
+				if (splitPanel.getSplitPosition() == 100) {
+					splitPanel.setSplitPosition(50);
 					//New FileEntry
-					EntityItem newFE = entityContainer.createEntityItem(new FileEntry());
+					newFE = entityContainer.createEntityItem(new FileEntry());
+					form.setMode(AttachmentForm.FormMode.CREATING);
 					form.setItemDataSource(newFE, AttachmentEditorPresenter.this.formVisibleFieldNames);					
+				} else {
+					splitPanel.setSplitPosition(100);
+					if (newFE != null && newFE.getItemId() != null) {
+						entityContainer.removeItem(newFE.getItemId());
+					}
+					newFE = null;
 				}
 			}
 		});
-		EntityEditorToolStripButton deleteButton = new EntityEditorToolStripButton(
-				"toolstrip/img/delete.png");
-
-		HorizontalLayout innerToolStrip1 = new HorizontalLayout();
-		innerToolStrip1.setSpacing(true);
-		innerToolStrip1.addComponent(attachButton);
-		innerToolStrip1.addComponent(deleteButton);
-
-		HorizontalLayout toolStrip1 = new HorizontalLayout();
-		toolStrip1.setHeight("40px");
-		toolStrip1.setWidth("100%");
-		toolStrip1.setStyleName("conx-entity-toolstrip");
-		toolStrip1.addComponent(innerToolStrip1);
-
-		toolStrip1
-				.setComponentAlignment(innerToolStrip1, Alignment.MIDDLE_LEFT);
-
+		
 		VerticalLayout gridLayout = new VerticalLayout();
-		gridLayout.setStyleName("conx-entity-grid");
-		gridLayout.addComponent(toolStrip1);
-		gridLayout.addComponent(grid);
-		gridLayout.addComponent(uploadLayout);
 		gridLayout.setSizeFull();
+		gridLayout.addComponent(toolStrip);
+		gridLayout.addComponent(grid);
 		gridLayout.setExpandRatio(grid, 1.0f);
+
+		splitPanel.setStyleName("conx-entity-grid");
+		splitPanel.addComponent(gridLayout);
+		splitPanel.addComponent(uploadLayout);
+		splitPanel.setSizeFull();
+		splitPanel.setSplitPosition(100);
 
 		// - Presenter: Init grid
 		Set<String> nestedFieldNames = attachmentComponent.getDataSource()
@@ -181,21 +180,25 @@ public class AttachmentEditorPresenter
 
 		this.visibleFieldNames = attachmentComponent.getDataSource()
 				.getVisibleFieldNames();
-		this.formVisibleFieldNames = Arrays.asList("title","docType");
+		this.formVisibleFieldNames = Arrays.asList("docType");
 		grid.setVisibleColumns(visibleFieldNames.toArray(new String[0]));
 		grid.addListener(new ItemClickListener() {
 			private static final long serialVersionUID = 7230326485331772539L;
 
 			public void itemClick(ItemClickEvent event) {
+				AttachmentEditorPresenter.this.toolStrip.setEditButtonEnabled(true);
+				AttachmentEditorPresenter.this.toolStrip.setDeleteButtonEnabled(true);
 				JPAContainerItem item = (JPAContainerItem) event.getItem();
 				Object entity = item.getEntity();
 				entity.toString();
+				form.setMode(AttachmentForm.FormMode.EDITING);
 				form.setItemDataSource(item, formVisibleFieldNames);
+				splitPanel.setSplitPosition(50);
 				// AttachmentEditorPresenter.this.entityEditorEventListener.entityItemEdit(item);
 			}
 		});
 
-		resetViewContentPanel(gridLayout);
+		resetViewContentPanel(splitPanel);
 		this.setInitialized(true);
 	}
 
@@ -214,7 +217,6 @@ public class AttachmentEditorPresenter
 			}
 		}	
 		this.form.setDocFolder(this.docFolder);
-		this.attachButton.setEnabled(true);
 		updateQueryFilter();				
 	}
 

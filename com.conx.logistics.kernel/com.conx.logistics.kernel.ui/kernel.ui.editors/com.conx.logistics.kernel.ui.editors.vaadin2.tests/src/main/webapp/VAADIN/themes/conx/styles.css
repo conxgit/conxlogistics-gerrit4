@@ -6020,7 +6020,9 @@ textarea.v-textarea-readonly,
 	padding-left: 6px;
 	color: #222;
 }
-
+/******************************************************************************
+*******************************************************************************
+******************************************************************************/
 .header-toolstrip .v-button:focus {
 	background-color: #fff;
 }
@@ -6182,10 +6184,22 @@ textarea.v-textarea-readonly,
 	background-image: none;
 	outline: none;
 }
+.conx-entity-toolstrip .v-disabled.v-button {
+	border: 1px solid transparent;
+}
+.conx-entity-toolstrip .v-disabled.v-button:active {
+	background-color: transparent;
+}
+.conx-entity-toolstrip .v-disabled.v-button:hover {
+	background-color: transparent;
+}
 .conx-entity-toolstrip .v-button,
 .conx-entity-toolstrip .v-disabled.v-button {
 	background-image: none;
 	outline: none;
+}
+.conx-entity-toolstrip .v-disabled.v-button .v-button-wrap {
+	padding: 6px 6px 6px 6px;
 }
 .conx-entity-toolstrip .v-button-wrap,
 .conx-entity-toolstrip .v-disabled.v-button .v-button-wrap {
@@ -6298,12 +6312,16 @@ textarea.v-textarea-readonly,
 .datefilterpopup:focus,
 .datefilterpopup:active,
 .datefilterpopup.v-pressed {
-	background: #fff none repeat-x 0 100%;
+	background: white;
+	background-repeat: repeat-x;
+	background-image: url(common/img/vertical-sprites.png);
+	-background-image: url(common/img/vertical-sprites-ie6.png);
+	background-position: left -1853px;
 	height: 23px;
-	border: 1px solid #b7b7b7;
-	border-top: 2px solid #b7b7b7;
+	border-right: 1px solid #BCBDBE;
+	border-bottom: 1px solid #d4d7d9;
 	position:relative;
-
+	height: 22px;
 }
 .datefilterpopup .v-button-wrap,
 .datefilterpopup:focus .v-button-wrap,
@@ -6412,6 +6430,7 @@ textarea.v-textarea-readonly,
 .conx-entity-editor-form-header .v-button, .conx-entity-editor-form-header .v-disabled.v-button {
     background-image: none;
     outline: medium none;
+    border: 1px solid #aaa;
 }
 .conx-entity-editor-form-header .v-button:focus {
   	background-image: none;
@@ -6458,6 +6477,12 @@ textarea.v-textarea-readonly,
 	border-radius: 0px;
 	background-image: none;
 }
+.conx-entity-editor-form .v-gridlayout textarea {
+	-moz-border-radius: 0px;
+	-webkit-border-radius: 0px;
+	border-radius: 0px;
+	background-image: none;
+}
 .conx-entity-editor-form-header-left {
 	padding-left: 6px;
 }
@@ -6466,4 +6491,71 @@ textarea.v-textarea-readonly,
 }
 .conx-entity-editor-form-separator-arrow-expanded {
 	background: url(../base/treetable/img/arrow-right.png) right center no-repeat;
+}
+.filters-panel .v-textfield-focus {
+	border-right-color: #BCBDBE;
+}
+/******************************************************************************
+*******************************************************************************
+******************************************************************************/
+.conx-entity-editor-bread-crumb {
+	background: url('breadcrumb/img/conx-bread-crumb-background.png') repeat-x;
+}
+.conx-entity-editor-bread-crumb .v-button {
+      display: block;
+      background: transparent;
+      border: none;
+      text-align: center;
+      cursor: pointer;
+}
+.conx-entity-editor-bread-crumb .v-button-caption {
+      color: #777;
+}
+.conx-entity-editor-bread-crumb .v-button-wrap {
+      margin-top: 0px;
+      padding-left: 0px;
+      padding-right: 0px;
+      padding-top: 0px;
+}
+.conx-entity-editor-bread-crumb .v-button img {
+}
+.conx-entity-editor-bread-crumb .v-button:focus {
+	background: transparent;
+}
+.conx-entity-editor-bread-crumb .v-button:hover .v-button-caption {
+	color: #385b82;
+}
+.conx-entity-editor-bread-crumb .v-button .v-button-wrap, 
+.conx-entity-editor-bread-crumb .v-disabled.v-button .v-button-wrap {
+   background: transparent;
+   border: none;
+   -webkit-border-radius: 0;
+   -moz-border-radius: 0;
+   border-radius: 0;
+   -webkit-box-shadow: none;
+   -moz-box-shadow: none;
+   box-shadow: none;
+}
+.conx-entity-editor-bread-crumb .v-button:active .v-button-wrap,
+.conx-entity-editor-bread-crumb .v-button.v-pressed .v-button-wrap {
+   background: transparent;
+   -webkit-box-shadow: none;
+   -moz-box-shadow: none;
+   box-shadow: none;
+}
+.conx-entity-editor-bread-crumb-item .v-button-wrap {
+	height: 16px;
+	padding-top: 4px;
+	padding-left: 2px;
+	padding-right: 0px;
+}
+.conx-entity-editor-bread-crumb-item .v-icon {
+	padding-right: 3px;
+}
+.v-caption-conx-entity-editor-bread-crumb-separator {
+	padding-top: 7px;
+	padding-left: 6px;
+}
+.conx-entity-editor-bread-crumb-item-current .v-button-caption {
+	color: #222;
 }
