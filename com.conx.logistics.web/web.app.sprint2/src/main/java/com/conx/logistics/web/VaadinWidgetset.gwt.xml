@@ -20,10 +20,14 @@
 
     
 
-    <inherits name="com.conx.logistics.kernel.ui.common.gwt.KernelUICommonWidgetset" />
+    
     
 
     <inherits name="org.vaadin.hene.popupbutton.widgetset.PopupbuttonWidgetset" />
 
+    
+
     <inherits name="com.conx.logistics.kernel.ui.filteredtable.gwt.KernelUIFilteredTableWidgetset" />
+
+    <inherits name="com.conx.logistics.kernel.ui.common.gwt.KernelUICommonWidgetset" />
 </module>

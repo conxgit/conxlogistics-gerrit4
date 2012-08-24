@@ -7,8 +7,6 @@ import org.vaadin.mvp.presenter.IPresenterFactory;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
 import com.conx.logistics.kernel.ui.common.gwt.client.ui.ConXEntityEditor;
-import com.conx.logistics.kernel.ui.common.gwt.client.ui.ConXEntityGrid;
-import com.conx.logistics.kernel.ui.common.gwt.client.ui.ConXEntityToolStrip;
 import com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication;
 import com.conx.logistics.kernel.ui.common.mvp.view.feature.FeatureView;
 import com.conx.logistics.kernel.workspace.ui.navigation.WorkspaceNavigationPresenter;
@@ -16,15 +14,9 @@ import com.conx.logistics.kernel.workspace.ui.navigation.view.IWorkspaceNavigati
 import com.conx.logistics.kernel.workspace.ui.view.IWorkspaceView;
 import com.conx.logistics.kernel.workspace.ui.view.WorkspaceView;
 import com.conx.logistics.mdm.domain.application.Feature;
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
-import com.vaadin.data.Property.ConversionException;
-import com.vaadin.data.Property.ReadOnlyException;
-import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.Window;
 
 @Presenter(view = WorkspaceView.class)

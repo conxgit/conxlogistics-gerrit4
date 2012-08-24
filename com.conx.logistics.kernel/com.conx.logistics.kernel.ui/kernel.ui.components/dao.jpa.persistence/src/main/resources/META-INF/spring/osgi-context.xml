@@ -17,6 +17,8 @@
 	</osgi:reference>	
 	
 	<!-- import external interfaces -->
+	<osgi:reference id="entityTypeDao" interface="com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService" />
+	<osgi:reference id="basicEntityTypeDao" interface="com.conx.logistics.kernel.metamodel.dao.services.IBasicTypeDAOService" />	
 	
 	<!-- export internal interfaces -->
 	<osgi:service ref="componentDao" interface="com.conx.logistics.kernel.ui.components.dao.services.IComponentDAOService"/>

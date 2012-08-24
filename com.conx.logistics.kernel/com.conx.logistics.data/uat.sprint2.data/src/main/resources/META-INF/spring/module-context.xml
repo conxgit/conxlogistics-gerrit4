@@ -20,20 +20,28 @@
 		<property name="asnPickupDAOService" ref="asnPickupDao"></property>
 		<property name="asnDropOffDAOService" ref="asnDropOffDao"></property>
 		<property name="contactDAOService" ref="contactDao"></property>
+		<property name="componentDAOService" ref="componentDao"></property>
 		<property name="countryDaoService" ref="countryDao"></property>
 		<property name="countryStateDaoService" ref="countryStateDao"></property>
 		<property name="currencyUnitDaoService" ref="currencyUnitDao"></property>
+		<property name="dataSourceDAOService" ref="dataSourceDao"></property>
 		<property name="dimUnitDaoService" ref="dimUnitDao"></property>
 		<property name="docTypeDOAService" ref="docTypeDao"></property>
 		<property name="dockTypeDOAService" ref="dockTypeDao"></property>
+		<property name="documentRepositoryService" ref="documentRepositoryDao"></property>
 		<property name="entityMetadataDAOService" ref="entityMetadataDao"></property>
+		<property name="entityTypeDAOService" ref="entityTypeDao"></property>
+		<property name="folderDAOService" ref="folderDao"></property>
 		<property name="orgDaoService" ref="orgDao"></property>
+		<property name="noteDAOService" ref="noteDao"></property>
 		<property name="packUnitDaoService" ref="packUnitDao"></property>
 		<property name="productDaoService" ref="productDao"></property>
 		<property name="productTypeDaoService" ref="productTypeDao"></property>
 		<property name="referenceNumberTypeDaoService" ref="referenceNumberTypeDao"></property>
+		<property name="rcvDaoService" ref="rcvDao"></property>
 		<property name="referenceNumberDaoService" ref="referenceNumberDao"></property>
 		<property name="unlocoDaoService" ref="unlocoDao"></property>
+		<property name="whseDAOService" ref="whseDao"></property>
 		<property name="weightUnitDaoService" ref="weightUnitDao"></property>
 	</bean>
 </beans>

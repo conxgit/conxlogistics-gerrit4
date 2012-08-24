@@ -4,7 +4,7 @@ Bundle-Name: ConX Logistics Vaadin Frontend
 Bundle-SymbolicName: com.conx.logistics.web.app.sprint2
 Bundle-Version: 2.0.1.RC1
 Bundle-ClassPath: .,WEB-INF/classes
-Web-ContextPath: logistics2.0.0.RC4
+Web-ContextPath: logistics2.0.1.RC1
 Import-Template: 
  org.springframework.*;version="[3.0, 3.1)",
  com.conx.logistics.kernel.ui.common.*;version="[1.0.0,2.0.0)",

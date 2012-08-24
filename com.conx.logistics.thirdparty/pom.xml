@@ -52,6 +52,7 @@
 		<module>javax.security.jacc</module>
 		<module>vaadin-addon-wizard</module>
 		<module>vaadin-addon-popup-button</module>
+		<module>flexjson</module>
 	</modules>
 	<build>
 		<plugins>

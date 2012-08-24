@@ -28,9 +28,12 @@
 	<osgi:reference id="dimUnitDao" interface="com.conx.logistics.mdm.dao.services.product.IDimUnitDAOService"/>
 	<osgi:reference id="docTypeDao" interface="com.conx.logistics.mdm.dao.services.documentlibrary.IDocTypeDAOService"/>
 	<osgi:reference id="dockTypeDao" interface="com.conx.logistics.app.whse.dao.services.IDockTypeDAOService"/>
+	<osgi:reference id="documentRepositoryDao" interface="com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository"/>
 	<osgi:reference id="entityMetadataDao" interface="com.conx.logistics.mdm.dao.services.IEntityMetadataDAOService"/>
 	<osgi:reference id="entityTypeDao" interface="com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService"/>
+	<osgi:reference id="folderDao" interface="com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService"/>
 	<osgi:reference id="orgDao" interface="com.conx.logistics.mdm.dao.services.IOrganizationDAOService"/>
+	<osgi:reference id="noteDao" interface="com.conx.logistics.mdm.dao.services.note.INoteDAOService"/>
 	<osgi:reference id="productDao" interface="com.conx.logistics.mdm.dao.services.product.IProductDAOService"/>	
 	<osgi:reference id="packUnitDao" interface="com.conx.logistics.mdm.dao.services.product.IPackUnitDAOService"/>
 	<osgi:reference id="productTypeDao" interface="com.conx.logistics.mdm.dao.services.product.IProductTypeDAOService"/>
@@ -38,5 +41,14 @@
 	<osgi:reference id="referenceNumberTypeDao" interface="com.conx.logistics.mdm.dao.services.referencenumber.IReferenceNumberTypeDAOService"/>
 	<osgi:reference id="referenceNumberDao" interface="com.conx.logistics.mdm.dao.services.referencenumber.IReferenceNumberDAOService"/>
 	<osgi:reference id="unlocoDao" interface="com.conx.logistics.mdm.dao.services.IUnlocoDAOService"/>
+	<osgi:reference id="whseDao" interface="com.conx.logistics.app.whse.dao.services.IWarehouseDAOService"/>
 	<osgi:reference id="weightUnitDao" interface="com.conx.logistics.mdm.dao.services.product.IWeightUnitDAOService"/>
 </beans>
+
+
+
+
+
+	
+
+

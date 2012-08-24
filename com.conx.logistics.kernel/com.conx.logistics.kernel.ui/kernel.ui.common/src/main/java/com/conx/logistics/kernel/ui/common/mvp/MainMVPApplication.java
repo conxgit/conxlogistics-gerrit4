@@ -78,7 +78,7 @@ public class MainMVPApplication extends Application implements IMainApplication 
 	public void init() {
 		try 
 		{
-			setTheme("sampler-reindeer");
+			setTheme("conx");
 
 			// request an instance of MainPresenter
 			mainPresenter = this.presenterFactory.createPresenter(MainPresenter.class);

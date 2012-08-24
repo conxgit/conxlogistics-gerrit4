@@ -13,6 +13,7 @@ import javax.persistence.EntityManagerFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -81,7 +82,80 @@ import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumberType;
 @Transactional
 @Repository
 public class TestDataManager {
-	protected static Logger logger = LoggerFactory.getLogger(TestDataManager.class);	
+	protected static Logger logger = LoggerFactory.getLogger(TestDataManager.class);
+	
+	private EntityManagerFactory conxlogisticsEMF;
+
+	private PlatformTransactionManager globalTransactionManager;
+	
+	private IOrganizationDAOService orgDaoService;
+	private ICountryDAOService countryDaoService;
+	private ICountryStateDAOService countryStateDaoService;
+	private IUnlocoDAOService unlocoDaoService;
+	private IAddressDAOService addressDaoService;
+	
+	private IPackUnitDAOService packUnitDaoService;
+	private IDimUnitDAOService dimUnitDaoService;
+	private IWeightUnitDAOService weightUnitDaoService;
+	private IProductTypeDAOService productTypeDaoService;
+	private IProductDAOService productDaoService;
+	private ICurrencyUnitDAOService currencyUnitDAOService;
+	private IASNDAOService asnDaoService;
+	private IASNPickupDAOService asnPickupDAOService;
+	private IASNDropOffDAOService asnDropOffDAOService;
+	
+	private IContactDAOService contactDAOService;
+	private IDocTypeDAOService docTypeDOAService;
+	private IDockTypeDAOService dockTypeDOAService;
+	private IEntityMetadataDAOService entityMetadataDAOService;
+	
+	private IReferenceNumberTypeDAOService referenceNumberTypeDaoService;
+	private IReferenceNumberDAOService referenceNumberDaoService;
+	
+
+	
+	private IWarehouseDAOService whseDAOService;	
+	private IReceiveDAOService rcvDaoService;
+	private IComponentDAOService componentDAOService;
+	private IEntityTypeDAOService entityTypeDAOService;
+	private IDataSourceDAOService dataSourceDAOService;
+	private IRemoteDocumentRepository documentRepositoryService;
+	private IFolderDAOService folderDAOService;	
+	private INoteDAOService noteDAOService;
+
+	private EntityManager em;	
+
+	public void start()
+	{
+		 this.em = conxlogisticsEMF.createEntityManager();
+		 
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setName("uat.sprint2.data");
+		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+		TransactionStatus status = this.globalTransactionManager.getTransaction(def);	
+		try
+		{
+			TestDataManager.generateData(em, orgDaoService,countryDaoService, countryStateDaoService, unlocoDaoService, addressDaoService, packUnitDaoService, dimUnitDaoService, weightUnitDaoService, productTypeDaoService, productDaoService, currencyUnitDAOService, asnDaoService, asnPickupDAOService, asnDropOffDAOService, contactDAOService, docTypeDOAService, dockTypeDOAService, entityMetadataDAOService, referenceNumberTypeDaoService, referenceNumberDaoService, rcvDaoService, componentDAOService, entityTypeDAOService, dataSourceDAOService, whseDAOService,documentRepositoryService, folderDAOService, noteDAOService);
+			
+			this.globalTransactionManager.commit(status);
+		}
+		catch (Exception e) 
+		{
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			String stacktrace = sw.toString();
+			logger.error(stacktrace);
+			
+			this.globalTransactionManager.rollback(status);
+		}
+	}
+	
+	public void stop()
+	{
+		if (this.em != null && this.em.isOpen())
+			this.em.close();
+	}
+	
 	public static void generateData(
 			EntityManager em,
 			IOrganizationDAOService orgDaoService,
@@ -459,5 +533,137 @@ public class TestDataManager {
 		}
 		
 		return asn;
+	}
+
+	public static void setLogger(Logger logger) {
+		TestDataManager.logger = logger;
+	}
+
+	public void setConxlogisticsEMF(EntityManagerFactory conxlogisticsEMF) {
+		this.conxlogisticsEMF = conxlogisticsEMF;
+	}
+
+	public void setGlobalTransactionManager(
+			PlatformTransactionManager globalTransactionManager) {
+		this.globalTransactionManager = globalTransactionManager;
+	}
+
+	public void setOrgDaoService(IOrganizationDAOService orgDaoService) {
+		this.orgDaoService = orgDaoService;
+	}
+
+	public void setCountryDaoService(ICountryDAOService countryDaoService) {
+		this.countryDaoService = countryDaoService;
+	}
+
+	public void setCountryStateDaoService(
+			ICountryStateDAOService countryStateDaoService) {
+		this.countryStateDaoService = countryStateDaoService;
+	}
+
+	public void setUnlocoDaoService(IUnlocoDAOService unlocoDaoService) {
+		this.unlocoDaoService = unlocoDaoService;
+	}
+
+	public void setAddressDaoService(IAddressDAOService addressDaoService) {
+		this.addressDaoService = addressDaoService;
+	}
+
+	public void setPackUnitDaoService(IPackUnitDAOService packUnitDaoService) {
+		this.packUnitDaoService = packUnitDaoService;
+	}
+
+	public void setDimUnitDaoService(IDimUnitDAOService dimUnitDaoService) {
+		this.dimUnitDaoService = dimUnitDaoService;
+	}
+
+	public void setWeightUnitDaoService(IWeightUnitDAOService weightUnitDaoService) {
+		this.weightUnitDaoService = weightUnitDaoService;
+	}
+
+	public void setProductTypeDaoService(
+			IProductTypeDAOService productTypeDaoService) {
+		this.productTypeDaoService = productTypeDaoService;
+	}
+
+	public void setProductDaoService(IProductDAOService productDaoService) {
+		this.productDaoService = productDaoService;
+	}
+
+	public void setCurrencyUnitDAOService(
+			ICurrencyUnitDAOService currencyUnitDAOService) {
+		this.currencyUnitDAOService = currencyUnitDAOService;
+	}
+
+	public void setAsnDaoService(IASNDAOService asnDaoService) {
+		this.asnDaoService = asnDaoService;
+	}
+
+	public void setAsnPickupDAOService(IASNPickupDAOService asnPickupDAOService) {
+		this.asnPickupDAOService = asnPickupDAOService;
+	}
+
+	public void setAsnDropOffDAOService(IASNDropOffDAOService asnDropOffDAOService) {
+		this.asnDropOffDAOService = asnDropOffDAOService;
+	}
+
+	public void setContactDAOService(IContactDAOService contactDAOService) {
+		this.contactDAOService = contactDAOService;
+	}
+
+	public void setDocTypeDOAService(IDocTypeDAOService docTypeDOAService) {
+		this.docTypeDOAService = docTypeDOAService;
+	}
+
+	public void setDockTypeDOAService(IDockTypeDAOService dockTypeDOAService) {
+		this.dockTypeDOAService = dockTypeDOAService;
+	}
+
+	public void setEntityMetadataDAOService(
+			IEntityMetadataDAOService entityMetadataDAOService) {
+		this.entityMetadataDAOService = entityMetadataDAOService;
+	}
+
+	public void setReferenceNumberTypeDaoService(
+			IReferenceNumberTypeDAOService referenceNumberTypeDaoService) {
+		this.referenceNumberTypeDaoService = referenceNumberTypeDaoService;
+	}
+
+	public void setReferenceNumberDaoService(
+			IReferenceNumberDAOService referenceNumberDaoService) {
+		this.referenceNumberDaoService = referenceNumberDaoService;
+	}
+
+	public void setWhseDAOService(IWarehouseDAOService whseDAOService) {
+		this.whseDAOService = whseDAOService;
+	}
+
+	public void setRcvDaoService(IReceiveDAOService rcvDaoService) {
+		this.rcvDaoService = rcvDaoService;
+	}
+
+	public void setComponentDAOService(IComponentDAOService componentDAOService) {
+		this.componentDAOService = componentDAOService;
+	}
+
+	public void setEntityTypeDAOService(IEntityTypeDAOService entityTypeDAOService) {
+		this.entityTypeDAOService = entityTypeDAOService;
+	}
+
+	public void setDataSourceDAOService(IDataSourceDAOService dataSourceDAOService) {
+		this.dataSourceDAOService = dataSourceDAOService;
+	}
+
+	public void setDocumentRepositoryService(
+			IRemoteDocumentRepository documentRepositoryService) {
+		this.documentRepositoryService = documentRepositoryService;
+	}
+
+	public void setFolderDAOService(IFolderDAOService folderDAOService) {
+		this.folderDAOService = folderDAOService;
+	}
+
+	public void setNoteDAOService(INoteDAOService noteDAOService) {
+		this.noteDAOService = noteDAOService;
 	}
 }

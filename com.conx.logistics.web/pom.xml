@@ -17,5 +17,6 @@
   	<module>com.conx.logistics.web.client.vaadin.mock</module>
   	-->
     <module>web.app</module>
+    <module>web.app.sprint2</module>
   </modules>
 </project>
