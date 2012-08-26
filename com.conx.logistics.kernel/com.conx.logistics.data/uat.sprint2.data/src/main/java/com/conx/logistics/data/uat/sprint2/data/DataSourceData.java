@@ -33,7 +33,7 @@ public class DataSourceData {
 		DataSource receiveDS = dataSourceDAOService.provide(rcvET);
 		receiveDS.setCode("defaultReceiveDS");
 		receiveDS.setName("DefaultReceiveDS");
-		receiveDS = em.merge(receiveDS);
+		receiveDS = dataSourceDAOService.update(receiveDS);
 		
 		String[] visibleFieldNames = {"id","code","name","dateCreated","dateLastUpdated","warehouse"};
 		List<String> visibleFieldNamesSet = Arrays.asList(visibleFieldNames);	
@@ -50,8 +50,7 @@ public class DataSourceData {
 			}
 		}	
 		
-		receiveDS = em.merge(receiveDS);
-		em.flush();
+		receiveDS = dataSourceDAOService.update(receiveDS);
 	
 		RCV_DEFAULT_DS = receiveDS;
 		
@@ -82,8 +81,7 @@ public class DataSourceData {
 		
 		receiveDS = dataSourceDAOService.addFields(receiveDS, fieldSet);
 		
-		receiveDS = em.merge(receiveDS);
-		em.flush();
+		receiveDS = dataSourceDAOService.update(receiveDS);
 		
 		RCV_BASIC_DS = receiveDS;
 		
@@ -97,7 +95,7 @@ public class DataSourceData {
 		DataSource feDS = dataSourceDAOService.provide(feET);
 		feDS.setCode("fileEntryDS");
 		feDS.setName("fileEntryDS");
-		feDS = em.merge(feDS);
+		feDS = dataSourceDAOService.update(feDS);
 		
 		String[] visibleFieldNames = {"title","size","createDate","modifiedDate","dateCreated","docType","mimeType"};
 		List<String> visibleFieldNamesSet = Arrays.asList(visibleFieldNames);	
@@ -114,8 +112,7 @@ public class DataSourceData {
 			}
 		}	
 		
-		feDS = em.merge(feDS);
-		em.flush();
+		feDS = dataSourceDAOService.update(feDS);
 	
 		FE_DS = feDS;
 		
@@ -130,7 +127,7 @@ public class DataSourceData {
 		DataSource niDS = dataSourceDAOService.provide(niET);
 		niDS.setCode("noteDS");
 		niDS.setName("noteDS");
-		niDS = em.merge(niDS);
+		niDS = dataSourceDAOService.update(niDS);
 		
 		String[] visibleFieldNames = {"id","code","name","dateCreated","dateLastUpdated","content"};
 		List<String> visibleFieldNamesSet = Arrays.asList(visibleFieldNames);	
@@ -142,8 +139,7 @@ public class DataSourceData {
 				fld.setHidden(true);
 		}	
 		
-		niDS = em.merge(niDS);
-		em.flush();
+		niDS = dataSourceDAOService.update(niDS);
 	
 		NI_DS = niDS;
 		
@@ -157,7 +153,7 @@ public class DataSourceData {
 		DataSource rnDS = dataSourceDAOService.provide(rnET);
 		rnDS.setCode("referenceNumberDS");
 		rnDS.setName("referenceNumberDS");
-		rnDS = em.merge(rnDS);
+		rnDS = dataSourceDAOService.update(rnDS);
 		
 		String[] visibleFieldNames = {"dateCreated","dateLastUpdated","value","type"};
 		List<String> visibleFieldNamesSet = Arrays.asList(visibleFieldNames);	
@@ -169,8 +165,7 @@ public class DataSourceData {
 				fld.setHidden(true);
 		}	
 		
-		rnDS = em.merge(rnDS);
-		em.flush();
+		rnDS = dataSourceDAOService.update(rnDS);
 	
 		RN_DS = rnDS;
 		

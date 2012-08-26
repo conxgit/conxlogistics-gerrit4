@@ -355,6 +355,24 @@ public class LiferayPortalDocumentRepositoryImpl implements
 		
 		return fe;
 	}
+	
+	@Override
+	public FileEntry addorUpdateFileEntry(String folderId, File sourceFile,
+			String mimeType, String title, String description)
+			throws Exception {
+		FileEntry fe = null;
+		if (fileEntryExists(folderId, title))
+		{
+			FileEntry fe_ = getFileEntryByTitle(folderId, title);
+			fe = updateFileEntry(fe_.getFileEntryId(),sourceFile, mimeType, title, description);
+		}
+		else
+		{
+			fe = addFileEntry(folderId, sourceFile, mimeType, title, description);
+		}
+		
+		return fe;
+	}	
 
 	private FileEntry updateFileEntry(long fileEntryId, String sourceFileName,
 			String mimeType, String title, String description) throws Exception {
@@ -408,6 +426,92 @@ public class LiferayPortalDocumentRepositoryImpl implements
 		}
 		return fe;
 	}
+	
+	private FileEntry updateFileEntry(long fileEntryId, File sourceFile,
+			String mimeType, String title, String description) throws Exception {
+		// Add AuthCache to the execution context
+		BasicHttpContext ctx = new BasicHttpContext();
+		ctx.setAttribute(ClientContext.AUTH_CACHE, authCache);
+		
+		HttpPost post = new HttpPost("/api/secure/jsonws/dlapp/update-file-entry");
+		MultipartEntity entity = new MultipartEntity(
+				HttpMultipartMode.BROWSER_COMPATIBLE);
+		
+		entity.addPart("fileEntryId",new StringBody(Long.toString(fileEntryId), Charset.forName("UTF-8")));
+		entity.addPart("sourceFileName",new StringBody(sourceFile.getName(), Charset.forName("UTF-8")));
+		entity.addPart("mimeType ", new StringBody(mimeType,Charset.forName("UTF-8")));
+		entity.addPart("title", new StringBody(title,Charset.forName("UTF-8")));
+		entity.addPart("description", new StringBody(description,Charset.forName("UTF-8")));
+		entity.addPart("changeLog", new StringBody("",Charset.forName("UTF-8")));		
+		entity.addPart("file", new FileBody(sourceFile,mimeType,sourceFile.getName()));
+		//entity.addPart("bytes", new ByteArrayBody("Test Content".getBytes(),mimeType,sourceFileName));
+		entity.addPart("majorVersion", new StringBody("false",Charset.forName("UTF-8")));
+		entity.addPart("serviceContext", new StringBody("{}",Charset.forName("UTF-8")));
+
+		post.setEntity(entity);
+
+		HttpResponse resp = httpclient.execute(targetHost, post, ctx);
+		System.out.println(resp.getStatusLine());
+		
+		String response = null;
+		if(resp.getEntity()!=null) {
+		    response = EntityUtils.toString(resp.getEntity());
+		}
+		System.out.println("updateFileEntry Res:["+response+"]");
+
+		FileEntry fe = null;
+		if (!StringUtil.contains(response, "com.liferay.portlet.documentlibrary.NoSuchFileEntryException", ""))
+		{
+			JSONDeserializer<FileEntry> deserializer = new JSONDeserializer<FileEntry>();
+			fe = deserializer.deserialize(response,FileEntry.class);
+		}
+		return fe;
+	}	
+	
+	@Override
+	public FileEntry addFileEntry(String folderId, File sourceFile,
+			String mimeType, String title, String description)
+			throws Exception {
+		// Add AuthCache to the execution context
+		BasicHttpContext ctx = new BasicHttpContext();
+		ctx.setAttribute(ClientContext.AUTH_CACHE, authCache);
+		
+		HttpPost post = new HttpPost("/api/secure/jsonws/dlapp/add-file-entry");
+		MultipartEntity entity = new MultipartEntity(
+				HttpMultipartMode.BROWSER_COMPATIBLE);
+		
+		entity.addPart("repositoryId",new StringBody(repositoryId, Charset.forName("UTF-8")));
+		entity.addPart("folderId",new StringBody(folderId, Charset.forName("UTF-8")));
+		entity.addPart("sourceFileName",new StringBody(sourceFile.getName(), Charset.forName("UTF-8")));
+		entity.addPart("mimeType ", new StringBody(mimeType,Charset.forName("UTF-8")));
+		entity.addPart("title", new StringBody(title,Charset.forName("UTF-8")));
+		entity.addPart("description", new StringBody(description,Charset.forName("UTF-8")));
+		entity.addPart("changeLog", new StringBody("",Charset.forName("UTF-8")));		
+		entity.addPart("file", new FileBody(sourceFile,mimeType,sourceFile.getName()));
+		//entity.addPart("bytes", new ByteArrayBody("Test Content".getBytes(),mimeType,sourceFileName));
+		entity.addPart("size", new StringBody("0",Charset.forName("UTF-8")));
+		entity.addPart("serviceContext", new StringBody("{}",Charset.forName("UTF-8")));
+
+		post.setEntity(entity);
+
+		HttpResponse resp = httpclient.execute(targetHost, post, ctx);
+		System.out.println(resp.getStatusLine());
+		
+		String response = null;
+		if(resp.getEntity()!=null) {
+		    response = EntityUtils.toString(resp.getEntity());
+		}
+		System.out.println("addFileEntry Res:["+response+"]");
+
+		FileEntry fe = null;
+		if (!StringUtil.contains(response, "com.liferay.portlet.documentlibrary.NoSuchFileEntryException", "")
+		    && !StringUtil.contains(response, "com.liferay.portal.NoSuchRepositoryEntryException", "") )
+		{
+			JSONDeserializer<FileEntry> deserializer = new JSONDeserializer<FileEntry>();
+			fe = deserializer.deserialize(response,FileEntry.class);
+		}
+		return fe;
+	}	
 
 	@Override
 	public FileEntry addFileEntry(String folderId, String sourceFileName,
@@ -578,6 +682,23 @@ public class LiferayPortalDocumentRepositoryImpl implements
 		
 		return fe;
 	}
+	
+	@Override
+	public FileEntry addorUpdateFileEntry(BaseEntity entity, 
+			DocType attachmentType,
+			File sourceFile, 
+			String mimeType, 
+			String title,
+			String description) throws Exception {
+		FileEntry fe = null;
+		Folder df = entity.getDocFolder();
+
+		fe = addorUpdateFileEntry(Long.toString(df.getFolderId()), sourceFile, mimeType, title, description);
+		
+		fe = folderDAOService.addFileEntry(df.getFolderId(),attachmentType,fe);
+		
+		return fe;
+	}	
 	
 	@Override
 	public FileEntry addorUpdateFileEntry(Folder folder, 

@@ -29,6 +29,7 @@
 	<osgi:service ref="docTypeDao" interface="com.conx.logistics.mdm.dao.services.documentlibrary.IDocTypeDAOService"/>
 	<osgi:service ref="entityMetadataDao" interface="com.conx.logistics.mdm.dao.services.IEntityMetadataDAOService"/>
 	<osgi:service ref="folderDao" interface="com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService"/>
+	<osgi:service ref="noteDao" interface="com.conx.logistics.mdm.dao.services.note.INoteDAOService"/>
 	<osgi:service ref="orgDao" interface="com.conx.logistics.mdm.dao.services.IOrganizationDAOService"/>
 	<osgi:service ref="packUnitDao" interface="com.conx.logistics.mdm.dao.services.product.IPackUnitDAOService"/>
 	<osgi:service ref="productTypeDao" interface="com.conx.logistics.mdm.dao.services.product.IProductTypeDAOService"/>

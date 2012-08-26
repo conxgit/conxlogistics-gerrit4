@@ -1,5 +1,6 @@
 package com.conx.logistics.kernel.documentlibrary.remote.services;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
@@ -50,9 +51,13 @@ public interface IRemoteDocumentRepository {
 	
 	public FileEntry addFileEntry(String folderId, String sourceFileName, String mimeType, String title, String description) throws Exception;
 	
+	public FileEntry addFileEntry(String folderId, File sourceFile, String mimeType,String title, String description) throws Exception;	
+	
 	public FileEntry addorUpdateFileEntry(String folderId, String sourceFileName, String mimeType, String title, String description) throws Exception;	
 	
 	public FileEntry addorUpdateFileEntry(BaseEntity entity, DocType attachmentType, String sourceFileName, String mimeType, String title, String description) throws Exception;
+	
+	public FileEntry addorUpdateFileEntry(String folderId, File sourceFile,String mimeType, String title, String description) throws Exception;	
 	
 	public FileEntry addorUpdateFileEntry(Folder folder, 
 			DocType attachmentType,
@@ -68,6 +73,10 @@ public interface IRemoteDocumentRepository {
 			String title,
 			String description) throws Exception;	
 	
+	public FileEntry addorUpdateFileEntry(BaseEntity entity, DocType attachmentType,
+			File source, String mimeType, String title, String description)
+			throws Exception;	
+	
 	public FileEntry deleteFileEntryById(String folderId, String fileEntryId)  throws Exception;
 	
 	/**
@@ -77,5 +86,4 @@ public interface IRemoteDocumentRepository {
 	 * @return
 	 */
 	public String getConxlogiFolderId();
-
 }

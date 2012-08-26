@@ -29,5 +29,6 @@
   	<module>metamodel</module>
   	<module>datasource</module>
   	<module>documentlibrary</module>
+  	<module>com.springframework.orm.fragment</module>
   </modules>
 </project>

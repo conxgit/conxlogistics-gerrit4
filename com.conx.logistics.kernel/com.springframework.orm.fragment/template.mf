@@ -1,0 +1,7 @@
+Bundle-ManifestVersion: 2
+Bundle-Version: 1.0.0
+Bundle-Name: com.springframework.orm Persistence MetaModel Fragment
+Bundle-SymbolicName: com.conx.logistics.kernel.persistence.com.springframework.orm.fragment
+Fragment-Host: com.springframework.orm
+Import-Package: javax.persistence.metamodel;version="2.0.0"
+

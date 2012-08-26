@@ -1,5 +1,6 @@
 package com.conx.logistics.app.whse.rcv.rcv.dao.services.impl;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
@@ -145,7 +146,7 @@ public class ReceiveDAOImpl implements IReceiveDAOService {
 		}
 		
 		//Doc Folder
-		EntityType et = entityTypeDAOService.provide(em.getMetamodel().entity(Receive.class));
+		EntityType et = entityTypeDAOService.provide(Receive.class);
 		Folder fldr = documentRepositoryService.provideFolderForEntity(et, rcv.getId());
 		fldr = em.merge(fldr);
 		rcv.setDocFolder(fldr);
@@ -170,6 +171,14 @@ public class ReceiveDAOImpl implements IReceiveDAOService {
 		return fe;
 	}
 	
+	@Override
+	public FileEntry addAttachment(Long rcvId, File sourceFile, String title, String description, String mimeType, DocType attachmentType) throws Exception {
+		Receive rcv = get(rcvId);
+		FileEntry fe = documentRepositoryService.addorUpdateFileEntry(rcv,attachmentType,sourceFile, mimeType, title, description);
+		rcv = update(rcv);
+		
+		return fe;
+	}	
 	
 	private void copySingularAttrs(Receive rcv, ASN asn) {
 		rcv.setDimUnit(asn.getDimUnit());

@@ -18,7 +18,10 @@
 	
 	<!-- import external interfaces -->
 	<osgi:reference id="entityMetadataDao" interface="com.conx.logistics.mdm.dao.services.IEntityMetadataDAOService"/>
+	<osgi:reference id="entityTypeDao" interface="com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService"/>
 	<osgi:reference id="referenceNumberDao" interface="com.conx.logistics.mdm.dao.services.referencenumber.IReferenceNumberDAOService"/>
+	<osgi:reference id="remoteDocumentRepository" interface="com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository"/>
+			
 			
 	<!-- export internal interfaces -->
 	<osgi:service ref="rcvDao" interface="com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveDAOService"/>

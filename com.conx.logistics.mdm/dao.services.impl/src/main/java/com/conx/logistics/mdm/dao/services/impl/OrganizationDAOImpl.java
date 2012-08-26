@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -68,6 +69,7 @@ public class OrganizationDAOImpl implements IOrganizationDAOService {
 			org = q.getSingleResult();*/
 		}
 		catch(NoResultException e){}
+		catch(EntityNotFoundException e){}		
 		catch(Exception e)
 		{
 			StringWriter sw = new StringWriter();

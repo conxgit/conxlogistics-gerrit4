@@ -1,7 +1,9 @@
 package com.conx.logistics.data.uat.sprint2.data;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -34,8 +36,10 @@ import com.conx.logistics.app.whse.rcv.asn.domain.ASNLine;
 import com.conx.logistics.app.whse.rcv.asn.domain.ASNPickup;
 import com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveDAOService;
 import com.conx.logistics.app.whse.rcv.rcv.domain.Receive;
+import com.conx.logistics.common.utils.Validator;
 import com.conx.logistics.kernel.datasource.dao.services.IDataSourceDAOService;
 import com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository;
+import com.conx.logistics.kernel.documentlibrary.remote.services.impl.LiferayPortalDocumentRepositoryImpl;
 import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
 import com.conx.logistics.kernel.ui.components.dao.services.IComponentDAOService;
 import com.conx.logistics.mdm.dao.services.IAddressDAOService;
@@ -79,8 +83,6 @@ import com.conx.logistics.mdm.domain.product.Product;
 import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber;
 import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumberType;
 
-@Transactional
-@Repository
 public class TestDataManager {
 	protected static Logger logger = LoggerFactory.getLogger(TestDataManager.class);
 	
@@ -194,8 +196,6 @@ public class TestDataManager {
 		
 		//Create Datasource/Component models
 		UIComponentModelData.createReceiveSearchMasterDetail(componentDAOService, entityTypeDAOService, dataSourceDAOService, em);
-		
-		em.flush();
 	}
 	
 	
@@ -246,11 +246,15 @@ public class TestDataManager {
 		 * Add attachment
 		 * 
 		 */
+		URL testfile = TestDataManager.class.getResource("/bol.pdf");
+		File file = new File(testfile.toURI());
 		DocType dt = docTypeDOAService.getByCode(DocTypeCustomCONSTANTS.TYPE_BOL_CODE);
-		FileEntry fe = rcvDaoService.addAttachment(rcv.getId(), "/bol.pdf", "Bill Of Laden", "Bill Of Laden", "application/pdf", dt);
+		FileEntry fe = rcvDaoService.addAttachment(rcv.getId(),file, "Bill Of Laden", "Bill Of Laden", "application/pdf", dt);
 		
+		testfile = TestDataManager.class.getResource("/SamplePurchaseRequisition.jpg");
+		file = new File(testfile.toURI());		
 		dt = docTypeDOAService.getByCode(DocTypeCustomCONSTANTS.TYPE_PO_CODE);
-		fe = rcvDaoService.addAttachment(rcv.getId(), "/SamplePurchaseRequisition.jpg", "PO", "PO", "image/jpeg", dt);		
+		fe = rcvDaoService.addAttachment(rcv.getId(),file, "PO", "PO", "image/jpeg", dt);		
 		
 		/**
 		 * 

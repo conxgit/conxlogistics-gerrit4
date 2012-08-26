@@ -25,7 +25,7 @@
 		Instruct Spring to perform declarative transaction management
 		automatically on annotated classes.
 	-->
-	<tx:annotation-driven mode="aspectj" transaction-manager="globalJtaTransactionManager"/>
+	<tx:annotation-driven mode="aspectj" transaction-manager="globalTransactionManager"/>
 
 
 	<!--
@@ -33,5 +33,5 @@
 		EntityManager will be auto-injected due to @PersistenceContext.
 		PersistenceExceptions will be auto-translated due to @Repository.
 	-->
-	<bean id="rcvDao" class="com.conx.logistics.app.whse.rcv.rcv.dao.services.impl.ReceiveDAOImpl"/>
+	<bean id="lplDocLibService" class="com.conx.logistics.kernel.documentlibrary.remote.services.impl.LiferayPortalDocumentRepositoryImpl" init-method="init"/>
 </beans>

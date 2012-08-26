@@ -37,4 +37,6 @@ public interface IEntityTypeDAOService {
 	public List<PluralAttribute> getAllPluralAttributesByEntityType(EntityType parentEntityType);
 
 	public EntityType createMappedSupperClass(IdentifiableType supertype) throws Exception;
+
+	public EntityType provide(Class entityJavaClass) throws Exception;
 }

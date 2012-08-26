@@ -1,5 +1,6 @@
 package com.conx.logistics.app.whse.rcv.rcv.dao.services;
 
+import java.io.File;
 import java.util.List;
 
 import com.conx.logistics.app.whse.rcv.asn.domain.ASN;
@@ -18,6 +19,8 @@ public interface IReceiveDAOService {
 	public Receive process(ASN asn) throws ClassNotFoundException, Exception;
 	
 	public FileEntry addAttachment(Long rcvId, String sourceFileName, String title, String description, String mimeType, DocType attachmentType) throws Exception;
+	
+	public FileEntry addAttachment(Long rcvId, File sourceFile, String title, String description, String mimeType, DocType attachmentType) throws Exception;	
 	
 	public NoteItem addNoteItem(Long rcvId, String content, NoteType noteType) throws Exception;	
 	

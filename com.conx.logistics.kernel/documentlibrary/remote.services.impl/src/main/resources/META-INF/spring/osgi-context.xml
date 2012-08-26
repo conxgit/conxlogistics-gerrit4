@@ -17,8 +17,9 @@
 	</osgi:reference>	
 	
 	<!-- import external interfaces -->
-			
+	<osgi:reference id="folderDao" interface="com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService"/>
+	<osgi:reference id="basicTypeDao" interface="com.conx.logistics.kernel.metamodel.dao.services.IBasicTypeDAOService"/>
+	
 	<!-- export internal interfaces -->
-	<osgi:service ref="dockTypeDao" interface="com.conx.logistics.app.whse.dao.services.IDockTypeDAOService"/>
-	<osgi:service ref="whseDao" interface="com.conx.logistics.app.whse.dao.services.IWarehouseDAOService"/>
+	<osgi:service ref="lplDocLibService" interface="com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository"/>
 </beans>

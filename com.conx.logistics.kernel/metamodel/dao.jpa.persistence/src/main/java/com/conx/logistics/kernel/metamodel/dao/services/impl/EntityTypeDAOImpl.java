@@ -235,6 +235,12 @@ public class EntityTypeDAOImpl implements IEntityTypeDAOService {
 	public EntityType update(EntityType record) {
 		return em.merge(record);
 	}
+	
+	@Override
+	public EntityType provide(Class entityJavaClass) throws Exception {
+		javax.persistence.metamodel.EntityType ie = em.getMetamodel().entity(entityJavaClass);
+		return provide(ie);
+	}
 
 
 	@Override
