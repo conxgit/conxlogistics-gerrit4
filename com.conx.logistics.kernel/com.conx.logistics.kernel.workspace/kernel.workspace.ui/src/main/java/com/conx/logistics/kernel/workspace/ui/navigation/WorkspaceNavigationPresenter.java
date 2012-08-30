@@ -3,10 +3,9 @@ package com.conx.logistics.kernel.workspace.ui.navigation;
 import org.vaadin.mvp.presenter.BasePresenter;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
-import com.conx.logistics.kernel.ui.common.gwt.client.ui.ConXNavigationAccordion;
-import com.conx.logistics.kernel.ui.common.gwt.client.ui.ConXNavigationTree;
 import com.conx.logistics.kernel.ui.common.ui.feature.Feature;
 import com.conx.logistics.kernel.ui.common.ui.feature.FeatureSet;
+import com.conx.logistics.kernel.ui.vaadin.common.ConXNavigationAccordion;
 import com.conx.logistics.kernel.workspace.ui.WorkspaceEventBus;
 import com.conx.logistics.kernel.workspace.ui.navigation.view.IWorkspaceNavigationView;
 import com.conx.logistics.kernel.workspace.ui.navigation.view.WorkspaceNavigationView;

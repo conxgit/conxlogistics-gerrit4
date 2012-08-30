@@ -91,10 +91,10 @@ public class Receive extends MultitenantBaseEntity {
     @JoinColumn
     private Address shipperAddress;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<ReceiveLine> rcvLines = new java.util.HashSet<ReceiveLine>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Arrival> arrivals = new java.util.HashSet<Arrival>();
 
     @OneToOne(targetEntity = CommercialRecord.class, fetch = FetchType.LAZY)

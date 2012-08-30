@@ -1,7 +1,7 @@
 package com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.table.view;
 
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.IEntityEditorComponentView;
-import com.conx.logistics.kernel.ui.filteredtable.gwt.client.ui.FilterTable;
+import com.conx.logistics.kernel.ui.filteredtable.FilterTable;
 import com.vaadin.data.Container;
 
 public interface IEntityTableView extends IEntityEditorComponentView {

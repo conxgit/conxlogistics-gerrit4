@@ -1,41 +1,90 @@
 package com.conx.logistics.kernel.ui.editors.builder.vaadin;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
-import org.vaadin.mvp.eventbus.EventBus;
-import org.vaadin.mvp.presenter.IPresenter;
-import org.vaadin.mvp.presenter.PresenterFactory;
+import javax.persistence.EntityManager;
 
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+import org.vaadin.mvp.eventbus.EventBus;
+import org.vaadin.mvp.eventbus.EventBusManager;
+import org.vaadin.mvp.presenter.IPresenter;
+
+import com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository;
 import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
 import com.conx.logistics.kernel.ui.components.domain.attachment.AttachmentEditorComponent;
+import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.ConfigurablePresenterFactory;
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.MultiLevelEntityEditorEventBus;
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.MultiLevelEntityEditorPresenter;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment.AttachmentEditorPresenter;
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.customizer.ConfigurablePresenterFactoryCustomizer;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
 
+
+@Transactional
+@Repository
 public class VaadinEntityEditorFactoryImpl implements
 		IEntityEditorFactory {
+	
+    private IRemoteDocumentRepository remoteDocumentRepository;
 
 	private ConfigurablePresenterFactory factory;
-
+	
+	public VaadinEntityEditorFactoryImpl(){
+	}
 
 	public VaadinEntityEditorFactoryImpl(ConfigurablePresenterFactory factory) {
 		this.factory = factory;
 	}
+	
 
 	@Override
-	public Map<IPresenter<?, ? extends EventBus>,EventBus> create(AbstractConXComponent conXComponent) {
+	public Map<IPresenter<?, ? extends EventBus>,EventBus> create(AbstractConXComponent conXComponent, Map<String,Object> params) {
 		Map<IPresenter<?, ? extends EventBus>,EventBus> res = null;
 		
 		if (conXComponent instanceof AttachmentEditorComponent)
 		{
-			IPresenter<?, ? extends EventBus> presenter = factory.createPresenter(AttachmentEditorPresenter.class);
-			EventBus eventBus = presenter.getEventBus();
+			final IPresenter<?, ? extends EventBus> presenter = factory.createPresenter(AttachmentEditorPresenter.class);
+			final EventBus eventBus = presenter.getEventBus();
 			
-			res = new HashMap<IPresenter<?,? extends EventBus>, EventBus>();
-			res.put(presenter, eventBus);
+			res = new HashMap<IPresenter<?,? extends EventBus>, EventBus>() {{
+				   put(presenter, eventBus);
+				}};
+		}
+		else if (conXComponent instanceof MasterDetailComponent)
+		{
+			params.put(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL,conXComponent);
+			ConfigurablePresenterFactory presenterFactory = null;
+			EventBusManager ebm = (EventBusManager)params.get(IEntityEditorFactory.FACTORY_PARAM_MVP_EVENTBUS_MANAGER);
+			
+			if (params.containsKey(IEntityEditorFactory.FACTORY_PARAM_MVP_PRESENTER_FACTORY))
+			{
+				presenterFactory = (ConfigurablePresenterFactory)params.get(IEntityEditorFactory.FACTORY_PARAM_MVP_PRESENTER_FACTORY);
+			}
+			else
+			{
+				ebm = (EventBusManager)params.get(IEntityEditorFactory.FACTORY_PARAM_MVP_EVENTBUS_MANAGER);
+				Locale locale = (Locale)params.get(IEntityEditorFactory.FACTORY_PARAM_MVP_LOCALE);
+				presenterFactory = new ConfigurablePresenterFactory(ebm, locale);
+				presenterFactory.setCustomizer(new ConfigurablePresenterFactoryCustomizer(params));
+				params.put(IEntityEditorFactory.FACTORY_PARAM_MVP_PRESENTER_FACTORY, presenterFactory);
+			}
+			
+			final IPresenter<?, ? extends EventBus> mainPresenter = presenterFactory.createPresenter(MultiLevelEntityEditorPresenter.class);
+			final MultiLevelEntityEditorEventBus mainEventBus = (MultiLevelEntityEditorEventBus) mainPresenter.getEventBus();		
+
+			res = new HashMap<IPresenter<?,? extends EventBus>, EventBus>() {{
+				   put(mainPresenter, mainEventBus);
+				}};
 		}
 		return res;
 	}
 
+	public void setRemoteDocumentRepository(
+			IRemoteDocumentRepository remoteDocumentRepository) {
+		this.remoteDocumentRepository = remoteDocumentRepository;
+	}
 }

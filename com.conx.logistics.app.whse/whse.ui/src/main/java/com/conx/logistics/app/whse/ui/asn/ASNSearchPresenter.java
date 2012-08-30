@@ -20,7 +20,7 @@ import com.conx.logistics.app.whse.ui.view.asn.ASNSearchView;
 import com.conx.logistics.app.whse.ui.view.asn.IASNSearchView;
 import com.conx.logistics.kernel.system.dao.services.application.IApplicationDAOService;
 import com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication;
-import com.conx.logistics.kernel.ui.common.mvp.view.feature.FeatureView;
+import com.conx.logistics.kernel.ui.common.mvp.view.feature.FeatureTabbedView;
 import com.conx.logistics.mdm.domain.application.Feature;
 import com.conx.logistics.mdm.domain.geolocation.Address;
 import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber;
@@ -50,7 +50,7 @@ public class ASNSearchPresenter extends
 		BasePresenter<IASNSearchView, ASNSearchEventBus> {
 
 	private MainMVPApplication application;
-	private FeatureView fv;
+	private FeatureTabbedView fv;
 
 	private IPresenter<?, ? extends EventBus> contentPresenter;
 	private VerticalLayout defaultDetailView;

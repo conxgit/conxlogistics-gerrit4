@@ -28,6 +28,7 @@ import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.table.EntityTableE
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.table.EntityTablePresenter;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.view.IMultiLevelEntityEditorView;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.view.MultiLevelEntityEditorView;
+import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
 import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -104,11 +105,11 @@ implements Property.ValueChangeListener {
 	public void configure() {
 		try {
 			Map<String, Object> config = super.getConfig();
-			this.metaData = (MasterDetailComponent)config.get("md");
-			this.entityManager = (EntityManager)config.get("em");
-			this.ebm = (EventBusManager)config.get("ebm");
-			this.presenterFactory = (ConfigurablePresenterFactory)config.get("presenterFactory");
-			this.presenterFactory.getCustomizer().getConfig().put("multiLevelEntityEditorPresenter", this);
+			this.metaData = (MasterDetailComponent)config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL);
+			this.entityManager = (EntityManager)config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_ENTITY_MANAGER);
+			this.ebm = (EventBusManager)config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_EVENTBUS_MANAGER);
+			this.presenterFactory = (ConfigurablePresenterFactory)config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_PRESENTER_FACTORY);
+			this.presenterFactory.getCustomizer().getConfig().put(IEntityEditorFactory.FACTORY_PARAM_MVP_CURRENT_MLENTITY_EDITOR_PRESENTER, this);			
 			
 			
 			/**

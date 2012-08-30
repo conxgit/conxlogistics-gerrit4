@@ -34,7 +34,8 @@ public class UIComponentModelData {
 	{
 		//-- ML E.E.
 		DataSource rcvDefaultDS = getDefaultRCVDS(entityTypeDAOService,dataSourceDAOService,em);	
-		MasterDetailComponent rcvSearchMLEE = new MasterDetailComponent("searchReceives","Receives",rcvDefaultDS);
+		DataSource basicRcvDS = getBasicFormRCVDS(entityTypeDAOService,dataSourceDAOService,em);
+		MasterDetailComponent rcvSearchMLEE = new MasterDetailComponent("searchReceives","Receives",basicRcvDS);
 		rcvSearchMLEE = (MasterDetailComponent) componentDAOService.add((AbstractConXComponent)rcvSearchMLEE);
 
 		
@@ -64,9 +65,6 @@ public class UIComponentModelData {
 		rcvBaicFormLE = (LineEditorComponent) componentDAOService.add((AbstractConXComponent)rcvBaicFormLE);
 		lecc.getLineEditors().add(rcvBaicFormLE);
 		rcvSearchMLEE.setLineEditorPanel(lecc);
-		
-		//--  DS
-		DataSource basicRcvDS = getBasicFormRCVDS(entityTypeDAOService,dataSourceDAOService,em);
 		
 		//--Layout
 		ConXGridLayout gl = new ConXGridLayout();

@@ -4,19 +4,9 @@ Bundle-Name: ConX kernel UI Common Vaadin Addon
 Bundle-SymbolicName: com.conx.logistics.kernel.ui.vaadin.common.addon
 Bundle-Vendor: ConX
 Bundle-Version: 1.0.0
-Vaadin-Widgetsets: com.conx.logistics.kernel.ui.common.gwt.KernelUICommonWidgetset
-Import-Package: 
-  com.vaadin;version="[6.7.0,7.0.0)",
-  com.vaadin.terminal;version="[6.7.0,7.0.0)",
-  com.vaadin.terminal.gwt.client;version="[6.7.0,7.0.0)",
-  com.vaadin.terminal.gwt.client.ui;version="[6.7.0,7.0.0)",
-  com.vaadin.ui;version="[6.7.0,7.0.0)",
-  com.vaadin.data;version="[6.7.0,7.0.0)",
-  com.vaadin.data.util;version="[6.7.0,7.0.0)",
-  com.vaadin.event;version="[6.7.0,7.0.0)",
-  com.conx.logistics.kernel.ui.filteredtable.gwt.client.ui;version="1.0.0",
-  com.vaadin.addon.jpacontainer;version="2.0.0",
-  com.vaadin.addon.jpacontainer.provider;version="2.0.0"
+Fragment-Host: com.vaadin
+Import-Package: com.vaadin.addon.jpacontainer;version="2.0.0",
+  org.vaadin.hene.popupbutton;version="1.2.1"
 Excluded-Imports: com.google.gwt.core.client,
   com.google.gwt.dom.client,
   com.google.gwt.event.dom.client,
@@ -25,4 +15,21 @@ Excluded-Imports: com.google.gwt.core.client,
   com.google.gwt.user.client,
   com.google.gwt.user.client.ui,
   com.conx.logistics,
-  com.conx.logistics.gwt.client
+  com.conx.logistics.gwt.client,
+  com.vaadin.ui,
+  com.vaadin.terminal.gwt.client.ui,
+  com.vaadin,
+  com.vaadin.terminal,
+  com.vaadin.terminal.gwt.client,
+  com.vaadin.terminal.gwt.client.ui,
+  com.vaadin.ui,
+  com.vaadin.data,
+  com.vaadin.data.util,
+  com.vaadin.event,
+  com.vaadin.data.util.filter,
+  com.vaadin.event.dd,
+  com.vaadin.event.dd.acceptcriteria,
+  com.vaadin.terminal.gwt.client.ui.dd
+Excluded-Exports: com.vaadin.ui,
+  com.vaadin.terminal.gwt.client.ui
+  

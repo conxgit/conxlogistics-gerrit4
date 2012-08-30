@@ -51,7 +51,6 @@ public class AttachmentForm extends Form {
 	protected String folderId;
 	protected String tempSourceFileName;
 	private IFolderDAOService docFolderDAOService;
-	private EntityManager em;
 	private AbstractEntityEditorEventBus abstractEntityEditorEventBus;
 	private AttachmentEditorEventBus attachmentEditorEventBus;
 	private Button uploadToDocRepoButton;
@@ -70,7 +69,6 @@ public class AttachmentForm extends Form {
 			IFolderDAOService docFolderDAOService, VerticalSplitPanel parent) {
 		this.docRepo = docRepo;
 		this.docFolderDAOService = docFolderDAOService;
-		this.em = em;
 		this.abstractEntityEditorEventBus = abstractEntityEditorEventBus;
 		this.attachmentEditorEventBus = attachmentEditorEventBus;
 		this.parent = parent;

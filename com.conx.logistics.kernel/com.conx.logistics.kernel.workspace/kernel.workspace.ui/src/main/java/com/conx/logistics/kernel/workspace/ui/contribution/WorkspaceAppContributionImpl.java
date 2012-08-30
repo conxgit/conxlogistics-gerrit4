@@ -8,9 +8,11 @@ import org.vaadin.mvp.presenter.FactoryPresenter;
 import org.vaadin.mvp.presenter.IPresenterFactory;
 
 import com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication;
+import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
 import com.conx.logistics.kernel.ui.service.contribution.IApplicationViewContribution;
 import com.conx.logistics.kernel.ui.service.contribution.IViewContribution;
 import com.conx.logistics.kernel.workspace.ui.WorkspacePresenter;
+import com.conx.logistics.mdm.domain.application.Feature;
 import com.vaadin.Application;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Component;
@@ -41,8 +43,7 @@ public class WorkspaceAppContributionImpl implements IApplicationViewContributio
 	}
 
 	@Override
-	public Class<? extends BasePresenter<?, ? extends EventBus>> getPresenterClass(
-			Application application) {
+	public Class<? extends BasePresenter<?, ? extends EventBus>> getPresenterClass() {
 		return WorkspacePresenter.class;
 	}
 
@@ -51,5 +52,12 @@ public class WorkspaceAppContributionImpl implements IApplicationViewContributio
 		IPresenterFactory pf = ((MainMVPApplication)app).getPresenterFactory();
 		WorkspacePresenter wsp =  (WorkspacePresenter)pf.createPresenter(WorkspacePresenter.class);
 		return (Component)wsp.getView();
+	}
+
+	@Override
+	public AbstractConXComponent getComponentModel(Application application,
+			Feature feature) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

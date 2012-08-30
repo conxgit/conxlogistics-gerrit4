@@ -11,7 +11,31 @@
 			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
 			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 	
-	<bean id="warehouseAppContribution" class="com.conx.logistics.app.whse.ui.contribution.WarehouseAppContributionImpl"/>		
-			
-	<bean id="asnSearchViewContribution" class="com.conx.logistics.app.whse.ui.contribution.asn.ASNSearchViewContributionImpl"/>
+	<!-- ========================= BUSINESS OBJECT DEFINITIONS ========================= -->
+
+	<!--
+		Activates various annotations to be detected in bean classes: Spring's
+		@Required and @Autowired, as well as JSR 250's @PostConstruct,
+		@PreDestroy and @Resource (if available) and JPA's @PersistenceContext
+		and @PersistenceUnit (if available).
+	-->
+	<context:annotation-config/>
+
+	<!--
+		Instruct Spring to perform declarative transaction management
+		automatically on annotated classes.
+	-->
+	<tx:annotation-driven mode="aspectj" transaction-manager="globalJtaTransactionManager"/>
+		
+	
+	<bean id="warehouseAppContribution" class="com.conx.logistics.app.whse.ui.contribution.WarehouseAppContributionImpl" init-method="start">
+		<property name="globalTransactionManager" ref="globalJtaTransactionManager"></property>
+		<property name="warehouseApplicationDAOService" ref="warehouseApplicationDAOService"></property>
+	</bean>				
+	<bean id="asnSearchViewContribution" class="com.conx.logistics.app.whse.ui.contribution.asn.ASNSearchViewContributionImpl">
+		<property name="componentDAOService" ref="componentDAOService"/>
+	</bean>
+	<bean id="rcvSearchViewContribution" class="com.conx.logistics.app.whse.ui.contribution.rcv.RCVSearchViewContributionImpl">
+		<property name="componentDAOService" ref="componentDAOService"/>
+	</bean>
 </beans>

@@ -61,10 +61,16 @@
 	<artifact type="bundle" name="com.conx.logistics.kernel.ui.vaadin.filteredtable.addon" version="1.0.0"/>
 	<artifact type="bundle" name="vaadin-addon-popup-button" version="1.2.1"/> -->
 	
-	<artifact type="bundle" name="com.conx.logistics.kernel.ui.services" version="1.0.0"/>
-	<artifact type="bundle" name="com.conx.logistics.kernel.ui.common" version="1.0.0"/>
+    <artifact type="bundle" name="com.conx.logistics.kernel.ui.services" version="1.0.0"/>
+	    
+	<!-- <artifact type="bundle" name="com.conx.logistics.kernel.ui.vaadin.filteredtable.addon" version="1.0.0"/> -->
+	<!--
+	<artifact type="bundle" name="com.conx.logistics.kernel.ui.vaadin.common.addon" version="1.0.0"/>	
+    <artifact type="bundle" name="com.conx.logistics.kernel.ui.common" version="1.0.0"/>
+	<artifact type="bundle" name="com.conx.logistics.kernel.ui.factory.services" version="1.0.0"/>
+	<artifact type="bundle" name="com.conx.logistics.kernel.ui.editors.entity.vaadin" version="1.0.0"/>
 	<artifact type="bundle" name="com.conx.logistics.kernel.system.ui" version="1.0.0"/>
-	<artifact type="bundle" name="com.conx.logistics.kernel.workspace.ui" version="1.0.0"/>
+	<artifact type="bundle" name="com.conx.logistics.kernel.workspace.ui" version="1.0.0"/> -->
 	
 	<!-- kernel : DocLib -->
 	<artifact type="bundle" name="com.conx.logistics.kernel.documentlibrary.remote.services" version="1.0.0"/>
@@ -108,5 +114,5 @@
 	<!-- Misc -->
 	
 	<!-- Sprint #2 Test Data -->	
-	<artifact type="bundle" name="com.conx.logistics.data.uat.sprint2.data" version="1.0.0"/>	        
+	<!-- <artifact type="bundle" name="com.conx.logistics.data.uat.sprint2.data" version="1.0.0"/> -->	        
 </plan>

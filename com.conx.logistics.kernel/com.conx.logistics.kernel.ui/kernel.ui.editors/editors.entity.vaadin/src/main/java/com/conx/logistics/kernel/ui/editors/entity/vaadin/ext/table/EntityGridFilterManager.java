@@ -2,8 +2,8 @@ package com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table;
 
 import java.util.Locale;
 
-import com.conx.logistics.kernel.ui.filteredtable.gwt.client.ui.FilterDecorator;
-import com.conx.logistics.kernel.ui.filteredtable.gwt.client.ui.FilterGenerator;
+import com.conx.logistics.kernel.ui.filteredtable.FilterDecorator;
+import com.conx.logistics.kernel.ui.filteredtable.FilterGenerator;
 import com.vaadin.data.Container.Filter;
 import com.vaadin.terminal.Resource;
 import com.vaadin.ui.CustomTable;

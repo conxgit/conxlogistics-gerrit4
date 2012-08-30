@@ -460,7 +460,8 @@ public class LiferayPortalDocumentRepositoryImpl implements
 		System.out.println("updateFileEntry Res:["+response+"]");
 
 		FileEntry fe = null;
-		if (!StringUtil.contains(response, "com.liferay.portlet.documentlibrary.NoSuchFileEntryException", ""))
+		if (!StringUtil.contains(response, "com.liferay.portlet.documentlibrary.NoSuchFileEntryException", "")
+			&& !StringUtil.contains(response, "com.liferay.portal.kernel.exception.SystemException",""))
 		{
 			JSONDeserializer<FileEntry> deserializer = new JSONDeserializer<FileEntry>();
 			fe = deserializer.deserialize(response,FileEntry.class);

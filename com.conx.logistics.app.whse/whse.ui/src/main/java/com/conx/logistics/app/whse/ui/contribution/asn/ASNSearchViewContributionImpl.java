@@ -6,7 +6,11 @@ import org.vaadin.mvp.eventbus.EventBus;
 import org.vaadin.mvp.presenter.BasePresenter;
 
 import com.conx.logistics.app.whse.ui.asn.ASNSearchPresenter;
+import com.conx.logistics.kernel.ui.components.dao.services.IComponentDAOService;
+import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
+import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent;
 import com.conx.logistics.kernel.ui.service.contribution.IViewContribution;
+import com.conx.logistics.mdm.domain.application.Feature;
 import com.vaadin.Application;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Form;
@@ -20,6 +24,8 @@ public class ASNSearchViewContributionImpl implements IViewContribution {
 	private Component view;
 
 	private Form userForm;
+	
+	private IComponentDAOService componentDAOService;
 
 	@Override
 	public String getIcon() {
@@ -37,10 +43,20 @@ public class ASNSearchViewContributionImpl implements IViewContribution {
 	}
 
 	@Override
-	public Class<? extends BasePresenter<?, ? extends EventBus>> getPresenterClass(
-			Application application) {
-		return ASNSearchPresenter.class;
+	public AbstractConXComponent getComponentModel(
+			Application application, Feature feature) {
+		String componentName = feature.getComponentModelCode();
+		MasterDetailComponent md = (MasterDetailComponent)componentDAOService.getByCode(componentName);
+		return md;
 	}
 
-	
+	@Override
+	public Class<? extends BasePresenter<?, ? extends EventBus>> getPresenterClass() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setComponentDAOService(IComponentDAOService componentDAOService) {
+		this.componentDAOService = componentDAOService;
+	}
 }

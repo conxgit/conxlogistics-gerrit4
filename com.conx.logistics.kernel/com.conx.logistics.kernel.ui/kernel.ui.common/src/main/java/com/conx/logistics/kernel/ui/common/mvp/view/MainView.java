@@ -1,7 +1,7 @@
 package com.conx.logistics.kernel.ui.common.mvp.view;
 
-import com.conx.logistics.kernel.ui.common.gwt.client.ui.ConXFooter;
-import com.conx.logistics.kernel.ui.common.gwt.client.ui.ConXHeader;
+import com.conx.logistics.kernel.ui.vaadin.common.ConXFooter;
+import com.conx.logistics.kernel.ui.vaadin.common.ConXHeader;
 import com.vaadin.data.Container;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.HierarchicalContainer;

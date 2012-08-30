@@ -1,15 +1,10 @@
 package com.conx.logistics.mdm.domain.application;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -43,6 +38,10 @@ public class Feature extends BaseEntity {
     protected boolean featureSet = false;
     
     protected boolean taskFeature;
+    
+    protected String componentModelCode;
+    
+    protected Long entityId;//In case of inline editor launch
     
     public Feature()
     {
@@ -124,5 +123,21 @@ public class Feature extends BaseEntity {
 
 	public void setOnCompletionFeature(Feature onCompletionFeature) {
 		this.onCompletionFeature = onCompletionFeature;
+	}
+
+	public String getComponentModelCode() {
+		return componentModelCode;
+	}
+
+	public void setComponentModelCode(String componentModelCode) {
+		this.componentModelCode = componentModelCode;
+	}
+
+	public Long getEntityId() {
+		return entityId;
+	}
+
+	public void setEntityId(Long entityId) {
+		this.entityId = entityId;
 	}   
 }

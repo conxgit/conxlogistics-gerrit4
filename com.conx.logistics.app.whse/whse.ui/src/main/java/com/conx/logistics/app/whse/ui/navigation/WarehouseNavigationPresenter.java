@@ -8,13 +8,14 @@ import javax.persistence.TypedQuery;
 import org.vaadin.mvp.presenter.BasePresenter;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
+import com.conx.logistics.app.whse.dao.services.IWarehouseApplicationDAOService;
 import com.conx.logistics.app.whse.data.HierarchicalFeatureContainer;
 import com.conx.logistics.app.whse.ui.WarehouseEventBus;
 import com.conx.logistics.app.whse.ui.navigation.view.IWarehouseNavigationView;
 import com.conx.logistics.app.whse.ui.navigation.view.WarehouseNavigationView;
 import com.conx.logistics.kernel.system.dao.services.application.IApplicationDAOService;
-import com.conx.logistics.kernel.ui.common.gwt.client.ui.ConXNavigationAccordion;
 import com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication;
+import com.conx.logistics.kernel.ui.vaadin.common.ConXNavigationAccordion;
 import com.conx.logistics.mdm.domain.application.Application;
 import com.conx.logistics.mdm.domain.application.Feature;
 import com.vaadin.addon.jpacontainer.JPAContainer;
@@ -52,7 +53,7 @@ public class WarehouseNavigationPresenter extends
 		
 		//== Find ControlPanel system app and init container filter
 		TypedQuery<Application> appQuery = this.kernelSystemEntityManager.createQuery("select o from Application o where o.code = :code",Application.class);
-		appQuery.setParameter("code", IApplicationDAOService.WAREHOUSE_APP_CODE);
+		appQuery.setParameter("code", IWarehouseApplicationDAOService.WAREHOUSE_APP_CODE);
 		try 
 		{
 			this.controlPanelApplication = appQuery.getSingleResult();

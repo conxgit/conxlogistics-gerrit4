@@ -34,6 +34,18 @@
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.app.whse.dao.services</artifactId>
 			<version>${project.version}</version>
+		</dependency>	
+		
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.ui.components.domain</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.ui.components.dao.services</artifactId>
+			<version>${project.version}</version>
 		</dependency>		
 				
 		<!-- GWT/Vaadin -->

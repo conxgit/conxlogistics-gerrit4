@@ -35,4 +35,5 @@
 	-->
 	<bean id="dockTypeDao" class="com.conx.logistics.app.whse.dao.services.impl.DockTypeDAOImpl"/>
 	<bean id="whseDao" class="com.conx.logistics.app.whse.dao.services.impl.WarehouseDAOImpl"/>	
+	<bean id="whseAppDao" class="com.conx.logistics.app.whse.dao.services.impl.WahouseApplicationDAOImpl"/>	
 </beans>

@@ -19,7 +19,7 @@ import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.AbstractEntityEdit
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.lineeditor.view.EntityLineEditorSectionView;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.lineeditor.view.IEntityLineEditorSectionView;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.notes.view.INotesEditorView;
-import com.conx.logistics.kernel.ui.filteredtable.gwt.client.ui.FilterTable;
+import com.conx.logistics.kernel.ui.filteredtable.FilterTable;
 import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerFactory;

@@ -7,7 +7,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,18 +28,25 @@ import org.vaadin.mvp.presenter.PresenterFactory;
 import org.vaadin.mvp.uibinder.UiBinderException;
 
 import com.conx.logistics.common.utils.Validator;
+import com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository;
 import com.conx.logistics.kernel.pageflow.services.IPageFlowManager;
 import com.conx.logistics.kernel.system.dao.services.application.IApplicationDAOService;
 import com.conx.logistics.kernel.ui.common.data.container.EntityTypeContainerFactory;
 import com.conx.logistics.kernel.ui.common.ui.menu.app.AppMenuEntry;
+import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
 import com.conx.logistics.kernel.ui.service.IUIContributionManager;
 import com.conx.logistics.kernel.ui.service.contribution.IActionContribution;
 import com.conx.logistics.kernel.ui.service.contribution.IApplicationViewContribution;
 import com.conx.logistics.kernel.ui.service.contribution.IMainApplication;
 import com.conx.logistics.kernel.ui.service.contribution.IViewContribution;
+import com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService;
 import com.vaadin.Application;
+import com.vaadin.addon.jpacontainer.JPAContainer;
+import com.vaadin.addon.jpacontainer.JPAContainerFactory;
+import com.vaadin.addon.jpacontainer.util.EntityManagerPerRequestHelper;
+import com.vaadin.terminal.gwt.server.HttpServletRequestListener;
 
-public class MainMVPApplication extends Application implements IMainApplication {
+public class MainMVPApplication extends Application implements IMainApplication,HttpServletRequestListener {
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	/** Per application (session) event bus manager */
@@ -51,6 +61,10 @@ public class MainMVPApplication extends Application implements IMainApplication 
 
 	private IApplicationDAOService applicationDAOService;
 	
+	private IFolderDAOService folderDAOService;
+	
+	private IRemoteDocumentRepository remoteDocumentRepository;
+	
 	private boolean appServiceInititialized = false;
 
 	private PlatformTransactionManager kernelSystemTransManager;
@@ -58,6 +72,8 @@ public class MainMVPApplication extends Application implements IMainApplication 
 	private EntityManagerFactory kernelSystemEntityManagerFactory;	
 	
 	private IPageFlowManager pageFlowEngine;
+	
+	private IEntityEditorFactory entityEditorFactory;
 	
 	/** UI contributions management*/
 	private final Map<String,IApplicationViewContribution> appContributions = Collections
@@ -73,23 +89,42 @@ public class MainMVPApplication extends Application implements IMainApplication 
 
 	private EntityTypeContainerFactory entityTypeContainerFactory;
 
+	private EntityManagerPerRequestHelper entityManagerPerRequestHelper;
+
+	private HashMap<String, Object> entityFactoryPresenterParams;
+
 
 	@Override
 	public void init() {
 		try 
 		{
 			setTheme("conx");
-
+			
+			//Create container manager/helper
+			this.entityManagerPerRequestHelper = new EntityManagerPerRequestHelper();
+			
 			// request an instance of MainPresenter
 			mainPresenter = this.presenterFactory.createPresenter(MainPresenter.class);
 			mainEventBus = (MainEventBus) mainPresenter.getEventBus();
+			
+			
+			//Create EntityFactory Presenter params
+			this.entityFactoryPresenterParams = new HashMap<String, Object>();
+			this.entityFactoryPresenterParams.put(IEntityEditorFactory.FACTORY_PARAM_MVP_EVENTBUS_MANAGER,ebm);
+			this.entityFactoryPresenterParams.put(IEntityEditorFactory.FACTORY_PARAM_MVP_LOCALE,getLocale());
+			this.entityFactoryPresenterParams.put(IEntityEditorFactory.FACTORY_PARAM_MVP_ENTITYMANAGERPERREQUESTHELPER,this.entityManagerPerRequestHelper);
+			this.entityFactoryPresenterParams.put(IEntityEditorFactory.FACTORY_PARAM_MVP_ENTITY_MANAGER_FACTORY,this.kernelSystemEntityManagerFactory);
+			this.entityFactoryPresenterParams.put(IEntityEditorFactory.FACTORY_PARAM_IDOCLIB_REPO_SERVICE,this.remoteDocumentRepository);
+			this.entityFactoryPresenterParams.put(IEntityEditorFactory.FACTORY_PARAM_IFOLDER_SERVICE,this.folderDAOService);
+			this.entityFactoryPresenterParams.put(IEntityEditorFactory.FACTORY_PARAM_MAIN_APP,this);
+			
 			mainEventBus.start(this);
 			
 			//By default, add workspace
 			IApplicationViewContribution ac = appContributions.get("KERNEL.WORKSPACE");
 			if (Validator.isNotNull(ac))
 			{
-				Class<? extends BasePresenter<?, ? extends EventBus>> acClass = ac.getPresenterClass(this);
+				Class<? extends BasePresenter<?, ? extends EventBus>> acClass = ac.getPresenterClass();
 				//IPresenter acPresenter = this.presenterFactory.createPresenter(acClass);
 				//StartableApplicationEventBus acSB = (StartableApplicationEventBus)acPresenter.getEventBus();
 				//acSB.start(this);
@@ -109,7 +144,34 @@ public class MainMVPApplication extends Application implements IMainApplication 
 		}
 
 	}
+	
+	/**
+	 * 
+	 * HttpServletRequestListener
+	 * 
+	 */
+	@Override
+    public void onRequestStart(HttpServletRequest request, HttpServletResponse response) {
+		if (this.entityManagerPerRequestHelper != null)//Init called already
+			this.entityManagerPerRequestHelper.requestStart();
+	}
 
+	@Override
+	public void onRequestEnd(HttpServletRequest request, HttpServletResponse response) {
+		if (this.entityManagerPerRequestHelper != null)//Init called already
+			this.entityManagerPerRequestHelper.requestEnd();
+	}	
+
+	@Override
+	public Object createPersistenceContainer(Class entityClass) {
+		EntityManager em = this.kernelSystemEntityManagerFactory.createEntityManager();
+		JPAContainer container = JPAContainerFactory.make(entityClass, em);
+		container.getEntityProvider().setEntitiesDetached(false);
+		//this.entityManagerPerRequestHelper.addContainer(container);
+		
+		return container;
+	}
+	
 	public IPresenterFactory getPresenterFactory() {
 		return this.presenterFactory;
 	}
@@ -332,6 +394,42 @@ public class MainMVPApplication extends Application implements IMainApplication 
 		this.entityTypeContainerFactory  = null;
 		this.kernelSystemEntityManagerFactory = null;
 	}		
+	
+	public void bindEntityEditorFactory(
+			IEntityEditorFactory entityEditorFactory, Map properties) {
+		logger.debug("bindEntityEditorFactory()");
+		this.entityEditorFactory = entityEditorFactory;
+	}
+
+	public void unbindEntityEditorFactory(
+			IEntityEditorFactory entityEditorFactory, Map properties) {
+		logger.debug("unbindEntityEditorFactory()");
+		this.entityEditorFactory  = null;
+	}	
+	
+	public void bindRemoteDocumentRepository(
+			IRemoteDocumentRepository remoteDocumentRepository, Map properties) {
+		logger.debug("bindRemoteDocumentRepository()");
+		this.remoteDocumentRepository = remoteDocumentRepository;
+	}
+
+	public void unbindRemoteDocumentRepository(
+			IRemoteDocumentRepository remoteDocumentRepository, Map properties) {
+		logger.debug("unbindRemoteDocumentRepository()");
+		this.remoteDocumentRepository  = null;
+	}	
+	
+	public void bindFolderDAOService(
+			IFolderDAOService folderDAOService, Map properties) {
+		logger.debug("bindFolderDAOService()");
+		this.folderDAOService = folderDAOService;
+	}
+
+	public void unbindFolderDAOService(
+			IFolderDAOService folderDAOService, Map properties) {
+		logger.debug("unbindFolderDAOService()");
+		this.folderDAOService  = null;
+	}		
 
 
 	public IUIContributionManager getUiContributionManager() {
@@ -345,6 +443,11 @@ public class MainMVPApplication extends Application implements IMainApplication 
 
 	public EntityTypeContainerFactory getEntityTypeContainerFactory() {
 		return entityTypeContainerFactory;
+	}
+	
+
+	public IRemoteDocumentRepository getRemoteDocumentRepository() {
+		return remoteDocumentRepository;
 	}
 
 	public EventBusManager getEeventBusManager() {
@@ -369,5 +472,26 @@ public class MainMVPApplication extends Application implements IMainApplication 
 	public IApplicationViewContribution getApplicationContributionByCode(String code)
 	{
 		return appContributions.get(code);
+	}
+
+	public IEntityEditorFactory getEntityEditorFactory() {
+		return entityEditorFactory;
+	}
+
+	public void setEntityEditorFactory(IEntityEditorFactory entityEditorFactory) {
+		this.entityEditorFactory = entityEditorFactory;
+	}
+
+	public EntityManagerPerRequestHelper getEntityManagerPerRequestHelper() {
+		return entityManagerPerRequestHelper;
+	}
+
+	public void setEntityManagerPerRequestHelper(
+			EntityManagerPerRequestHelper entityManagerPerRequestHelper) {
+		this.entityManagerPerRequestHelper = entityManagerPerRequestHelper;
+	}
+
+	public HashMap<String, Object> getEntityFactoryPresenterParams() {
+		return entityFactoryPresenterParams;
 	}	
 }

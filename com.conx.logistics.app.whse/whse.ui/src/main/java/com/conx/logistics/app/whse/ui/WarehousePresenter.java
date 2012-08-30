@@ -12,7 +12,7 @@ import com.conx.logistics.app.whse.ui.navigation.view.IWarehouseNavigationView;
 import com.conx.logistics.app.whse.ui.view.WarehouseView;
 import com.conx.logistics.app.whse.ui.view.IWarehouseView;
 import com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication;
-import com.conx.logistics.kernel.ui.common.mvp.view.feature.FeatureView;
+import com.conx.logistics.kernel.ui.common.mvp.view.feature.FeatureTabbedView;
 import com.conx.logistics.mdm.domain.application.Feature;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalSplitPanel;
@@ -23,7 +23,7 @@ import com.vaadin.ui.Window;
 public class WarehousePresenter extends BasePresenter<IWarehouseView, WarehouseEventBus>{
 
   private MainMVPApplication application;
-  private FeatureView fv;
+  private FeatureTabbedView fv;
   
   private WarehouseNavigationPresenter navPresenter;
   
@@ -51,7 +51,7 @@ public class WarehousePresenter extends BasePresenter<IWarehouseView, WarehouseE
 	this.view.setNavigation(navView);
     
     //load fv
-	fv = new FeatureView(this.application,this);
+	fv = new FeatureTabbedView(this.application,this);
     this.view.setContent(this.fv);
   }
   

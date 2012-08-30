@@ -6,9 +6,9 @@ import org.vaadin.mvp.presenter.IPresenter;
 import org.vaadin.mvp.presenter.IPresenterFactory;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
-import com.conx.logistics.kernel.ui.common.gwt.client.ui.ConXEntityEditor;
 import com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication;
-import com.conx.logistics.kernel.ui.common.mvp.view.feature.FeatureView;
+import com.conx.logistics.kernel.ui.common.mvp.view.feature.FeatureTabbedView;
+import com.conx.logistics.kernel.ui.vaadin.common.ConXEntityEditor;
 import com.conx.logistics.kernel.workspace.ui.navigation.WorkspaceNavigationPresenter;
 import com.conx.logistics.kernel.workspace.ui.navigation.view.IWorkspaceNavigationView;
 import com.conx.logistics.kernel.workspace.ui.view.IWorkspaceView;
@@ -23,7 +23,7 @@ import com.vaadin.ui.Window;
 public class WorkspacePresenter extends BasePresenter<IWorkspaceView, WorkspaceEventBus>{
 
 	private MainMVPApplication application;
-	private FeatureView fv;
+	private FeatureTabbedView fv;
 
 	private WorkspaceNavigationPresenter navPresenter;
 

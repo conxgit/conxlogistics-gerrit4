@@ -20,6 +20,18 @@
 		<osgi:listener ref="mainApp" bind-method="bindApplicationDAOService" unbind-method="unbindApplicationDAOService"/>
 	</osgi:reference>	
 	
+	<osgi:reference id="entityEditorFactory" cardinality="1..1" interface="com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory">
+		<osgi:listener ref="mainApp" bind-method="bindEntityEditorFactory" unbind-method="unbindEntityEditorFactory"/>
+	</osgi:reference>
+	
+	<osgi:reference id="remoteDocumentRepository" cardinality="1..1" interface="com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository">
+		<osgi:listener ref="mainApp" bind-method="bindRemoteDocumentRepository" unbind-method="unbindRemoteDocumentRepository"/>
+	</osgi:reference>	
+	
+	<osgi:reference id="folderDAOService" cardinality="1..1" interface="com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService">
+		<osgi:listener ref="mainApp" bind-method="bindFolderDAOService" unbind-method="unbindFolderDAOService"/>
+	</osgi:reference>	
+	
 	<!-- Subscribe to UI app contributions -->
 	<osgi:list id="appContributions" cardinality="0..N" interface="com.conx.logistics.kernel.ui.service.contribution.IApplicationViewContribution" >
 		<osgi:listener ref="mainApp" bind-method="bindApplicationContribution" unbind-method="unbindApplicationContribution"/>

@@ -11,6 +11,13 @@
 	<name>com.conx.logistics.kernel.ui.services</name>
 	<description>com.conx.logistics.kernel.ui.services</description>
 	<dependencies>
+		<!-- ConX -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.ui.components.domain</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+				
 		<!-- Vaadin -->
 		<dependency>
 			<groupId>com.vaadin</groupId>

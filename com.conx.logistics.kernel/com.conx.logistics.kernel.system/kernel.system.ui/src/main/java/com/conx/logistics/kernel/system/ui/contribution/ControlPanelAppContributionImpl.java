@@ -12,8 +12,10 @@ import com.conx.logistics.kernel.system.ui.ControlPanelEventBus;
 import com.conx.logistics.kernel.system.ui.ControlPanelPresenter;
 import com.conx.logistics.kernel.ui.common.mvp.MainEventBus;
 import com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication;
+import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
 import com.conx.logistics.kernel.ui.service.contribution.IApplicationViewContribution;
 import com.conx.logistics.kernel.ui.service.contribution.IViewContribution;
+import com.conx.logistics.mdm.domain.application.Feature;
 import com.vaadin.Application;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Component;
@@ -45,8 +47,7 @@ public class ControlPanelAppContributionImpl implements IApplicationViewContribu
 	}
 
 	@Override
-	public Class<? extends BasePresenter<?, ? extends EventBus>> getPresenterClass(
-			Application application) {
+	public Class<? extends BasePresenter<?, ? extends EventBus>> getPresenterClass() {
 		return ControlPanelPresenter.class;
 	}
 
@@ -57,5 +58,12 @@ public class ControlPanelAppContributionImpl implements IApplicationViewContribu
 		ControlPanelEventBus eb = (ControlPanelEventBus) cpp.getEventBus();
 		eb.start((MainMVPApplication)app);
 		return (Component)cpp.getView();
+	}
+
+	@Override
+	public AbstractConXComponent getComponentModel(Application application,
+			Feature feature) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -1,11 +1,19 @@
 package com.conx.logistics.kernel.ui.components.dao.jpa.persistence.impl;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Root;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.conx.logistics.kernel.datasource.domain.DataSource;
 import com.conx.logistics.kernel.metamodel.dao.services.IBasicTypeDAOService;
 import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
+import com.conx.logistics.kernel.metamodel.domain.BasicType;
 import com.conx.logistics.kernel.ui.components.dao.services.IComponentDAOService;
 import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent;
@@ -72,18 +81,38 @@ public class ComponentDAOImpl implements IComponentDAOService {
 
 	@Override
 	public AbstractConXComponent getByCode(String code) {
-		AbstractConXComponent ds = null;
-		
+		AbstractConXComponent comp = null;
+
 		try
 		{
-		TypedQuery<AbstractConXComponent> q = em.createQuery("select DISTINCT o from com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent o WHERE o.code = :code",AbstractConXComponent.class);
-		q.setParameter("code",code);
-		ds = q.getSingleResult();
+			CriteriaBuilder builder = em.getCriteriaBuilder();
+			CriteriaQuery<AbstractConXComponent> query = builder.createQuery(AbstractConXComponent.class);
+			Root<AbstractConXComponent> rootEntity = query.from(AbstractConXComponent.class);
+			ParameterExpression<String> p = builder.parameter(String.class);
+			query.select(rootEntity).where(builder.equal(rootEntity.get("code"), p));
+
+			TypedQuery<AbstractConXComponent> typedQuery = em.createQuery(query);
+			typedQuery.setParameter(p, code);
+			
+			comp = typedQuery.getSingleResult();
 		}
-		catch(javax.persistence.NoResultException e)
-		{}
+		catch(NoResultException e){}
+		catch(Exception e)
+		{
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			String stacktrace = sw.toString();
+			logger.error(stacktrace);
+		}
+		catch(Error e)
+		{
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			String stacktrace = sw.toString();
+			logger.error(stacktrace);
+		}		
 		
-		return ds;
+		return comp;		
 	}
 
 

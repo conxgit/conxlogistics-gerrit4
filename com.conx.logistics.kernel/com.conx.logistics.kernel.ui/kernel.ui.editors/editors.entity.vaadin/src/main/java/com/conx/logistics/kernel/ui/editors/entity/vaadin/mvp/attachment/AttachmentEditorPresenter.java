@@ -31,16 +31,18 @@ import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.ConfigurableBasePr
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment.view.IAttachmentEditorView;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.lineeditor.view.EntityLineEditorSectionView;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.lineeditor.view.IEntityLineEditorSectionView;
-import com.conx.logistics.kernel.ui.filteredtable.gwt.client.ui.FilterTable;
+import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
+import com.conx.logistics.kernel.ui.filteredtable.FilterTable;
+import com.conx.logistics.kernel.ui.service.contribution.IMainApplication;
 import com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService;
 import com.conx.logistics.mdm.domain.BaseEntity;
 import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.conx.logistics.mdm.domain.documentlibrary.Folder;
 import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.addon.jpacontainer.JPAContainer;
-import com.vaadin.addon.jpacontainer.JPAContainerFactory;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.addon.jpacontainer.util.DefaultQueryModifierDelegate;
+import com.vaadin.addon.jpacontainer.util.EntityManagerPerRequestHelper;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.event.ItemClickEvent;
@@ -86,7 +88,7 @@ public class AttachmentEditorPresenter
 
 	private IFolderDAOService docFolderDAOService;
 
-	private ConfigurableBasePresenter mainEventBus;
+	private ConfigurableBasePresenter mlEntityPresenter;
 
 	private List<String> formVisibleFieldNames;
 
@@ -95,6 +97,8 @@ public class AttachmentEditorPresenter
 	private VerticalSplitPanel splitPanel;
 	
 	private EntityItem newFE;
+
+	private IMainApplication mainApplication;
 
 	public AttachmentEditorPresenter() {
 		super();
@@ -120,12 +124,15 @@ public class AttachmentEditorPresenter
 		this.splitPanel = new VerticalSplitPanel();
 		this.form = new AttachmentForm(
 				(AttachmentEditorEventBus)this.getEventBus(),
-				(AbstractEntityEditorEventBus)this.mainEventBus.getEventBus(),
+				(AbstractEntityEditorEventBus)this.mlEntityPresenter.getEventBus(),
 				this.entityManager,
 				this.docRepo,
 				this.docFolderDAOService,
 				this.splitPanel);
 		form.setFormFieldFactory(new ConXFieldFactory());
+		
+		// - Create FileEntry container
+		this.entityContainer = (JPAContainer)this.mainApplication.createPersistenceContainer(FileEntry.class);
 
 		// - Create upload form
 		final VerticalLayout uploadLayout = new VerticalLayout();
@@ -233,8 +240,9 @@ public class AttachmentEditorPresenter
 						// Add a "WHERE age > 116" expression
 						Path<Folder> parentFolder = fromFileEntry
 								.<Folder> get("folder");
-						predicates.add(criteriaBuilder.equal(parentFolder,
-								AttachmentEditorPresenter.this.docFolder));
+						Path<Long> pathId = parentFolder.get("id");
+						predicates.add(criteriaBuilder.equal(pathId,
+								AttachmentEditorPresenter.this.docFolder.getId()));
 					}
 				});
 	}
@@ -276,20 +284,13 @@ public class AttachmentEditorPresenter
 
 	@Override
 	public void configure() {
-		this.mainEventBus = (ConfigurableBasePresenter) getConfig().get("multiLevelEntityEditorPresenter");		
+		this.mlEntityPresenter = (ConfigurableBasePresenter) getConfig().get(IEntityEditorFactory.FACTORY_PARAM_MVP_CURRENT_MLENTITY_EDITOR_PRESENTER);		
 		
-		this.docRepo = (IRemoteDocumentRepository) getConfig().get(
-				"iremoteDocumentRepository");
-
-		this.docFolderDAOService = (IFolderDAOService) getConfig().get(
-				"ifolderDAOService");		
+		this.docRepo = (IRemoteDocumentRepository) getConfig().get(IEntityEditorFactory.FACTORY_PARAM_IDOCLIB_REPO_SERVICE);
+		this.docFolderDAOService = (IFolderDAOService) getConfig().get(IEntityEditorFactory.FACTORY_PARAM_IFOLDER_SERVICE);	
 		
-		this.attachmentComponent = (AttachmentEditorComponent) getConfig().get(
-				"componentModel");
-		this.entityManager = (EntityManager) getConfig().get("em");
+		this.attachmentComponent = (AttachmentEditorComponent) getConfig().get(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL);
 
-		// - Create FileEntry container
-		this.entityContainer = JPAContainerFactory.make(FileEntry.class,
-				entityManager);
+		this.mainApplication = (IMainApplication) getConfig().get(IEntityEditorFactory.FACTORY_PARAM_MAIN_APP);
 	}
 }

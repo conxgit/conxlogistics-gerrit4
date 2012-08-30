@@ -12,7 +12,7 @@ import com.conx.logistics.kernel.system.ui.navigation.view.IControlPanelNavigati
 import com.conx.logistics.kernel.system.ui.view.IControlPanelView;
 import com.conx.logistics.kernel.system.ui.view.ControlPanelView;
 import com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication;
-import com.conx.logistics.kernel.ui.common.mvp.view.feature.FeatureView;
+import com.conx.logistics.kernel.ui.common.mvp.view.feature.FeatureTabbedView;
 import com.conx.logistics.mdm.domain.application.Feature;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalSplitPanel;
@@ -23,7 +23,7 @@ import com.vaadin.ui.Window;
 public class ControlPanelPresenter extends BasePresenter<IControlPanelView, ControlPanelEventBus>{
 
   private MainMVPApplication application;
-  private FeatureView fv;
+  private FeatureTabbedView fv;
   
   private ControlPanelNavigationPresenter navPresenter;
   
@@ -49,7 +49,7 @@ public class ControlPanelPresenter extends BasePresenter<IControlPanelView, Cont
 	this.view.setNavigation(navView);
     
     //load fv
-	fv = new FeatureView(this.application,this);
+	fv = new FeatureTabbedView(this.application,this);
     this.view.setContent(this.fv);
   }
   

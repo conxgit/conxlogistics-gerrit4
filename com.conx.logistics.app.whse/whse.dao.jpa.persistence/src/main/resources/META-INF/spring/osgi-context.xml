@@ -17,8 +17,12 @@
 	</osgi:reference>	
 	
 	<!-- import external interfaces -->
+	<osgi:reference id="featureDAOService" interface="com.conx.logistics.kernel.system.dao.services.application.IFeatureDAOService"/>
+	<osgi:reference id="featureSetDAOService" interface="com.conx.logistics.kernel.system.dao.services.application.IFeatureSetDAOService"/>
+	<osgi:reference id="applicationDAOService" interface="com.conx.logistics.kernel.system.dao.services.application.IApplicationDAOService"/>
 			
 	<!-- export internal interfaces -->
 	<osgi:service ref="dockTypeDao" interface="com.conx.logistics.app.whse.dao.services.IDockTypeDAOService"/>
 	<osgi:service ref="whseDao" interface="com.conx.logistics.app.whse.dao.services.IWarehouseDAOService"/>
+	<osgi:service ref="whseAppDao" interface="com.conx.logistics.app.whse.dao.services.IWarehouseApplicationDAOService"/>
 </beans>

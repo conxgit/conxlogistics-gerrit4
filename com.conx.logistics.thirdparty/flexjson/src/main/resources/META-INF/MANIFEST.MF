@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Export-Package: flexjson;version="2.1";uses:="flexjson.transformer",fl
+ exjson.factories;version="2.1";uses:="flexjson",flexjson.locators;ver
+ sion="2.1";uses:="flexjson",flexjson.transformer;version="2.1";uses:=
+ "flexjson"
+Build-Jdk: 1.6.0_33
+Built-By: mdu
+Bundle-Version: 2.1
+Tool: Bundlor 1.0.0.RELEASE
+Bundle-Name: Flexjson
+Bundle-ManifestVersion: 2
+Created-By: Apache Maven
+Bundle-SymbolicName: com.conx.logistics.thirdparty.flexjson
+Archiver-Version: Plexus Archiver
+

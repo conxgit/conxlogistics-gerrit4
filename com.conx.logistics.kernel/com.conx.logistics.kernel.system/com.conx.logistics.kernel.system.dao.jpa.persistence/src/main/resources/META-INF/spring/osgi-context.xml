@@ -17,5 +17,7 @@
 	
 			
 	<!-- export internal interfaces -->
-	<osgi:service ref="applicationDao" interface="com.conx.logistics.kernel.system.dao.services.application.IApplicationDAOService"/>
+	<osgi:service ref="featureDao" interface="com.conx.logistics.kernel.system.dao.services.application.IFeatureDAOService"/>	
+	<osgi:service ref="featuresetDao" interface="com.conx.logistics.kernel.system.dao.services.application.IFeatureSetDAOService"/>	
+	<osgi:service ref="applicationDao" interface="com.conx.logistics.kernel.system.dao.services.application.IApplicationDAOService"/>	
 </beans>

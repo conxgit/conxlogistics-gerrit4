@@ -49,6 +49,7 @@ public class ApplicationDAOImpl implements IApplicationDAOService {
 		return em.createQuery("select o from Application o order by o.id",Application.class).getResultList();
 	}
 	
+	@Override
 	public Application findApplicationByCode(String code) {
 		Application org = null;
 		
@@ -131,58 +132,6 @@ public class ApplicationDAOImpl implements IApplicationDAOService {
 			fs.getChildFeatures().add(ft);			
 			
 			cpApp = updateApplication(cpApp);
-			
-			
-			/**
-			 *
-			 * Warehouse App
-			 * 
-			 **/
-			Application whseApp = new Application(IApplicationDAOService.WAREHOUSE_APP_CODE);
-			whseApp.setName(IApplicationDAOService.WAREHOUSE_APP_NAME);
-			whseApp.setThemeIconPath("");
-			
-			whseApp = addApplication(whseApp);
-			
-			/**
-			 * Receiving Featureset
-			 */
-			Feature mfs = new Feature(whseApp,null,IApplicationDAOService.WAREHOUSE_APP_RECEIVING_CODE);
-			mfs.setName(IApplicationDAOService.WAREHOUSE_APP_RECEIVING_NAME);
-			mfs = featureDaoService.addFeature(mfs);
-			whseApp.getFeatures().add(mfs);
-			
-			Feature smfs = new Feature(whseApp,mfs,IApplicationDAOService.WAREHOUSE_APP_RECEIVING_ASN_CODE);
-			smfs.setName(IApplicationDAOService.WAREHOUSE_APP_RECEIVING_ASN_NAME);
-			smfs.setFeatureSet(true);
-			smfs = featureDaoService.addFeature(smfs);
-			mfs.getChildFeatures().add(smfs);
-			mfs = featureDaoService.updateFeature(mfs);		
-			
-			Feature searchFt = new Feature(whseApp,smfs, IApplicationDAOService.WAREHOUSE_APP_RECEIVING_ASN_SEARCH_CODE);
-			searchFt.setName(WAREHOUSE_APP_RECEIVING_ASN_SEARCH_NAME);
-			searchFt = featureDaoService.addFeature(searchFt);
-			smfs.getChildFeatures().add(searchFt);
-			
-			ft = new Feature(whseApp,smfs, IApplicationDAOService.WAREHOUSE_APP_RECEIVING_ASN_NEW_CODE);
-			ft.setName(WAREHOUSE_APP_RECEIVING_ASN_NEW_NAME);
-			ft.setTaskFeature(true);
-			ft.setOnCompletionFeature(searchFt);
-			ft.setCode("whse.rcv.asn.CreateNewASNByOrgV1.0");
-			ft.setExternalCode("KERNEL.PAGEFLOW.STARTTASK");
-			ft.setName("New");
-			fs = featureDaoService.addFeature(fs);
-			smfs.getChildFeatures().add(ft);	
-			
-			smfs = featureDaoService.updateFeature(smfs);
-
-			whseApp = updateApplication(whseApp);					
-			try {
-				//em.flush();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 		
 		return cpApp;

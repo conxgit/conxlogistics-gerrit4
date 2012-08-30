@@ -2,9 +2,8 @@ package com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.table.view;
 
 import org.vaadin.mvp.uibinder.annotation.UiField;
 
-import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityGridFilterManager;
-import com.conx.logistics.kernel.ui.filteredtable.gwt.client.ui.FilterTable;
+import com.conx.logistics.kernel.ui.filteredtable.FilterTable;
 import com.vaadin.data.Container;
 import com.vaadin.ui.VerticalLayout;
 

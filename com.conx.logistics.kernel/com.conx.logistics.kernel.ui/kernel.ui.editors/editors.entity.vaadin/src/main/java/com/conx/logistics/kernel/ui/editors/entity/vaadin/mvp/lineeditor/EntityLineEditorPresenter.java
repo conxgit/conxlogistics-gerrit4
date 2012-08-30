@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.mvp.eventbus.EventBus;
+import org.vaadin.mvp.eventbus.EventBusManager;
 import org.vaadin.mvp.presenter.IPresenter;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
@@ -26,6 +27,7 @@ import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.ConfigurablePresen
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.MultiLevelEntityEditorPresenter;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.lineeditor.view.EntityLineEditorView;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.lineeditor.view.IEntityLineEditorView;
+import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
 import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -48,7 +50,6 @@ implements Property.ValueChangeListener {
 	public EntityLineEditorPresenter() {
 		super();
 	}
-
 
 
 	/**
@@ -135,10 +136,9 @@ implements Property.ValueChangeListener {
 	public void configure() {
 		try {
 			Map<String, Object> config = super.getConfig();
-			EntityManager entityManager = (EntityManager)config.get("em");
-			MasterDetailComponent metaData = (MasterDetailComponent)config.get("md");
-			ConfigurablePresenterFactory presenterFactory = (ConfigurablePresenterFactory)config.get("presenterFactory");
-
+			MasterDetailComponent metaData = (MasterDetailComponent)config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL);
+			ConfigurablePresenterFactory presenterFactory = (ConfigurablePresenterFactory)config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_PRESENTER_FACTORY);
+			
 			/**
 			 * 1. Get LineEditor models
 			 * 
@@ -155,8 +155,8 @@ implements Property.ValueChangeListener {
 			Map<IPresenter<?, ? extends EventBus>, EventBus> entityMVP = null;
 			for (LineEditorComponent lec : lecs)
 			{
-				presenterFactory.getCustomizer().getConfig().put("componentModel", lec.getContent());
-				entityMVP = entityFactory.create(lec.getContent());
+				presenterFactory.getCustomizer().getConfig().put(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL, lec.getContent());
+				entityMVP = entityFactory.create(lec.getContent(),getConfig());
 				if (entityMVP != null)
 				{
 					IPresenter<?, ? extends EventBus> presenter = entityMVP.keySet().iterator().next();

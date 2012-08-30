@@ -21,7 +21,7 @@ import org.vaadin.mvp.presenter.annotation.Presenter;
 import com.conx.logistics.kernel.system.ui.view.TaskDefSearchView;
 import com.conx.logistics.kernel.system.ui.view.ITaskDefSearchView;
 import com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication;
-import com.conx.logistics.kernel.ui.common.mvp.view.feature.FeatureView;
+import com.conx.logistics.kernel.ui.common.mvp.view.feature.FeatureTabbedView;
 import com.conx.logistics.kernel.ui.common.ui.form.field.BasicFieldFactory;
 import com.conx.logistics.mdm.domain.task.TaskDefinition;
 import com.google.gwt.user.client.rpc.core.java.util.Collections;
@@ -47,7 +47,7 @@ public class TaskDefSearchPresenter extends
 		BasePresenter<ITaskDefSearchView, TaskDefSearchEventBus> {
 
 	private MainMVPApplication application;
-	private FeatureView fv;
+	private FeatureTabbedView fv;
 
 	private IPresenter<?, ? extends EventBus> contentPresenter;
 	private VerticalLayout defaultDetailView;

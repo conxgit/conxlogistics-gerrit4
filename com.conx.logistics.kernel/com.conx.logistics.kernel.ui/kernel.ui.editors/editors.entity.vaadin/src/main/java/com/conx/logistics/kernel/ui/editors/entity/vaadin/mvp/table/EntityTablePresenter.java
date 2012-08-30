@@ -25,6 +25,8 @@ import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.MultiLevelEntityEd
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.MultiLevelEntityEditorPresenter;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.table.view.EntityTableView;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.table.view.IEntityTableView;
+import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
+import com.conx.logistics.kernel.ui.service.contribution.IMainApplication;
 import com.conx.logistics.mdm.domain.BaseEntity;
 import com.conx.logistics.mdm.domain.task.TaskDefinition;
 import com.vaadin.addon.jpacontainer.EntityItem;
@@ -115,18 +117,16 @@ public class EntityTablePresenter extends ConfigurableBasePresenter<IEntityTable
 	@Override
 	public void configure() {
 		try {
-			MasterDetailComponent masterDetailComponent = (MasterDetailComponent)getConfig().get("md");
-			MultiLevelEntityEditorPresenter multiLevelEntityEditorPresenter = (MultiLevelEntityEditorPresenter)getConfig().get("multiLevelEntityEditorPresenter");
-			this.em = (EntityManager)getConfig().get("em");
-			
-			
+			MasterDetailComponent masterDetailComponent = (MasterDetailComponent)getConfig().get(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL);
+			MultiLevelEntityEditorPresenter multiLevelEntityEditorPresenter = (MultiLevelEntityEditorPresenter)getConfig().get(IEntityEditorFactory.FACTORY_PARAM_MVP_CURRENT_MLENTITY_EDITOR_PRESENTER);
+			IMainApplication mainApplication = (IMainApplication) getConfig().get(IEntityEditorFactory.FACTORY_PARAM_MAIN_APP);
 			
 			this.dataSource = masterDetailComponent.getDataSource();
 			this.javaEntityClass = this.dataSource.getEntityType().getJavaType();
 			this.entityEditorEventListener = multiLevelEntityEditorPresenter.getEventBus();
 			
 			//-- Create datasource/container from md.dataSource
-			this.entityContainer = JPAContainerFactory.make(this.javaEntityClass,this.em);
+			this.entityContainer = (JPAContainer)mainApplication.createPersistenceContainer(this.javaEntityClass);
 			Set<String> nestedFieldNames = this.dataSource.getNestedFieldNames();
 			for (String npp : nestedFieldNames)
 			{

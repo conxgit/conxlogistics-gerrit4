@@ -9,4 +9,5 @@ public interface IMainApplication {
 	public IPresenterFactory getPresenterFactory();
 	public IViewContribution getViewContributionByCode(String code);
 	public IApplicationViewContribution getApplicationContributionByCode(String code);
+	public Object createPersistenceContainer(Class entityClass);
 }

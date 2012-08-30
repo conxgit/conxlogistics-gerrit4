@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Map;
 
-import com.conx.logistics.kernel.ui.common.gwt.client.VActiveLink;
+import com.conx.logistics.kernel.ui.vaadin.common.gwt.client.VActiveLink;
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
 import com.vaadin.terminal.Resource;

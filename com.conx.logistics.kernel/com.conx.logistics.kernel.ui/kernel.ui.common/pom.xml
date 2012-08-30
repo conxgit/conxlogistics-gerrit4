@@ -33,12 +33,24 @@
 			</artifactId>
 			<version>${project.version}</version>
 		</dependency>	
+		<dependency>	
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>
+				com.conx.logistics.kernel.ui.factory.services
+			</artifactId>
+			<version>${project.version}</version>
+		</dependency>		
 		<dependency>
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.kernel.ui.vaadin.common.addon</artifactId>
 			<version>1.0.0</version>
 			<scope>provided</scope>
-		</dependency>		
+		</dependency>	
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.mdm.dao.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>			
 				
 		<!-- GWT/Vaadin -->
 		<dependency>

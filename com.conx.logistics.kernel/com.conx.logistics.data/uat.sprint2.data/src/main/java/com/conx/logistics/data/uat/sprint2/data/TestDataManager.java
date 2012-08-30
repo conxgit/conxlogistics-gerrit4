@@ -149,6 +149,8 @@ public class TestDataManager {
 			logger.error(stacktrace);
 			
 			this.globalTransactionManager.rollback(status);
+			
+			throw new RuntimeException(stacktrace, e);
 		}
 	}
 	

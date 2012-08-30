@@ -6,9 +6,11 @@ import org.vaadin.mvp.eventbus.EventBus;
 import org.vaadin.mvp.presenter.BasePresenter;
 import org.vaadin.mvp.presenter.FactoryPresenter;
 
+import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
 import com.conx.logistics.kernel.ui.service.contribution.IApplicationViewContribution;
 import com.conx.logistics.kernel.ui.service.contribution.IViewContribution;
 import com.conx.logistics.kernel.workspace.ui.UserProfilePresenter;
+import com.conx.logistics.mdm.domain.application.Feature;
 import com.vaadin.Application;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Component;
@@ -67,10 +69,13 @@ public class UserProfileBasicView implements IViewContribution {
 	}
 
 	@Override
-	public Class<? extends BasePresenter<?, ? extends EventBus>> getPresenterClass(
-			Application application) {
+	public Class<? extends BasePresenter<?, ? extends EventBus>> getPresenterClass() {
 		return UserProfilePresenter.class;
 	}
 
-	
+	@Override
+	public AbstractConXComponent getComponentModel(Application application, Feature feature) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
