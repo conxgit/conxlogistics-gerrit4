@@ -110,7 +110,10 @@
 		<dependency>
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.thirdparty.hibernate.core</artifactId>
-			<version>3.6.0.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.thirdparty.hibernate.annotations.commons</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax.persistence</groupId>

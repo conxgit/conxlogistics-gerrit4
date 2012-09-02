@@ -2,6 +2,8 @@ package com.conx.logistics.mdm.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,17 +14,20 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
 
 import com.conx.logistics.mdm.domain.documentlibrary.Folder;
 import com.conx.logistics.mdm.domain.note.Note;
-
+import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber;
 
 @MappedSuperclass
 public class BaseEntity implements Serializable {
-    @Id
+	private static final long serialVersionUID = 2729618029911190092L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     protected Long id;
@@ -37,8 +42,7 @@ public class BaseEntity implements Serializable {
     
     @ManyToOne(targetEntity = Note.class, fetch = FetchType.EAGER, cascade=CascadeType.ALL)
     @JoinColumn
-    private Note note;    
-
+    private Note note;
     
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreated = new Date();

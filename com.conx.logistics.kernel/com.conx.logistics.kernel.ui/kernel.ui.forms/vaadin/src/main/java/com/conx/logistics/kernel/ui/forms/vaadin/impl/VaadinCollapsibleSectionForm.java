@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import com.conx.logistics.kernel.ui.components.domain.form.ConXCollapseableSectionForm;
 import com.conx.logistics.kernel.ui.components.domain.form.FieldSet;
+import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
 import com.conx.logistics.kernel.ui.forms.vaadin.IVaadinForm;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.Form;
@@ -46,5 +47,19 @@ public class VaadinCollapsibleSectionForm extends Form implements IVaadinForm {
 		layout.addComponent(content);
 		headers.put(fieldSet, header);
 		return header;
+	}
+
+	@Override
+	public FormMode getFormMode() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setFormMode(FormMode mode) {
+	}
+
+	@Override
+	public void setTitle(String title) {
 	}
 }

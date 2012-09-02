@@ -1282,6 +1282,12 @@
 				com.conx.logistics.kernel.ui.editors.entity.vaadin
 			</artifactId>
 			<version>1.0.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>ecj</artifactId>
+					<groupId>org.eclipse.jdt.core.compiler</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.conx.logistics</groupId>

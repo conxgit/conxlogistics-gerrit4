@@ -11,7 +11,6 @@ import javax.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.mvp.eventbus.EventBus;
-import org.vaadin.mvp.eventbus.EventBusManager;
 import org.vaadin.mvp.presenter.IPresenter;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
@@ -20,6 +19,7 @@ import com.conx.logistics.kernel.ui.components.domain.attachment.AttachmentEdito
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent;
 import com.conx.logistics.kernel.ui.components.domain.note.NoteEditorComponent;
+import com.conx.logistics.kernel.ui.components.domain.referencenumber.ReferenceNumberEditorComponent;
 import com.conx.logistics.kernel.ui.editors.builder.vaadin.VaadinEntityEditorFactoryImpl;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.AbstractEntityEditorEventBus;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.ConfigurableBasePresenter;
@@ -34,31 +34,28 @@ import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.ui.Component;
 
 @Presenter(view = EntityLineEditorView.class)
-public class EntityLineEditorPresenter extends ConfigurableBasePresenter<IEntityLineEditorView, EntityLineEditorEventBus>
-implements Property.ValueChangeListener {
+public class EntityLineEditorPresenter extends ConfigurableBasePresenter<IEntityLineEditorView, EntityLineEditorEventBus> implements Property.ValueChangeListener {
 	private static final long serialVersionUID = 1L;
 
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 	private boolean initialized = false;
-	private Map<IPresenter<?, ? extends EventBus>,EventBus> mvpCache = new HashMap<IPresenter<?,? extends EventBus>, EventBus>();
+	private Map<IPresenter<?, ? extends EventBus>, EventBus> mvpCache = new HashMap<IPresenter<?, ? extends EventBus>, EventBus>();
 
 	private IPresenter<?, ? extends EventBus> attachmentsPresenter;
-
+	private IPresenter<?, ? extends EventBus> refNumPresenter;
 	private IPresenter<?, ? extends EventBus> notesPresenter;
-
 
 	public EntityLineEditorPresenter() {
 		super();
 	}
 
-
 	/**
 	 * EventBus callbacks
 	 */
-	public void onStart(MultiLevelEntityEditorPresenter parentPresenter, AbstractEntityEditorEventBus entityEditorEventListener,  AbstractConXComponent aec, EntityManager em, HashMap<String,Object> extraParams) {
+	public void onStart(MultiLevelEntityEditorPresenter parentPresenter, AbstractEntityEditorEventBus entityEditorEventListener, AbstractConXComponent aec, EntityManager em,
+			HashMap<String, Object> extraParams) {
 		try {
 			this.getView().init();
-
 
 		} catch (Exception e) {
 			StringWriter sw = new StringWriter();
@@ -68,55 +65,58 @@ implements Property.ValueChangeListener {
 		}
 	}
 
-	//MultiLevelEntityEditorEventBus implementation
+	// MultiLevelEntityEditorEventBus implementation
+	@SuppressWarnings("rawtypes")
 	public void onEntityItemEdit(EntityItem item) {
-		for (EventBus  elesb : mvpCache.values())
-		{
-			((AbstractEntityEditorEventBus)elesb).entityItemEdit(item);
+		for (EventBus elesb : mvpCache.values()) {
+			((AbstractEntityEditorEventBus) elesb).entityItemEdit(item);
 		}
-		
-		//- Attachments
-		if (attachmentsPresenter != null)
-			((AbstractEntityEditorEventBus)attachmentsPresenter.getEventBus()).entityItemEdit(item);
 
-		//- Notes
+		// - Attachments
+		if (attachmentsPresenter != null)
+			((AbstractEntityEditorEventBus) attachmentsPresenter.getEventBus()).entityItemEdit(item);
+		// - Reference Numbers
+		if (refNumPresenter != null)
+			((AbstractEntityEditorEventBus) refNumPresenter.getEventBus()).entityItemEdit(item);
+		// - Notes
 		if (notesPresenter != null)
-			((AbstractEntityEditorEventBus)notesPresenter.getEventBus()).entityItemEdit(item);	
+			((AbstractEntityEditorEventBus) notesPresenter.getEventBus()).entityItemEdit(item);
 	}
-	
+
+	@SuppressWarnings("rawtypes")
 	public void onEntityItemAdded(EntityItem item) {
-		for (EventBus  elesb : mvpCache.values())
-		{
-			((AbstractEntityEditorEventBus)elesb).entityItemAdded(item);
+		for (EventBus elesb : mvpCache.values()) {
+			((AbstractEntityEditorEventBus) elesb).entityItemAdded(item);
 		}
-		
-		//- Attachments
-		if (attachmentsPresenter != null)
-			((AbstractEntityEditorEventBus)attachmentsPresenter.getEventBus()).entityItemAdded(item);
 
-		//- Notes
+		// - Attachments
+		if (attachmentsPresenter != null)
+			((AbstractEntityEditorEventBus) attachmentsPresenter.getEventBus()).entityItemAdded(item);
+		// - Reference Numbers
+		if (refNumPresenter != null)
+			((AbstractEntityEditorEventBus) refNumPresenter.getEventBus()).entityItemAdded(item);
+		// - Notes
 		if (notesPresenter != null)
-			((AbstractEntityEditorEventBus)notesPresenter.getEventBus()).entityItemAdded(item);	
+			((AbstractEntityEditorEventBus) notesPresenter.getEventBus()).entityItemAdded(item);
 	}
-	
-	
+
 	@Override
 	public void bind() {
-		for (IPresenter<?, ? extends EventBus> presenter : mvpCache.keySet())
-		{
-			((IEntityLineEditorView)getView()).getMainLayout().addTab((Component)presenter.getView(),"!!!!");
+		for (IPresenter<?, ? extends EventBus> presenter : mvpCache.keySet()) {
+			((IEntityLineEditorView) getView()).getMainLayout().addTab((Component) presenter.getView(), "Basic");
 		}
-		
-		//- Attachments
+
+		// - Attachments
 		if (attachmentsPresenter != null)
-			((IEntityLineEditorView)getView()).getMainLayout().addTab((Component)attachmentsPresenter.getView(),"Attachements");
-
-		//- Notes
+			((IEntityLineEditorView) getView()).getMainLayout().addTab((Component) attachmentsPresenter.getView(), "Attachements");
+		// - Reference Numbers
+		if (refNumPresenter != null)
+			((IEntityLineEditorView) getView()).getMainLayout().addTab((Component) refNumPresenter.getView(), "Reference Numbers");
+		// - Notes
 		if (notesPresenter != null)
-			((IEntityLineEditorView)getView()).getMainLayout().addTab((Component)attachmentsPresenter.getView(),"Notes");
+			((IEntityLineEditorView) getView()).getMainLayout().addTab((Component) notesPresenter.getView(), "Notes");
 
-
-		this.setInitialized(true);		
+		this.setInitialized(true);
 	}
 
 	@Override
@@ -136,42 +136,36 @@ implements Property.ValueChangeListener {
 	public void configure() {
 		try {
 			Map<String, Object> config = super.getConfig();
-			MasterDetailComponent metaData = (MasterDetailComponent)config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL);
-			ConfigurablePresenterFactory presenterFactory = (ConfigurablePresenterFactory)config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_PRESENTER_FACTORY);
-			
+			MasterDetailComponent metaData = (MasterDetailComponent) config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL);
+			ConfigurablePresenterFactory presenterFactory = (ConfigurablePresenterFactory) config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_PRESENTER_FACTORY);
+
 			/**
 			 * 1. Get LineEditor models
 			 * 
 			 * 2. For each, create LineEditorSection presenters
 			 */
 
-			//1. 
+			// 1.
 			Set<LineEditorComponent> lecs = metaData.getLineEditorPanel().getLineEditors();
 
-			//2. 
+			// 2.
 			VaadinEntityEditorFactoryImpl entityFactory = new VaadinEntityEditorFactoryImpl(presenterFactory);
-			IPresenter<?, ? extends EventBus>  elesp = null;
-			AbstractEntityEditorEventBus elesb = null;
 			Map<IPresenter<?, ? extends EventBus>, EventBus> entityMVP = null;
-			for (LineEditorComponent lec : lecs)
-			{
+			for (LineEditorComponent lec : lecs) {
 				presenterFactory.getCustomizer().getConfig().put(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL, lec.getContent());
-				entityMVP = entityFactory.create(lec.getContent(),getConfig());
-				if (entityMVP != null)
-				{
+				entityMVP = entityFactory.create(lec.getContent(), getConfig());
+				if (entityMVP != null) {
 					IPresenter<?, ? extends EventBus> presenter = entityMVP.keySet().iterator().next();
-					AbstractEntityEditorEventBus bus = (AbstractEntityEditorEventBus)entityMVP.get(presenter);
 
-					if (lec.getContent() instanceof AttachmentEditorComponent)
-					{
+					if (lec.getContent() instanceof AttachmentEditorComponent) {
 						this.attachmentsPresenter = presenter;
-					}
-					else if (lec.getContent() instanceof NoteEditorComponent)
+					} else if (lec.getContent() instanceof NoteEditorComponent) {
 						this.notesPresenter = presenter;
-					else //Other: simply add lec
-					{
+					} else if (lec.getContent() instanceof ReferenceNumberEditorComponent) {
+						this.refNumPresenter = presenter;
+					} else {
 						mvpCache.putAll(entityMVP);
-					}					
+					}
 				}
 			}
 		} catch (Exception e) {

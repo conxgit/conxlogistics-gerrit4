@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import com.conx.logistics.common.utils.StringUtil;
-import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.upload.AttachmentForm;
 import com.vaadin.ui.Upload.Receiver;
 
 public class AttachmentFormReceiver implements Receiver {

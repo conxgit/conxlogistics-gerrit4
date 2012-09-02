@@ -10,6 +10,7 @@ import org.vaadin.mvp.presenter.PresenterFactory;
 
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent;
+import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.vaadin.addon.jpacontainer.EntityItem;
 
 public interface MultiLevelEntityEditorEventBus extends AbstractEntityEditorEventBus {
@@ -22,4 +23,6 @@ public interface MultiLevelEntityEditorEventBus extends AbstractEntityEditorEven
 	public void entityItemEdit(EntityItem item);
 	@Event(handlers = { MultiLevelEntityEditorPresenter.class })
 	public void entityItemAdded(EntityItem item);
+	@Event(handlers = { MultiLevelEntityEditorPresenter.class })
+	public void viewDocument(FileEntry fileEntry);
 }

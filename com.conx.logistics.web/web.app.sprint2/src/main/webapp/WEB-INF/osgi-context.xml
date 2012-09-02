@@ -30,6 +30,10 @@
 	
 	<osgi:reference id="folderDAOService" cardinality="1..1" interface="com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService">
 		<osgi:listener ref="mainApp" bind-method="bindFolderDAOService" unbind-method="unbindFolderDAOService"/>
+	</osgi:reference>
+	
+	<osgi:reference id="entityMetadataDao" cardinality="1..1" interface="com.conx.logistics.mdm.dao.services.IEntityMetadataDAOService">
+		<osgi:listener ref="mainApp" bind-method="bindEntityMetaDataDAOService" unbind-method="unbindEntityMetaDataDAOService"/>
 	</osgi:reference>	
 	
 	<!-- Subscribe to UI app contributions -->

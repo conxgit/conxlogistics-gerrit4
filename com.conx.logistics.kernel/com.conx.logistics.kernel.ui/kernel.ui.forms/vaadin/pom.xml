@@ -740,7 +740,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<sourceDirectory>${basedir}/src/main</sourceDirectory>
+		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
 		<testSourceDirectory>${basedir}/src/test</testSourceDirectory>
 		<outputDirectory>${basedir}/target/classes</outputDirectory>
 		<testOutputDirectory>${basedir}/target/test-classes</testOutputDirectory>

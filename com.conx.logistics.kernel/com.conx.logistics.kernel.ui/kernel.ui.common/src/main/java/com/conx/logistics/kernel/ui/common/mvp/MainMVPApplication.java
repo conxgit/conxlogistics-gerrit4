@@ -39,6 +39,7 @@ import com.conx.logistics.kernel.ui.service.contribution.IActionContribution;
 import com.conx.logistics.kernel.ui.service.contribution.IApplicationViewContribution;
 import com.conx.logistics.kernel.ui.service.contribution.IMainApplication;
 import com.conx.logistics.kernel.ui.service.contribution.IViewContribution;
+import com.conx.logistics.mdm.dao.services.IEntityMetadataDAOService;
 import com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService;
 import com.vaadin.Application;
 import com.vaadin.addon.jpacontainer.JPAContainer;
@@ -64,6 +65,8 @@ public class MainMVPApplication extends Application implements IMainApplication,
 	private IFolderDAOService folderDAOService;
 	
 	private IRemoteDocumentRepository remoteDocumentRepository;
+	
+	private IEntityMetadataDAOService entityMetaDataDAOService;
 	
 	private boolean appServiceInititialized = false;
 
@@ -117,6 +120,7 @@ public class MainMVPApplication extends Application implements IMainApplication,
 			this.entityFactoryPresenterParams.put(IEntityEditorFactory.FACTORY_PARAM_IDOCLIB_REPO_SERVICE,this.remoteDocumentRepository);
 			this.entityFactoryPresenterParams.put(IEntityEditorFactory.FACTORY_PARAM_IFOLDER_SERVICE,this.folderDAOService);
 			this.entityFactoryPresenterParams.put(IEntityEditorFactory.FACTORY_PARAM_MAIN_APP,this);
+			this.entityFactoryPresenterParams.put(IEntityEditorFactory.FACTORY_PARAM_IENTITY_METADATA_SERVICE, entityMetaDataDAOService);
 			
 			mainEventBus.start(this);
 			
@@ -417,6 +421,18 @@ public class MainMVPApplication extends Application implements IMainApplication,
 			IRemoteDocumentRepository remoteDocumentRepository, Map properties) {
 		logger.debug("unbindRemoteDocumentRepository()");
 		this.remoteDocumentRepository  = null;
+	}
+	
+	public void bindEntityMetaDataDAOService(
+			IEntityMetadataDAOService entityMetaDataDAOService, Map properties) {
+		logger.debug("bindEntityMetaDataDAOService()");
+		this.entityMetaDataDAOService = entityMetaDataDAOService;
+	}
+
+	public void unbindEntityMetaDataDAOService(
+			IEntityMetadataDAOService entityMetaDataDAOService, Map properties) {
+		logger.debug("unbindEntityMetaDataDAOService()");
+		this.entityMetaDataDAOService  = null;
 	}	
 	
 	public void bindFolderDAOService(

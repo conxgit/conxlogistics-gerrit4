@@ -1,5 +1,6 @@
 package com.conx.logistics.kernel.metamodel.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -24,7 +25,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Entity
 @Table(name="sysmmtype")
 @Inheritance( strategy = InheritanceType.SINGLE_TABLE )
-public abstract class AbstractType {
+public abstract class AbstractType implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")

@@ -17,7 +17,7 @@ public class NoteItem extends MultitenantBaseEntity {
     @ManyToOne(targetEntity = Note.class)
     private Note parentNote;
     
-    @OneToOne(targetEntity = NoteType.class)
+    @ManyToOne(targetEntity = NoteType.class)
     private NoteType noteType;    
     
     @Size(max=4096)

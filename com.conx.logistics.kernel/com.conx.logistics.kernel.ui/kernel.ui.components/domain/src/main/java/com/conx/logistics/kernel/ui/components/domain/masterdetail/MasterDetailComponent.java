@@ -2,7 +2,6 @@ package com.conx.logistics.kernel.ui.components.domain.masterdetail;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.conx.logistics.kernel.datasource.domain.DataSource;
@@ -11,8 +10,10 @@ import com.conx.logistics.kernel.ui.components.domain.table.ConXTable;
 
 @Entity
 public class MasterDetailComponent extends AbstractConXComponent {
+	private static final long serialVersionUID = -3219294587155961706L;
+
 	@ManyToOne
-	private ConXTable table;	
+	private AbstractConXComponent masterComponent;
 	
 	@OneToOne
 	private LineEditorContainerComponent lineEditorPanel;
@@ -36,16 +37,16 @@ public class MasterDetailComponent extends AbstractConXComponent {
 			ConXTable table,
 			LineEditorContainerComponent lineEditorPanel) {
 		this();
-		this.table = table;
+		this.masterComponent = table;
 		this.lineEditorPanel = lineEditorPanel;
 	}
 
-	public ConXTable getTable() {
-		return table;
+	public AbstractConXComponent getMasterComponent() {
+		return masterComponent;
 	}
 
-	public void setTable(ConXTable table) {
-		this.table = table;
+	public void setMasterComponent(AbstractConXComponent masterComponent) {
+		this.masterComponent = masterComponent;
 		this.setDataSource(getDataSource());
 	}
 

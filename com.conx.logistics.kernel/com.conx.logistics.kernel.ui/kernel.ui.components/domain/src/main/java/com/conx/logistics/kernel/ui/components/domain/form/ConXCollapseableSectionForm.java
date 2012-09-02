@@ -1,97 +1,49 @@
 package com.conx.logistics.kernel.ui.components.domain.form;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
-import javax.persistence.Transient;
 
 import com.conx.logistics.kernel.datasource.domain.DataSource;
-import com.conx.logistics.kernel.datasource.domain.DataSourceField;
-import com.conx.logistics.kernel.ui.components.domain.AbstractConXField;
-import com.conx.logistics.kernel.ui.components.domain.layout.AbstractConXLayout;
 
 @Entity
 public class ConXCollapseableSectionForm extends ConXForm {
+	private static final long serialVersionUID = 7927975246835400006L;
 	
-	@Transient
-	private Map<String,FieldSet> fieldSetMap = null;
-	
-	@Transient
-	private Map<String,DataSourceField> fieldMap = null;	
+	@OneToMany(mappedBy = "form", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<FieldSet> fieldSetSet = new HashSet<FieldSet>();
 
-	
-	@OneToMany
-	private List<FieldSet> fieldSetList = new ArrayList<FieldSet>();
-	
-	
 	public ConXCollapseableSectionForm() {
 		super("collapseableSectionForm");
 	}
-
-
-	public List<FieldSet> getFieldSetList() {
-		return fieldSetList;
+	
+	public ConXCollapseableSectionForm(DataSource ds) {
+		super("collapseableSectionForm", ds);
 	}
 	
-	public Map<String, FieldSet> getFieldSetMap() {
-		if (fieldSetMap == null)
-		{
-			fieldSetMap = new HashMap<String, FieldSet>();
-			Map<String, DataSourceField> fm;
-			for (FieldSet fieldSet : getFieldSetList())
-			{
-				fm = fieldSet.getFieldMap();
-				for (String fieldName : fm.keySet())
-				{
-					fieldSetMap.put(fieldName, fieldSet);
-				}
+	public ConXCollapseableSectionForm(DataSource ds, Set<FieldSet> fieldSetSet) {
+		super("collapseableSectionForm", ds);
+		this.fieldSetSet = fieldSetSet;
+	}
+	
+	public Set<FieldSet> getFieldSetSet() {
+		return fieldSetSet;
+	}
+
+	public void setFieldSetSet(Set<FieldSet> fieldSetSet) {
+		this.fieldSetSet = fieldSetSet;
+	}
+	
+	public FieldSet getFieldSetForField(String fieldName) {
+		for (FieldSet fs : fieldSetSet) {
+			if (fs.getField(fieldName) != null) {
+				return fs;
 			}
 		}
-		return fieldSetMap;
-	}	
-	
-	public Map<String, DataSourceField> getFieldMap() {
-		if (fieldMap == null)
-		{
-			fieldMap = new HashMap<String, DataSourceField>();
-			Map<String, DataSourceField> fm;
-			for (FieldSet fieldSet : getFieldSetList())
-			{
-				fm = fieldSet.getFieldMap();
-				fieldMap.putAll(fm);
-			}
-		}
-		return fieldMap;
-	}		
-	
-	public FieldSet getFieldSetForField(String fieldName)
-	{
-		return getFieldSetMap().get(fieldName);
+		return null;
 	}
-	
-	public DataSourceField getField(String fieldName)
-	{
-		return getFieldMap().get(fieldName);
-	}	
-
-
-	public void setFieldSetList(List<FieldSet> fieldSetList) {
-		this.fieldSetList = fieldSetList;
-	}
-
-
-	public ConXCollapseableSectionForm(DataSource ds,AbstractConXLayout layout, List<FieldSet> fieldSetList) {
-		this(ds,layout);
-		this.fieldSetList = fieldSetList;
-	}
-	
-	public ConXCollapseableSectionForm(DataSource ds,AbstractConXLayout layout) {
-		this();
-		setLayout(layout);
-		setDataSource(ds);
-	}	
 }

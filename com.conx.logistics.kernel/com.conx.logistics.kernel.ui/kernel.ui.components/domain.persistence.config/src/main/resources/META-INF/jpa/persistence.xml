@@ -20,7 +20,6 @@
 		<class>com.conx.logistics.kernel.ui.components.domain.form.ConXTextField</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.form.FieldSet</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.form.FieldSetField</class>
-		<class>com.conx.logistics.kernel.ui.components.domain.form.FormField</class>
 		
 		<class>com.conx.logistics.kernel.ui.components.domain.layout.AbstractConXLayout</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.layout.AbstractConXOrderedLayout</class>

@@ -1,9 +1,7 @@
 package com.conx.logistics.kernel.ui.components.domain;
 
-import java.util.ArrayList;
 import java.util.Set;
 
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -11,12 +9,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.DiscriminatorOptions;
+
 import com.conx.logistics.kernel.datasource.domain.DataSource;
 import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
 
 @Entity
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @Table(name="sysuicomponent")
+@DiscriminatorOptions(force=true)
 public class AbstractConXComponent extends MultitenantBaseEntity implements Sizeable {
 
     private static final long serialVersionUID = 6207901499318773670L;

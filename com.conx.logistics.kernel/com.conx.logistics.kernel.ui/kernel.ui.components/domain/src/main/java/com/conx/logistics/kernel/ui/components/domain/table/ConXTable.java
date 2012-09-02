@@ -5,14 +5,16 @@ import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import javax.persistence.Transient;
+import javax.persistence.OneToOne;
 
 import com.conx.logistics.kernel.datasource.domain.DataSource;
-import com.conx.logistics.kernel.datasource.domain.DataSourceField;
 import com.conx.logistics.kernel.ui.components.domain.AbstractConXField;
+import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent;
 
 @Entity
 public class ConXTable extends AbstractConXField {
+	private static final long serialVersionUID = 8096124154666924743L;
+
 	@OneToMany(mappedBy="table")
 	private Set<ColumnWidth> columnWidths = new HashSet<ColumnWidth>();
 	
@@ -61,7 +63,13 @@ public class ConXTable extends AbstractConXField {
      * Is table sorting disabled alltogether; even if some of the properties
      * would be sortable.
      */
-    private boolean sortDisabled = false;	
+    private boolean sortDisabled = false;
+    
+    /**
+     * Editor for each row. Usually used when a row is double clicked.
+     */
+    @OneToOne
+    private MasterDetailComponent recordEditor;
 
 	public ConXTable() {
 		super("table");
@@ -156,5 +164,13 @@ public class ConXTable extends AbstractConXField {
 
 	public void setSortDisabled(boolean sortDisabled) {
 		this.sortDisabled = sortDisabled;
+	}
+
+	public MasterDetailComponent getRecordEditor() {
+		return recordEditor;
+	}
+
+	public void setRecordEditor(MasterDetailComponent childEntityEditor) {
+		this.recordEditor = childEntityEditor;
 	}
 }

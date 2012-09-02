@@ -26,6 +26,7 @@ public interface IEntityEditorFactory {
 	//-- Services
 	public final static String FACTORY_PARAM_IDOCLIB_REPO_SERVICE = "IDOCLIB_REPO_SERVICE";
 	public final static String FACTORY_PARAM_IFOLDER_SERVICE = "IFOLDER_SERVICE";
+	public final static String FACTORY_PARAM_IENTITY_METADATA_SERVICE = "IENTITY_METADATA_SERVICE";
 	public final static String FACTORY_PARAM_MAIN_APP = "MAIN_APP";
 	
 	public Object create(AbstractConXComponent conXComponent, Map<String,Object> params);

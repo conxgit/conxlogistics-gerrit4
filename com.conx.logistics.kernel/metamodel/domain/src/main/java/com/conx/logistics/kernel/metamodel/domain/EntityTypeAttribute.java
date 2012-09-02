@@ -1,5 +1,7 @@
 package com.conx.logistics.kernel.metamodel.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,7 +13,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="sysmmentitytypeattribute")
-public class EntityTypeAttribute {
+public class EntityTypeAttribute implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")

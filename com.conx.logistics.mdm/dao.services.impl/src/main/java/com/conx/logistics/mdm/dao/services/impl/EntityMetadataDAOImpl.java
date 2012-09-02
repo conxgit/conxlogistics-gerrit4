@@ -16,7 +16,6 @@ import javax.persistence.criteria.Root;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,13 +26,13 @@ import com.conx.logistics.mdm.domain.metadata.DefaultEntityMetadata;
 @Transactional
 @Repository
 public class EntityMetadataDAOImpl implements IEntityMetadataDAOService {
-	protected Logger logger = LoggerFactory.getLogger(this.getClass());	
-    /**
-     * Spring will inject a managed JPA {@link EntityManager} into this field.
-     */
-    @PersistenceContext
-    private EntityManager em;	
-    
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
+	/**
+	 * Spring will inject a managed JPA {@link EntityManager} into this field.
+	 */
+	@PersistenceContext
+	private EntityManager em;
+
 	public void setEm(EntityManager em) {
 		this.em = em;
 	}
@@ -41,19 +40,17 @@ public class EntityMetadataDAOImpl implements IEntityMetadataDAOService {
 	@Override
 	public DefaultEntityMetadata get(long id) {
 		return em.getReference(DefaultEntityMetadata.class, id);
-	}    
+	}
 
 	@Override
 	public List<DefaultEntityMetadata> getAll() {
-		return em.createQuery("select o from com.conx.logistics.mdm.domain.metadata.DefaultEntityMetadata o record by o.id",DefaultEntityMetadata.class).getResultList();
+		return em.createQuery("select o from com.conx.logistics.mdm.domain.metadata.DefaultEntityMetadata o record by o.id", DefaultEntityMetadata.class).getResultList();
 	}
-	
+
+	@SuppressWarnings("rawtypes")
 	@Override
 	public DefaultEntityMetadata getByClass(Class entityClass) {
-		DefaultEntityMetadata record = null;
-		
-		try
-		{
+		try {
 			CriteriaBuilder builder = em.getCriteriaBuilder();
 			CriteriaQuery<DefaultEntityMetadata> query = builder.createQuery(DefaultEntityMetadata.class);
 			Root<DefaultEntityMetadata> rootEntity = query.from(DefaultEntityMetadata.class);
@@ -62,32 +59,32 @@ public class EntityMetadataDAOImpl implements IEntityMetadataDAOService {
 
 			TypedQuery<DefaultEntityMetadata> typedQuery = em.createQuery(query);
 			typedQuery.setParameter(p, entityClass.getSimpleName());
-			
-			return typedQuery.getSingleResult();
-			//TypedQuery<DefaultEntityMetadata> q = em.createQuery("select DISTINCT  o from com.conx.logistics.mdm.domain.metadata.DefaultEntityMetadata o WHERE o.entityJavaSimpleType = :entityJavaSimpleType",DefaultEntityMetadata.class);
-			//q.setParameter("entityJavaSimpleType", entityClass.getSimpleName());
-			//record = q.getSingleResult();
-		}
-		catch(NoResultException e){}
-		catch(Exception e)
-		{
+
+			DefaultEntityMetadata result = typedQuery.getSingleResult();
+			return result;
+			// TypedQuery<DefaultEntityMetadata> q =
+			// em.createQuery("select DISTINCT  o from com.conx.logistics.mdm.domain.metadata.DefaultEntityMetadata o WHERE o.entityJavaSimpleType = :entityJavaSimpleType",DefaultEntityMetadata.class);
+			// q.setParameter("entityJavaSimpleType",
+			// entityClass.getSimpleName());
+			// record = q.getSingleResult();
+		} catch (NoResultException e) {
 			e.printStackTrace();
-		}
-		catch(Error e)
-		{
+		} catch (Exception e) {
+			e.printStackTrace();
+		} catch (Error e) {
 			StringWriter sw = new StringWriter();
 			e.printStackTrace(new PrintWriter(sw));
 			String stacktrace = sw.toString();
 			logger.error(stacktrace);
-		}		
-		
-		return record;
-	}	
+		}
+
+		return null;
+	}
 
 	@Override
 	public DefaultEntityMetadata add(DefaultEntityMetadata record) {
 		record = em.merge(record);
-		
+
 		return record;
 	}
 
@@ -101,12 +98,11 @@ public class EntityMetadataDAOImpl implements IEntityMetadataDAOService {
 		return em.merge(record);
 	}
 
-
+	@SuppressWarnings("rawtypes")
 	@Override
 	public DefaultEntityMetadata provide(Class entityClass) {
 		DefaultEntityMetadata existingRecord = getByClass(entityClass);
-		if (Validator.isNull(existingRecord))
-		{		
+		if (Validator.isNull(existingRecord)) {
 			existingRecord = new DefaultEntityMetadata();
 			existingRecord.setDateCreated(new Date());
 			existingRecord.setDateLastUpdated(new Date());

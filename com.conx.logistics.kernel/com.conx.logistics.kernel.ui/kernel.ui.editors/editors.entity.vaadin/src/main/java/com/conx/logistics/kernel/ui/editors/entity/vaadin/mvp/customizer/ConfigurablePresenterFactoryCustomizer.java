@@ -7,20 +7,24 @@ import org.vaadin.mvp.presenter.IPresenterFactoryCustomizer;
 
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.ConfigurableBasePresenter;
 
-public class ConfigurablePresenterFactoryCustomizer implements
-		IPresenterFactoryCustomizer {
-	
-	private Map<String,Object> config;
+public class ConfigurablePresenterFactoryCustomizer implements IPresenterFactoryCustomizer {
+
+	private Map<String, Object> config;
 
 	public ConfigurablePresenterFactoryCustomizer(Map<String, Object> config) {
 		super();
 		this.config = config;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void customize(IPresenter presenter) {
-		ConfigurableBasePresenter configPresenter = (ConfigurableBasePresenter)presenter;
-		configPresenter.setConfig(this.config);
+		if (presenter != null) {
+			ConfigurableBasePresenter configPresenter = (ConfigurableBasePresenter) presenter;
+			configPresenter.setConfig(this.config);
+		} else {
+			String err = "placeholder line";
+		}
 	}
 
 	public Map<String, Object> getConfig() {

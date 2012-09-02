@@ -168,6 +168,7 @@ public class MockApp extends Application {
 			config.put("presenterFactory",presenterFactory);
 			config.put("iremoteDocumentRepository",documentRepositoryService);
 			config.put("ifolderDAOService",folderDAOService);
+			config.put("ientityMetadataDAOService", entityMetadataDAOService);
 			
 			presenterFactory.setCustomizer(new ConfigurablePresenterFactoryCustomizer(config));
 			

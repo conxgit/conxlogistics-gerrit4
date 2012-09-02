@@ -10,6 +10,7 @@ import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
 
 @Entity
 public class LineEditorContainerComponent extends AbstractConXComponent {
+	private static final long serialVersionUID = 1334745924025959679L;
 	
 	@OneToMany(mappedBy="mainComponent")
 	private Set<LineEditorComponent> lineEditors = new HashSet<LineEditorComponent>();
