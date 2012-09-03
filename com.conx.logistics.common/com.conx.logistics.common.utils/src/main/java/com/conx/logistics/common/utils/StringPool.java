@@ -7,6 +7,8 @@ public class StringPool {
 
 	public static final String APOSTROPHE = "'";
 
+	public static final String[] ASCII_TABLE = new String[128];
+
 	public static final String AT = "@";
 
 	public static final String BACK_SLASH = "\\";
@@ -15,9 +17,11 @@ public class StringPool {
 
 	public static final String BLANK = "";
 
-	public static final String CDATA_OPEN = "<![CDATA[";
+	public static final String CARET = "^";
 
 	public static final String CDATA_CLOSE = "]]>";
+
+	public static final String CDATA_OPEN = "<![CDATA[";
 
 	public static final String CLOSE_BRACKET = "]";
 
@@ -33,23 +37,37 @@ public class StringPool {
 
 	public static final String DASH = "-";
 
+	public static final String DOLLAR = "$";
+
+	public static final String DOLLAR_AND_OPEN_CURLY_BRACE = "${";
+
 	public static final String DOUBLE_APOSTROPHE = "''";
+
+	public static final String DOUBLE_BACK_SLASH = "\\\\";
 
 	public static final String DOUBLE_CLOSE_BRACKET = "]]";
 
 	public static final String DOUBLE_CLOSE_CURLY_BRACE = "}}";
 
+	public static final String DOUBLE_DASH = "--";
+
 	public static final String DOUBLE_OPEN_BRACKET = "[[";
 
 	public static final String DOUBLE_OPEN_CURLY_BRACE = "{{";
 
+	public static final String DOUBLE_PERIOD = "..";
+
+	public static final String DOUBLE_QUOTE = "\"\"";
+
 	public static final String DOUBLE_SLASH = "//";
+
+	public static final String DOUBLE_SPACE = "  ";
+
+	public static final String DOUBLE_UNDERLINE = "__";
 
 	public static final String EQUAL = "=";
 
-	public static final String GREATER_THAN = ">";
-
-	public static final String GREATER_THAN_OR_EQUAL = ">=";
+	public static final String EXCLAMATION = "!";
 
 	public static final String FALSE = "false";
 
@@ -57,9 +75,21 @@ public class StringPool {
 
 	public static final String FOUR_SPACES = "    ";
 
+	public static final String GRAVE_ACCENT = "`";
+
+	public static final String GREATER_THAN = ">";
+
+	public static final String GREATER_THAN_OR_EQUAL = ">=";
+
+	public static final String INVERTED_EXCLAMATION = "\u00A1";
+
+	public static final String INVERTED_QUESTION = "\u00BF";
+
 	public static final String IS_NOT_NULL = "IS NOT NULL";
 
 	public static final String IS_NULL = "IS NULL";
+
+	public static final String ISO_8859_1 = "ISO-8859-1";
 
 	public static final String LESS_THAN = "<";
 
@@ -79,11 +109,15 @@ public class StringPool {
 
 	public static final String NULL = "null";
 
+	public static final String NULL_CHAR = "\u0000";
+
 	public static final String OPEN_BRACKET = "[";
 
 	public static final String OPEN_CURLY_BRACE = "{";
 
 	public static final String OPEN_PARENTHESIS = "(";
+
+	public static final String OS_EOL = System.getProperty("line.separator");
 
 	public static final String PERCENT = "%";
 
@@ -113,6 +147,8 @@ public class StringPool {
 
 	public static final String TAB = "\t";
 
+	public static final String THREE_SPACES = "   ";
+
 	public static final String TILDE = "~";
 
 	public static final String TRUE = "true";
@@ -122,4 +158,10 @@ public class StringPool {
 	public static final String UTC = "UTC";
 
 	public static final String UTF8 = "UTF-8";
+
+	static {
+		for (int i = 0; i < 128; i++) {
+			ASCII_TABLE[i] = String.valueOf((char)i);
+		}
+	}
 }
