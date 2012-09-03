@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -1390,7 +1391,54 @@ public class StringUtil {
 
 	    return root + c;
 	}
+	
+	public static String toHexString(int i) {
+		char[] buffer = new char[8];
 
+		int index = 8;
+
+		do {
+			buffer[--index] = _HEX_DIGITS[i & 15];
+
+			i >>>= 4;
+		}
+		while (i != 0);
+
+		return new String(buffer, index, 8 - index);
+	}
+
+	public static String toHexString(long l) {
+		char[] buffer = new char[16];
+
+		int index = 16;
+
+		do {
+			buffer[--index] = _HEX_DIGITS[(int) (l & 15)];
+
+			l >>>= 4;
+		}
+		while (l != 0);
+
+		return new String(buffer, index, 16 - index);
+	}
+
+	public static String toHexString(Object obj) {
+		if (obj instanceof Integer) {
+			return toHexString(((Integer)obj).intValue());
+		}
+		else if (obj instanceof Long) {
+			return toHexString(((Long)obj).longValue());
+		}
+		else {
+			return String.valueOf(obj);
+		}
+	}	
+
+	
+	private static final char[] _HEX_DIGITS = {
+		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd',
+		'e', 'f'
+	};	
 
 	private static Logger _log = LoggerFactory.getLogger(StringUtil.class.getName());
 }
