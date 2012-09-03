@@ -13,7 +13,10 @@ import com.conx.logistics.app.whse.ui.view.WarehouseView;
 import com.conx.logistics.app.whse.ui.view.IWarehouseView;
 import com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication;
 import com.conx.logistics.kernel.ui.common.mvp.view.feature.FeatureTabbedView;
+import com.conx.logistics.mdm.domain.BaseEntity;
+import com.conx.logistics.mdm.domain.application.DocViewFeature;
 import com.conx.logistics.mdm.domain.application.Feature;
+import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.VerticalLayout;
@@ -69,6 +72,10 @@ public class WarehousePresenter extends BasePresenter<IWarehouseView, WarehouseE
   
   public void onShowDialog(Window dialog) {
     this.application.getMainWindow().addWindow(dialog);
+  }
+  
+  public void onOpenDocument(FileEntry fileEntry) {
+	  fv.setFeature(new DocViewFeature(fileEntry));
   }
   
   @Override

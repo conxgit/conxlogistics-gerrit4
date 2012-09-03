@@ -7,6 +7,7 @@ import org.vaadin.mvp.presenter.BasePresenter;
 import com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication;
 import com.conx.logistics.kernel.ui.common.mvp.StartableApplicationEventBus;
 import com.conx.logistics.mdm.domain.application.Feature;
+import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.vaadin.ui.Field.ValueChangeEvent;
 
 public interface WarehouseEventBus extends StartableApplicationEventBus {
@@ -21,4 +22,7 @@ public interface WarehouseEventBus extends StartableApplicationEventBus {
   
   @Event(handlers = { WarehousePresenter.class })
   public void openFeatureView(Feature feature);  
+  
+  @Event(handlers = { WarehousePresenter.class })
+  public void openDocument(FileEntry fileEntry);   
 }
