@@ -2,6 +2,7 @@ package com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -20,11 +21,13 @@ import com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocument
 import com.conx.logistics.kernel.ui.components.domain.attachment.AttachmentEditorComponent;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.FormMode;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.ConfigurableBasePresenter;
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.MultiLevelEntityEditorEventBus;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment.view.AttachmentEditorView;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment.view.AttachmentEditorView.ICreateAttachmentListener;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment.view.AttachmentEditorView.IInspectAttachmentListener;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment.view.AttachmentEditorView.ISaveAttachmentListener;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment.view.IAttachmentEditorView;
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.view.IMultiLevelEntityEditorView;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
 import com.conx.logistics.kernel.ui.service.contribution.IMainApplication;
 import com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService;
@@ -34,8 +37,13 @@ import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.conx.logistics.mdm.domain.documentlibrary.Folder;
 import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.addon.jpacontainer.JPAContainer;
+import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.addon.jpacontainer.util.DefaultQueryModifierDelegate;
 import com.vaadin.data.Item;
+import com.vaadin.event.ItemClickEvent;
+import com.vaadin.event.ItemClickEvent.ItemClickListener;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 
 @Presenter(view = AttachmentEditorView.class)
 public class AttachmentEditorPresenter extends ConfigurableBasePresenter<IAttachmentEditorView, AttachmentEditorEventBus> implements ICreateAttachmentListener, ISaveAttachmentListener, IInspectAttachmentListener {
@@ -48,7 +56,7 @@ public class AttachmentEditorPresenter extends ConfigurableBasePresenter<IAttach
 	private List<String> formVisibleFieldNames;
 	private EntityItem<FileEntry> newEntityItem;
 	@SuppressWarnings({ "unused", "rawtypes" })
-	private ConfigurableBasePresenter mlEntityPresenter;
+	private ConfigurableBasePresenter<IMultiLevelEntityEditorView, MultiLevelEntityEditorEventBus> mlEntityPresenter;
 	@SuppressWarnings("unused")
 	private IFolderDAOService docFolderDAOService;
 	private AttachmentEditorComponent attachmentComponent;
@@ -89,8 +97,9 @@ public class AttachmentEditorPresenter extends ConfigurableBasePresenter<IAttach
 			}
 		}
 		updateQueryFilter();
-	}
 
+	}
+	
 	private void updateQueryFilter() {
 		this.entityContainer.getEntityProvider().setQueryModifierDelegate(new DefaultQueryModifierDelegate() {
 			@Override
@@ -112,6 +121,29 @@ public class AttachmentEditorPresenter extends ConfigurableBasePresenter<IAttach
 
 	@Override
 	public void bind() {
+		getView().addItemClickListener(new ItemClickListener() {
+			private static final long serialVersionUID = -7680485120452162721L;
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public void itemClick(ItemClickEvent event) {
+				if (event.isDoubleClick()) {
+					JPAContainerItem<FileEntry> jpaItem = (JPAContainerItem<FileEntry>) event.getItem();
+					onInspectAttachment(jpaItem.getEntity());
+				} else {
+					getView().entityItemSingleClicked((EntityItem)event.getItem());
+				}
+			}
+		});
+		
+		getView().addNewItemListener( new ClickListener() {
+			private static final long serialVersionUID = -60083075517936436L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				getView().newEntityItemActioned();
+			}
+		});
 	}
 
 	public boolean isInitialized() {
@@ -162,5 +194,6 @@ public class AttachmentEditorPresenter extends ConfigurableBasePresenter<IAttach
 
 	@Override
 	public void onInspectAttachment(FileEntry fileEntry) {
+		mlEntityPresenter.getEventBus().viewDocument(fileEntry);
 	}
 }

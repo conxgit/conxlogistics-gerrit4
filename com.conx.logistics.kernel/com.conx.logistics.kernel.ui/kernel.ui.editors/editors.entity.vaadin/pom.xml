@@ -38,7 +38,13 @@
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.kernel.ui.services</artifactId>
 			<version>1.0.0</version>
-		</dependency>					
+		</dependency>		
+		
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.ui.common</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 
 		<!-- GWT/Vaadin -->
 		<dependency>

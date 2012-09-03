@@ -2,6 +2,7 @@ package com.conx.logistics.kernel.documentlibrary.remote.services.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -15,8 +16,10 @@ import org.apache.http.ParseException;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
@@ -25,12 +28,15 @@ import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.SyncBasicHttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.conx.logistics.common.utils.HTTPUtil;
 import com.conx.logistics.common.utils.StringUtil;
 import com.conx.logistics.common.utils.Validator;
 import com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository;
@@ -40,6 +46,7 @@ import com.conx.logistics.mdm.domain.BaseEntity;
 import com.conx.logistics.mdm.domain.documentlibrary.DocType;
 import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.conx.logistics.mdm.domain.documentlibrary.Folder;
+import com.conx.logistics.common.utils.HTMLUtil;
 
 import flexjson.JSONDeserializer;
 
@@ -252,6 +259,42 @@ public class LiferayPortalDocumentRepositoryImpl implements
 		
 		return fe;
 	}
+	
+	@Override
+	public InputStream getFileAsStream(String fileEntryId, String version)  throws Exception{
+		// Add AuthCache to the execution context
+		BasicHttpContext ctx = new BasicHttpContext();
+		ctx.setAttribute(ClientContext.AUTH_CACHE, authCache);
+		
+		HttpGet get = new HttpGet(
+				"/api/secure/jsonws/dlfileentry/get-file-as-stream");
+
+		HttpParams params = new SyncBasicHttpParams();
+		params.setParameter("fileEntryId", fileEntryId);
+		params.setParameter("version", version);
+		get.setParams(params);
+		
+		
+		HttpResponse resp = httpclient.execute(targetHost, get, ctx);
+		System.out.println("getFileAsStream Status:["+resp.getStatusLine()+"]");
+		
+		InputStream is = resp.getEntity().getContent();
+		
+		return is;
+	}
+	
+
+	@Override
+	public String getFileAsURL(String fileEntryId, String version)
+			throws Exception {
+		FileEntry fe = getFileEntryById(fileEntryId);
+		// TODO Auto-generated method stub
+		//http://localhost:8080/documents/10180/16279/Bill+Of+Laden/7b30b6bd-4174-40e3-aadb-63f2cbadd8fe
+		//http://<host>:<port>/documents/<groupd.id>/<folder.id>/<url_encode_title>/<uuid>
+		String encodedUrl = targetHost.toString()+"/documents/"+loginGroupId+"/"+fe.getFolderId()+"/"+HTTPUtil.encodeURL(fe.getTitle(), true)+"/"+fe.getUuid();
+		return encodedUrl;
+	}		
+	
 
 	@Override
 	public FileEntry deleteFileEntryById(String folderId, String fileEntryId)  throws Exception{
@@ -724,5 +767,5 @@ public class LiferayPortalDocumentRepositoryImpl implements
 			String description) throws Exception {
 		FileEntry fe = addorUpdateFileEntry(Long.toString(folder.getFolderId()), sourceFileName, mimeType, title, description);
 		return fe;
-	}		
+	}	
 }

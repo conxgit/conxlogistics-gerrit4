@@ -36,5 +36,11 @@
 
     
 
-    <inherits name="com.conx.logistics.kernel.ui.common.gwt.KernelUICommonWidgetset" />
+    
+
+    <inherits name="org.vaadin.teemu.wizards.WizardsforvaadinWidgetset" />
+
+    <inherits name="org.vaadin.csstools.CssToolsWidgetset" />
+
+    <inherits name="org.vaadin.weelayout.WeelayoutWidgetset" />
 </module>

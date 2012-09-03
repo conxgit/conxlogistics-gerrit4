@@ -38,6 +38,7 @@ Import-Package:
   org.apache.http.util;version="[4.0,5.0)",
   org.apache.http.entity.mime;version="[4.0,5.0)",
   org.apache.http.entity.mime.content;version="[4.0,5.0)",
+  org.apache.http.params;version="[4.0,5.0)",
   flexjson;version="[2.0,3.0)",
   javax.persistence;version="0",
   javax.persistence.metamodel;version="0"

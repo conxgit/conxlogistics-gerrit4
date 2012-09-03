@@ -1,0 +1,322 @@
+/* Font Style */
+.footnote,
+.caption {
+  font-style: italic; }
+
+/* Font Weight */
+.normal,
+.page-heading,
+.side-nav ul ul a,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: normal; }
+
+.bold,
+.portlet-title,
+.page-multiheading,
+.page-subheading,
+.section-heading,
+.asset-heading,
+.asset-tag-label,
+.section-subheading,
+.section-terheading,
+.callout-heading,
+.aside-subheading,
+.page-nav a,
+.side-nav a,
+.tabs-nav a,
+.ui-tabs a,
+.ui-tabs span,
+.tabs-slide .heading a,
+.important-list,
+.basic-article .heading,
+.btn,
+.partner-banner .heading,
+.story-banner .heading,
+.event-chart a,
+.event-chart .summary,
+.event-blurb .summary,
+.portlet-blogs .heading,
+.portlet-blogs-aggregator .heading,
+.portlet-blogs .user-info a,
+.portlet-blogs-aggregator .user-info a,
+.portlet-blogs .count,
+.portlet-blogs-aggregator .count,
+.portlet-message-boards .figure .heading,
+.portlet-blogs .comments,
+.portlet-blogs-aggregator .comments,
+.portlet-blogs .entry-title,
+.portlet-blogs .entry-body h1,
+.portlet-blogs-aggregator .entry-title,
+.wiki-body h3,
+.wiki-body h4 {
+  font-weight: bold; }
+
+/* Font Size */
+.size-075,
+.portlet-icon-back,
+.caption,
+.event-blurb .location,
+small {
+  font-size: 0.75em; }
+
+.size-08,
+.controls-visible .portlet-borderless-bar,
+.foot-nav .legal a,
+.event-chart .dtstart,
+.event-chart .location,
+.event-blurb .summary,
+#dock a,
+#dock span,
+#dock-menu .is-menu a,
+.portlet-message-boards-thread-overview .threads .author {
+  font-size: 0.8em; }
+
+.size-09,
+.page-nav a,
+.aside-mod,
+footer {
+  font-size: 0.9em; }
+
+.size-1,
+.portlet-title,
+.tabs-slide .heading,
+.event-chart .summary,
+.product-highlight h2,
+.thread-tree .thread-heading,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: 1em; }
+
+.size-12,
+.callout-heading,
+.section-subheading,
+.aside-subheading,
+.important-list,
+.partner-banner .heading,
+.story-banner .heading,
+.callout-container .basic-article .heading,
+.wiki-body h4 {
+  font-size: 1.125em; }
+
+.size-13,
+.side-nav .heading,
+.page-heading-desc,
+.section-heading,
+.asset-heading,
+.asset-tag-label,
+.portlet-blogs .entry-title,
+.portlet-blogs .entry-body h1,
+.portlet-blogs-aggregator .entry-title,
+.wiki-body h2,
+h3 {
+  font-size: 1.3em; }
+
+.size-14,
+.page-subheading,
+.basic-article .heading {
+  font-size: 1.4em; }
+
+.size-18,
+.portlet-blogs .blog-news .heading,
+.portlet-blogs-aggregator .blog-news .heading {
+  font-size: 1.8em; }
+
+.size-2,
+.portlet-blogs .heading,
+.portlet-blogs-aggregator .heading {
+  font-size: 2em; }
+
+.size-24,
+.page-multiheading {
+  font-size: 2.4em; }
+
+.size-26,
+.page-heading {
+  font-size: 2.6em; }
+
+/* Line Height */
+.line-1,
+#dock a,
+#dock span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: 1; }
+
+.line-1-1,
+.aside .aside-subheading {
+  line-height: 1.1; }
+
+.line-1-2,
+.page-heading {
+  line-height: 1.2; }
+
+.regular-line-height,
+.side-nav a,
+.callout-heading,
+.page-subheading,
+.section-heading,
+.asset-heading,
+.asset-tag-label,
+.section-subheading,
+.section-terheading,
+.basic-article .heading,
+.btn,
+.portlet-blogs .user-info,
+.portlet-blogs-aggregator .user-info,
+.portlet-blogs .entry-title,
+.portlet-blogs .entry-body h1,
+.portlet-blogs-aggregator .entry-title,
+.wiki-body h3,
+.wiki-body h4 {
+  line-height: 1.25; }
+
+.line-1-3,
+.side-nav .heading,
+.page-heading-desc,
+.section-heading,
+.asset-heading,
+.asset-tag-label,
+.portlet-blogs .entry-title,
+.portlet-blogs .entry-body h1,
+.portlet-blogs-aggregator .entry-title {
+  line-height: 1.3; }
+
+.line-1-15,
+.page-multiheading,
+.portlet-blogs .heading,
+.portlet-blogs-aggregator .heading {
+  line-height: 1.15; }
+
+.line-1-5,
+.event-blurb .summary,
+.thread-tree a,
+.thread-tree a * {
+  line-height: 1.5; }
+
+.line-16,
+.btn-icon,
+.event-chart .dtstart,
+.event-chart .summary,
+.event-chart .location {
+  line-height: 16px; }
+
+/* Text Align */
+.text-align-left,
+.report .chart,
+.report-aside .chart,
+.report .chart th,
+.report-aside .chart th,
+.report .chart td,
+.report-aside .chart td,
+.report-chart th,
+.report-chart td,
+.portlet-message-boards th,
+.knowledge-base-portlet-admin .taglib-search-iterator th,
+.knowledge-base-portlet-admin .taglib-search-iterator td,
+.knowledge-base-portlet-aggregator .taglib-search-iterator th,
+.knowledge-base-portlet-aggregator .taglib-search-iterator td,
+.knowledge-base-portlet-display .taglib-search-iterator th,
+.knowledge-base-portlet-display .taglib-search-iterator td,
+.knowledge-base-portlet-search .taglib-search-iterator th,
+.knowledge-base-portlet-search .taglib-search-iterator td,
+.portlet-wiki .taglib-search-iterator th,
+.portlet-wiki .taglib-search-iterator td,
+.portlet-software-catalog .taglib-search-iterator th,
+.portlet-software-catalog .taglib-search-iterator td {
+  text-align: left; }
+
+.text-align-center,
+.aside-subheading,
+.aside-mod,
+.btn,
+.report .label,
+.report-chart .label,
+.report-aside .label,
+.callout-report .label,
+.recent-blogger .user-image,
+.portlet-blogs .count,
+.portlet-blogs .comment-count,
+.portlet-blogs-aggregator .count,
+.portlet-blogs-aggregator .comment-count {
+  text-align: center; }
+
+.text-align-right,
+.callout-heading,
+.event-chart .location,
+.report .aside,
+.report-chart .aside,
+.report-aside th,
+.report-aside td,
+.portlet-message-boards .rss,
+.portlet-document-library .login .ctrl-holder label {
+  text-align: right; }
+
+/* Text Decoration */
+.no-text-decoration,
+.portlet-icon-back,
+.page-nav a:hover,
+.side-nav a:hover,
+.tabs-nav a:hover,
+.ui-tabs a:hover,
+.tabs-slide a:hover,
+.foot-nav .legal a:hover,
+.portlet-site-map a:hover,
+.btn:hover,
+.btn-icon:hover,
+.important-list a:hover,
+.plain-list a:hover,
+.aside a:hover,
+.section-heading a:hover,
+.section-subheading a:hover,
+.section-terheading a:hover,
+.foot-nav .copy a:hover,
+#dock a,
+#dock span,
+#dock-menu .is-menu a,
+.heading-link:hover,
+.btn:hover,
+.highlight:hover,
+.link-icon:hover,
+.event-article .summary a:hover,
+.basic-article .heading a:hover,
+.event-chart a:hover,
+.event-blurb a:hover,
+.partner-banner a:hover,
+.story-banner a:hover,
+.portlet-blogs .user-info a:hover,
+.portlet-blogs-aggregator .user-info a:hover,
+.thread-tree a:hover,
+.thread-tree a.selected,
+.portlet-blogs .comments a:hover,
+.portlet-blogs-aggregator .comments a:hover,
+.portlet-blogs .entry-title a:hover,
+.portlet-blogs-aggregator .entry-title a:hover,
+a {
+  text-decoration: none; }
+
+a:hover {
+  text-decoration: underline; }
+
+/* Text Transform */
+.text-uppercase,
+.side-nav .heading,
+.foot-nav,
+.footer-shortcuts,
+.callout-heading,
+.event-chart .location,
+footer {
+  text-transform: uppercase; }
+

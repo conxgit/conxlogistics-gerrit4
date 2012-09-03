@@ -2,6 +2,7 @@ package com.conx.logistics.kernel.documentlibrary.remote.services;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
 import com.conx.logistics.kernel.metamodel.domain.EntityType;
@@ -47,6 +48,10 @@ public interface IRemoteDocumentRepository {
 	
 	public FileEntry getFileEntryByTitle(String parentFolderId, String title)  throws Exception;
 	
+	public 	InputStream getFileAsStream(String fileEntryId, String version) throws Exception;
+	
+	public 	String getFileAsURL(String fileEntryId, String version) throws Exception;
+	
 	public boolean fileEntryExists(String parentFolderId, String name) throws Exception;
 	
 	public FileEntry addFileEntry(String folderId, String sourceFileName, String mimeType, String title, String description) throws Exception;
@@ -86,4 +91,5 @@ public interface IRemoteDocumentRepository {
 	 * @return
 	 */
 	public String getConxlogiFolderId();
+
 }

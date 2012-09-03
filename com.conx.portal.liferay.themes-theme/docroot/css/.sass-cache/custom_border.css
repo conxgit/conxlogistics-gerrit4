@@ -1,0 +1,31 @@
+/* Border */
+.bordered,
+.callout,
+.callout-base,
+.callout-image-simple,
+.partner-banner .heading-image,
+.story-banner .heading-image,
+.callout-report,
+input,
+textarea {
+  border: 1px solid #BABEC2; }
+
+.bordered-left {
+  border-left: 1px solid #BABEC2; }
+
+.bordered-right {
+  border-right: 1px solid #BABEC2; }
+
+.hr {
+  border-bottom: 1px solid #FFF;
+  border-top: 1px solid #BABEC2;
+  font-size: 0;
+  position: relative;
+  text-indent: -9999em;
+  zoom: 1; }
+
+/* Borderless */
+.borderless,
+fieldset {
+  border: 0; }
+

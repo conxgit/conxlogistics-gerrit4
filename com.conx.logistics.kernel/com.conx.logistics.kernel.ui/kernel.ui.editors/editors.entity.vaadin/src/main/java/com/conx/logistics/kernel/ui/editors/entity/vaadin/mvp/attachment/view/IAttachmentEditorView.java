@@ -7,8 +7,11 @@ import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.IEntityEditorCompo
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment.view.AttachmentEditorView.ICreateAttachmentListener;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment.view.AttachmentEditorView.IInspectAttachmentListener;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment.view.AttachmentEditorView.ISaveAttachmentListener;
+import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
+import com.vaadin.event.ItemClickEvent.ItemClickListener;
+import com.vaadin.ui.Button;
 
 public interface IAttachmentEditorView extends IEntityEditorComponentView {
 	public void setItemDataSource(Item item, FormMode mode);
@@ -20,4 +23,10 @@ public interface IAttachmentEditorView extends IEntityEditorComponentView {
 	public void addCreateAttachmentListener(ICreateAttachmentListener listener);
 	public void addSaveAttachmentListener(ISaveAttachmentListener listener);
 	public void addInspectAttachmentListener(IInspectAttachmentListener listener);
+	
+	public void addItemClickListener(ItemClickListener clickListener);
+	public void entityItemSingleClicked(EntityItem item);
+	
+	public void addNewItemListener(Button.ClickListener clickListener);
+	public void newEntityItemActioned();
 }

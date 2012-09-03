@@ -1,0 +1,189 @@
+/* Color */
+.alto {
+  color: #D9D9D9; }
+
+.black-squeeze {
+  color: #EEF4F9; }
+
+.blue-bayoux,
+.page-heading,
+.callout-heading,
+.section-heading a,
+.section-terheading,
+.aside-subheading,
+.important-list a,
+.event-article .summary a,
+.plain-list a,
+.basic-article .heading a,
+.event-chart a,
+.event-blurb a,
+.portlet-blogs .entry-title a,
+.portlet-blogs-aggregator .entry-title a,
+.portlet-wiki a {
+  color: #446D77; }
+
+.cape-cod,
+.side-nav a,
+.aside a,
+.heading-link,
+.tabs-nav a,
+.ui-tabs a,
+.ui-tabs span,
+.tabs-slide a,
+.btn-icon,
+#dock a,
+#dock-menu .is-menu a,
+.event-chart .location,
+.thread-tree a,
+.portlet-blogs .heading a,
+.portlet-blogs-aggregator .heading a,
+.search #term:focus,
+.portlet-blogs .comments a,
+.portlet-blogs-aggregator .comments a,
+.foot-nav .copy a,
+.portlet-message-boards td.taglib-search-iterator-highlighted a b,
+body {
+  color: #474A4B; }
+
+.cerulean,
+.highlight,
+.link-icon,
+.asset-tag-label,
+.portlet-site-map a,
+.side-nav a.selected,
+.side-nav a:hover,
+.section-subheading a,
+.tabs-nav .selected a,
+.tabs-nav a:hover,
+.ui-tabs .current a,
+.ui-tabs a:hover,
+.callout-container .basic-article .heading a,
+.user-profile-section a,
+.portlet-blogs .user-info a,
+.portlet-blogs-aggregator .user-info a,
+.portlet-message-boards .heading a,
+.thread-tree a .thread-heading,
+.portlet-wiki strong a,
+.portlet-wiki td a b,
+.portlet-message-boards td a b {
+  color: #00ADEF; }
+
+.gallery {
+  color: #F0F0F0; }
+
+.meteor,
+.attentive {
+  color: #DD5F13; }
+
+.mountain-mist,
+.foot-nav .legal a,
+.search #term,
+.event-blurb .location {
+  color: #908E91; }
+
+.silver-sand,
+.page-nav a:hover {
+  color: #BABEC2; }
+
+.thunderbird,
+a.highlight:hover,
+a.link-icon:hover,
+.portlet-site-map a:hover,
+.btn-icon:hover,
+.foot-nav .legal a:hover,
+.section-heading a:hover,
+.section-subheading a:hover,
+.important-list a:hover,
+.plain-list a:hover,
+.event-article .summary a:hover,
+#dock a:hover,
+#dock-menu .is-menu a:hover,
+.basic-article .heading a:hover,
+.event-chart a:hover,
+.event-chart .dtstart,
+.event-blurb a:hover,
+.partner-banner .description a,
+.portlet-blogs .entry-title a:hover,
+.portlet-blogs-aggregator .entry-title a:hover,
+.portlet-wiki a:hover,
+.portlet-message-boards .results-row .thread-body a,
+a {
+  color: #CD171D; }
+
+.white,
+.portlet-topper,
+.portlet-section-header,
+.portlet-icon-back,
+.page-nav a,
+.btn,
+.aside .btn,
+.partner-banner a,
+.story-banner a,
+.portlet-message-boards .figure-heading {
+  color: #FFF; }
+
+/* Background */
+.alto-bg,
+#dock .aui-col {
+  background-color: #D9D9D9; }
+
+.black-bg,
+.banner-nav,
+.banner-nav .menu {
+  background-color: #000; }
+
+.gallery-bg,
+.tabs-nav ul,
+.ui-tabs,
+.tabs-slide,
+.search,
+.thread-tree a:hover,
+.thread-tree a.selected,
+.search .search-terms #term {
+  background-color: #F0F0F0; }
+
+.black-squeeze-bg,
+body {
+  background-color: #EEEEEE; }
+
+.cape-cod-bg,
+.portlet-topper,
+.portlet-section-header,
+.page-nav ul,
+.banner-nav .menu a,
+.partner-banner .heading-title,
+.story-banner .heading-title,
+.portlet-message-boards .figure-heading {
+  background-color: #474A4B; }
+
+.cerulean-bg,
+.btn {
+  background-color: #00ADEF; }
+
+.meteor-bg,
+.btn:hover {
+  background: #DD5F13; }
+
+.white-bg,
+.portlet-content,
+.taglib-search-iterator,
+.controls-visible .portlet-borderless-bar,
+.callout,
+.callout-base,
+.callout-shadowed,
+.callout-shadowed-lite,
+.callout-heading,
+.callout-image,
+.aside-heading,
+#dock .active a,
+#dock-menu .taglib-settings,
+#dock-menu .taglib-my-places,
+.banner-nav .menu .selected,
+.partner-banner .heading-image,
+.story-banner .heading-image,
+.portlet-message-boards .figure,
+.search .search-terms #term:focus,
+input,
+textarea {
+  background-color: #FFF; }
+

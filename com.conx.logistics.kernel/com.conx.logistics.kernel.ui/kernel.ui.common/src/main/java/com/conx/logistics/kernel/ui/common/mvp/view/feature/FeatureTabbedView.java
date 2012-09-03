@@ -1,22 +1,23 @@
 package com.conx.logistics.kernel.ui.common.mvp.view.feature;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import org.vaadin.mvp.eventbus.EventBus;
-import org.vaadin.mvp.eventbus.EventBusManager;
 import org.vaadin.mvp.presenter.IPresenter;
 import org.vaadin.mvp.presenter.IPresenterFactory;
 
 import com.conx.logistics.common.utils.Validator;
 import com.conx.logistics.kernel.ui.common.mvp.LaunchableViewEventBus;
 import com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication;
+import com.conx.logistics.kernel.ui.common.mvp.docviewer.DocViewerPresenter;
 import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
 import com.conx.logistics.kernel.ui.service.contribution.ITaskActionContribution;
 import com.conx.logistics.kernel.ui.service.contribution.IViewContribution;
+import com.conx.logistics.mdm.domain.application.DocViewFeature;
 import com.conx.logistics.mdm.domain.application.Feature;
+import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
 
@@ -54,6 +55,21 @@ public class FeatureTabbedView extends TabSheet implements IFeatureView {
 				} else {
 					addTab(componentFeature, feature.getName());
 				}
+			}
+			else if (feature instanceof DocViewFeature)
+			{
+				currentFeature = feature;
+				IPresenterFactory pf = this.app.getPresenterFactory();
+				DocViewerPresenter viewPresenter = (DocViewerPresenter)pf.createPresenter(DocViewerPresenter.class);
+				FileEntry fe = ((DocViewFeature)feature).getFileEntry();
+				viewPresenter.getEventBus().viewDocument(fe);
+
+				Component view = (Component)viewPresenter.getView();				
+				if (getTab(view) != null) {
+					this.setSelectedTab(view);
+				} else {
+					addTab(view, feature.getName());
+				}				
 			}
 		}
 	}
@@ -93,6 +109,7 @@ public class FeatureTabbedView extends TabSheet implements IFeatureView {
 						AbstractConXComponent componentModel = vc.getComponentModel(this.app, feature);
 						if (Validator.isNotNull(componentModel) && Validator.isNotNull(entityEditorFactory))
 						{
+							this.entityFactoryPresenterParams.put(IEntityEditorFactory.FACTORY_PARAM_MVP_CURRENT_APP_PRESENTER, this.viewPresenter);
 							Map<IPresenter<?, ? extends EventBus>, EventBus> mvp = (Map<IPresenter<?, ? extends EventBus>, EventBus>) entityEditorFactory.create(componentModel,this.entityFactoryPresenterParams);
 							IPresenter<?, ? extends EventBus> viewPresenter = mvp.keySet().iterator().next();
 							// ((LaunchableViewEventBus)viewPresenter.getEventBus()).launch(this.app);

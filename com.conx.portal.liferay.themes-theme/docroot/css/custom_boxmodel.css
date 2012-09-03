@@ -1,0 +1,603 @@
+/* Display Block */
+
+.display-block,
+.ctrl-holder label,
+.portlet-icons,
+.controls-visible .portlet-borderless-bar,
+.logo,
+.callout-image img,
+.callout-image-simple img,
+.obscured,
+.aside-subheading,
+.page-nav a,
+.side-nav a,
+.tabs-nav a,
+.ui-tabs a,
+.ui-tabs span,
+.btn-icon,
+.banner-nav a,
+.banner-nav .menu,
+.tabs-slide a,
+.tabs-slide .has-image img,
+#dock a,
+#dock span,
+#dock .to-profile a,
+#dock .to-profile span,
+#dock-menu .is-menu a,
+.event-chart a,
+.event-chart .dtstart,
+.event-chart .summary,
+.event-chart .location,
+.event-blurb a,
+.partner-banner .heading-image,
+.partner-banner .heading-image img,
+.story-banner .heading-image,
+.story-banner .heading-image img,
+.portlet-blogs .blog-entry .user-img img,
+.portlet-blogs-aggregator .blog-entry .user-img img,
+.portlet-blogs .blog-entry .entry-user,
+.portlet-blogs-aggregator .blog-entry .entry-user,
+.portlet-blogs .blog-entry .suffix,
+.portlet-blogs-aggregator .blog-entry .suffix,
+.portlet-blogs .blog-entry .count,
+.portlet-blogs-aggregator .blog-entry .count,
+.portlet-message-boards .user-img img,
+.portlet-message-boards .navigation a,
+.thread-tree a {
+	display: block;
+}
+
+/* Inline Block */
+
+.display-inline-block,
+.btn,
+.btn-icon,
+.link-bullet,
+.link-icon,
+.callout-image,
+.callout-image-simple,
+.search-pages .previous,
+.search-pages .next,
+.portlet-message-boards .previous,
+.portlet-message-boards .next,
+.portlet-blogs .comment-count,
+.portlet-blogs-aggregator .comment-count {
+	display: inline-block;
+}
+
+* html .display-inline-block,
+* html .btn,
+* html .btn-icon,
+* html .link-bullet,
+* html .link-icon,
+* html .callout-image,
+* html .callout-image-simple,
+* html .search-pages .previous,
+* html .search-pages .next,
+* html .portlet-message-boards .previous,
+* html .portlet-message-boards .next,
+* html .portlet-blogs .comment-count,
+* html .portlet-blogs-aggregator .comment-count {
+	display: inline;
+	display: inline-block;
+	zoom: 1;
+}
+
+/* Clear */
+
+.clear,
+.obscured,
+.ctrl-holder,
+.page-nav .heading,
+.tabs-nav .heading,
+.banner-nav .heading,
+.callout-image,
+.callout-image-simple,
+.aside-heading,
+.banner-nav,
+.results-grid,
+.thread-tree .heading,
+.portlet-blogs .blog-entry .user-info,
+.portlet-blogs-aggregator .blog-entry .user-info,
+.portlet-wiki .hr,
+.wiki-body {
+	clear: both;
+}
+
+/* Float Left */
+
+.float-left,
+.foot-nav .copy,
+.portlet-title,
+.callout-image img,
+.ctrl-holder label,
+.columns-max .portlet-login .navigation li,
+.page-nav li,
+.tabs-nav ul,
+.tabs-nav li,
+.ui-tabs,
+.ui-tabs li,
+.banner-nav a,
+.footer-shortcuts li,
+.foot-nav li,
+.tabs-slide .heading,
+.tabs-slide .list,
+.tabs-slide li,
+.tabs-slide a,
+.tabs-slide .has-image img,
+.search .heading,
+.search .terms,
+.event-chart .dtstart,
+.event-chart .summary,
+.product-highlight .image,
+.product-highlight .desc,
+#dock li,
+#dock a,
+#dock span,
+#dock #dock-profile,
+.portlet-blogs .blog-entry .user-img,
+.portlet-blogs-aggregator .blog-entry .user-img,
+.portlet-blogs .blog-entry .user-img img,
+.portlet-blogs-aggregator .blog-entry .user-img img,
+.portlet-blogs .blog-entry .suffix,
+.portlet-blogs-aggregator .blog-entry .suffix,
+.portlet-blogs .blog-entry .count,
+.portlet-blogs-aggregator .blog-entry .count,
+.portlet-message-boards .heading-container .heading,
+.portlet-wiki .heading-container .heading,
+.portlet-wiki .heading-container form,
+.knowledge-base-portlet-admin .heading-container form,
+.knowledge-base-portlet-aggregator .heading-container form,
+.knowledge-base-portlet-display .heading-container form,
+.knowledge-base-portlet-search .heading-container form,
+.portlet-message-boards .user-img,
+.portlet-message-boards .user-img img,
+.portlet-message-boards .navigation div,
+.portlet-message-boards .navigation a,
+.thread-tree a *,
+.commands-container li,
+.user-commands li,
+.portlet-blogs .entry-information,
+.portlet-blogs-aggregator .entry-information {
+	float: left;
+}
+
+/* Float Right */
+
+.float-right,
+.portlet-icons,
+.footer-shortcuts .feed,
+.foot-nav .legal,
+.event-chart .location,
+.portlet-message-boards .navigation,
+.portlet-message-boards .rss-commands,
+.portlet-message-boards .user-commands,
+#dock #dock-navigation,
+.portlet-blogs .edit-actions,
+.portlet-blogs-aggregator .edit-actions,
+footer {
+	float: right;
+}
+
+/* Clear After */
+
+.clear-after:after,
+.container:after,
+.callout:after,
+.callout-cell:after,
+.callout-cell-only:after,
+.callout-cell-first:after,
+.callout-cell-last:after,
+.callout-cell-main:after,
+.callout-cell-content:after,
+.callout-shadowed:after,
+.portlet:after,
+.page-nav ul:after,
+.tabs-nav:after,
+.ui-tabs:after,
+.footer-shortcuts:after,
+.foot-nav:after,
+.search:after,
+.event-chart a:after,
+.portlet-blogs .blog-entry .user-img:after,
+.portlet-blogs-aggregator .blog-entry .user-img:after,
+.thread-tree a:after,
+.portlet-blogs .entry-details:after,
+.portlet-blogs-aggregator .entry-details:after,
+.portlet-asset-publisher .asset-title .controls:after {
+	clear: both;
+	content: ".";
+	display: block;
+	height: 0;
+	line-height: 0;
+	visibility: hidden;
+}
+
+* html .clear-after,
+* html .container,
+* html .callout,
+* html .callout-cell,
+* html .callout-cell-only,
+* html .callout-cell-first,
+* html .callout-cell-last,
+* html .callout-cell-main,
+* html .callout-shadowed,
+* html .landing,
+* html .portlet,
+* html .page-nav ul,
+* html .tabs-nav,
+* html .ui-tabs,
+* html .footer-shortcuts,
+* html .foot-nav,
+* html .search,
+* html .event-chart a,
+* html .portlet-blogs .blog-entry .user-img,
+* html .portlet-blogs-aggregator .blog-entry .user-img,
+* html .thread-tree a,
+* html .portlet-blogs .entry-details ,
+* html .portlet-blogs-aggregator .entry-details,
+* html .portlet-asset-publisher .asset-title .controls {
+	height: 1%;
+}
+
+* + html .clear-after,
+* + html .container,
+* + html .callout,
+* + html .callout-cell,
+* + html .callout-cell-only,
+* + html .callout-cell-first,
+* + html .callout-cell-last,
+* + html .callout-cell-main,
+* + html .callout-cell-content,
+* + html .callout-shadowed,
+* + html .portlet,
+* + html .page-nav ul,
+* + html .tabs-nav,
+* + html .ui-tabs,
+* + html .footer-shortcuts,
+* + html .foot-nav,
+* + html .search,
+* + html .event-chart a,
+* + html .portlet-blogs .blog-entry .user-img,
+* + html .portlet-blogs-aggregator .blog-entry .user-img,
+* + html .thread-tree a,
+* + html .portlet-blogs .entry-details,
+* + html .portlet-blogs-aggregator .entry-details,
+* + html .portlet-asset-publisher .asset-title .controls {
+	height: 1%;
+}
+
+/* Obscured */
+
+.obscured,
+.page-nav .heading,
+.tabs-nav .heading,
+.banner-nav .heading,
+.footer-shortcuts .heading,
+.foot-nav .heading,
+.logo,
+.page-nav .heading,
+.banner-nav .banner p,
+.banner-nav .menu a,
+.tabs-slide .item,
+.banner-nav .heading,
+.aside-heading,
+.event-chart .heading,
+.event-blurb .heading,
+.story-banner .case-study,
+.thread-tree .heading,
+.portlet-message-boards-categories-overview-heading,
+.portlet-message-boards-thread-overview-heading,
+.portlet-message-boards-thread-details-heading,
+.portlet-message-boards .navigation a {
+	font-size: 0;
+	line-height: 0;
+	overflow: hidden;
+	position: relative;
+	text-indent: -9999em;
+	zoom: 1;
+}
+
+.zoom-1,
+.callout-heading {
+	zoom: 1;
+}
+
+/* No Height */
+
+.no-height,
+.page-nav .heading,
+.tabs-nav .heading,
+.banner-nav .heading,
+.event-chart .heading,
+.event-blurb .heading {
+	height: 0;
+}
+
+/* Break */
+
+.no-break,
+.side-nav .heading,
+.side-nav ul,
+.banner-nav .menu,
+.tabs-slide .menu,
+.tabs-slide .list,
+.footer-shortcuts ul,
+.portlet-message-boards-categories-overview p,
+.portlet-blogs .blog-entry .read-more,
+.portlet-blogs-aggregator .blog-entry .read-more,
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul,
+menu {
+	margin: 0;
+}
+
+.aside-subheading {
+	margin-bottom: -0.14em;
+	margin-top: 0.175em;
+}
+
+.margin-bottom-2,
+.btn {
+	margin-bottom: 2px;
+}
+
+.margin-bottom-4,
+.page-heading,
+.page-subheading,
+.section-heading,
+.section-subheading,
+.section-terheading,
+.asset-tag-label,
+.important-list li,
+.caption,
+.event-blurb .vevent,
+.portlet-blogs .blog-entry .user-img,
+.portlet-blogs-aggregator .blog-entry .user-img,
+.portlet-wiki .section-subheading {
+	margin-bottom: 4px;
+}
+
+.margin-bottom-9,
+.callout-shadowed,
+.callout-shadowed-lite,
+.callout-heading,
+.callout-image,
+.callout-image-simple,
+.portlet-blogs .blog-entry .heading,
+.portlet-blogs-aggregator .blog-entry .heading,
+p,
+ul {
+	margin-bottom: 9px;
+}
+
+ul.community ul {
+	margin-top: 9px;
+}
+
+.margin-bottom-12,
+.page-heading,
+.search,
+.aside,
+.basic-article,
+.community-start-here-hr,
+.portlet-message-boards .breadcrumb-container,
+.portlet-message-boards .user-commands,
+.knowledge-base-portlet-admin .commands-container,
+.knowledge-base-portlet-aggregator .commands-container,
+.knowledge-base-portlet-display .commands-container,
+.knowledge-base-portlet-search .commands-container,
+.product-highlight-container,
+.portlet-wiki h2,
+.portlet-wiki h3 {
+	margin-bottom: 12px;
+}
+
+.margin-bottom-18,
+.portlet,
+.callout,
+.callout-base,
+.page-nav,
+.page-heading-desc,
+.side-nav,
+.tabs-nav,
+.ui-tabs,
+.tabs-slide,
+.banner-nav,
+.foot-nav,
+.partner-banner,
+.story-banner,
+.event-chart,
+.event-blurb,
+.report,
+.report-chart,
+.asset-tag-hr,
+#start-here .callout-heading,
+.portlet-message-boards .figure,
+.thread-tree,
+.portlet-wiki .toc {
+	margin-bottom: 18px;
+}
+
+.margin-bottom-27,
+.portlet-blogs .hr,
+.portlet-blogs-aggregator .hr,
+.portlet-blogs .blog-entry .continue,
+.portlet-blogs-aggregator .blog-entry .continue {
+	margin-bottom: 27px;
+}
+
+/* Side Margin */
+
+.callout-shadowed,
+.callout-shadowed-lite,
+.callout-heading,
+.callout-image,
+.aside-heading,
+.page-nav ul,
+.tabs-nav ul,
+.ui-tabs,
+.search,
+.banner-nav,
+.tabs-slide,
+.thread-tree a,
+input,
+textarea {
+	margin-left: 2px;
+	margin-right: 2px;
+}
+
+/* No Padding */
+
+.no-padding,
+.page-nav li,
+.side-nav li,
+.tabs-nav li,
+.ui-tabs li,
+.tabs-slide li,
+.footer-shortcuts li,
+.foot-nav li,
+.plain-list li,
+.portlet-wiki li,
+.portlet-message-boards li,
+.knowledge-base-portlet-admin li,
+.knowledge-base-portlet-aggregator li,
+.knowledge-base-portlet-display li,
+.knowledge-base-portlet-search li,
+.commands-container li,
+.user-commands li,
+ul,
+menu {
+	padding: 0;
+}
+
+/* Padding */
+
+.padding-side-20 {
+	padding: 0 20px;
+}
+
+.padding-side-10,
+.callout-mod {
+	padding: 0 20px;
+}
+
+.padding-side-5,
+.foot-nav .legal a {
+	padding: 0 5px;
+}
+
+.padding-10,
+.callout-base {
+	padding: 10px;
+}
+
+.padding-20-10,
+.callout-cell,
+.callout-cell-first,
+.callout-cell-last,
+.callout-cell-only {
+	padding: 20px 10px;
+}
+
+.padding-left-9,
+.callout-cell-first,
+.callout-cell-only {
+	padding-left: 9px;
+}
+
+.padding-right-9,
+.callout-cell-last,
+.callout-cell-only {
+	padding-right: 9px;
+}
+
+.padding-base-20-side-19,
+.callout-cell-main {
+	padding: 20px 19px;
+}
+
+.padding-left-20,
+.side-nav a,
+.tabs-nav a,
+.ui-tabs a,
+.ui-tabs span,
+.important-list li,
+.event-chart .dtstart {
+	padding-left: 20px;
+}
+
+.padding-right-20,
+.tabs-nav a,
+.ui-tabs a,
+.ui-tabs span,
+.event-blurb a {
+	padding-right: 20px;
+}
+
+.padding-left-19,
+.tabs-nav .first a,
+.ui-tabs .current a,
+.ui-tabs .current span,
+.event-chart .dtstart {
+	padding-left: 19px;
+}
+
+/* Left Padding */
+
+li {
+	padding-left: 16px;
+}
+
+/* Visible Overflow */
+
+.overflow-visible,
+#dock .aui-col,
+#dock .aui-mod {
+	overflow: visible;
+}
+
+/* Hidden Overflow */
+
+.overflow-hidden,
+.callout,
+.callout-shadowed,
+.callout-shadowed-lite,
+.callout-heading,
+.callout-image,
+.callout-image img,
+.callout-image-simple,
+.side-nav li,
+.side-nav li a,
+.tabs-slide,
+.tabs-slide .port,
+.banner-nav,
+.partner-banner .heading-image,
+.story-banner .heading-image,
+.portlet-blogs .blog-entry .user-img,
+.portlet-blogs-aggregator .blog-entry .user-img,
+.portlet-message-boards .user-img,
+.thread-tree {
+	overflow: hidden;
+}
+
+/* Transparent */
+
+.obscured img,
+.callout-image img,
+.callout-image-simple img,
+.banner-nav .banner,
+.tabs-slide .has-image img,
+.portlet-blogs .blog-entry .user-img img,
+.portlet-blogs-aggregator .blog-entry .user-img img,
+.portlet-message-boards .user-img img {
+	filter: alpha(opacity=0);
+	opacity: 0;
+}

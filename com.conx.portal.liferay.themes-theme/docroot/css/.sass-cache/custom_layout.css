@@ -1,0 +1,71 @@
+/* 960 Grid */
+.grid-960 {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%; }
+
+* html .grid-960 {
+  width: 100%; }
+
+/*
+.grid-960 {
+	margin-left: auto;
+	margin-right: auto;
+	width: 960px;
+}
+
+* html .grid-960 {
+	width: 960px;
+}
+*/
+/*
+
+.controls-visible .grid-960 {
+	background-image: url(../images/custom/grid-960.png);
+}
+
+*/
+.grid-960 .aui-mod,
+.grid-960 .lfr-portlet-column {
+  margin-left: 10px;
+  margin-right: 10px; }
+
+.grid-960 .aui-mod .aui-lay,
+.grid-960 .lfr-portlet-column .aui-lay {
+  height: auto;
+  margin-left: -10px;
+  margin-right: -10px;
+  overflow: hidden; }
+
+* html .grid-960 .aui-mod .aui-lay,
+* html .grid-960 .lfr-portlet-column .aui-lay {
+  zoom: 1; }
+
+/* Callout Heading */
+.callout-heading {
+  background-repeat: repeat-y;
+  padding: 5px 0.7em 5px 25%; }
+
+/* Callout Layout */
+.callout-bordered-container .callout-mod {
+  border-right: 1px solid #BABEC2; }
+
+.callout-bordered-container .last {
+  border-right: none;
+  padding-right: 11px; }
+
+/* Callout Cell */
+.callout-cell-heading {
+  margin-bottom: 0.5em;
+  margin-top: 0.5em; }
+
+/* iPhone Test */
+/*.grid-960 {
+	width: 300px;
+}
+
+.aui-col {
+	clear: both;
+	width: 100%;
+}*/
+

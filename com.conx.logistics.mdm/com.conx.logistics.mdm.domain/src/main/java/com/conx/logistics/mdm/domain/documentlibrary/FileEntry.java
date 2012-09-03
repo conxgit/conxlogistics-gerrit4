@@ -1,15 +1,20 @@
 package com.conx.logistics.mdm.domain.documentlibrary;
 
+import java.io.InputStream;
 import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "sysdlfileentry")
 public class FileEntry extends AbstractDocument {
+	
+	@Transient
+	private InputStream	contentStream;	
 	
 	@OneToOne
 	private Folder folder;
@@ -329,5 +334,11 @@ public class FileEntry extends AbstractDocument {
 	}
 	public void setDocType(DocType docType) {
 		this.docType = docType;
+	}
+	public InputStream getContentStream() {
+		return contentStream;
+	}
+	public void setContentStream(InputStream contentStream) {
+		this.contentStream = contentStream;
 	}
 }

@@ -15,14 +15,12 @@ import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityGridFi
 import com.conx.logistics.kernel.ui.filteredtable.FilterTable;
 import com.conx.logistics.mdm.domain.documentlibrary.DocType;
 import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
-import com.vaadin.addon.jpacontainer.JPAContainerItem;
+import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
-import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.VerticalLayout;
@@ -79,48 +77,10 @@ public class AttachmentEditorView extends VerticalLayout implements IAttachmentE
 		this.grid.setNullSelectionAllowed(false);
 		this.grid.setFilterDecorator(gridManager);
 		this.grid.setFiltersVisible(true);
-		this.grid.addListener(new ItemClickListener() {
-			private static final long serialVersionUID = -7680485120452162721L;
-
-			@SuppressWarnings("unchecked")
-			@Override
-			public void itemClick(ItemClickEvent event) {
-				if (event.isDoubleClick()) {
-					JPAContainerItem<FileEntry> jpaItem = (JPAContainerItem<FileEntry>) event.getItem();
-					onInspectAttachment(jpaItem.getEntity());
-				} else {
-					if (visibleFormFields == null) {
-						ArrayList<String> tempVisibleFormFields = new ArrayList<String>();
-						tempVisibleFormFields.add("code");
-						visibleFormFields = tempVisibleFormFields;
-					}
-	
-					AttachmentEditorView.this.toolStrip.setEditButtonEnabled(true);
-					AttachmentEditorView.this.toolStrip.setDeleteButtonEnabled(true);
-					form.setMode(FormMode.EDITING);
-					form.setItemDataSource(event.getItem(), visibleFormFields);
-					if (detailHidden) {
-						showDetail();
-					}
-				}
-			}
-		});
 
 		this.toolStrip = new AttachmentEditorToolStrip();
 		this.toolStrip.setEditButtonEnabled(false);
 		this.toolStrip.setDeleteButtonEnabled(false);
-		this.toolStrip.addNewButtonClickListener(new ClickListener() {
-			private static final long serialVersionUID = -60083075517936436L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				if (detailHidden) {
-					onCreateAttachment();
-				} else {
-					hideDetail();
-				}
-			}
-		});
 
 		this.masterLayout.setSizeFull();
 		this.masterLayout.removeAllComponents();
@@ -234,5 +194,41 @@ public class AttachmentEditorView extends VerticalLayout implements IAttachmentE
 	
 	public interface ISaveAttachmentListener {
 		public boolean onSaveAttachment(Item item, DocType attachmentType, String sourceFileName, String mimeType, String title, String description);
+	}
+
+	@Override
+	public void addItemClickListener(ItemClickListener clickListener) {
+		this.grid.addListener(clickListener);
+	}
+
+	@Override
+	public void entityItemSingleClicked(EntityItem item) {
+		if (visibleFormFields == null) {
+			ArrayList<String> tempVisibleFormFields = new ArrayList<String>();
+			tempVisibleFormFields.add("code");
+			visibleFormFields = tempVisibleFormFields;
+		}
+
+		AttachmentEditorView.this.toolStrip.setEditButtonEnabled(true);
+		AttachmentEditorView.this.toolStrip.setDeleteButtonEnabled(true);
+		form.setMode(FormMode.EDITING);
+		form.setItemDataSource(item, visibleFormFields);
+		if (detailHidden) {
+			showDetail();
+		}		
+	}
+
+	@Override
+	public void addNewItemListener(Button.ClickListener clickListener) {
+		this.toolStrip.addNewButtonClickListener(clickListener);
+	}
+
+	@Override
+	public void newEntityItemActioned() {
+		if (detailHidden) {
+			onCreateAttachment();
+		} else {
+			hideDetail();
+		}
 	}
 }

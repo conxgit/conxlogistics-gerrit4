@@ -106,7 +106,7 @@ public class LiferayPortalDocumentRepositoryTests extends AbstractTestNGSpringCo
     	if (!res)
     	{
     		InputStream is = new ByteArrayInputStream("test string".getBytes());
-    		FileEntry fe = docRepoRemoteService.addFileEntry(Long.toString(fldr.getFolderId()), "C:/dev/gitrepos/conxlogistics-gerrit3/com.conx.logistics.kernel/com.conx.logistics.data/uat.sprint2.data/src/main/resources/bol.pdf", "application/pdf", "BoL", "BoL");
+    		FileEntry fe = docRepoRemoteService.addFileEntry(Long.toString(fldr.getFolderId()), "C:/dev/gitrepos/conxlogistics-gerrit4/com.conx.logistics.kernel/documentlibrary/remote.services.impl/src/test/resources/bol.pdf", "application/pdf", "BoL", "BoL");
 /*	    	fldr = docRepoRemoteService.addFolder(docRepoRemoteService.getConxlogiFolderId(),"Receive123", "Receive123");
 	    	Assert.assertNotNull(fldr);
 	    	

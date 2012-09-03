@@ -2,6 +2,7 @@ package com.conx.logistics.kernel.ui.common.mvp;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -41,6 +41,7 @@ import com.conx.logistics.kernel.ui.service.contribution.IMainApplication;
 import com.conx.logistics.kernel.ui.service.contribution.IViewContribution;
 import com.conx.logistics.mdm.dao.services.IEntityMetadataDAOService;
 import com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService;
+import com.sun.syndication.io.impl.Base64;
 import com.vaadin.Application;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerFactory;
@@ -54,7 +55,7 @@ public class MainMVPApplication extends Application implements IMainApplication,
 	private EventBusManager ebm = new EventBusManager();
 	/** Per application presenter factory */
 	// create an instance of a default presenter factory
-	private PresenterFactory presenterFactory = new PresenterFactory(ebm, getLocale());
+	private PresenterFactory presenterFactory = null;
 
 	/** Main presenter */
 	private IPresenter<?, ? extends EventBus> mainPresenter;
@@ -65,8 +66,6 @@ public class MainMVPApplication extends Application implements IMainApplication,
 	private IFolderDAOService folderDAOService;
 	
 	private IRemoteDocumentRepository remoteDocumentRepository;
-	
-	private IEntityMetadataDAOService entityMetaDataDAOService;
 	
 	private boolean appServiceInititialized = false;
 
@@ -95,6 +94,8 @@ public class MainMVPApplication extends Application implements IMainApplication,
 	private EntityManagerPerRequestHelper entityManagerPerRequestHelper;
 
 	private HashMap<String, Object> entityFactoryPresenterParams;
+	
+	private IEntityMetadataDAOService entityMetaDataDAOService;
 
 
 	@Override
@@ -102,6 +103,10 @@ public class MainMVPApplication extends Application implements IMainApplication,
 		try 
 		{
 			setTheme("conx");
+			
+			//Presenter factory
+			this.presenterFactory = new PresenterFactory(ebm, getLocale());
+			this.presenterFactory.setApplication(this);
 			
 			//Create container manager/helper
 			this.entityManagerPerRequestHelper = new EntityManagerPerRequestHelper();
@@ -149,6 +154,18 @@ public class MainMVPApplication extends Application implements IMainApplication,
 
 	}
 	
+	public void bindEntityMetaDataDAOService(
+			IEntityMetadataDAOService entityMetaDataDAOService, Map properties) {
+			logger.debug("bindEntityMetaDataDAOService()");
+			this.entityMetaDataDAOService = entityMetaDataDAOService;
+	}
+	
+	public void unbindEntityMetaDataDAOService(
+			IEntityMetadataDAOService entityMetaDataDAOService, Map properties) {
+			logger.debug("unbindEntityMetaDataDAOService()");
+			this.entityMetaDataDAOService  = null;
+	}      
+	
 	/**
 	 * 
 	 * HttpServletRequestListener
@@ -156,9 +173,31 @@ public class MainMVPApplication extends Application implements IMainApplication,
 	 */
 	@Override
     public void onRequestStart(HttpServletRequest request, HttpServletResponse response) {
+		//authenticate(request);
+		Map pns = request.getParameterMap();
+		Principal userPrinc = request.getUserPrincipal();
 		if (this.entityManagerPerRequestHelper != null)//Init called already
 			this.entityManagerPerRequestHelper.requestStart();
 	}
+	
+	 private boolean authenticate(HttpServletRequest req)
+	 {
+	  String authhead=req.getHeader("Authorization");
+
+	  if(authhead!=null)
+	  {
+	   //*****Decode the authorisation String*****
+	   String usernpass=Base64.decode(authhead.substring(6));
+	   //*****Split the username from the password*****
+	   String user=usernpass.substring(0,usernpass.indexOf(":"));
+	   String password=usernpass.substring(usernpass.indexOf(":")+1);
+
+	   if (user.equals("user") && password.equals("pass"))
+	    return true;
+	  }
+	  
+	  return false;
+	 }
 
 	@Override
 	public void onRequestEnd(HttpServletRequest request, HttpServletResponse response) {
@@ -421,18 +460,6 @@ public class MainMVPApplication extends Application implements IMainApplication,
 			IRemoteDocumentRepository remoteDocumentRepository, Map properties) {
 		logger.debug("unbindRemoteDocumentRepository()");
 		this.remoteDocumentRepository  = null;
-	}
-	
-	public void bindEntityMetaDataDAOService(
-			IEntityMetadataDAOService entityMetaDataDAOService, Map properties) {
-		logger.debug("bindEntityMetaDataDAOService()");
-		this.entityMetaDataDAOService = entityMetaDataDAOService;
-	}
-
-	public void unbindEntityMetaDataDAOService(
-			IEntityMetadataDAOService entityMetaDataDAOService, Map properties) {
-		logger.debug("unbindEntityMetaDataDAOService()");
-		this.entityMetaDataDAOService  = null;
 	}	
 	
 	public void bindFolderDAOService(

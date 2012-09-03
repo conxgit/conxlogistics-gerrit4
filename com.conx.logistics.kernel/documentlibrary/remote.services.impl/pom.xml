@@ -15,6 +15,11 @@
 		<!-- ConX -->
 		<dependency>
 			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.common.utils</artifactId>
+			<version>${project.version}</version>
+		</dependency>		
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.mdm.domain</artifactId>
 			<version>${project.version}</version>
 		</dependency>

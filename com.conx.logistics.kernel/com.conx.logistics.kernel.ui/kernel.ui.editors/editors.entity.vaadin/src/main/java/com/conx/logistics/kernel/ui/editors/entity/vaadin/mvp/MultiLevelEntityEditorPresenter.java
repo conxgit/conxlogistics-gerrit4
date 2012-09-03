@@ -11,12 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.mvp.eventbus.EventBus;
 import org.vaadin.mvp.eventbus.EventBusManager;
-import org.vaadin.mvp.eventbus.annotation.Event;
-import org.vaadin.mvp.presenter.BasePresenter;
 import org.vaadin.mvp.presenter.IPresenter;
 import org.vaadin.mvp.presenter.PresenterFactory;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
+import com.conx.logistics.kernel.ui.common.mvp.StartableApplicationEventBus;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.footer.EntityTableFooterEventBus;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.footer.EntityTableFooterPresenter;
@@ -29,6 +28,7 @@ import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.table.EntityTableP
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.view.IMultiLevelEntityEditorView;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.view.MultiLevelEntityEditorView;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
+import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -69,6 +69,8 @@ implements Property.ValueChangeListener {
 
 	private HashMap<String, Object> extraParams;
 
+	private StartableApplicationEventBus appEventBus;
+
 	public MultiLevelEntityEditorPresenter() {
 		super();
 	}
@@ -99,7 +101,11 @@ implements Property.ValueChangeListener {
 
 	public void onEntityItemAdded(EntityItem item) {
 		((AbstractEntityEditorEventBus)lineEditorBus).entityItemAdded(item); 		
-	}		
+	}	
+	
+	public void onViewDocument(FileEntry fileEntry) {
+		this.appEventBus.openDocument(fileEntry);
+	}
 	
 	@Override
 	public void configure() {
@@ -108,6 +114,8 @@ implements Property.ValueChangeListener {
 			this.metaData = (MasterDetailComponent)config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL);
 			this.entityManager = (EntityManager)config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_ENTITY_MANAGER);
 			this.ebm = (EventBusManager)config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_EVENTBUS_MANAGER);
+			IPresenter<?, ? extends StartableApplicationEventBus> appPresenter = (IPresenter<?, ? extends StartableApplicationEventBus>)config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_CURRENT_APP_PRESENTER);
+			this.appEventBus = appPresenter.getEventBus();
 			this.presenterFactory = (ConfigurablePresenterFactory)config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_PRESENTER_FACTORY);
 			this.presenterFactory.getCustomizer().getConfig().put(IEntityEditorFactory.FACTORY_PARAM_MVP_CURRENT_MLENTITY_EDITOR_PRESENTER, this);			
 			
