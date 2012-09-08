@@ -59,4 +59,76 @@ public class ArrivalReceipt extends MultitenantBaseEntity {
     
     @Enumerated(EnumType.STRING)
     private ARRIVALRECEIPTSTATUS status;
+
+	public Arrival getParentArrival() {
+		return parentArrival;
+	}
+
+	public void setParentArrival(Arrival parentArrival) {
+		this.parentArrival = parentArrival;
+	}
+
+	public CommercialRecord getCommercialRecord() {
+		return commercialRecord;
+	}
+
+	public void setCommercialRecord(CommercialRecord commercialRecord) {
+		this.commercialRecord = commercialRecord;
+	}
+
+	public Set<ReferenceNumber> getRefNumbers() {
+		return refNumbers;
+	}
+
+	public void setRefNumbers(Set<ReferenceNumber> refNumbers) {
+		this.refNumbers = refNumbers;
+	}
+
+	public Set<ArrivalReceiptLine> getRcptLines() {
+		return rcptLines;
+	}
+
+	public void setRcptLines(Set<ArrivalReceiptLine> rcptLines) {
+		this.rcptLines = rcptLines;
+	}
+
+	public Organization getShipper() {
+		return shipper;
+	}
+
+	public void setShipper(Organization shipper) {
+		this.shipper = shipper;
+	}
+
+	public Organization getShippedFrom() {
+		return shippedFrom;
+	}
+
+	public void setShippedFrom(Organization shippedFrom) {
+		this.shippedFrom = shippedFrom;
+	}
+
+	public Organization getAgent() {
+		return agent;
+	}
+
+	public void setAgent(Organization agent) {
+		this.agent = agent;
+	}
+
+	public Organization getConsignee() {
+		return consignee;
+	}
+
+	public void setConsignee(Organization consignee) {
+		this.consignee = consignee;
+	}
+
+	public ARRIVALRECEIPTSTATUS getStatus() {
+		return status;
+	}
+
+	public void setStatus(ARRIVALRECEIPTSTATUS status) {
+		this.status = status;
+	}
 }

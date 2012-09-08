@@ -31,6 +31,14 @@ import com.conx.logistics.mdm.domain.organization.Organization;
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 @Table(name="wharrival")
 public class Arrival extends MultitenantBaseEntity {
+    @OneToOne(targetEntity = Pickup.class, fetch = FetchType.LAZY)
+    @JoinColumn
+    private Pickup actualPickUp;
+    
+    @OneToOne(targetEntity = DropOff.class, fetch = FetchType.LAZY)
+    @JoinColumn
+    private DropOff actualDropOff;    
+    
     @ManyToOne(targetEntity = Organization.class, fetch = FetchType.LAZY)
     @JoinColumn
     private Organization actualLocalTrans;
@@ -53,17 +61,16 @@ public class Arrival extends MultitenantBaseEntity {
     @JoinColumn
     private Receive receive;
 
-    private String bolNumber;
+    private String actualBolNumber;
 
-    private String vehicleNumber;
+    private String actualVehicleNumber;
 
-    private String driverName;
+    private String actualDriverName;
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "S-")
-    private Date arrivalTime;
+    private Date actualArrivalTime;
 
-    private Long bolImageId;
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "S-")
@@ -79,4 +86,140 @@ public class Arrival extends MultitenantBaseEntity {
 
     @Enumerated(EnumType.STRING)
     private ARRIVALSTATUS arrvlStatus;
+
+	public Pickup getActualPickUp() {
+		return actualPickUp;
+	}
+
+	public void setActualPickUp(Pickup actualPickUp) {
+		this.actualPickUp = actualPickUp;
+	}
+
+	public DropOff getActualDropOff() {
+		return actualDropOff;
+	}
+
+	public void setActualDropOff(DropOff actualDropOff) {
+		this.actualDropOff = actualDropOff;
+	}
+
+	public Organization getActualLocalTrans() {
+		return actualLocalTrans;
+	}
+
+	public void setActualLocalTrans(Organization actualLocalTrans) {
+		this.actualLocalTrans = actualLocalTrans;
+	}
+
+	public Organization getActualShipper() {
+		return actualShipper;
+	}
+
+	public void setActualShipper(Organization actualShipper) {
+		this.actualShipper = actualShipper;
+	}
+
+	public Organization getActualShippedFrom() {
+		return actualShippedFrom;
+	}
+
+	public void setActualShippedFrom(Organization actualShippedFrom) {
+		this.actualShippedFrom = actualShippedFrom;
+	}
+
+	public Set<ReceiveLineStockItemSet> getRlStockItems() {
+		return rlStockItems;
+	}
+
+	public void setRlStockItems(Set<ReceiveLineStockItemSet> rlStockItems) {
+		this.rlStockItems = rlStockItems;
+	}
+
+	public Set<ArrivalReceipt> getReceipts() {
+		return receipts;
+	}
+
+	public void setReceipts(Set<ArrivalReceipt> receipts) {
+		this.receipts = receipts;
+	}
+
+	public Receive getReceive() {
+		return receive;
+	}
+
+	public void setReceive(Receive receive) {
+		this.receive = receive;
+	}
+
+	public String getActualBolNumber() {
+		return actualBolNumber;
+	}
+
+	public void setActualBolNumber(String actualBolNumber) {
+		this.actualBolNumber = actualBolNumber;
+	}
+
+	public String getActualVehicleNumber() {
+		return actualVehicleNumber;
+	}
+
+	public void setActualVehicleNumber(String actualVehicleNumber) {
+		this.actualVehicleNumber = actualVehicleNumber;
+	}
+
+	public String getActualDriverName() {
+		return actualDriverName;
+	}
+
+	public void setActualDriverName(String actualDriverName) {
+		this.actualDriverName = actualDriverName;
+	}
+
+	public Date getActualArrivalTime() {
+		return actualArrivalTime;
+	}
+
+	public void setActualArrivalTime(Date actualArrivalTime) {
+		this.actualArrivalTime = actualArrivalTime;
+	}
+
+	public Date getWeekEndingDate() {
+		return weekEndingDate;
+	}
+
+	public void setWeekEndingDate(Date weekEndingDate) {
+		this.weekEndingDate = weekEndingDate;
+	}
+
+	public String getWeekEnding() {
+		return weekEnding;
+	}
+
+	public void setWeekEnding(String weekEnding) {
+		this.weekEnding = weekEnding;
+	}
+
+	public ARRIVALTYPE getArvlType() {
+		return arvlType;
+	}
+
+	public void setArvlType(ARRIVALTYPE arvlType) {
+		this.arvlType = arvlType;
+	}
+
+	public TRANSMODE getMode() {
+		return mode;
+	}
+
+	public void setMode(TRANSMODE mode) {
+		this.mode = mode;
+	}
+
+	public ARRIVALSTATUS getArrvlStatus() {
+		return arrvlStatus;
+	}
+
+	public void setArrvlStatus(ARRIVALSTATUS arrvlStatus) {
+		this.arrvlStatus = arrvlStatus;
+	}
 }

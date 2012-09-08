@@ -43,4 +43,8 @@
     <inherits name="org.vaadin.csstools.CssToolsWidgetset" />
 
     <inherits name="org.vaadin.weelayout.WeelayoutWidgetset" />
+
+    <inherits name="com.vaadin.addon.tableexport.widgetset.Tableexport_for_vaadinWidgetset" />
+
+    <inherits name="org.vaadin.sasha.portallayout.PortallayoutWidgetset" />
 </module>

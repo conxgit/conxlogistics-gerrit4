@@ -43,7 +43,13 @@
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.app.whse.rcv.asn.dao.services</artifactId>
 			<version>1.0.0</version>
-		</dependency>			
+		</dependency>	
+		
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.rcv.rcv.dao.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>				
 
 		<!-- Drools/JBPM -->
 		<dependency>

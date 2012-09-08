@@ -3,21 +3,18 @@ package com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.header;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import javax.persistence.EntityManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vaadin.mvp.presenter.BasePresenter;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
-import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
-import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.AbstractEntityEditorEventBus;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.ConfigurableBasePresenter;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.MultiLevelEntityEditorPresenter;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.header.view.EntityTableHeaderView;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.header.view.IEntityTableHeaderView;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 
 @Presenter(view = EntityTableHeaderView.class)
 public class EntityTableHeaderPresenter extends ConfigurableBasePresenter<IEntityTableHeaderView, EntityTableHeaderEventBus>
@@ -46,6 +43,15 @@ public class EntityTableHeaderPresenter extends ConfigurableBasePresenter<IEntit
 		try {
 			this.setInitialized(true);
 			this.getView().init();
+			
+			this.getView().getPrintButton().addListener(new ClickListener() {
+				
+				@Override
+				public void buttonClick(ClickEvent event) {
+					EntityTableHeaderPresenter.this.getEventBus().printClicked();
+				}
+			});
+			
 		} catch (Exception e) {
 			StringWriter sw = new StringWriter();
 			e.printStackTrace(new PrintWriter(sw));

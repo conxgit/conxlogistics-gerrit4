@@ -45,4 +45,8 @@
     <inherits name="com.conx.logistics.kernel.ui.vaadin.widgetsets.ConXWidgetset" />
 
     <inherits name="org.vaadin.hene.popupbutton.widgetset.PopupbuttonWidgetset" />
+
+    <inherits name="com.vaadin.addon.tableexport.widgetset.Tableexport_for_vaadinWidgetset" />
+
+    <inherits name="org.vaadin.sasha.portallayout.PortallayoutWidgetset" />
 </module>

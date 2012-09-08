@@ -53,6 +53,8 @@
 		<module>vaadin-addon-wizard</module>
 		<module>vaadin-addon-popup-button</module>
 		<module>flexjson</module>
+		<module>vaadin-addon-tableexport</module>
+		<module>vaadin-addon-portallayout</module>
 	</modules>
 	<build>
 		<plugins>

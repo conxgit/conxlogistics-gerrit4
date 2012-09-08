@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import com.conx.logistics.app.whse.rcv.asn.domain.ASN;
+import com.conx.logistics.app.whse.rcv.rcv.domain.Arrival;
 import com.conx.logistics.app.whse.rcv.rcv.domain.Receive;
 import com.conx.logistics.mdm.domain.documentlibrary.DocType;
 import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
@@ -17,6 +18,8 @@ public interface IReceiveDAOService {
 	public Receive add(Receive record);
 	
 	public Receive process(ASN asn) throws ClassNotFoundException, Exception;
+	
+	public Arrival attachArrival(Receive targetRcv) throws ClassNotFoundException, Exception;
 	
 	public FileEntry addAttachment(Long rcvId, String sourceFileName, String title, String description, String mimeType, DocType attachmentType) throws Exception;
 	

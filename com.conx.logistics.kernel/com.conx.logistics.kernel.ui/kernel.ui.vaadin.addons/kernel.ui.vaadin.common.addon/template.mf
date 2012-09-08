@@ -6,7 +6,11 @@ Bundle-Vendor: ConX
 Bundle-Version: 1.0.0
 Fragment-Host: com.vaadin
 Import-Package: com.vaadin.addon.jpacontainer;version="2.0.0",
-  org.vaadin.hene.popupbutton;version="1.2.1"
+  org.vaadin.hene.popupbutton;version="1.2.1",
+  com.vaadin.addon.tableexport;version="1.3.0",
+  org.apache.poi.hssf.usermodel;version="3.8.0",
+  org.apache.poi.ss.usermodel;version="3.8.0",
+  org.apache.poi.ss.util;version="3.8.0"  
 Excluded-Imports: com.google.gwt.core.client,
   com.google.gwt.dom.client,
   com.google.gwt.event.dom.client,

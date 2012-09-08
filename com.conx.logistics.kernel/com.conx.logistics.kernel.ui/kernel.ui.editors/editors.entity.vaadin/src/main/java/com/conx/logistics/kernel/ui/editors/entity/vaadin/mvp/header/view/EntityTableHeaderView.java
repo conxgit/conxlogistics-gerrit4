@@ -4,6 +4,7 @@ import org.vaadin.mvp.uibinder.annotation.UiField;
 
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.header.EntityEditorBreadCrumb;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.header.EntityEditorToolStrip;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.VerticalLayout;
 
 public class EntityTableHeaderView extends VerticalLayout implements IEntityTableHeaderView {
@@ -31,5 +32,10 @@ public class EntityTableHeaderView extends VerticalLayout implements IEntityTabl
 		
 		mainLayout.addComponent(toolstrip);
 		mainLayout.addComponent(breadcrumb);
+	}
+
+	@Override
+	public Button getPrintButton() {
+		return this.toolstrip.getPrintButton();
 	}
 }

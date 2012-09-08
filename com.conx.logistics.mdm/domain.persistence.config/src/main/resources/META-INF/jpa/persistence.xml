@@ -36,8 +36,12 @@
 		<class>com.conx.logistics.mdm.domain.product.ProductMaster</class>
 		<class>com.conx.logistics.mdm.domain.product.ProductUnitConversion</class>
 		<class>com.conx.logistics.mdm.domain.product.WeightUnit</class>
+		
 		<class>com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber</class>
 		<class>com.conx.logistics.mdm.domain.referencenumber.ReferenceNumberType</class>
+		
 		<class>com.conx.logistics.mdm.domain.task.TaskDefinition</class>	
+		
+		<class>com.conx.logistics.mdm.domain.user.User</class>
 	</persistence-unit>
 </persistence>

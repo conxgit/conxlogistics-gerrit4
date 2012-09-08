@@ -25,4 +25,7 @@
 			
 	<!-- export internal interfaces -->
 	<osgi:service ref="rcvDao" interface="com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveDAOService"/>
+	<osgi:service ref="arvlDao" interface="com.conx.logistics.app.whse.rcv.rcv.dao.services.IArrivalDAOService"/>
+	
+	
 </beans>

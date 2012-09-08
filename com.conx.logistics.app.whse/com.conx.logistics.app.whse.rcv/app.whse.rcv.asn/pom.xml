@@ -16,5 +16,6 @@
   	<module>dao.services</module>
   	<module>dao.jpa.persistence</module>
   	<module>human-task-core.package.decorator</module>
+  	<module>osgi.fragment.human-task-core</module>
   </modules>
 </project>

@@ -1,22 +1,19 @@
 package com.conx.logistics.kernel.bpm.impl.jbpm.taskserver;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringWriter;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
@@ -31,13 +28,12 @@ import org.jbpm.task.service.local.LocalTaskService;
 import org.jbpm.task.service.mina.MinaTaskServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jndi.JndiTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.conx.logistics.kernel.bpm.services.IBPMTaskService;
+import com.conx.logistics.kernel.portal.remote.services.IPortalUserService;
 
 public class HumanTaskServer implements IBPMTaskService {
 	private static Logger logger = LoggerFactory
@@ -54,6 +50,10 @@ public class HumanTaskServer implements IBPMTaskService {
 
 	private LocalTaskService localTaskService;
 	private JTACustomTaskService taskService;
+	
+	
+	@Autowired
+	private IPortalUserService portalUserService;
 
 	public void stop() {
 		minaServer.stop();
@@ -76,42 +76,16 @@ public class HumanTaskServer implements IBPMTaskService {
 			taskService = new JTACustomTaskService(globalTransactionManager,
 					jndiTemplate, userTransaction,emfOrgJbpmTask,
 					SystemEventListenerFactory.getSystemEventListener());
-			TaskServiceSession taskSession = taskService.createSession();
-
 			localTaskService = new LocalTaskService(taskService);
 
-			// Add users
-/*			Map vars = new HashMap();
-			Reader reader;
-
-			URL usersURL = HumanTaskServer.class.getClassLoader().getResource(
-					"LoadUsers.mvel");
-			reader = new FileReader(new File(usersURL.toURI()));
-
-			Map<String, User> users = (Map<String, User>) eval(reader, vars);
-			for (User user : users.values()) {
-				taskSession.addUser(user);
-
-			}
-
-			URL grpsURL = HumanTaskServer.class.getClassLoader().getResource(
-					"LoadGroups.mvel");
-			reader = new FileReader(new File(grpsURL.toURI()));
-
-			Map<String, Group> groups = (Map<String, Group>) eval(reader, vars);
-			for (Group group : groups.values()) {
-				taskSession.addGroup(group);
-			}
-			*/
-
-			//ut.commit();			
+			//-- Add users and groups
+			addUsersAndGroups();		
 			
 			// start server
 			minaServer = new MinaTaskServer(taskService);
 			minaServerThread = new Thread(minaServer);
 			minaServerThread.start();		
 			
-			taskSession.dispose();
 			// kernelSystemBPMTransManager.commit(status);
 		} catch (Exception e) {
 			StringWriter sw = new StringWriter();
@@ -178,4 +152,61 @@ public class HumanTaskServer implements IBPMTaskService {
 	public TaskService getTaskService() {
 		return taskService;
 	}
+	
+	private void addUsersAndGroups() throws NamingException
+	{
+		 Context ctx = jndiTemplate.getContext();
+		 UserTransaction ut = (UserTransaction)ctx.lookup( "java:comp/UserTransaction" );
+
+		 try
+		 {
+			ut.begin();
+			
+			TaskServiceSession ts = taskService.createSession();
+			
+			// Add users
+			Map vars = new HashMap();
+			Reader reader;
+			URL usersURL;
+			try {
+				List<com.conx.logistics.mdm.domain.user.User> portalusers = portalUserService.getUsersByDefaultCompany();
+				for (com.conx.logistics.mdm.domain.user.User user : portalusers)
+				{
+					ts.addUser(new User(user.getScreenName()));
+				}
+			} catch (Exception e) {
+				StringWriter sw = new StringWriter();
+				e.printStackTrace(new PrintWriter(sw));
+				String stacktrace = sw.toString();
+				logger.error(stacktrace);
+			}
+
+
+			URL grpsURL = null;
+			
+			try {
+				grpsURL = HumanTaskServer.class.getClassLoader().getResource(
+						"LoadGroups.mvel");
+				reader = new FileReader(new File(grpsURL.toURI()));
+			} catch (IllegalArgumentException e) {
+				grpsURL = HumanTaskServer.class.getClassLoader().getResource(
+						"/LoadGroups.mvel");
+				File file = new File(Thread.currentThread().getContextClassLoader().getResource("/LoadGroups.mvel").getFile());
+				reader = new FileReader(file);				
+			}
+
+			Map<String, Group> groups = (Map<String, Group>) eval(reader, vars);
+			for (Group group : groups.values()) {
+				ts.addGroup(group);
+			}
+			
+			
+			ut.commit();
+		} catch (Exception e) {
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			String stacktrace = sw.toString();
+			logger.error(stacktrace);
+		}				
+	}	
 }

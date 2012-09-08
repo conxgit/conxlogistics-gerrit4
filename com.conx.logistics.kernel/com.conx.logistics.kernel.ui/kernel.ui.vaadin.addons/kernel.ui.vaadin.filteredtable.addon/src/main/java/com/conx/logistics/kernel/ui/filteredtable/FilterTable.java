@@ -10,6 +10,7 @@ import java.util.Set;
 
 import com.vaadin.data.Container;
 import com.vaadin.data.Property;
+import com.vaadin.data.util.filter.Between;
 import com.vaadin.data.util.filter.SimpleStringFilter;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
@@ -233,7 +234,7 @@ public class FilterTable extends CustomTable {
         }
     };
 
-    private Filter generateFilter(Property field, Object propertyId,
+    protected Filter generateFilter(Property field, Object propertyId,
             Object value) {
         if (field instanceof DateFilterPopup) {
             /* Handle date filtering */
@@ -249,7 +250,8 @@ public class FilterTable extends CustomTable {
                     return newFilter;
                 }
             }
-            return new DateFilter(interval, propertyId);
+            return new Between(propertyId, interval.getFrom(), interval.getTo());
+            //return new DateFilter(interval, propertyId);
         } else if (value != null && !value.equals("")) {
             /* Handle filtering for other data */
             if (filterGenerator != null) {

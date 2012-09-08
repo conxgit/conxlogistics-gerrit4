@@ -32,5 +32,12 @@
 	<!-- ========================= BUSINESS OBJECT DEFINITIONS ========================= -->
 		
 	<bean id="attachNewArrivalWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.AttachNewArrivalWIH"/>
-	<bean id="attachNewDynamicArrivalWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.AttachNewDynamicArrivalWIH"/>
+	<bean id="saveDropOffWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.expected.SaveDropOffWIH"/>
+	<bean id="savePickupWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.expected.SavePickupWIH"/>
+	<bean id="saveTruckInfoWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.expected.SaveTruckInfoWIH"/>
+	
+	<bean id="attachNewDynaArrivalWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.jit.AttachNewDynaArrivalWIH"/>
+	<bean id="saveDynaDropOffWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.jit.SaveDynaDropOffWIH"/>
+	<bean id="saveDynaPickupWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.jit.SaveDynaPickupWIH"/>
+	<bean id="saveDynaTruckInfoWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.jit.SaveDynaTruckInfoWIH"/>
 </beans>

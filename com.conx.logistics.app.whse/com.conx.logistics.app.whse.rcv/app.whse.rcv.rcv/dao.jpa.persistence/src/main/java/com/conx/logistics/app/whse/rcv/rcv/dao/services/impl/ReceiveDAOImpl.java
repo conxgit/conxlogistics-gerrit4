@@ -20,7 +20,9 @@ import com.conx.logistics.app.whse.rcv.asn.domain.ASN;
 import com.conx.logistics.app.whse.rcv.asn.domain.ASNDropOff;
 import com.conx.logistics.app.whse.rcv.asn.domain.ASNLine;
 import com.conx.logistics.app.whse.rcv.asn.domain.ASNPickup;
+import com.conx.logistics.app.whse.rcv.rcv.dao.services.IArrivalDAOService;
 import com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveDAOService;
+import com.conx.logistics.app.whse.rcv.rcv.domain.Arrival;
 import com.conx.logistics.app.whse.rcv.rcv.domain.DropOff;
 import com.conx.logistics.app.whse.rcv.rcv.domain.Pickup;
 import com.conx.logistics.app.whse.rcv.rcv.domain.Receive;
@@ -59,6 +61,9 @@ public class ReceiveDAOImpl implements IReceiveDAOService {
     
     @Autowired
     private IEntityTypeDAOService entityTypeDAOService;
+    
+    @Autowired
+    private IArrivalDAOService arrivalDAOService;
     
 	public void setEm(EntityManager em) {
 		this.em = em;
@@ -271,5 +276,20 @@ public class ReceiveDAOImpl implements IReceiveDAOService {
 		rcv = em.merge(rcv);
 		
 		return ni;
+	}
+
+	@Override
+	public Arrival attachArrival(Receive targetRcv)
+			throws ClassNotFoundException, Exception {
+		
+		targetRcv = em.merge(targetRcv);
+		
+		Arrival arvl = new Arrival();
+		arvl = arrivalDAOService.add(arvl, targetRcv);
+		
+		targetRcv.getArrivals().add(arvl);
+		targetRcv = update(targetRcv);
+		
+		return arvl;
 	}
 }

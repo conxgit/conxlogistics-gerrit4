@@ -24,6 +24,8 @@ import com.conx.logistics.app.tms.domain.types.DROPMODE;
 import com.conx.logistics.app.tms.domain.types.TRANSMODE;
 import com.conx.logistics.app.whse.domain.warehouse.Warehouse;
 import com.conx.logistics.app.whse.rcv.asn.domain.ASN;
+import com.conx.logistics.app.whse.rcv.asn.domain.ASNDropOff;
+import com.conx.logistics.app.whse.rcv.asn.domain.ASNPickup;
 import com.conx.logistics.app.whse.rcv.rcv.domain.types.RECEIVESTATUS;
 import com.conx.logistics.app.whse.rcv.rcv.domain.types.RECEIVETYPE;
 import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
@@ -41,11 +43,11 @@ import com.conx.logistics.mdm.domain.product.WeightUnit;
 public class Receive extends MultitenantBaseEntity {
     @OneToOne(targetEntity = Pickup.class, fetch = FetchType.EAGER)
     @JoinColumn
-    private Pickup pickUp;
+    private ASNPickup expectedPickUp;
     
     @OneToOne(targetEntity = DropOff.class, fetch = FetchType.EAGER)
     @JoinColumn
-    private DropOff dropOff;
+    private ASNDropOff expectedDropOff;
     
     @OneToOne(targetEntity = PackUnit.class, fetch = FetchType.EAGER)
     @JoinColumn
@@ -469,19 +471,19 @@ public class Receive extends MultitenantBaseEntity {
 		this.dropMode = dropMode;
 	}
 
-	public Pickup getPickUp() {
-		return pickUp;
+	public ASNPickup getExpectedPickUp() {
+		return expectedPickUp;
 	}
 
-	public void setPickUp(Pickup pickUp) {
-		this.pickUp = pickUp;
+	public void setExpectedPickUp(ASNPickup expectedPickUp) {
+		this.expectedPickUp = expectedPickUp;
 	}
 
-	public DropOff getDropOff() {
-		return dropOff;
+	public ASNDropOff getExpectedDropOff() {
+		return expectedDropOff;
 	}
 
-	public void setDropOff(DropOff dropOff) {
-		this.dropOff = dropOff;
-	}	
+	public void setExpectedDropOff(ASNDropOff expectedDropOff) {
+		this.expectedDropOff = expectedDropOff;
+	}
 }

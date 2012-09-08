@@ -26,85 +26,70 @@ import com.conx.logistics.mdm.domain.organization.Organization;
 
 @Entity
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
-@Table(name="whrcvpickup")
+@Table(name="whrcvdropoff")
 public class DropOff extends MultitenantBaseEntity implements Serializable {
 
     @ManyToOne(targetEntity = Organization.class, fetch = FetchType.EAGER)
     @JoinColumn
-    private Organization cfs;
+    private Organization actualCfs;
 
     @ManyToOne(targetEntity = Address.class, fetch = FetchType.EAGER)
     @JoinColumn
-    private Address cfsAddress;
+    private Address actualCfsAddress;
 
     @ManyToOne(targetEntity = Organization.class, fetch = FetchType.EAGER)
     @JoinColumn
-    private Organization dropOffAt;
+    private Organization actualDropOffAt;
 
     @ManyToOne(targetEntity = Address.class, fetch = FetchType.EAGER)
     @JoinColumn
-    private Address dropOffAtAddress;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "S-")
-    private Date estimatedDropOff;
+    private Address actualDropOffAtAddress;
     
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "S-")
     private Date actualDropOff;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "S-")
-    private Date dropOffRequiredBy;
-
-    private String shippersRef;
+    private String actualShippersRef;
 
     @Enumerated(EnumType.STRING)
-    private DROPMODE dropMode;
+    private DROPMODE actualDropMode;
     
     @ManyToOne(targetEntity = DockType.class, cascade={CascadeType.PERSIST,CascadeType.MERGE},fetch = FetchType.EAGER)
     @JoinColumn
-    private DockType dockType;
+    private DockType actualDockType;
 
 	public Organization getCfs() {
-		return cfs;
+		return actualCfs;
 	}
 
 	public void setCfs(Organization cfs) {
-		this.cfs = cfs;
+		this.actualCfs = cfs;
 	}
 
 	public Address getCfsAddress() {
-		return cfsAddress;
+		return actualCfsAddress;
 	}
 
 	public void setCfsAddress(Address cfsAddress) {
-		this.cfsAddress = cfsAddress;
+		this.actualCfsAddress = cfsAddress;
 	}
 
 	public Organization getDropOffAt() {
-		return dropOffAt;
+		return actualDropOffAt;
 	}
 
 	public void setDropOffAt(Organization dropOffAt) {
-		this.dropOffAt = dropOffAt;
+		this.actualDropOffAt = dropOffAt;
 	}
 
 	public Address getDropOffAtAddress() {
-		return dropOffAtAddress;
+		return actualDropOffAtAddress;
 	}
 
 	public void setDropOffAtAddress(Address dropOffAtAddress) {
-		this.dropOffAtAddress = dropOffAtAddress;
+		this.actualDropOffAtAddress = dropOffAtAddress;
 	}
 
-	public Date getEstimatedDropOff() {
-		return estimatedDropOff;
-	}
-
-	public void setEstimatedDropOff(Date estimatedDropOff) {
-		this.estimatedDropOff = estimatedDropOff;
-	}
 
 	public Date getActualDropOff() {
 		return actualDropOff;
@@ -114,35 +99,83 @@ public class DropOff extends MultitenantBaseEntity implements Serializable {
 		this.actualDropOff = actualDropOff;
 	}
 
-	public Date getDropOffRequiredBy() {
-		return dropOffRequiredBy;
-	}
-
-	public void setDropOffRequiredBy(Date dropOffRequiredBy) {
-		this.dropOffRequiredBy = dropOffRequiredBy;
-	}
-
 	public String getShippersRef() {
-		return shippersRef;
+		return actualShippersRef;
 	}
 
 	public void setShippersRef(String shippersRef) {
-		this.shippersRef = shippersRef;
+		this.actualShippersRef = shippersRef;
 	}
 
 	public DROPMODE getDropMode() {
-		return dropMode;
+		return actualDropMode;
 	}
 
 	public void setDropMode(DROPMODE dropMode) {
-		this.dropMode = dropMode;
+		this.actualDropMode = dropMode;
 	}
 
 	public DockType getDockType() {
-		return dockType;
+		return actualDockType;
 	}
 
 	public void setDockType(DockType dockType) {
-		this.dockType = dockType;
+		this.actualDockType = dockType;
+	}
+
+	public Organization getActualCfs() {
+		return actualCfs;
+	}
+
+	public void setActualCfs(Organization actualCfs) {
+		this.actualCfs = actualCfs;
+	}
+
+	public Address getActualCfsAddress() {
+		return actualCfsAddress;
+	}
+
+	public void setActualCfsAddress(Address actualCfsAddress) {
+		this.actualCfsAddress = actualCfsAddress;
+	}
+
+	public Organization getActualDropOffAt() {
+		return actualDropOffAt;
+	}
+
+	public void setActualDropOffAt(Organization actualDropOffAt) {
+		this.actualDropOffAt = actualDropOffAt;
+	}
+
+	public Address getActualDropOffAtAddress() {
+		return actualDropOffAtAddress;
+	}
+
+	public void setActualDropOffAtAddress(Address actualDropOffAtAddress) {
+		this.actualDropOffAtAddress = actualDropOffAtAddress;
+	}
+
+	public String getActualShippersRef() {
+		return actualShippersRef;
+	}
+
+	public void setActualShippersRef(String actualShippersRef) {
+		this.actualShippersRef = actualShippersRef;
+	}
+
+	public DROPMODE getActualDropMode() {
+		return actualDropMode;
+	}
+
+	public void setActualDropMode(DROPMODE actualDropMode) {
+		this.actualDropMode = actualDropMode;
+	}
+
+	public DockType getActualDockType() {
+		return actualDockType;
+	}
+
+	public void setActualDockType(DockType actualDockType) {
+		this.actualDockType = actualDockType;
 	}
 }

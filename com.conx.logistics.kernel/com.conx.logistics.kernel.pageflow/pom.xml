@@ -13,5 +13,6 @@
   	<module>com.conx.logistics.kernel.pageflow.engine</module>
   	<module>pageflow.ui</module>
   	<module>pageflow.tests</module>
+  	<module>sprint2.integration.tests</module>
   </modules>
 </project>

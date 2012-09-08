@@ -35,7 +35,7 @@ public class ConXFooter extends HorizontalLayout {
 		customer.setWidth("150px");
 		customer.setContentMode(Label.CONTENT_XHTML);
 		customer.addStyleName("conx-footer-right");
-		setCustomerName("F & B Food Inc.");
+		setCustomerName("OHL");
 		
 		addComponent(customer);
 		setComponentAlignment(customer, Alignment.MIDDLE_RIGHT);

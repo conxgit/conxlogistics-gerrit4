@@ -11,6 +11,7 @@ public class EntityEditorToolStrip extends HorizontalLayout {
 	private static final String TOOLSTRIP_IMG_SAVE_PNG = "toolstrip/img/save.png";
 	private static final String TOOLSTRIP_IMG_EDIT_PNG = "toolstrip/img/edit.png";
 	private static final String TOOLSTRIP_IMG_NEW_PNG = "toolstrip/img/new.png";
+	private static final String TOOLSTRIP_IMG_PRINT_PNG = "toolstrip/img/print.png";
 
 	private HorizontalLayout leftLayout;
 	private HorizontalLayout rightLayout;
@@ -19,6 +20,7 @@ public class EntityEditorToolStrip extends HorizontalLayout {
 	private EntityEditorToolStripButton editButton;
 	private EntityEditorToolStripButton saveButton;
 	private EntityEditorToolStripButton deleteButton;
+	private EntityEditorToolStripButton printButton;
 
 	public EntityEditorToolStrip() {
 		setStyleName("conx-entity-toolstrip");
@@ -29,6 +31,7 @@ public class EntityEditorToolStrip extends HorizontalLayout {
 		editButton = new EntityEditorToolStripButton(TOOLSTRIP_IMG_EDIT_PNG);
 		saveButton = new EntityEditorToolStripButton(TOOLSTRIP_IMG_SAVE_PNG);
 		deleteButton = new EntityEditorToolStripButton(TOOLSTRIP_IMG_DELETE_PNG);
+		printButton = new EntityEditorToolStripButton(TOOLSTRIP_IMG_PRINT_PNG);		
 		
 		leftLayout = new HorizontalLayout();
 		leftLayout.setHeight("28px");
@@ -38,6 +41,7 @@ public class EntityEditorToolStrip extends HorizontalLayout {
 		leftLayout.addComponent(editButton);
 		leftLayout.addComponent(saveButton);
 		leftLayout.addComponent(deleteButton);
+		leftLayout.addComponent(printButton);
 		
 		rightLayout = new HorizontalLayout();
 		rightLayout.setHeight("28px");
@@ -48,5 +52,13 @@ public class EntityEditorToolStrip extends HorizontalLayout {
 		
 		setComponentAlignment(leftLayout, Alignment.MIDDLE_LEFT);
 		setComponentAlignment(rightLayout, Alignment.MIDDLE_RIGHT);
+	}
+
+	public EntityEditorToolStripButton getPrintButton() {
+		return printButton;
+	}
+
+	public void setPrintButton(EntityEditorToolStripButton printButton) {
+		this.printButton = printButton;
 	}
 }

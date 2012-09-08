@@ -24,6 +24,13 @@ public class DocViewFeature extends Feature {
 		setName(fileEntry.getDocType().getCode()+"/"+fileEntry.getTitle());
 	}
 
+	public DocViewFeature(FileEntry fileEntry, BaseEntity ownerEntity) {
+		super();
+		this.fileEntry = fileEntry;
+		this.ownerEntity = ownerEntity;
+		setName(ownerEntity.getCode()+"/"+fileEntry.getDocType().getCode()+"/"+fileEntry.getTitle());
+	}
+	
 	public FileEntry getFileEntry() {
 		return fileEntry;
 	}

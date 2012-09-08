@@ -11,13 +11,56 @@
 			<entry key="TASK_NAME" value="AttachNewArrivalWIH" />
 		</osgi:service-properties>
 	</osgi:service>
-	<osgi:service ref="attachNewDynamicArrivalWIH"
+	<osgi:service ref="saveDropOffWIH"
 		interface="org.drools.process.instance.WorkItemHandler">
 		<osgi:service-properties>
 			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0" />
-			<entry key="TASK_NAME" value="AttachNewDynamicArrivalWIH" />
+			<entry key="TASK_NAME" value="SaveDropOffWIH" />
 		</osgi:service-properties>
 	</osgi:service>
+	<osgi:service ref="savePickupWIH"
+		interface="org.drools.process.instance.WorkItemHandler">
+		<osgi:service-properties>
+			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0" />
+			<entry key="TASK_NAME" value="SavePickupWIH" />
+		</osgi:service-properties>
+	</osgi:service>	
+	<osgi:service ref="saveTruckInfoWIH"
+		interface="org.drools.process.instance.WorkItemHandler">
+		<osgi:service-properties>
+			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0" />
+			<entry key="TASK_NAME" value="SaveTruckInfoWIH" />
+		</osgi:service-properties>
+	</osgi:service>		
+	<osgi:service ref="attachNewDynaArrivalWIH"
+		interface="org.drools.process.instance.WorkItemHandler">
+		<osgi:service-properties>
+			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0" />
+			<entry key="TASK_NAME" value="AttachNewDynaArrivalWIH" />
+		</osgi:service-properties>
+	</osgi:service>
+	<osgi:service ref="saveDynaDropOffWIH"
+		interface="org.drools.process.instance.WorkItemHandler">
+		<osgi:service-properties>
+			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0" />
+			<entry key="TASK_NAME" value="SaveDynaDropOffWIH" />
+		</osgi:service-properties>
+	</osgi:service>
+	<osgi:service ref="saveDynaPickupWIH"
+		interface="org.drools.process.instance.WorkItemHandler">
+		<osgi:service-properties>
+			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0" />
+			<entry key="TASK_NAME" value="SaveDynaPickupWIH" />
+		</osgi:service-properties>
+	</osgi:service>	
+	<osgi:service ref="saveDynaTruckInfoWIH"
+		interface="org.drools.process.instance.WorkItemHandler">
+		<osgi:service-properties>
+			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0" />
+			<entry key="TASK_NAME" value="SaveDynaTruckInfoWIH" />
+		</osgi:service-properties>
+	</osgi:service>			
+
 	
 	<osgi:reference id="conxLogisticsManagerFactory" interface="javax.persistence.EntityManagerFactory" filter="(module=KERNEL)">
 	</osgi:reference>		

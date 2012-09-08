@@ -15,5 +15,6 @@
   	<module>domain.persistence.config</module>
   	<module>dao.services</module>
   	<module>dao.services.impl</module>
+  	<module>domain.osgi.fragment.human-task-core</module>
   </modules>
 </project>

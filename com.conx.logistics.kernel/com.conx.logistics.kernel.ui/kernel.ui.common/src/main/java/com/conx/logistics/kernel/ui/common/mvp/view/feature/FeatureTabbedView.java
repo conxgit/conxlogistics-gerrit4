@@ -18,8 +18,10 @@ import com.conx.logistics.kernel.ui.service.contribution.IViewContribution;
 import com.conx.logistics.mdm.domain.application.DocViewFeature;
 import com.conx.logistics.mdm.domain.application.Feature;
 import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
+import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TabSheet.Tab;
 
 public class FeatureTabbedView extends TabSheet implements IFeatureView {
 	private static final long serialVersionUID = 1987628349762L;
@@ -59,17 +61,35 @@ public class FeatureTabbedView extends TabSheet implements IFeatureView {
 			else if (feature instanceof DocViewFeature)
 			{
 				currentFeature = feature;
-				IPresenterFactory pf = this.app.getPresenterFactory();
-				DocViewerPresenter viewPresenter = (DocViewerPresenter)pf.createPresenter(DocViewerPresenter.class);
+				Component view = viewCache.get(feature);
 				FileEntry fe = ((DocViewFeature)feature).getFileEntry();
-				viewPresenter.getEventBus().viewDocument(fe);
-
-				Component view = (Component)viewPresenter.getView();				
-				if (getTab(view) != null) {
+				ThemeResource rc = null;
+				if (view == null)
+				{
+					IPresenterFactory pf = this.app.getPresenterFactory();
+					DocViewerPresenter viewPresenter = (DocViewerPresenter)pf.createPresenter(DocViewerPresenter.class);
+					view = (Component)viewPresenter.getView();
+					
+					viewPresenter.getEventBus().viewDocument(fe);
+					
+					rc = new ThemeResource("icons/mimetype/attachment-generic.png");
+					Tab tab = addTab(view, feature.getName(),rc);
+					tab.setClosable(true);
 					this.setSelectedTab(view);
-				} else {
-					addTab(view, feature.getName());
-				}				
+					viewCache.put(feature, view);					
+				}
+				else
+				{			
+					if (getTab(view) != null) {
+						this.setSelectedTab(view);
+					} else {
+						rc = new ThemeResource("icons/mimetype/attachment-generic.png");
+						Tab tab = addTab(view, feature.getName(),rc);
+						this.setSelectedTab(view);
+						tab.setClosable(true);
+						viewCache.put(feature, view);
+					}		
+				}
 			}
 		}
 	}

@@ -30,5 +30,6 @@
   	<module>datasource</module>
   	<module>documentlibrary</module>
   	<module>com.springframework.orm.fragment</module>
+  	<module>portal</module>
   </modules>
 </project>

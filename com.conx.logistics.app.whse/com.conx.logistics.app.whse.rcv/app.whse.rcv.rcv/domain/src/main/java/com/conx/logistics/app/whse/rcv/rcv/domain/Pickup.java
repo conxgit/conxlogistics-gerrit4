@@ -28,126 +28,84 @@ import com.conx.logistics.mdm.domain.organization.Organization;
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 @Table(name="whrcvpickup")
 public class Pickup extends MultitenantBaseEntity implements Serializable {
-
     @ManyToOne(targetEntity = Organization.class, fetch = FetchType.EAGER)
     @JoinColumn
-    private Organization cfs;
+    private Organization actualCfs;
 
     @ManyToOne(targetEntity = Address.class, fetch = FetchType.EAGER)
     @JoinColumn
-    private Address cfsAddress;
-
+    private Address actualCfsAddress;
+    
     @ManyToOne(targetEntity = Organization.class, fetch = FetchType.EAGER)
     @JoinColumn
-    private Organization localTrans;
+    private Organization actualLocalTrans;
 
     @ManyToOne(targetEntity = Address.class, fetch = FetchType.EAGER)
     @JoinColumn
-    private Address localTransAddress;
+    private Address actualLocalTransAddress;
 
     @ManyToOne(targetEntity = Organization.class, fetch = FetchType.EAGER)
     @JoinColumn
-    private Organization pickUpFrom;
+    private Organization actualPickUpFrom;
 
     @ManyToOne(targetEntity = Address.class, fetch = FetchType.EAGER)
     @JoinColumn
-    private Address pickUpFromAddress;
+    private Address actualPickUpFromAddress;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "S-")
-    private Date estimatedPickup;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "S-")
-    private Date localTransAdvised;
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "S-")
     private Date actualPickup;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "S-")
-    private Date pickupRequiredBy;
     
     @ManyToOne(targetEntity = DockType.class, cascade={CascadeType.PERSIST,CascadeType.MERGE},fetch = FetchType.EAGER)
     @JoinColumn
-    private DockType dockType;
+    private DockType actualDockType;
 
-    private String shippersRef;
+    private String actualShippersRef;
     
-    private String driverId;
+    private String actualDriverId;
     
-    private String vehicleId;
+    private String actualVehicleId;
     
-    private String bolNumber;
+    private String actualBolNumber;
     
-    private String sealNumber;
+    private String actualSealNumber;
 
     @Enumerated(EnumType.STRING)
-    private DROPMODE dropMode;
+    private DROPMODE actualDropMode;
 
-	public Organization getCfs() {
-		return cfs;
-	}
-
-	public void setCfs(Organization cfs) {
-		this.cfs = cfs;
-	}
-
-	public Address getCfsAddress() {
-		return cfsAddress;
-	}
-
-	public void setCfsAddress(Address cfsAddress) {
-		this.cfsAddress = cfsAddress;
-	}
 
 	public Organization getLocalTrans() {
-		return localTrans;
+		return actualLocalTrans;
 	}
 
 	public void setLocalTrans(Organization localTrans) {
-		this.localTrans = localTrans;
+		this.actualLocalTrans = localTrans;
 	}
 
 	public Address getLocalTransAddress() {
-		return localTransAddress;
+		return actualLocalTransAddress;
 	}
 
 	public void setLocalTransAddress(Address localTransAddress) {
-		this.localTransAddress = localTransAddress;
+		this.actualLocalTransAddress = localTransAddress;
 	}
 
 	public Organization getPickUpFrom() {
-		return pickUpFrom;
+		return actualPickUpFrom;
 	}
 
 	public void setPickUpFrom(Organization pickUpFrom) {
-		this.pickUpFrom = pickUpFrom;
+		this.actualPickUpFrom = pickUpFrom;
 	}
 
 	public Address getPickUpFromAddress() {
-		return pickUpFromAddress;
+		return actualPickUpFromAddress;
 	}
 
 	public void setPickUpFromAddress(Address pickUpFromAddress) {
-		this.pickUpFromAddress = pickUpFromAddress;
-	}
-
-	public Date getEstimatedPickup() {
-		return estimatedPickup;
-	}
-
-	public void setEstimatedPickup(Date estimatedPickup) {
-		this.estimatedPickup = estimatedPickup;
-	}
-
-	public Date getLocalTransAdvised() {
-		return localTransAdvised;
-	}
-
-	public void setLocalTransAdvised(Date localTransAdvised) {
-		this.localTransAdvised = localTransAdvised;
+		this.actualPickUpFromAddress = pickUpFromAddress;
 	}
 
 	public Date getActualPickup() {
@@ -158,67 +116,163 @@ public class Pickup extends MultitenantBaseEntity implements Serializable {
 		this.actualPickup = actualPickup;
 	}
 
-	public Date getPickupRequiredBy() {
-		return pickupRequiredBy;
-	}
-
-	public void setPickupRequiredBy(Date pickupRequiredBy) {
-		this.pickupRequiredBy = pickupRequiredBy;
-	}
-
 	public String getShippersRef() {
-		return shippersRef;
+		return actualShippersRef;
 	}
 
 	public void setShippersRef(String shippersRef) {
-		this.shippersRef = shippersRef;
+		this.actualShippersRef = shippersRef;
 	}
 
 	public DROPMODE getDropMode() {
-		return dropMode;
+		return actualDropMode;
 	}
 
 	public void setDropMode(DROPMODE dropMode) {
-		this.dropMode = dropMode;
+		this.actualDropMode = dropMode;
 	}
 
 	public String getDriverId() {
-		return driverId;
+		return actualDriverId;
 	}
 
 	public void setDriverId(String driverId) {
-		this.driverId = driverId;
+		this.actualDriverId = driverId;
 	}
 
 	public String getVehicleId() {
-		return vehicleId;
+		return actualVehicleId;
 	}
 
 	public void setVehicleId(String vehicleId) {
-		this.vehicleId = vehicleId;
+		this.actualVehicleId = vehicleId;
 	}
 
 	public String getBolNumber() {
-		return bolNumber;
+		return actualBolNumber;
 	}
 
 	public void setBolNumber(String bolNumber) {
-		this.bolNumber = bolNumber;
+		this.actualBolNumber = bolNumber;
 	}
 
 	public String getSealNumber() {
-		return sealNumber;
+		return actualSealNumber;
 	}
 
 	public void setSealNumber(String sealNumber) {
-		this.sealNumber = sealNumber;
+		this.actualSealNumber = sealNumber;
 	}
 
 	public DockType getDockType() {
-		return dockType;
+		return actualDockType;
 	}
 
 	public void setDockType(DockType dockType) {
-		this.dockType = dockType;
+		this.actualDockType = dockType;
+	}
+
+	public Organization getActualCfs() {
+		return actualCfs;
+	}
+
+	public void setActualCfs(Organization actualCfs) {
+		this.actualCfs = actualCfs;
+	}
+
+	public Address getActualCfsAddress() {
+		return actualCfsAddress;
+	}
+
+	public void setActualCfsAddress(Address actualCfsAddress) {
+		this.actualCfsAddress = actualCfsAddress;
+	}
+
+	public Organization getActualLocalTrans() {
+		return actualLocalTrans;
+	}
+
+	public void setActualLocalTrans(Organization actualLocalTrans) {
+		this.actualLocalTrans = actualLocalTrans;
+	}
+
+	public Address getActualLocalTransAddress() {
+		return actualLocalTransAddress;
+	}
+
+	public void setActualLocalTransAddress(Address actualLocalTransAddress) {
+		this.actualLocalTransAddress = actualLocalTransAddress;
+	}
+
+	public Organization getActualPickUpFrom() {
+		return actualPickUpFrom;
+	}
+
+	public void setActualPickUpFrom(Organization actualPickUpFrom) {
+		this.actualPickUpFrom = actualPickUpFrom;
+	}
+
+	public Address getActualPickUpFromAddress() {
+		return actualPickUpFromAddress;
+	}
+
+	public void setActualPickUpFromAddress(Address actualPickUpFromAddress) {
+		this.actualPickUpFromAddress = actualPickUpFromAddress;
+	}
+
+	public DockType getActualDockType() {
+		return actualDockType;
+	}
+
+	public void setActualDockType(DockType actualDockType) {
+		this.actualDockType = actualDockType;
+	}
+
+	public String getActualShippersRef() {
+		return actualShippersRef;
+	}
+
+	public void setActualShippersRef(String actualShippersRef) {
+		this.actualShippersRef = actualShippersRef;
+	}
+
+	public String getActualDriverId() {
+		return actualDriverId;
+	}
+
+	public void setActualDriverId(String actualDriverId) {
+		this.actualDriverId = actualDriverId;
+	}
+
+	public String getActualVehicleId() {
+		return actualVehicleId;
+	}
+
+	public void setActualVehicleId(String actualVehicleId) {
+		this.actualVehicleId = actualVehicleId;
+	}
+
+	public String getActualBolNumber() {
+		return actualBolNumber;
+	}
+
+	public void setActualBolNumber(String actualBolNumber) {
+		this.actualBolNumber = actualBolNumber;
+	}
+
+	public String getActualSealNumber() {
+		return actualSealNumber;
+	}
+
+	public void setActualSealNumber(String actualSealNumber) {
+		this.actualSealNumber = actualSealNumber;
+	}
+
+	public DROPMODE getActualDropMode() {
+		return actualDropMode;
+	}
+
+	public void setActualDropMode(DROPMODE actualDropMode) {
+		this.actualDropMode = actualDropMode;
 	}
 }
