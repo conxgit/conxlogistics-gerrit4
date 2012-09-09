@@ -14,6 +14,9 @@ Import-Package: com.conx.logistics.app.whse.rcv.rcv.domain;version="1.0.0",
   com.conx.logistics.mdm.domain.referencenumber;version="1.0.0",
   com.conx.logistics.common.utils;version="1.0.0",
   com.conx.logistics.app.whse.domain.docktype;version="[1.0.0, 2.0.0)",
+  com.conx.logistics.app.whse.rcv.asn.domain;version="[1.0.0, 2.0.0)",
+  com.conx.logistics.app.whse.rcv.rcv.workitems;version="[1.0.0, 2.0.0)",
+  com.conx.logistics.mdm.domain.geolocation;version="[1.0.0, 2.0.0)",
   javax.persistence;version="0",
   javax.persistence.criteria;version="0",
   org.springframework.jndi;version="[3.0,3.1)",
@@ -30,5 +33,6 @@ Import-Package: com.conx.logistics.app.whse.rcv.rcv.domain;version="1.0.0",
   org.springframework.orm.jpa;version="[3.0,3.1)",
   org.springframework.transaction.support;version="[3.0,3.1)",
   org.slf4j;version="[1.6.0,1.7.0)"
+Excluded-Imports: com.conx.logistics.app.whse.rcv.rcv.workitems
   
 
