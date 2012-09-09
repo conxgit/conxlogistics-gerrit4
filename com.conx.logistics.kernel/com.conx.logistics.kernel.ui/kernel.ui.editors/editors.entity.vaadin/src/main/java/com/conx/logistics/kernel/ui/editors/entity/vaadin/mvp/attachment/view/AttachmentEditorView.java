@@ -7,12 +7,12 @@ import java.util.Set;
 
 import org.vaadin.mvp.uibinder.annotation.UiField;
 
-import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.FormMode;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.attachment.AttachmentEditorToolStrip;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.attachment.AttachmentForm;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.fieldfactory.ConXFieldFactory;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityGridFilterManager;
 import com.conx.logistics.kernel.ui.filteredtable.FilterTable;
+import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
 import com.conx.logistics.mdm.domain.documentlibrary.DocType;
 import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.vaadin.addon.jpacontainer.EntityItem;

@@ -2,7 +2,6 @@ package com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +18,6 @@ import org.vaadin.mvp.presenter.annotation.Presenter;
 
 import com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository;
 import com.conx.logistics.kernel.ui.components.domain.attachment.AttachmentEditorComponent;
-import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.FormMode;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.ConfigurableBasePresenter;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.MultiLevelEntityEditorEventBus;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment.view.AttachmentEditorView;
@@ -29,6 +27,7 @@ import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment.view.At
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment.view.IAttachmentEditorView;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.view.IMultiLevelEntityEditorView;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
+import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
 import com.conx.logistics.kernel.ui.service.contribution.IMainApplication;
 import com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService;
 import com.conx.logistics.mdm.domain.BaseEntity;
@@ -55,7 +54,6 @@ public class AttachmentEditorPresenter extends ConfigurableBasePresenter<IAttach
 	private Folder docFolder;
 	private List<String> formVisibleFieldNames;
 	private EntityItem<FileEntry> newEntityItem;
-	@SuppressWarnings({ "unused", "rawtypes" })
 	private ConfigurableBasePresenter<IMultiLevelEntityEditorView, MultiLevelEntityEditorEventBus> mlEntityPresenter;
 	@SuppressWarnings("unused")
 	private IFolderDAOService docFolderDAOService;
@@ -97,7 +95,6 @@ public class AttachmentEditorPresenter extends ConfigurableBasePresenter<IAttach
 			}
 		}
 		updateQueryFilter();
-
 	}
 	
 	private void updateQueryFilter() {
@@ -131,7 +128,7 @@ public class AttachmentEditorPresenter extends ConfigurableBasePresenter<IAttach
 					JPAContainerItem<FileEntry> jpaItem = (JPAContainerItem<FileEntry>) event.getItem();
 					onInspectAttachment(jpaItem.getEntity());
 				} else {
-					getView().entityItemSingleClicked((EntityItem)event.getItem());
+					getView().entityItemSingleClicked((EntityItem<?>) event.getItem());
 				}
 			}
 		});
@@ -154,7 +151,7 @@ public class AttachmentEditorPresenter extends ConfigurableBasePresenter<IAttach
 		this.initialized = initialized;
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void configure() {
 		this.mlEntityPresenter = (ConfigurableBasePresenter) getConfig().get(IEntityEditorFactory.FACTORY_PARAM_MVP_CURRENT_MLENTITY_EDITOR_PRESENTER);

@@ -2,8 +2,6 @@ package com.conx.logistics.mdm.domain;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,18 +12,22 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
 
 import com.conx.logistics.mdm.domain.documentlibrary.Folder;
 import com.conx.logistics.mdm.domain.note.Note;
-import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber;
 
 @MappedSuperclass
 public class BaseEntity implements Serializable {
 	private static final long serialVersionUID = 2729618029911190092L;
+	
+	public static final String BASIC_ENTITY_ATTRIBUTE_ID = "id";
+	public static final String BASIC_ENTITY_ATTRIBUTE_NAME = "name";
+	public static final String BASIC_ENTITY_ATTRIBUTE_CODE = "code";
+	public static final String BASIC_ENTITY_ATTRIBUTE_DATE_CREATED = "dateCreated";
+	public static final String BASIC_ENTITY_ATTRIBUTE_DATE_LAST_UPDATED = "dateLastUpdated";
 
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)

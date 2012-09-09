@@ -18,7 +18,7 @@ import org.vaadin.mvp.presenter.annotation.Presenter;
 
 import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
 import com.conx.logistics.kernel.ui.components.domain.note.NoteEditorComponent;
-import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.FormMode;
+import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.ConfigurableBasePresenter;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.notes.view.INotesEditorView;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.notes.view.NotesEditorView;

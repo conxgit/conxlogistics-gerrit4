@@ -1,12 +1,12 @@
 package com.conx.logistics.data.uat.sprint2.data;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
 
 import com.conx.logistics.kernel.datasource.dao.services.IDataSourceDAOService;
 import com.conx.logistics.kernel.datasource.domain.DataSource;
+import com.conx.logistics.kernel.datasource.domain.DataSourceField;
 import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
 import com.conx.logistics.kernel.ui.components.dao.services.IComponentDAOService;
 import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
@@ -14,6 +14,7 @@ import com.conx.logistics.kernel.ui.components.domain.attachment.AttachmentEdito
 import com.conx.logistics.kernel.ui.components.domain.form.ConXCollapseableSectionForm;
 import com.conx.logistics.kernel.ui.components.domain.form.ConXSimpleForm;
 import com.conx.logistics.kernel.ui.components.domain.form.FieldSet;
+import com.conx.logistics.kernel.ui.components.domain.form.FieldSetField;
 import com.conx.logistics.kernel.ui.components.domain.layout.ConXGridLayout;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorContainerComponent;
@@ -21,6 +22,7 @@ import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailC
 import com.conx.logistics.kernel.ui.components.domain.note.NoteEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.referencenumber.ReferenceNumberEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.table.ConXTable;
+import com.conx.logistics.mdm.domain.BaseEntity;
 
 public class UIComponentModelData {
 	@SuppressWarnings("unused")
@@ -29,6 +31,7 @@ public class UIComponentModelData {
 		// -- ML E.E.
 		DataSource rcvDefaultDS = getDefaultRCVDS(entityTypeDAOService, dataSourceDAOService, em);
 		DataSource basicRcvDS = getBasicFormRCVDS(entityTypeDAOService, dataSourceDAOService, em);
+		DataSource weightDimsRcvDS = getWeightDimsRCVDS(entityTypeDAOService, dataSourceDAOService, em);
 		MasterDetailComponent rcvSearchMDC = new MasterDetailComponent("searchReceives", "Receives", basicRcvDS);
 		rcvSearchMDC = (MasterDetailComponent) componentDAOService.add((AbstractConXComponent) rcvSearchMDC);
 
@@ -43,130 +46,131 @@ public class UIComponentModelData {
 		 * Line Editors
 		 */
 		// A. -- RCV Basic Line Editor
-		ConXGridLayout gl2 = new ConXGridLayout();
-		gl2 = (ConXGridLayout) componentDAOService.add((AbstractConXComponent) gl2);
-		
-		FieldSet simpleFormFieldSet = new FieldSet();
-		simpleFormFieldSet.setCaption("Simple Form Field Set");
-		simpleFormFieldSet.setLayout(gl2);
-		simpleFormFieldSet = (FieldSet) componentDAOService.add((AbstractConXComponent) simpleFormFieldSet);
+		FieldSet basicFormFieldSet = createFieldSet("Basic", basicRcvDS, componentDAOService);
+		FieldSet weightDimsFormFieldSet = createFieldSet("Weight & Dimensions", weightDimsRcvDS, componentDAOService);
 
 		// -- Simple Form
-		ConXSimpleForm sform = new ConXSimpleForm(basicRcvDS, "Other");
-		sform.setFieldSet(simpleFormFieldSet);
-		sform = (ConXSimpleForm) componentDAOService.add((AbstractConXComponent) sform);
+		ConXSimpleForm rcvBasicForm = new ConXSimpleForm(basicRcvDS, "Basic");
+		rcvBasicForm.setFieldSet(basicFormFieldSet);
+		rcvBasicForm = (ConXSimpleForm) componentDAOService.add((AbstractConXComponent) rcvBasicForm);
 		
+		ConXSimpleForm rcvWeightDimsForm = new ConXSimpleForm(weightDimsRcvDS, "Weight & Dimensions");
+		rcvWeightDimsForm.setFieldSet(weightDimsFormFieldSet);
+		rcvWeightDimsForm = (ConXSimpleForm) componentDAOService.add((AbstractConXComponent) rcvWeightDimsForm);
+
 		LineEditorComponent rcvBasicFormLE = new LineEditorComponent(lecc.getCode() + "-basicAttrs", "Basic", lecc);
-		rcvBasicFormLE.setContent(sform);
+		rcvBasicFormLE.setContent(rcvBasicForm);
 		rcvBasicFormLE = (LineEditorComponent) componentDAOService.add((AbstractConXComponent) rcvBasicFormLE);
 		
+		LineEditorComponent rcvWeightDimsFormLE = new LineEditorComponent(lecc.getCode() + "-weightDimsAttrs", "Weight & Dimensions", lecc);
+		rcvWeightDimsFormLE.setContent(rcvWeightDimsForm);
+		rcvWeightDimsFormLE = (LineEditorComponent) componentDAOService.add((AbstractConXComponent) rcvWeightDimsFormLE);
+
 		LineEditorComponent referenceNumbersLE = provideReferenceNumberEditor(componentDAOService, entityTypeDAOService, dataSourceDAOService, em, lecc);
 		LineEditorComponent attachmentsLE = provideAttachmentLineEditor(componentDAOService, entityTypeDAOService, dataSourceDAOService, em, lecc);
 		LineEditorComponent notesLE = provideNotesLineEditor(componentDAOService, entityTypeDAOService, dataSourceDAOService, em, lecc);
-		
+
+		lecc.getLineEditors().add(rcvWeightDimsFormLE);
 		lecc.getLineEditors().add(rcvBasicFormLE);
 		lecc.getLineEditors().add(referenceNumbersLE);
 		lecc.getLineEditors().add(attachmentsLE);
 		lecc.getLineEditors().add(notesLE);
-		
+
 		rcvSearchMDC.setLineEditorPanel(lecc);
-		
+
 		ConXTable rcvSearchTable = new ConXTable();
-//		rcvSearchTable.setRecordEditor(createReceiveMasterDetail(rcvSearchMDC, componentDAOService, entityTypeDAOService, dataSourceDAOService, em));
+		rcvSearchTable.setDataSource(basicRcvDS);
+		rcvSearchTable.setRecordEditor(createReceiveMasterDetail(rcvSearchMDC, componentDAOService, entityTypeDAOService, dataSourceDAOService, em));
 		rcvSearchTable = (ConXTable) componentDAOService.add((AbstractConXComponent) rcvSearchTable);
 		rcvSearchMDC.setMasterComponent(rcvSearchTable);
 		rcvSearchMDC = (MasterDetailComponent) componentDAOService.update((AbstractConXComponent) rcvSearchMDC);
 
 		// --Layout
-//		ConXGridLayout gl = new ConXGridLayout();
-//		gl = (ConXGridLayout) componentDAOService.add((AbstractConXComponent) gl);
+		// ConXGridLayout gl = new ConXGridLayout();
+		// gl = (ConXGridLayout) componentDAOService.add((AbstractConXComponent)
+		// gl);
 
 		// -- FieldSet: Collapseable form
-//		FieldSet fs1 = new FieldSet(0, "Basic", gl);
-//		fs1 = (FieldSet) componentDAOService.add((AbstractConXComponent) fs1);
-//		Set<FieldSetField> fsfs = new HashSet<FieldSetField>();
-//		FieldSetField fsf1;
-//		int ordinalIndex = 0;
-//		for (DataSourceField dsf : basicRcvDS.getDSFields()) {
-//			fsf1 = new FieldSetField(ordinalIndex++, dsf, fs1);
-//			fsfs.add(fsf1);
-//		}
-//		fs1.getFields().addAll(fsfs);
-//		fs1 = (FieldSet) componentDAOService.update((AbstractConXComponent) fs1);
-//
-//		Set<FieldSet> collapseableFormFieldSets = new HashSet<FieldSet>();
-//		collapseableFormFieldSets.add(fs1);
+		// FieldSet fs1 = new FieldSet(0, "Basic", gl);
+		// fs1 = (FieldSet) componentDAOService.add((AbstractConXComponent)
+		// fs1);
+		// Set<FieldSetField> fsfs = new HashSet<FieldSetField>();
+		// FieldSetField fsf1;
+		// int ordinalIndex = 0;
+		// for (DataSourceField dsf : basicRcvDS.getDSFields()) {
+		// fsf1 = new FieldSetField(ordinalIndex++, dsf, fs1);
+		// fsfs.add(fsf1);
+		// }
+		// fs1.getFields().addAll(fsfs);
+		// fs1 = (FieldSet) componentDAOService.update((AbstractConXComponent)
+		// fs1);
+		//
+		// Set<FieldSet> collapseableFormFieldSets = new HashSet<FieldSet>();
+		// collapseableFormFieldSets.add(fs1);
 
 		// -- FormField's: Simple Form
-//		Set<FieldSetField> simpleFormFields = new HashSet<FieldSetField>();
-//		FieldSetField ff;
-//		ordinalIndex = 0;
-//		for (DataSourceField dsf : basicRcvDS.getDSFields()) {
-//			ff = new FieldSetField(ordinalIndex++, dsf);
-//			simpleFormFields.add(ff);
-//		}
-//		
-//		// -- Collapseable Form
-//		ConXCollapseableSectionForm cform = new ConXCollapseableSectionForm(basicRcvDS, collapseableFormFieldSets);
-//		cform = (ConXCollapseableSectionForm) componentDAOService.add((AbstractConXComponent) cform);
-//
-//		// -- Update Line Editor
-//		rcvBasicFormLE.setContent(sform);
-//		rcvBasicFormLE = (LineEditorComponent) componentDAOService.update((AbstractConXComponent) rcvBasicFormLE);
-		
+		// Set<FieldSetField> simpleFormFields = new HashSet<FieldSetField>();
+		// FieldSetField ff;
+		// ordinalIndex = 0;
+		// for (DataSourceField dsf : basicRcvDS.getDSFields()) {
+		// ff = new FieldSetField(ordinalIndex++, dsf);
+		// simpleFormFields.add(ff);
+		// }
+		//
+		// // -- Collapseable Form
+		// ConXCollapseableSectionForm cform = new
+		// ConXCollapseableSectionForm(basicRcvDS, collapseableFormFieldSets);
+		// cform = (ConXCollapseableSectionForm)
+		// componentDAOService.add((AbstractConXComponent) cform);
+		//
+		// // -- Update Line Editor
+		// rcvBasicFormLE.setContent(sform);
+		// rcvBasicFormLE = (LineEditorComponent)
+		// componentDAOService.update((AbstractConXComponent) rcvBasicFormLE);
+
 		return rcvSearchMDC;
 	}
-	
+
 	@SuppressWarnings("unused")
 	public final static MasterDetailComponent createReceiveMasterDetail(MasterDetailComponent searchMDC, IComponentDAOService componentDAOService, IEntityTypeDAOService entityTypeDAOService,
 			IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
 		// -- ML E.E.
 		DataSource rcvDefaultDS = getDefaultRCVDS(entityTypeDAOService, dataSourceDAOService, em);
 		DataSource basicRcvDS = getBasicFormRCVDS(entityTypeDAOService, dataSourceDAOService, em);
+		DataSource weightDimsRcvDS = getWeightDimsRCVDS(entityTypeDAOService, dataSourceDAOService, em);
 		MasterDetailComponent rcvMDC = new MasterDetailComponent("receive", "Receive", basicRcvDS);
 		rcvMDC = (MasterDetailComponent) componentDAOService.add((AbstractConXComponent) rcvMDC);
 
-		// -- RCV Search Table
-		HashSet<FieldSet> fieldSetSet = new HashSet<FieldSet>();
-		Set<LineEditorComponent> lineEditors = searchMDC.getLineEditorPanel().getLineEditors();
-		AbstractConXComponent content;
-		for (LineEditorComponent lec : lineEditors) {
-			content = lec.getContent();
-			if (content instanceof ConXSimpleForm) {
-				fieldSetSet.add(((ConXSimpleForm) content).getFieldSet());
-			} else if (content instanceof ConXCollapseableSectionForm) {
-				fieldSetSet.addAll(((ConXCollapseableSectionForm) content).getFieldSetSet());
-			}
-		}
-		ConXCollapseableSectionForm rcvForm = new ConXCollapseableSectionForm(basicRcvDS, fieldSetSet);
-		rcvForm = (ConXCollapseableSectionForm) componentDAOService.add((AbstractConXComponent) rcvForm);
-		rcvMDC.setMasterComponent(rcvForm);
-
 		LineEditorContainerComponent lecc = new LineEditorContainerComponent(rcvMDC.getCode() + "-lineEditorContainerComponent", rcvMDC.getName() + " Line Editor");
-		try {
-			lecc = (LineEditorContainerComponent) componentDAOService.add((AbstractConXComponent) lecc);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		rcvMDC.setLineEditorPanel(lecc);
+		lecc = (LineEditorContainerComponent) componentDAOService.add((AbstractConXComponent) lecc);
 
-		/**
-		 * Line Editors
-		 */
-
-		// B. -- Reference Numbers
 		LineEditorComponent referenceNumbersLE = provideReferenceNumberEditor(componentDAOService, entityTypeDAOService, dataSourceDAOService, em, lecc);
-
-		// A. -- Attachments
 		LineEditorComponent attachmentsLE = provideAttachmentLineEditor(componentDAOService, entityTypeDAOService, dataSourceDAOService, em, lecc);
-
-		// B. -- Notes
 		LineEditorComponent notesLE = provideNotesLineEditor(componentDAOService, entityTypeDAOService, dataSourceDAOService, em, lecc);
 
-		// -- Update EE
 		lecc.getLineEditors().add(referenceNumbersLE);
 		lecc.getLineEditors().add(attachmentsLE);
 		lecc.getLineEditors().add(notesLE);
+
+		lecc = (LineEditorContainerComponent) componentDAOService.update((AbstractConXComponent) lecc);
+
+		FieldSet simpleFormFieldSet = createFieldSet("Basic", basicRcvDS, componentDAOService);
+		FieldSet weightDimsFormFieldSet = createFieldSet("Weight & Dimensions", weightDimsRcvDS, componentDAOService);
+
+		ConXCollapseableSectionForm rcvForm = new ConXCollapseableSectionForm(basicRcvDS);
+		rcvForm.setCaption("Receive");
+		rcvForm.getFieldSetSet().add(simpleFormFieldSet);
+		rcvForm.getFieldSetSet().add(weightDimsFormFieldSet);
+		rcvForm = (ConXCollapseableSectionForm) componentDAOService.add((AbstractConXComponent) rcvForm);
+
+		simpleFormFieldSet.setForm(rcvForm);
+		simpleFormFieldSet = (FieldSet) componentDAOService.update((AbstractConXComponent) simpleFormFieldSet);
+		
+		weightDimsFormFieldSet.setForm(rcvForm);
+		weightDimsFormFieldSet = (FieldSet) componentDAOService.update((AbstractConXComponent) weightDimsFormFieldSet);
+
+		rcvMDC.setMasterComponent(rcvForm);
+		rcvMDC.setLineEditorPanel(lecc);
 		rcvMDC = (MasterDetailComponent) componentDAOService.update((AbstractConXComponent) rcvMDC);
 
 		return rcvMDC;
@@ -240,7 +244,15 @@ public class UIComponentModelData {
 
 		return DataSourceData.RCV_BASIC_DS;
 	}
+	
+	private static DataSource getWeightDimsRCVDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
+		if (DataSourceData.RCV_WEIGHT_DIMS_DS == null) {
+			DataSourceData.provideWeightDimsFormReceiveDS(entityTypeDAOService, dataSourceDAOService, em);
+		}
 
+		return DataSourceData.RCV_WEIGHT_DIMS_DS;
+	}
+	
 	/**
 	 * 
 	 * 
@@ -269,5 +281,35 @@ public class UIComponentModelData {
 		}
 
 		return DataSourceData.RN_DS;
+	}
+
+	private static FieldSet createFieldSet(String caption, DataSource dataSource, IComponentDAOService componentDAOService) {
+		ConXGridLayout gridLayout = new ConXGridLayout();
+		gridLayout = (ConXGridLayout) componentDAOService.add((AbstractConXComponent) gridLayout);
+
+		FieldSet fieldSet = new FieldSet();
+		fieldSet.setCaption(caption);
+		fieldSet.setLayout(gridLayout);
+		fieldSet = (FieldSet) componentDAOService.add((AbstractConXComponent) fieldSet);
+
+		int fieldIndex = 0;
+		FieldSetField field = null;
+		Set<DataSourceField> dsFields = dataSource.getDSFields();
+		for (DataSourceField dsField : dsFields) {
+			field = new FieldSetField(fieldIndex++, dsField);
+			if (dsField.getName().equals(BaseEntity.BASIC_ENTITY_ATTRIBUTE_ID) || dsField.getName().equals(BaseEntity.BASIC_ENTITY_ATTRIBUTE_NAME)
+					|| dsField.getName().equals(BaseEntity.BASIC_ENTITY_ATTRIBUTE_CODE) || dsField.getName().equals(BaseEntity.BASIC_ENTITY_ATTRIBUTE_DATE_CREATED)
+					|| dsField.getName().equals(BaseEntity.BASIC_ENTITY_ATTRIBUTE_DATE_LAST_UPDATED)) {
+				field.setReadOnly(true);
+			}
+			field.setFieldSet(fieldSet);
+			field = (FieldSetField) componentDAOService.add((AbstractConXComponent) field);
+
+			fieldSet.getFields().add(field);
+		}
+
+		fieldSet = (FieldSet) componentDAOService.update((AbstractConXComponent) fieldSet);
+
+		return fieldSet;
 	}
 }

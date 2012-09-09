@@ -2,9 +2,9 @@ package com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.attachment;
 
 import java.util.Collection;
 
-import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.FormMode;
-import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.lineeditor.form.VaadinFormHeader;
+import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormHeader;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment.view.AttachmentEditorView;
+import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
 import com.conx.logistics.mdm.domain.documentlibrary.DocType;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
@@ -228,7 +228,7 @@ public class AttachmentForm extends Form {
 	public void setTempSourceFile(String absolutePath) {
 		this.tempSourceFileName = absolutePath;
 	}
-	
+
 	public void setView(AttachmentEditorView view) {
 		this.view = view;
 	}

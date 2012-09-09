@@ -6,11 +6,14 @@ import javax.persistence.OneToOne;
 
 import com.conx.logistics.kernel.datasource.domain.DataSource;
 import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
+import com.conx.logistics.kernel.ui.components.domain.form.ConXForm;
 import com.conx.logistics.kernel.ui.components.domain.table.ConXTable;
 
 @Entity
 public class MasterDetailComponent extends AbstractConXComponent {
 	private static final long serialVersionUID = -3219294587155961706L;
+	
+	private boolean hasGrid;
 
 	@ManyToOne
 	private AbstractConXComponent masterComponent;
@@ -45,9 +48,16 @@ public class MasterDetailComponent extends AbstractConXComponent {
 		return masterComponent;
 	}
 
-	public void setMasterComponent(AbstractConXComponent masterComponent) {
+	public void setMasterComponent(ConXTable masterComponent) {
 		this.masterComponent = masterComponent;
 		this.setDataSource(getDataSource());
+		this.setHasGrid(true);
+	}
+	
+	public void setMasterComponent(ConXForm masterComponent) {
+		this.masterComponent = masterComponent;
+		this.setDataSource(getDataSource());
+		this.setHasGrid(false);
 	}
 
 	public LineEditorContainerComponent getLineEditorPanel() {
@@ -56,5 +66,13 @@ public class MasterDetailComponent extends AbstractConXComponent {
 
 	public void setLineEditorPanel(LineEditorContainerComponent lineEditorPanel) {
 		this.lineEditorPanel = lineEditorPanel;
+	}
+
+	public boolean hasGrid() {
+		return hasGrid;
+	}
+
+	public void setHasGrid(boolean hasGrid) {
+		this.hasGrid = hasGrid;
 	} 
 }

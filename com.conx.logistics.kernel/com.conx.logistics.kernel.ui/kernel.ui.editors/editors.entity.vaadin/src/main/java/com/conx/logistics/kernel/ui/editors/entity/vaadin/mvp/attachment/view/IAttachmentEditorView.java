@@ -2,11 +2,11 @@ package com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment.view;
 
 import java.util.Collection;
 
-import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.FormMode;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.IEntityEditorComponentView;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment.view.AttachmentEditorView.ICreateAttachmentListener;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment.view.AttachmentEditorView.IInspectAttachmentListener;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment.view.AttachmentEditorView.ISaveAttachmentListener;
+import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
 import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;

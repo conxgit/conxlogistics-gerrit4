@@ -2,7 +2,7 @@ package com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.notes.view;
 
 import java.util.Collection;
 
-import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.FormMode;
+import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.IEntityEditorComponentView;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.notes.view.NotesEditorView.ICreateNoteListener;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.notes.view.NotesEditorView.ISaveNoteListener;

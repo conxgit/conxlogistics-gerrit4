@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
 import com.conx.logistics.kernel.ui.components.domain.referencenumber.ReferenceNumberEditorComponent;
-import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.FormMode;
+import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.ConfigurableBasePresenter;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.refNum.view.IReferenceNumberEditorView;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.refNum.view.ReferenceNumberEditorView;

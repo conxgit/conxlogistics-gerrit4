@@ -17,7 +17,7 @@ import org.vaadin.mvp.presenter.annotation.Presenter;
 import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
 import com.conx.logistics.kernel.ui.components.domain.attachment.AttachmentEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorComponent;
-import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent;
+import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorContainerComponent;
 import com.conx.logistics.kernel.ui.components.domain.note.NoteEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.referencenumber.ReferenceNumberEditorComponent;
 import com.conx.logistics.kernel.ui.editors.builder.vaadin.VaadinEntityEditorFactoryImpl;
@@ -29,6 +29,7 @@ import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.lineeditor.view.En
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.lineeditor.view.IEntityLineEditorView;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
 import com.vaadin.addon.jpacontainer.EntityItem;
+import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.ui.Component;
@@ -44,6 +45,8 @@ public class EntityLineEditorPresenter extends ConfigurableBasePresenter<IEntity
 	private IPresenter<?, ? extends EventBus> attachmentsPresenter;
 	private IPresenter<?, ? extends EventBus> refNumPresenter;
 	private IPresenter<?, ? extends EventBus> notesPresenter;
+
+	private Item itemDataSource;
 
 	public EntityLineEditorPresenter() {
 		super();
@@ -116,6 +119,11 @@ public class EntityLineEditorPresenter extends ConfigurableBasePresenter<IEntity
 		if (notesPresenter != null)
 			((IEntityLineEditorView) getView()).getMainLayout().addTab((Component) notesPresenter.getView(), "Notes");
 
+		if (!initialized) {
+			if (this.itemDataSource != null) {
+				onEntityItemEdit((EntityItem<?>) this.itemDataSource);
+			}
+		}
 		this.setInitialized(true);
 	}
 
@@ -134,45 +142,46 @@ public class EntityLineEditorPresenter extends ConfigurableBasePresenter<IEntity
 
 	@Override
 	public void configure() {
-		try {
-			Map<String, Object> config = super.getConfig();
-			MasterDetailComponent metaData = (MasterDetailComponent) config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL);
-			ConfigurablePresenterFactory presenterFactory = (ConfigurablePresenterFactory) config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_PRESENTER_FACTORY);
+		Map<String, Object> config = super.getConfig();
+		LineEditorContainerComponent componentModel = (LineEditorContainerComponent) config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL);
+		ConfigurablePresenterFactory presenterFactory = (ConfigurablePresenterFactory) config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_PRESENTER_FACTORY);
 
-			/**
-			 * 1. Get LineEditor models
-			 * 
-			 * 2. For each, create LineEditorSection presenters
-			 */
+		/**
+		 * 1. Get LineEditor models
+		 * 
+		 * 2. For each, create LineEditorSection presenters
+		 */
 
-			// 1.
-			Set<LineEditorComponent> lecs = metaData.getLineEditorPanel().getLineEditors();
+		// 1.
+		Set<LineEditorComponent> lecs = componentModel.getLineEditors();
 
-			// 2.
-			VaadinEntityEditorFactoryImpl entityFactory = new VaadinEntityEditorFactoryImpl(presenterFactory);
-			Map<IPresenter<?, ? extends EventBus>, EventBus> entityMVP = null;
-			for (LineEditorComponent lec : lecs) {
-				presenterFactory.getCustomizer().getConfig().put(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL, lec.getContent());
-				entityMVP = entityFactory.create(lec.getContent(), getConfig());
-				if (entityMVP != null) {
-					IPresenter<?, ? extends EventBus> presenter = entityMVP.keySet().iterator().next();
+		// 2.
+		VaadinEntityEditorFactoryImpl entityFactory = new VaadinEntityEditorFactoryImpl(presenterFactory);
+		Map<IPresenter<?, ? extends EventBus>, EventBus> entityMVP = null;
+		for (LineEditorComponent lec : lecs) {
+			presenterFactory.getCustomizer().getConfig().put(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL, lec.getContent());
+			entityMVP = entityFactory.create(lec.getContent(), getConfig());
+			if (entityMVP != null) {
+				IPresenter<?, ? extends EventBus> presenter = entityMVP.keySet().iterator().next();
 
-					if (lec.getContent() instanceof AttachmentEditorComponent) {
-						this.attachmentsPresenter = presenter;
-					} else if (lec.getContent() instanceof NoteEditorComponent) {
-						this.notesPresenter = presenter;
-					} else if (lec.getContent() instanceof ReferenceNumberEditorComponent) {
-						this.refNumPresenter = presenter;
-					} else {
-						mvpCache.putAll(entityMVP);
-					}
+				if (lec.getContent() instanceof AttachmentEditorComponent) {
+					this.attachmentsPresenter = presenter;
+				} else if (lec.getContent() instanceof NoteEditorComponent) {
+					this.notesPresenter = presenter;
+				} else if (lec.getContent() instanceof ReferenceNumberEditorComponent) {
+					this.refNumPresenter = presenter;
+				} else {
+					mvpCache.putAll(entityMVP);
 				}
 			}
-		} catch (Exception e) {
-			StringWriter sw = new StringWriter();
-			e.printStackTrace(new PrintWriter(sw));
-			String stacktrace = sw.toString();
-			logger.error(stacktrace);
+		}
+
+		this.itemDataSource = (Item) getConfig().get(IEntityEditorFactory.FACTORY_PARAM_MVP_ITEM_DATASOURCE);
+	}
+	
+	public void onSetItemDataSource(Item item) {
+		if (item != null) {
+			onEntityItemEdit((EntityItem<?>) item);
 		}
 	}
 }

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
 import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
@@ -12,7 +13,7 @@ import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
 public class LineEditorContainerComponent extends AbstractConXComponent {
 	private static final long serialVersionUID = 1334745924025959679L;
 	
-	@OneToMany(mappedBy="mainComponent")
+	@OneToMany(mappedBy="mainComponent", fetch=FetchType.EAGER)
 	private Set<LineEditorComponent> lineEditors = new HashSet<LineEditorComponent>();
 
 	public LineEditorContainerComponent(String code, String name) {

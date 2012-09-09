@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.vaadin.mvp.uibinder.annotation.UiField;
 
-import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.FormMode;
+import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.fieldfactory.ConXFieldFactory;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.refNum.ReferenceNumberEditorForm;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.refNum.ReferenceNumberEditorToolStrip;

@@ -2,8 +2,8 @@ package com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.refNum;
 
 import java.util.Collection;
 
-import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.FormMode;
-import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.lineeditor.form.VaadinFormHeader;
+import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
+import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormHeader;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.VerticalLayout;

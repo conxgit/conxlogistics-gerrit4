@@ -192,7 +192,7 @@ public class TestDataManager {
 			INoteDAOService noteDAOService) throws Exception {
 		
 		//Required for ASN
-		ASN asn = createSprint1Data(null, em, orgDaoService, countryDaoService, countryStateDaoService, unlocoDaoService, addressDaoService, packUnitDaoService, dimUnitDaoService, weightUnitDaoService, productTypeDaoService, productDaoService, currencyUnitDAOService, asnDaoService, asnPickupDAOService, asnDropOffDAOService, contactDAOService, docTypeDOAService, dockTypeDOAService, entityMetadataDAOService, referenceNumberTypeDaoService, referenceNumberDaoService, rcvDaoService, componentDAOService, entityTypeDAOService, dataSourceDAOService, whseDAOService);		
+		ASN[] asn = createSprint1Data(null, em, orgDaoService, countryDaoService, countryStateDaoService, unlocoDaoService, addressDaoService, packUnitDaoService, dimUnitDaoService, weightUnitDaoService, productTypeDaoService, productDaoService, currencyUnitDAOService, asnDaoService, asnPickupDAOService, asnDropOffDAOService, contactDAOService, docTypeDOAService, dockTypeDOAService, entityMetadataDAOService, referenceNumberTypeDaoService, referenceNumberDaoService, rcvDaoService, componentDAOService, entityTypeDAOService, dataSourceDAOService, whseDAOService);		
 		createPrint2Data(asn, null, em, orgDaoService, countryDaoService, countryStateDaoService, unlocoDaoService, addressDaoService, packUnitDaoService, dimUnitDaoService, weightUnitDaoService, productTypeDaoService, productDaoService, currencyUnitDAOService, asnDaoService, asnPickupDAOService, asnDropOffDAOService, contactDAOService, docTypeDOAService, dockTypeDOAService, entityMetadataDAOService, referenceNumberTypeDaoService, referenceNumberDaoService, rcvDaoService, componentDAOService, entityTypeDAOService, dataSourceDAOService, whseDAOService,documentRepositoryService,folderDAOService,noteDAOService);
 
 		
@@ -201,7 +201,7 @@ public class TestDataManager {
 	}
 	
 	
-	public static Receive createPrint2Data(ASN asn,
+	public static Receive[] createPrint2Data(ASN[] asns,
 			PlatformTransactionManager globalTransactionManager,
 			EntityManager em,
 			IOrganizationDAOService orgDaoService,
@@ -232,6 +232,8 @@ public class TestDataManager {
 			IRemoteDocumentRepository documentRepositoryService, 
 			IFolderDAOService folderDAOService,
 			INoteDAOService noteDAOService) throws ClassNotFoundException, Exception {
+		
+		Receive[] rcvs = new Receive[2];
 		/**
 		 * 
 		 * provide Defaults
@@ -239,6 +241,15 @@ public class TestDataManager {
 		 */
 		docTypeDOAService.provideDefaults();
 		noteDAOService.provideDefaults();
+		
+		
+		/**
+		 * 
+		 * Receive #1
+		 * 
+		 */
+		
+		ASN asn = asns[0];
 		
 		
 		Receive rcv = rcvDaoService.process(asn);
@@ -280,10 +291,63 @@ public class TestDataManager {
 		 * Dynamic Arrival
 		 * 
 		 */
-		return rcv;
+		rcvs[0] = rcv;
+		
+		
+		/**
+		 * 
+		 * Receive #2
+		 * 
+		 */
+		
+		asn = asns[1];
+		
+		
+		rcv = rcvDaoService.process(asn);
+		
+		/**
+		 * 
+		 * Add attachment
+		 * 
+		 */
+		testfile = TestDataManager.class.getResource("/bol.pdf");
+		file = new File(testfile.toURI());
+		dt = docTypeDOAService.getByCode(DocTypeCustomCONSTANTS.TYPE_BOL_CODE);
+		fe = rcvDaoService.addAttachment(rcv.getId(),file, "Bill Of Laden", "Bill Of Laden", "application/pdf", dt);
+		
+		testfile = TestDataManager.class.getResource("/SamplePurchaseRequisition.jpg");
+		file = new File(testfile.toURI());		
+		dt = docTypeDOAService.getByCode(DocTypeCustomCONSTANTS.TYPE_PO_CODE);
+		fe = rcvDaoService.addAttachment(rcv.getId(),file, "PO", "PO", "image/jpeg", dt);		
+		
+		/**
+		 * 
+		 * Add attachment
+		 * 
+		 */
+		nt = noteDAOService.getByNoteTypeCode(NoteTypeCustomCONSTANTS.TYPE_OTHER_CODE);
+		note = rcvDaoService.addNoteItem(rcv.getId(), "call when it starts arriving", nt);
+		
+		
+		
+		/**
+		 * 
+		 * ASN Arrival
+		 * 
+		 */
+		
+		
+		/**
+		 * 
+		 * Dynamic Arrival
+		 * 
+		 */		
+		rcvs[1] = rcv;
+		
+		return rcvs;
 	}
 	
-	public static ASN createSprint1Data(
+	public static ASN[] createSprint1Data(
 			PlatformTransactionManager globalTransactionManager,
 			EntityManager em,
 			IOrganizationDAOService orgDaoService,
@@ -311,6 +375,7 @@ public class TestDataManager {
 			IEntityTypeDAOService entityTypeDAOService,
 			IDataSourceDAOService dataSourceDAOService,
 			IWarehouseDAOService whseDAOService) throws Exception {
+		ASN[] asns = new ASN[2];
 		ASN asn = null;
 		
 		/**
@@ -430,7 +495,7 @@ public class TestDataManager {
 				
 				/**
 				 * 
-				 * Sample ASN
+				 * Sample ASN#1
 				 * 
 				 */
 				DefaultEntityMetadata asnEMD = entityMetadataDAOService.getByClass(ASN.class);
@@ -526,6 +591,102 @@ public class TestDataManager {
 
 				asnDaoService.addLines(asn.getId(), asnLineList);
 				asn = asnDaoService.addLocalTrans(asn.getId(), pickup1, dropOff1);
+				
+				asns[0] = asn;
+				
+				/**
+				 * 
+				 * Sample ASN#2
+				 * 
+				 */
+				//- Ref Numbers
+				ReferenceNumberType fedexRefType2 = referenceNumberTypeDaoService.getByCode(ReferenceNumberTypeCustomCONSTANTS.TYPE_CarrierId_NAME);
+				ReferenceNumber rn21 = new ReferenceNumber();
+				rn21.setValue("12238888888888");
+				rn21.setType(fedexRefType2);
+				rn21.setEntityMetadata(asnEMD);
+				rn21  = referenceNumberDaoService.add(rn21);
+				
+				ReferenceNumber rn22 = new ReferenceNumber();
+				rn22.setValue("99884444444444");
+				rn22.setType(fedexRefType2);
+				rn22.setEntityMetadata(asnEMD);
+				rn22  = referenceNumberDaoService.add(rn22);				
+				
+				Set<ReferenceNumber> refNumList2 = new HashSet<ReferenceNumber>();
+				refNumList2.add(rn21);
+				refNumList2.add(rn22);
+				
+				asn = new ASN();
+				asn.setCode("ASN21");
+				asn = asnDaoService.add(asn);
+				
+				asn = asnDaoService.addRefNums(asn.getId(), refNumList2);				
+				
+				Iterator<ReferenceNumber> rnsIt2 = asn.getRefNumbers().iterator();
+				
+				ASNLine al21 = new ASNLine();
+				al21.setCode("AL21");
+				al21.setProduct(prd2);
+				//al21.setRefNumber(rnsIt2.next());
+				al21.setLineNumber(0);
+				al21.setExpectedInnerPackCount(8);
+				al21.setExpectedOuterPackCount(12);
+				al21.setExpectedTotalWeight(28.0);
+				al21.setExpectedTotalVolume(12.54);
+				al21.setExpectedTotalLen(9.3);
+				al21.setExpectedTotalWidth(1.0);
+				al21.setExpectedTotalHeight(1.39);
+				al21.setDescription("A90234708-1111111 Desktop Package");
+				
+				ASNLine al22 = new ASNLine();
+				al22.setCode("AL22");
+				al22.setProduct(prd4);
+				//al2.setRefNumber(rnsIt2.next());
+				al22.setLineNumber(0);
+				al22.setExpectedInnerPackCount(18);
+				al22.setExpectedOuterPackCount(2);
+				al22.setExpectedTotalWeight(28.0);
+				al22.setExpectedTotalVolume(12.54);
+				al22.setExpectedTotalLen(9.3);
+				al22.setExpectedTotalWidth(1.0);
+				al22.setExpectedTotalHeight(1.39);
+				al22.setDescription("AODK-DLKDJ YHNNNNN");
+				
+				Set<ASNLine> asnLineList2 = new HashSet<ASNLine>();
+				asnLineList2.add(al21);
+				asnLineList2.add(al22);
+				
+				pickup1 = new ASNPickup();
+				dropOff1 = new ASNDropOff();
+				
+				pickup1.setCode("PKUP21");
+				pickup1.setPickUpFrom(tescus1);
+				pickup1.setPickUpFromAddress(tescus1_addr);
+				pickup1.setLocalTrans(tescar1);
+				pickup1.setLocalTransAddress(tescar1_addr);
+				pickup1.setDriverId("DRV0021");
+				pickup1.setVehicleId("DRV0021");
+				pickup1.setBolNumber("DRV0021");
+				pickup1.setVehicleId("DRV0021");
+				pickup1.setEstimatedPickup(new Date());
+				
+				pickup1 = asnPickupDAOService.add(pickup1);
+				
+				
+				dropOff1.setDropOffAt(tescus1);
+				dropOff1.setCode("DRPOF21");
+				dropOff1.setDropOffAtAddress(tescus1_addr);
+				dropOff1.setEstimatedDropOff(new Date());
+				dropOff1 = asnDropOffDAOService.add(dropOff1);
+				
+				asn.setWarehouse(warehouse);
+				asn = asnDaoService.update(asn);
+
+				asnDaoService.addLines(asn.getId(), asnLineList2);
+				asn = asnDaoService.addLocalTrans(asn.getId(), pickup1, dropOff1);		
+				
+				asns[1] = asn;
 			}
 		} 
 		catch (Exception e) 
@@ -538,7 +699,7 @@ public class TestDataManager {
 			throw e;
 		}
 		
-		return asn;
+		return asns;
 	}
 
 	public static void setLogger(Logger logger) {

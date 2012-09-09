@@ -21,7 +21,7 @@ import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.TabSheet.Tab;
+import com.vaadin.ui.VerticalLayout;
 
 public class FeatureTabbedView extends TabSheet implements IFeatureView {
 	private static final long serialVersionUID = 1987628349762L;
@@ -127,21 +127,27 @@ public class FeatureTabbedView extends TabSheet implements IFeatureView {
 				if (vc != null) {
 					try {
 						AbstractConXComponent componentModel = vc.getComponentModel(this.app, feature);
-						if (Validator.isNotNull(componentModel) && Validator.isNotNull(entityEditorFactory))
-						{
-							this.entityFactoryPresenterParams.put(IEntityEditorFactory.FACTORY_PARAM_MVP_CURRENT_APP_PRESENTER, this.viewPresenter);
-							Map<IPresenter<?, ? extends EventBus>, EventBus> mvp = (Map<IPresenter<?, ? extends EventBus>, EventBus>) entityEditorFactory.create(componentModel,this.entityFactoryPresenterParams);
-							IPresenter<?, ? extends EventBus> viewPresenter = mvp.keySet().iterator().next();
-							// ((LaunchableViewEventBus)viewPresenter.getEventBus()).launch(this.app);
-							view = (Component) viewPresenter.getView();
-						}
-						else 
-						{
-							IPresenterFactory pf = this.app.getPresenterFactory();
-							IPresenter<?, ? extends EventBus> viewPresenter = pf.createPresenter(vc.getPresenterClass());					
-							((LaunchableViewEventBus)viewPresenter.getEventBus()).launch(this.app);
+						if (Validator.isNotNull(componentModel) && Validator.isNotNull(entityEditorFactory)) {
+							VerticalLayout viewContainer = new VerticalLayout();
+							viewContainer.setSizeFull();
 
-							view = (Component)viewPresenter.getView();
+							this.entityFactoryPresenterParams.put(IEntityEditorFactory.FACTORY_PARAM_MVP_CURRENT_APP_PRESENTER, this.viewPresenter);
+							this.entityFactoryPresenterParams.put(IEntityEditorFactory.FACTORY_PARAM_MVP_EDITOR_CONTAINER, viewContainer);
+							Map<IPresenter<?, ? extends EventBus>, EventBus> mvp = (Map<IPresenter<?, ? extends EventBus>, EventBus>) entityEditorFactory.create(componentModel,
+									this.entityFactoryPresenterParams);
+							IPresenter<?, ? extends EventBus> viewPresenter = mvp.keySet().iterator().next();
+							
+							Component newView = (Component) viewPresenter.getView();
+							viewContainer.addComponent(newView);
+							viewContainer.setExpandRatio(newView, 1.0f);
+							
+							view = viewContainer;
+						} else {
+							IPresenterFactory pf = this.app.getPresenterFactory();
+							IPresenter<?, ? extends EventBus> viewPresenter = pf.createPresenter(vc.getPresenterClass());
+							((LaunchableViewEventBus) viewPresenter.getEventBus()).launch(this.app);
+
+							view = (Component) viewPresenter.getView();
 						}
 						view.setSizeFull();
 					} catch (Exception e) {

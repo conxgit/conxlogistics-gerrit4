@@ -28,7 +28,6 @@ public class VaadinSimpleForm extends Form implements IVaadinForm {
 	}
 	
 	private void initialize() {
-		this.header = new VaadinFormHeader();
 		this.header.setTitle("Note");
 		
 		this.innerLayout.setWidth("100%");
@@ -41,7 +40,6 @@ public class VaadinSimpleForm extends Form implements IVaadinForm {
 		this.layout.addComponent(header);
 		this.layout.addComponent(innerLayout);
 		
-		setSizeFull();
 		setFormMode(FormMode.EDITING);
 		setLayout(layout);
 		// False so that commit() must be called explicitly

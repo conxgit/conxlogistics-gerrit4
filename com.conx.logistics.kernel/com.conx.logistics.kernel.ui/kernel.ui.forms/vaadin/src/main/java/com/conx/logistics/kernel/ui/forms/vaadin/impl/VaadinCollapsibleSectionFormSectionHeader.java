@@ -11,51 +11,54 @@ import com.vaadin.ui.Layout;
 
 class VaadinCollapsibleSectionFormSectionHeader extends HorizontalLayout {
 	private static final long serialVersionUID = 1010002929298L;
-	
+
 	private Embedded arrow;
 	private Layout layout;
 	private String caption;
 	private Label label;
-	private boolean expanded;
 
 	public VaadinCollapsibleSectionFormSectionHeader(FieldSet fieldSet, Layout layout) {
-		this.caption = fieldSet.getCaption();
 		this.layout = layout;
-		this.expanded = false;
-		
+		this.arrow = new Embedded();
+		this.label = new Label(fieldSet.getCaption());
+
 		setWidth("100%");
-		setHeight("25px");
+		setHeight("20px");
 		setStyleName("conx-entity-editor-form-separator");
-		setExpanded(true);
-		
+
 		initialize();
 	}
 
 	private void initialize() {
+		this.layout.setVisible(true);
+		
 		HorizontalLayout leftPanel = new HorizontalLayout();
 		leftPanel.setHeight("25px");
 		leftPanel.setSpacing(true);
-		
-		arrow = new Embedded();
+
 		arrow.setStyleName("conx-entity-editor-form-separator-arrow");
+		arrow.addStyleName("conx-entity-editor-form-separator-arrow-expanded");
 		arrow.setWidth("18px");
 		arrow.setHeight("10px");
-		
-		label = new Label();
+
 		label.setStyleName("conx-entity-editor-form-separator-caption");
 		label.setHeight("15px");
 		label.setCaption(caption);
-		
+
 		leftPanel.addComponent(arrow);
 		leftPanel.addComponent(label);
 		addComponent(leftPanel);
 		setComponentAlignment(leftPanel, Alignment.TOP_LEFT);
-		
+
 		this.addListener(new LayoutClickListener() {
 			private static final long serialVersionUID = 1L;
 
 			public void layoutClick(LayoutClickEvent event) {
-				setExpanded(!expanded);
+				if (isExpanded()) {
+					setExpanded(false);
+				} else {
+					setExpanded(true);
+				}
 			}
 		});
 	}
@@ -69,17 +72,16 @@ class VaadinCollapsibleSectionFormSectionHeader extends HorizontalLayout {
 	}
 
 	public boolean isExpanded() {
-		return expanded;
+		return layout.isVisible();
 	}
 
-	public void setExpanded(boolean expanded) {
-		this.expanded = expanded;
-		if (!expanded) {
-			arrow.removeStyleName("conx-entity-editor-form-separator-arrow-expanded");
-		} else {
+	public void setExpanded(boolean isExpanded) {
+		if (isExpanded) {
 			arrow.addStyleName("conx-entity-editor-form-separator-arrow-expanded");
+		} else {
+			arrow.removeStyleName("conx-entity-editor-form-separator-arrow-expanded");
 		}
-		layout.setVisible(expanded);
+		layout.setVisible(isExpanded);
 	}
 
 	public String getCaption() {

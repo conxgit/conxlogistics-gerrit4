@@ -19,7 +19,7 @@ public class ConXNavigationTreeItem extends HorizontalLayout {
 	public ConXNavigationTreeItem(String caption, String url, TreeTable tree, int itemId) {
 		addStyleName("conx-navigation-tree-item");
 		setHeight("16px");
-		setWidth("60px");
+		setWidth("80px");
 		parent = tree;
 		this.id = itemId;
 		icon = new Embedded();

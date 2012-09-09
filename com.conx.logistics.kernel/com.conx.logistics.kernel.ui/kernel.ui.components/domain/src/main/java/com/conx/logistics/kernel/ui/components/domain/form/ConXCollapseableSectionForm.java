@@ -40,7 +40,7 @@ public class ConXCollapseableSectionForm extends ConXForm {
 	
 	public FieldSet getFieldSetForField(String fieldName) {
 		for (FieldSet fs : fieldSetSet) {
-			if (fs.getField(fieldName) != null) {
+			if (fs.getFieldSetField(fieldName) != null) {
 				return fs;
 			}
 		}

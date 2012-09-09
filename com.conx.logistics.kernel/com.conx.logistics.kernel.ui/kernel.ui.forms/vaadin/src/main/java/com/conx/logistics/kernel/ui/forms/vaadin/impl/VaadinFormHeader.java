@@ -12,7 +12,7 @@ public class VaadinFormHeader extends HorizontalLayout {
 	private HorizontalLayout rightPanel;
 
 	public VaadinFormHeader() {
-		setHeight("38px");
+		setHeight("33px");
 		setWidth("100%");
 		setStyleName("conx-entity-editor-form-header");
 		
@@ -27,7 +27,7 @@ public class VaadinFormHeader extends HorizontalLayout {
 		title.setStyleName("conx-entity-editor-form-header-title");
 		
 		HorizontalLayout leftPanel = new HorizontalLayout();
-		leftPanel.setHeight("38px");
+		leftPanel.setHeight("33px");
 		leftPanel.setSpacing(true);
 		leftPanel.setStyleName("conx-entity-editor-form-header-left");
 		leftPanel.setMargin(false, false, false, true);
@@ -37,7 +37,7 @@ public class VaadinFormHeader extends HorizontalLayout {
 		leftPanel.setComponentAlignment(title, Alignment.MIDDLE_LEFT);
 		
 		rightPanel = new HorizontalLayout();
-		rightPanel.setHeight("36px");
+		rightPanel.setHeight("33px");
 		rightPanel.setSpacing(true);
 		rightPanel.setStyleName("conx-entity-editor-form-header-right");
 		rightPanel.setMargin(false, true, false, false);

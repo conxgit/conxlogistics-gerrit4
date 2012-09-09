@@ -4665,6 +4665,11 @@ td.v-datefield-calendarpanel-nextyear {
 }
 .v-table .v-selected .v-table-cell-content {
 	border-right-color: #466c90;
+	-moz-user-select: -moz-none;
+  	-khtml-user-select: none;
+   	-webkit-user-select: none;
+   	-ms-user-select: none;
+   	user-select: none;
 }
 .v-table-column-selector {
 	width: 16px;
@@ -6141,6 +6146,13 @@ textarea.v-textarea-readonly,
 	padding-left: 12px;
 	padding-right: 14px;
 }
+.v-tabsheet-tabitem .v-icon {
+	padding-right: 6px;
+}
+.v-tabsheet-caption-close {
+	padding-left: 1px;
+	width: 14px;
+}
 .v-tabsheet-tabcontainer {
 	background: url('tabsheet/img/custom/conx-tabsheet-background.png') repeat-x;
 	padding-left: 0px;
@@ -6186,6 +6198,7 @@ textarea.v-textarea-readonly,
 }
 .conx-entity-toolstrip .v-disabled.v-button {
 	border: 1px solid transparent;
+	padding-left: 3px;
 }
 .conx-entity-toolstrip .v-disabled.v-button:active {
 	background-color: transparent;
@@ -6396,7 +6409,6 @@ textarea.v-textarea-readonly,
 }
 .v-caption-conx-entity-editor-form-header-action {
 	font-weight: bold;
-    padding-top: 2px;
     font-size: 12px;
     text-align: left;
     color: #222222;
@@ -6404,7 +6416,6 @@ textarea.v-textarea-readonly,
     text-transform: uppercase;
 }
 .v-caption-conx-entity-editor-form-header-title { 
-    padding-top: 2px;
     font-size: 12px;
     text-align: left;
     color: #222222;
@@ -6477,6 +6488,9 @@ textarea.v-textarea-readonly,
 	border-radius: 0px;
 	background-image: none;
 }
+.conx-entity-editor-form .v-gridlayout .v-readonly {
+	padding-left: 0px;
+}
 .conx-entity-editor-form .v-gridlayout textarea {
 	-moz-border-radius: 0px;
 	-webkit-border-radius: 0px;
@@ -6484,13 +6498,14 @@ textarea.v-textarea-readonly,
 	background-image: none;
 }
 .conx-entity-editor-form-header-left {
-	padding-left: 6px;
+	padding-left: 0px;
 }
 .conx-entity-editor-form-separator-arrow {
-	background: url(../base/treetable/img/arrow-down.png) right center no-repeat;
+	padding-top: 3px;
+	background: url(../base/treetable/img/arrow-right.png) left center no-repeat;
 }
 .conx-entity-editor-form-separator-arrow-expanded {
-	background: url(../base/treetable/img/arrow-right.png) right center no-repeat;
+	background: url(../base/treetable/img/arrow-down.png) left center no-repeat;
 }
 .filters-panel .v-textfield-focus {
 	border-right-color: #BCBDBE;
@@ -6508,10 +6523,23 @@ textarea.v-textarea-readonly,
       text-align: center;
       cursor: pointer;
 }
+.conx-entity-editor-bread-crumb .v-disabled {
+      display: block;
+      background: transparent;
+      border: none;
+      text-align: center;
+      cursor: default;
+}
 .conx-entity-editor-bread-crumb .v-button-caption {
       color: #777;
 }
 .conx-entity-editor-bread-crumb .v-button-wrap {
+      margin-top: 0px;
+      padding-left: 0px;
+      padding-right: 0px;
+      padding-top: 0px;
+}
+.conx-entity-editor-bread-crumb .v-disabled .v-button-wrap {
       margin-top: 0px;
       padding-left: 0px;
       padding-right: 0px;
@@ -6545,7 +6573,7 @@ textarea.v-textarea-readonly,
 }
 .conx-entity-editor-bread-crumb-item .v-button-wrap {
 	height: 16px;
-	padding-top: 4px;
+	padding-top: 7px;
 	padding-left: 2px;
 	padding-right: 0px;
 }
@@ -6553,9 +6581,55 @@ textarea.v-textarea-readonly,
 	padding-right: 3px;
 }
 .v-caption-conx-entity-editor-bread-crumb-separator {
-	padding-top: 7px;
+	padding-top: 10px;
 	padding-left: 6px;
 }
 .conx-entity-editor-bread-crumb-item-current .v-button-caption {
 	color: #222;
+}
+.v-horizontallayout-conx-entity-editor-form-separator {
+	background: transparent;
+	background-image: none;
+	font-size: 12px;
+	border-bottom: 2px solid #4D749F;
+	color: #222;
+	font-weight: bold;
+	border-top: none;
+	cursor: pointer;
+}
+.v-label-conx-entity-editor-form-separator-caption {
+	cursor: pointer;
+}
+/******************************************************************************
+*******************************************************************************
+******************************************************************************/
+.conx-entity-pager .v-label {
+	padding-left: 10px;
+	padding-right: 5px;
+	color: #444;
+	text-shadow: white 0 1px 0;
+	font-weight: bold;
+	font-size: 11px;
+	line-height: 16px;	
+}
+/******************************************************************************
+*******************************************************************************
+******************************************************************************/
+.conx-entity-alert-panel {
+	background: url(formlayout/img/custom/conx-form-alert-panel-red-background.png) repeat-x;
+	color: #fff;
+	font-size: 12px;
+}
+.conx-entity-alert-panel .v-label {
+	padding-left: 4px;
+}
+.conx-entity-alert-panel-icon {
+	background: url(formlayout/img/custom/conx-form-alert-panel-warning-icon.png) left center no-repeat;
+}
+.conx-entity-alert-panel-message {
+	padding-top: 8px;
+}
+.conx-entity-alert-panel-close {
+	background: url(formlayout/img/custom/conx-form-alert-panel-close-icon.png) right center no-repeat;
+	cursor: pointer;
 }

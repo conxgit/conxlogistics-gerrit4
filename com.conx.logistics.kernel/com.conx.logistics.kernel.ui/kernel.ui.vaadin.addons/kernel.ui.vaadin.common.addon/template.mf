@@ -33,7 +33,8 @@ Excluded-Imports: com.google.gwt.core.client,
   com.vaadin.data.util.filter,
   com.vaadin.event.dd,
   com.vaadin.event.dd.acceptcriteria,
-  com.vaadin.terminal.gwt.client.ui.dd
+  com.vaadin.terminal.gwt.client.ui.dd,
+  com.vaadin.tools
 Excluded-Exports: com.vaadin.ui,
   com.vaadin.terminal.gwt.client.ui
   

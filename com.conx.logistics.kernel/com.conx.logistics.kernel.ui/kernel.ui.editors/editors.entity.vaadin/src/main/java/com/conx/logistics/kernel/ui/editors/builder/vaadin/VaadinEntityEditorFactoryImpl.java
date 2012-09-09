@@ -13,18 +13,22 @@ import org.vaadin.mvp.presenter.IPresenter;
 import com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository;
 import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
 import com.conx.logistics.kernel.ui.components.domain.attachment.AttachmentEditorComponent;
-import com.conx.logistics.kernel.ui.components.domain.form.ConXForm;
+import com.conx.logistics.kernel.ui.components.domain.form.ConXCollapseableSectionForm;
+import com.conx.logistics.kernel.ui.components.domain.form.ConXSimpleForm;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent;
 import com.conx.logistics.kernel.ui.components.domain.note.NoteEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.referencenumber.ReferenceNumberEditorComponent;
+import com.conx.logistics.kernel.ui.components.domain.table.ConXTable;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.ConfigurablePresenterFactory;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.MultiLevelEntityEditorEventBus;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.MultiLevelEntityEditorPresenter;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment.AttachmentEditorPresenter;
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.collapsibleForm.CollapsibleFormEditorPresenter;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.customizer.ConfigurablePresenterFactoryCustomizer;
-import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.form.FormEditorPresenter;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.notes.NotesEditorPresenter;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.refNum.ReferenceNumberEditorPresenter;
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.search.grid.EntityGridPresenter;
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.simpleForm.SimpleFormEditorPresenter;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
 
 @Transactional
@@ -85,8 +89,23 @@ public class VaadinEntityEditorFactoryImpl implements IEntityEditorFactory {
 
 			res = new HashMap<IPresenter<?, ? extends EventBus>, EventBus>();
 			res.put(mainPresenter, mainEventBus);
-		} else if (conXComponent instanceof ConXForm) {
-			IPresenter<?, ? extends EventBus> presenter = factory.createPresenter(FormEditorPresenter.class);
+		} else if (conXComponent instanceof ConXCollapseableSectionForm) {
+			params.put(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL, conXComponent);
+			IPresenter<?, ? extends EventBus> presenter = factory.createPresenter(CollapsibleFormEditorPresenter.class);
+			EventBus eventBus = presenter.getEventBus();
+
+			res = new HashMap<IPresenter<?, ? extends EventBus>, EventBus>();
+			res.put(presenter, eventBus);
+		} else if (conXComponent instanceof ConXSimpleForm) {
+			params.put(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL, conXComponent);
+			IPresenter<?, ? extends EventBus> presenter = factory.createPresenter(SimpleFormEditorPresenter.class);
+			EventBus eventBus = presenter.getEventBus();
+
+			res = new HashMap<IPresenter<?, ? extends EventBus>, EventBus>();
+			res.put(presenter, eventBus);
+		} else if (conXComponent instanceof ConXTable) {
+			params.put(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL, conXComponent);
+			IPresenter<?, ? extends EventBus> presenter = factory.createPresenter(EntityGridPresenter.class);
 			EventBus eventBus = presenter.getEventBus();
 
 			res = new HashMap<IPresenter<?, ? extends EventBus>, EventBus>();

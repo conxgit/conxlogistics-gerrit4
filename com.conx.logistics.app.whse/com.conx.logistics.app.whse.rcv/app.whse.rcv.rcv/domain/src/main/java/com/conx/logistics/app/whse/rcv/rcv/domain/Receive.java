@@ -49,7 +49,7 @@ public class Receive extends MultitenantBaseEntity {
     @JoinColumn
     private ASNDropOff expectedDropOff;
     
-    @OneToOne(targetEntity = PackUnit.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = PackUnit.class, fetch = FetchType.EAGER)
     @JoinColumn
     private PackUnit outerPackUnit;
 
@@ -61,7 +61,7 @@ public class Receive extends MultitenantBaseEntity {
     @JoinColumn
     private DimUnit dimUnit;
 
-    @OneToOne(targetEntity = DimUnit.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = DimUnit.class, fetch = FetchType.LAZY)
     @JoinColumn
     private DimUnit volUnit;
 
