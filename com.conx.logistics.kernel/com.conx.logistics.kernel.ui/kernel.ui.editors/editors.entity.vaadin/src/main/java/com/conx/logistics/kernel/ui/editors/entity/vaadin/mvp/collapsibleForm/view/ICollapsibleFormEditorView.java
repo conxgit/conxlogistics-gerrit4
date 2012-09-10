@@ -14,7 +14,7 @@ public interface ICollapsibleFormEditorView extends IEntityEditorComponentView {
 	public void setFormTitle(String title);
 	public void addFormChangeListener(IFormChangeListener listener);
 	public void saveForm();
-	public void validateForm();
+	public boolean validateForm();
 	public void resetForm();
 	public void resizeForm(int height);
 }

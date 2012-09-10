@@ -14,7 +14,7 @@ public class VaadinFormAlertPanel extends HorizontalLayout {
 
 	public VaadinFormAlertPanel() {
 		this.icon = new Embedded();
-		this.message = new Label("This is an example message for style purposes.");
+		this.message = new Label();
 		this.closeButton = new Embedded();
 		
 		initialize();

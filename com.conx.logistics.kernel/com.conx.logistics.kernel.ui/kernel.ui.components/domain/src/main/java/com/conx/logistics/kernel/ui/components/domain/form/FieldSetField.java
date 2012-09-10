@@ -63,4 +63,11 @@ public class FieldSetField extends AbstractConXField implements Serializable {
 	public void setOrdinal(int ordinal) {
 		this.ordinal = ordinal;
 	}
+	
+	public boolean isRequired() {
+		if (this.field != null) {
+			return this.field.getRequired();
+		}
+		return false;
+	}
 }

@@ -82,7 +82,7 @@ public class CollapsibleFormEditorPresenter extends ConfigurableBasePresenter<IC
 	public void setEntity(BaseEntity entity) {
 		this.entity = entity;
 	}
-	
+
 	public void onSetItemDataSource(Item item) {
 		if (item != null) {
 			this.itemDataSource = (EntityItem<?>) item;
@@ -98,24 +98,30 @@ public class CollapsibleFormEditorPresenter extends ConfigurableBasePresenter<IC
 			this.getView().setFormTitle(formComponent.getCaption() + " (" + this.itemDataSource.getItemProperty("code").getValue().toString() + ")");
 		}
 	}
-	
+
 	@Override
 	public void onFormChanged() {
 		entityEditorEventListener.formChanged();
 	}
-	
+
+	public void onFormValidated() {
+		entityEditorEventListener.formValidated();
+	}
+
 	public void onSaveForm() {
 		this.getView().saveForm();
 	}
-	
+
 	public void onValidateForm() {
-		this.getView().validateForm();
+		if (this.getView().validateForm()) {
+			this.onFormValidated();
+		}
 	}
-	
+
 	public void onResetForm() {
 		this.getView().resetForm();
 	}
-	
+
 	public void onResizeForm(int newHeight) {
 		this.getView().resizeForm(newHeight);
 	}

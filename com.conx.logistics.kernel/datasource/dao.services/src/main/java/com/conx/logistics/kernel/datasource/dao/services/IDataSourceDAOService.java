@@ -53,4 +53,6 @@ public interface IDataSourceDAOService {
 	public DataSource addField(DataSource record, DataSourceField dsf);
 
 	public DataSource addFields(DataSource record, Set<DataSourceField> dsfs);
+
+	public DataSourceField update(DataSourceField record);
 }

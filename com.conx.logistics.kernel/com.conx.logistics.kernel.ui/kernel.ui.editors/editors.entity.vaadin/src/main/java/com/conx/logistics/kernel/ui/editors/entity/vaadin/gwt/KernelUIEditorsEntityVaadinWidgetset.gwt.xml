@@ -47,4 +47,6 @@
     <inherits name="com.vaadin.addon.tableexport.widgetset.Tableexport_for_vaadinWidgetset" />
 
     <inherits name="org.vaadin.sasha.portallayout.PortallayoutWidgetset" />
+
+    <inherits name="com.conx.logistics.kernel.ui.common.gwt.KernelUICommonWidgetset" />
 </module>

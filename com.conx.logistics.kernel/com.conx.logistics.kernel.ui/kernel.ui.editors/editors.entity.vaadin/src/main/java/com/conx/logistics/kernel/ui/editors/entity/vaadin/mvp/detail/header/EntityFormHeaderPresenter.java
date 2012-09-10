@@ -69,6 +69,7 @@ public class EntityFormHeaderPresenter extends ConfigurableBasePresenter<IEntity
 	}
 	
 	public void validate() {
+		this.getView().setVerifyEnabled(false);
 		entityEditorEventListener.validateForm();
 	}
 	
@@ -78,6 +79,7 @@ public class EntityFormHeaderPresenter extends ConfigurableBasePresenter<IEntity
 	
 	public void reset() {
 		this.getView().setVerifyEnabled(false);
+		this.getView().setResetEnabled(false);
 		entityEditorEventListener.resetForm();
 	}
 
@@ -104,6 +106,7 @@ public class EntityFormHeaderPresenter extends ConfigurableBasePresenter<IEntity
 			this.getView().setSaveEnabled(false);
 		}
 		this.getView().setVerifyEnabled(true);
+		this.getView().setResetEnabled(true);
 	}
 	
 	public void onFormValidated() {

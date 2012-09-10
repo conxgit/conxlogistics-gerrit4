@@ -319,6 +319,11 @@ public class DataSourceDAOImpl implements IDataSourceDAOService {
 	public DataSource update(DataSource record) {
 		return em.merge(record);
 	}
+	
+	@Override
+	public DataSourceField update(DataSourceField record) {
+		return em.merge(record);
+	}
 
 
 	@Override

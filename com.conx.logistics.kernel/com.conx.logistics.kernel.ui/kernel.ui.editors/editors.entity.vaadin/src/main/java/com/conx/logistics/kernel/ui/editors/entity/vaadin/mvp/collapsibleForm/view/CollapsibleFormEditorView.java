@@ -51,13 +51,14 @@ public class CollapsibleFormEditorView extends VerticalLayout implements ICollap
 	}
 
 	@Override
-	public void validateForm() {
-		this.form.validate();
+	public boolean validateForm() {
+		return this.form.validateForm();
 	}
 
 	@Override
 	public void resetForm() {
 		this.form.setItemDataSource(this.form.getItemDataSource());
+//		this.form.discard();
 	}
 
 	@Override

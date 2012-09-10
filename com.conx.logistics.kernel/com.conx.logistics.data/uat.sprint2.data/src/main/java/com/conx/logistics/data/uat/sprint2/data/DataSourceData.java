@@ -87,9 +87,17 @@ public class DataSourceData {
 		receiveDS = dataSourceDAOService.add(receiveDS);
 
 		DataSourceField expectedTotalWeight = dataSourceDAOService.getFieldByName(RCV_DEFAULT_DS, "expectedTotalweight");
+		expectedTotalWeight.setRequired(true);
+		expectedTotalWeight = dataSourceDAOService.update(expectedTotalWeight);
 		DataSourceField weightUnit = dataSourceDAOService.getFieldByName(RCV_DEFAULT_DS, "weightUnit");
+		weightUnit.setRequired(true);
+		weightUnit = dataSourceDAOService.update(weightUnit);
 		DataSourceField expectedTotalVolume = dataSourceDAOService.getFieldByName(RCV_DEFAULT_DS, "expectedTotalVolume");
+		expectedTotalVolume.setRequired(true);
+		expectedTotalVolume = dataSourceDAOService.update(expectedTotalVolume);
 		DataSourceField volumeUnit = dataSourceDAOService.getFieldByName(RCV_DEFAULT_DS, "volUnit");
+		volumeUnit.setRequired(true);
+		volumeUnit = dataSourceDAOService.update(volumeUnit);
 
 		DataSourceField fields[] = { expectedTotalWeight, weightUnit, expectedTotalVolume, volumeUnit };
 		Set<DataSourceField> fieldSet = new HashSet<DataSourceField>(Arrays.asList(fields));

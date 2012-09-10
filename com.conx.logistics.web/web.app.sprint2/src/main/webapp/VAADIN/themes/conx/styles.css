@@ -6600,6 +6600,15 @@ textarea.v-textarea-readonly,
 .v-label-conx-entity-editor-form-separator-caption {
 	cursor: pointer;
 }
+.conx-form-field-error select {
+	border-color: #b80000;
+}
+.conx-form-field-error {
+	border-color: #b80000;
+}
+.conx-form-header-error {
+	border-bottom: 2px solid #b80000;
+}
 /******************************************************************************
 *******************************************************************************
 ******************************************************************************/
@@ -6632,4 +6641,10 @@ textarea.v-textarea-readonly,
 .conx-entity-alert-panel-close {
 	background: url(formlayout/img/custom/conx-form-alert-panel-close-icon.png) right center no-repeat;
 	cursor: pointer;
+}
+/******************************************************************************
+*******************************************************************************
+******************************************************************************/
+.v-splitpanel-vsplitter-conx-entity-grid div {
+	background: url(splitpanel/img/custom/conx-entity-line-editor-split.png) repeat-x;
 }
