@@ -28,7 +28,6 @@ public class Role extends AbstractRole{
 	private String subtype;
 	private String originalSubtype;
 	private long columnBitmask;
-	private Role escapedModelProxy;
 	
 	public Role(String name)
 	{
@@ -166,11 +165,5 @@ public class Role extends AbstractRole{
 	}
 	public void setColumnBitmask(long columnBitmask) {
 		this.columnBitmask = columnBitmask;
-	}
-	public Role getEscapedModelProxy() {
-		return escapedModelProxy;
-	}
-	public void setEscapedModelProxy(Role escapedModelProxy) {
-		this.escapedModelProxy = escapedModelProxy;
 	}
 }
