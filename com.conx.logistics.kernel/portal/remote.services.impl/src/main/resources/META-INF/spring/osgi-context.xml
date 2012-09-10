@@ -16,10 +16,11 @@
 	<osgi:reference id="globalTransactionManager" interface="javax.transaction.TransactionManager" filter="(module=KERNEL.TM)">
 	</osgi:reference>	
 	
-	<!-- import external interfaces -->
-	<osgi:reference id="folderDao" interface="com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService"/>
-	<osgi:reference id="basicTypeDao" interface="com.conx.logistics.kernel.metamodel.dao.services.IBasicTypeDAOService"/>
+	<osgi:reference id="globalTransactionManager" interface="javax.transaction.TransactionManager" filter="(module=KERNEL.TM)">
+	</osgi:reference>		
 	
 	<!-- export internal interfaces -->
-	<osgi:service ref="lplDocLibService" interface="com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository"/>
+	<osgi:service ref="liferayPortalService" interface="com.conx.logistics.kernel.portal.remote.services.IPortalUserService"/>
+	<osgi:service ref="liferayPortalService" interface="com.conx.logistics.kernel.portal.remote.services.IPortalOrganizationService"/>
+	<osgi:service ref="liferayPortalService" interface="com.conx.logistics.kernel.portal.remote.services.IPortalRoleService"/>	
 </beans>

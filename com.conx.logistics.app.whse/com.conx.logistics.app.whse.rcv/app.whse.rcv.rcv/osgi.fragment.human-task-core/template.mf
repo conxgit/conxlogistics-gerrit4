@@ -1,0 +1,7 @@
+Bundle-ManifestVersion: 2
+Bundle-Version: 1.0.0
+Bundle-Name: ConX RCV RCV Domain OSGi Fragment
+Bundle-SymbolicName: com.conx.logistics.app.whse.rcv.rcv.domain.osgi.fragment.human-task-core
+Fragment-Host: org.jbpm.human-task-core
+Import-Package: com.conx.logistics.app.whse.rcv.rcv.domain;version="[1.0.0,2.0.0)"
+

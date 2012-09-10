@@ -33,5 +33,5 @@
 		EntityManager will be auto-injected due to @PersistenceContext.
 		PersistenceExceptions will be auto-translated due to @Repository.
 	-->
-	<bean id="lplDocLibService" class="LiferayPortal" init-method="init"/>
+	<bean id="liferayPortalService" class="com.conx.logistics.kernel.portal.remote.services.impl.LiferayPortalServicesImpl" init-method="init"/>
 </beans>

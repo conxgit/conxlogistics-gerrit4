@@ -100,6 +100,8 @@
 	<artifact type="bundle" name="com.conx.logistics.kernel.ui.components.dao.services" version="1.0.0"/>
 	<artifact type="bundle" name="com.conx.logistics.kernel.ui.components.dao.jpa.persistence" version="1.0.0"/>
 	
+	<!-- Kernel: BPM : DataSource -->
+	<artifact type="bundle" name="com.conx.logistics.kernel.bpm.impl.jbpm.persistence.datasource" version="1.0.0"/>
 	
 	<!-- Kernel: BPM : HumanTaskService -->
 	<artifact type="bundle" name="com.conx.logistics.kernel.bpm.impl.jbpm.taskserver.persistence" version="1.0.0"/>

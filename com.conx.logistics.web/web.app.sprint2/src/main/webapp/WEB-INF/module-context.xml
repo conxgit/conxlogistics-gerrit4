@@ -14,5 +14,8 @@
 	<context:component-scan base-package="*" />
 	<context:annotation-config />
 				
-	<bean id="mainApp" scope="singleton" class="com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication"/>
+	<bean id="mainApp" scope="singleton" class="com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication">
+		<property name="portalUserService" ref="portalUserService"/>
+		<property name="portalRoleService" ref="portalRoleService"/>
+	</bean>
 </beans>
