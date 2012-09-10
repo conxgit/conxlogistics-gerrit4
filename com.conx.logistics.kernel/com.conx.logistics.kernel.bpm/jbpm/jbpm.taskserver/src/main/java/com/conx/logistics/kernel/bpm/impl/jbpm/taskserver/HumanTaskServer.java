@@ -52,7 +52,6 @@ public class HumanTaskServer implements IBPMTaskService {
 	private JTACustomTaskService taskService;
 	
 	
-	@Autowired
 	private IPortalUserService portalUserService;
 
 	public void stop() {
@@ -153,6 +152,16 @@ public class HumanTaskServer implements IBPMTaskService {
 		return taskService;
 	}
 	
+	
+	
+	public IPortalUserService getPortalUserService() {
+		return portalUserService;
+	}
+
+	public void setPortalUserService(IPortalUserService portalUserService) {
+		this.portalUserService = portalUserService;
+	}
+
 	private void addUsersAndGroups() throws NamingException
 	{
 		 Context ctx = jndiTemplate.getContext();

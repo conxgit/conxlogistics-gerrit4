@@ -265,17 +265,17 @@ public class BPMServerImpl implements IBPMService {
 		registerWorkItemHandler(ksession, jbpmProperties);
 		addAgendaEventListener(ksession);
 		
-		try {
+/*		try {
 			addUsersAndGroups();
 		} catch (NamingException e) {
 			StringWriter sw = new StringWriter();
 			e.printStackTrace(new PrintWriter(sw));
 			String stacktrace = sw.toString();
 			logger.error(stacktrace);
-		}
+		}*/
 	}
 	
-	private void addUsersAndGroups() throws NamingException
+/*	private void addUsersAndGroups() throws NamingException
 	{
 		 Context ctx = jndiTemplate.getContext();
 		 UserTransaction ut = (UserTransaction)ctx.lookup( "java:comp/UserTransaction" );
@@ -330,7 +330,7 @@ public class BPMServerImpl implements IBPMService {
 			String stacktrace = sw.toString();
 			logger.error(stacktrace);
 		}				
-	}
+	}*/
 	
 	@SuppressWarnings("rawtypes")
 	public static Object eval(Reader reader, Map vars) {

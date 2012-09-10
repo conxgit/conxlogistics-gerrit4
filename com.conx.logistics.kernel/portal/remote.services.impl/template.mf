@@ -13,6 +13,8 @@ Import-Package:
   com.conx.logistics.kernel.metamodel.dao.services;version="1.0.0",
   com.conx.logistics.mdm.dao.services;version="1.0.0",
   com.conx.logistics.mdm.domain.organization;version="1.0.0",
+  com.conx.logistics.mdm.domain.documentlibrary;version="1.0.0",
+  com.conx.logistics.mdm.domain.role;version="1.0.0", 
   org.springframework.dao.annotation;version="[3.0,3.1)",
   org.springframework.transaction;version="[3.0,3.1)",
   org.springframework.transaction.jta;version="[3.0,3.1)",

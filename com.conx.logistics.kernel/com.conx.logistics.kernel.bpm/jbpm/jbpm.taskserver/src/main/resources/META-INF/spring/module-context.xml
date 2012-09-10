@@ -17,6 +17,7 @@
 		<property name="globalTransactionManager" ref="globalTransactionManager"/>
 		<property name="jndiTemplate" ref="tmJndiTemplate"/>	
 		<property name="userTransaction" ref="userTransaction"/>	
+		<property name="portalUserService" ref="portalUserService"/>
 	</bean>
 	
 	

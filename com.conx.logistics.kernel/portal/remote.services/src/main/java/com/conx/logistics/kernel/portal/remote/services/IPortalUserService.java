@@ -16,6 +16,8 @@ public interface IPortalUserService {
 	
 	public User provideUserByEmailAddress(String portalOrganizationId, String emailAddress) throws Exception;
 	
+	public User provideUserByEmailAddress(String emailAddress) throws Exception;
+	
 	public void syncUsersFromPortal() throws Exception;
 	
 	public Boolean isAvailable() throws Exception;

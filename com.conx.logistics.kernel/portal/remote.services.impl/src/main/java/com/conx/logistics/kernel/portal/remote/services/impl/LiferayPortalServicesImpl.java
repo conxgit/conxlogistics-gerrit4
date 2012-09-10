@@ -1,6 +1,7 @@
 package com.conx.logistics.kernel.portal.remote.services.impl;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -15,6 +16,9 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -22,15 +26,24 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.conx.logistics.common.utils.StringUtil;
+import com.conx.logistics.common.utils.Validator;
+import com.conx.logistics.kernel.portal.remote.services.IPortalOrganizationService;
+import com.conx.logistics.kernel.portal.remote.services.IPortalRoleService;
 import com.conx.logistics.kernel.portal.remote.services.IPortalUserService;
-import com.conx.logistics.mdm.dao.services.IOrganizationDAOService;
+import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.conx.logistics.mdm.domain.organization.Organization;
+import com.conx.logistics.mdm.domain.role.Role;
 import com.conx.logistics.mdm.domain.user.User;
 
 import flexjson.JSONDeserializer;
 
-public class LiferayPortalServicesImpl implements IPortalUserService, IOrganizationDAOService {
+@Transactional
+@Service
+public class LiferayPortalServicesImpl implements IPortalUserService, IPortalOrganizationService, IPortalRoleService {
 	static public final String CONXPORTAL_SERVER_HOSTNAME = "conxportal.server.hostname";//localhost
 	static public final String CONXPORTAL_SERVER_PORT = "conxportal.server.port";//8080
 	static public final String CONXPORTAL_REPOSITORY_ID = "conxportal.repository.id";//10180
@@ -51,6 +64,7 @@ public class LiferayPortalServicesImpl implements IPortalUserService, IOrganizat
 	private String hostname;
 	private String port;
 	private String loginGroupId;
+
 	
 	public void init()
 	{
@@ -190,8 +204,10 @@ public class LiferayPortalServicesImpl implements IPortalUserService, IOrganizat
 		}
 		System.out.println("getUsersByCompanyId Res:["+response+"]");
 		
-		JSONDeserializer<List<User>> deserializer = new JSONDeserializer<List<User>>();
-		List<User> users = deserializer.deserialize(response,List.class);
+		ArrayList<User> users = new JSONDeserializer<ArrayList<User>>()
+			    .use("values", User.class)
+			    .deserialize(response);
+
 		
 		return users;
 	}
@@ -228,46 +244,240 @@ public class LiferayPortalServicesImpl implements IPortalUserService, IOrganizat
 	}
 
 	@Override
-	public Organization get(long id) {
+	public Set<Organization> getOrganizationsByCompanyId(String companyId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<Organization> getAll() {
+	public Organization provideOrganization(String portalOrganizationId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Organization getByCode(String code) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Organization add(Organization record) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void delete(Organization record) {
-		// TODO Auto-generated method stub
+	public User provideUserByEmailAddress(String emailAddress) throws Exception {
+		// Add AuthCache to the execution context
+		BasicHttpContext ctx = new BasicHttpContext();
+		ctx.setAttribute(ClientContext.AUTH_CACHE, authCache);
 		
+		HttpPost post = new HttpPost(
+				"/api/secure/jsonws/user/get-user-by-email-address");
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("companyId", companyId));
+		params.add(new BasicNameValuePair("emailAddress", emailAddress));
+	
+		UrlEncodedFormEntity entity = new UrlEncodedFormEntity(params, "UTF-8");
+		post.setEntity(entity);
+		
+		
+		HttpResponse resp = httpclient.execute(targetHost, post, ctx);
+		System.out.println(resp.getStatusLine());
+		
+		String response = null;
+		if(resp.getEntity()!=null) {
+		    response = EntityUtils.toString(resp.getEntity());
+		}
+		
+		User user = null;
+		if (!StringUtil.contains(response, "NoSuch", "") 
+			|| !StringUtil.contains(response, "Exception", ""))
+		{
+			JSONDeserializer<User> deserializer = new JSONDeserializer<User>();
+			user = deserializer.deserialize(response,User.class);
+		}		
+		
+		return user;
+	}
+
+	
+	/*
+	 * 
+	 * 
+	 * Roles
+	 * 
+	 * 
+	 */		
+	private Role getRoleById(String roleId) throws ParseException, IOException
+	{
+		// Add AuthCache to the execution context
+		BasicHttpContext ctx = new BasicHttpContext();
+		ctx.setAttribute(ClientContext.AUTH_CACHE, authCache);
+		
+		HttpPost post = new HttpPost(
+				"/api/secure/jsonws//role/get-role");
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("companyId", companyId));
+		params.add(new BasicNameValuePair("roleId", roleId));
+	
+		UrlEncodedFormEntity entity = new UrlEncodedFormEntity(params, "UTF-8");
+		post.setEntity(entity);
+		
+		
+		HttpResponse resp = httpclient.execute(targetHost, post, ctx);
+		System.out.println(resp.getStatusLine());
+		
+		String response = null;
+		if(resp.getEntity()!=null) {
+		    response = EntityUtils.toString(resp.getEntity());
+		}
+		
+		Role role = null;
+		if (!StringUtil.contains(response, "NoSuch", "") )
+		{
+			JSONDeserializer<Role> deserializer = new JSONDeserializer<Role>();
+			role = deserializer.deserialize(response,Role.class);
+		}		
+		
+		return role;
+	}		
+	
+	@Override
+	public Role addRole(String roleName)
+			throws Exception {
+		// Add AuthCache to the execution context
+		BasicHttpContext ctx = new BasicHttpContext();
+		ctx.setAttribute(ClientContext.AUTH_CACHE, authCache);
+		
+		HttpPost post = new HttpPost("/api/secure/jsonws/role/add-role");
+		MultipartEntity entity = new MultipartEntity(
+				HttpMultipartMode.BROWSER_COMPATIBLE);
+
+		
+		entity.addPart("name",new StringBody(roleName, Charset.forName("UTF-8")));
+		entity.addPart("descriptionMap",null);
+		entity.addPart("titleMap",null);
+		entity.addPart("type", new StringBody("0",Charset.forName("UTF-8")));
+	
+		post.setEntity(entity);
+
+		HttpResponse resp = httpclient.execute(targetHost, post, ctx);
+		System.out.println(resp.getStatusLine());
+		
+		String response = null;
+		if(resp.getEntity()!=null) {
+		    response = EntityUtils.toString(resp.getEntity());
+		}
+		System.out.println("addRole Res:["+response+"]");
+
+		Role role = null;
+		JSONDeserializer<Role> deserializer = new JSONDeserializer<Role>();
+		role = deserializer.deserialize(response,FileEntry.class);
+
+		return role;
+	}
+	
+	
+
+	@Override
+	public Role provideRole(String roleId, String roleName) throws Exception {
+		Role role = getRoleById(roleId);
+		if (Validator.isNull(role))
+		{
+			role = addRole(roleName);
+		}
+		return role;
 	}
 
 	@Override
-	public Organization update(Organization record) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Role> getUserRoles(String userId) throws Exception {
+		// Add AuthCache to the execution context
+		BasicHttpContext ctx = new BasicHttpContext();
+		ctx.setAttribute(ClientContext.AUTH_CACHE, authCache);
+		
+		HttpPost post = new HttpPost("/api/secure/jsonws/role/get-user-roles");
+		MultipartEntity entity = new MultipartEntity(
+				HttpMultipartMode.BROWSER_COMPATIBLE);
+
+		entity.addPart("userId",new StringBody(userId, Charset.forName("UTF-8")));
+	
+		post.setEntity(entity);
+
+		HttpResponse resp = httpclient.execute(targetHost, post, ctx);
+		System.out.println(resp.getStatusLine());
+		
+		String response = null;
+		if(resp.getEntity()!=null) {
+		    response = EntityUtils.toString(resp.getEntity());
+		}
+		System.out.println("getUserRoles Res:["+response+"]");
+
+		ArrayList<Role> roles = new JSONDeserializer<ArrayList<Role>>()
+			    .use("values", Role.class)
+			    .deserialize(response);
+
+		return roles;
 	}
 
 	@Override
-	public Organization provide(Organization record) {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean userHasRole(String userId, String roleName)  throws Exception {
+		// Add AuthCache to the execution context
+		BasicHttpContext ctx = new BasicHttpContext();
+		ctx.setAttribute(ClientContext.AUTH_CACHE, authCache);
+		
+		HttpPost post = new HttpPost("/api/secure/jsonws/role/get-user-roles");
+		MultipartEntity entity = new MultipartEntity(
+				HttpMultipartMode.BROWSER_COMPATIBLE);
+
+		entity.addPart("userId",new StringBody(userId, Charset.forName("UTF-8")));
+		entity.addPart("companyId",new StringBody(companyId, Charset.forName("UTF-8")));
+		entity.addPart("name",new StringBody(roleName, Charset.forName("UTF-8")));
+		entity.addPart("inherited",new StringBody("false", Charset.forName("UTF-8")));
+		
+		post.setEntity(entity);
+
+		HttpResponse resp = httpclient.execute(targetHost, post, ctx);
+		System.out.println(resp.getStatusLine());
+		
+		String response = null;
+		if(resp.getEntity()!=null) {
+		    response = EntityUtils.toString(resp.getEntity());
+		}
+		System.out.println("userHasRole Res:["+response+"]");
+
+		JSONDeserializer<Boolean> deserializer = new JSONDeserializer<Boolean>();
+		Boolean hasRole = deserializer.deserialize(response,Boolean.class);
+
+		return hasRole;
 	}
 
+	@Override
+	public void setUserRole(String userId, String roleId)   throws Exception {
+		// Add AuthCache to the execution context
+		BasicHttpContext ctx = new BasicHttpContext();
+		ctx.setAttribute(ClientContext.AUTH_CACHE, authCache);
+		
+		HttpPost post = new HttpPost("/api/secure/jsonws//user/set-role-users");
+		MultipartEntity entity = new MultipartEntity(
+				HttpMultipartMode.BROWSER_COMPATIBLE);
 
+		entity.addPart("roleId",new StringBody(roleId, Charset.forName("UTF-8")));
+		entity.addPart("userIds[]",new StringBody(userId, Charset.forName("UTF-8")));
+
+		post.setEntity(entity);
+
+		HttpResponse resp = httpclient.execute(targetHost, post, ctx);
+		System.out.println(resp.getStatusLine());
+		
+		String response = null;
+		if(resp.getEntity()!=null) {
+		    response = EntityUtils.toString(resp.getEntity());
+		}
+		System.out.println("setUserRole Res:["+response+"]");
+	}
+
+	@Override
+	public boolean userHasRoleByScreenName(String userScreenName,
+			String roleName) throws Exception {
+		// TODO Auto-generated method stub
+		return false;
+	}	
+	
+	@Override
+	public boolean userHasRoleByEmailAddress(String emailAddress,
+			String roleName) throws Exception {
+		User user = provideUserByEmailAddress(emailAddress);
+		Boolean hasRole = userHasRole(Long.toString(user.getUserId()), roleName);
+		return hasRole;
+	}	
 }

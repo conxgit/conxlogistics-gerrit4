@@ -195,21 +195,24 @@ public class MainMVPApplication extends Application implements IMainApplication,
 		String pwd = (String)pns.get("pwd");
 		String screenName = null;
 		
-		if (Validator.isNotNull(email)) //Normal login
+		if (Validator.isNull(currentUser))
 		{
-			try {
-				currentUser = portalUserService.provideUserByEmailAddress(email);
-			} catch (Exception e) {
-				e.printStackTrace();
+			if (Validator.isNotNull(email)) //Normal login
+			{
+				try {
+					currentUser = portalUserService.provideUserByEmailAddress(email);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
-		}
-		else//Test/Dev login
-		{
-			email = "test@liferay.com";
-			screenName = "ConX Test Admin";
-			currentUser = new User();
-			currentUser.setEmailAddress(email);
-			currentUser.setScreenName(screenName);
+			else//Test/Dev login
+			{
+				email = "test@liferay.com";
+				screenName = "ConX Test Admin";
+				currentUser = new User();
+				currentUser.setEmailAddress(email);
+				currentUser.setScreenName(screenName);
+			}
 		}
 		
 		//Start request helper
