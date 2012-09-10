@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.UserTransaction;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +31,12 @@ import org.vaadin.mvp.uibinder.UiBinderException;
 import com.conx.logistics.common.utils.Validator;
 import com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository;
 import com.conx.logistics.kernel.pageflow.services.IPageFlowManager;
+import com.conx.logistics.kernel.portal.remote.services.IPortalOrganizationService;
+import com.conx.logistics.kernel.portal.remote.services.IPortalRoleService;
+import com.conx.logistics.kernel.portal.remote.services.IPortalUserService;
 import com.conx.logistics.kernel.system.dao.services.application.IApplicationDAOService;
 import com.conx.logistics.kernel.ui.common.data.container.EntityTypeContainerFactory;
+import com.conx.logistics.kernel.ui.common.entityprovider.jta.CustomCachingMutableLocalEntityProvider;
 import com.conx.logistics.kernel.ui.common.ui.menu.app.AppMenuEntry;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
 import com.conx.logistics.kernel.ui.service.IUIContributionManager;
@@ -41,6 +46,8 @@ import com.conx.logistics.kernel.ui.service.contribution.IMainApplication;
 import com.conx.logistics.kernel.ui.service.contribution.IViewContribution;
 import com.conx.logistics.mdm.dao.services.IEntityMetadataDAOService;
 import com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService;
+import com.conx.logistics.mdm.domain.constants.RoleCustomCONSTANTS;
+import com.conx.logistics.mdm.domain.user.User;
 import com.sun.syndication.io.impl.Base64;
 import com.vaadin.Application;
 import com.vaadin.addon.jpacontainer.JPAContainer;
@@ -70,6 +77,8 @@ public class MainMVPApplication extends Application implements IMainApplication,
 	private boolean appServiceInititialized = false;
 
 	private PlatformTransactionManager kernelSystemTransManager;
+	
+	private UserTransaction userTransaction;
 
 	private EntityManagerFactory kernelSystemEntityManagerFactory;	
 	
@@ -96,7 +105,14 @@ public class MainMVPApplication extends Application implements IMainApplication,
 	private HashMap<String, Object> entityFactoryPresenterParams;
 	
 	private IEntityMetadataDAOService entityMetaDataDAOService;
-
+	
+	private IPortalUserService portalUserService;
+	
+	private IPortalRoleService portalRoleService;	
+	
+	private IPortalOrganizationService portalOrganizationService;
+	
+	private User currentUser;
 
 	@Override
 	public void init() {
@@ -174,8 +190,29 @@ public class MainMVPApplication extends Application implements IMainApplication,
 	@Override
     public void onRequestStart(HttpServletRequest request, HttpServletResponse response) {
 		//authenticate(request);
-		Map pns = request.getParameterMap();
-		Principal userPrinc = request.getUserPrincipal();
+		Map pns = request.getParameterMap();//email,pwd
+		String email = (String)pns.get("email");
+		String pwd = (String)pns.get("pwd");
+		String screenName = null;
+		
+		if (Validator.isNotNull(email)) //Normal login
+		{
+			try {
+				currentUser = portalUserService.provideUserByEmailAddress(email);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else//Test/Dev login
+		{
+			email = "test@liferay.com";
+			screenName = "ConX Test Admin";
+			currentUser = new User();
+			currentUser.setEmailAddress(email);
+			currentUser.setScreenName(screenName);
+		}
+		
+		//Start request helper
 		if (this.entityManagerPerRequestHelper != null)//Init called already
 			this.entityManagerPerRequestHelper.requestStart();
 	}
@@ -207,9 +244,14 @@ public class MainMVPApplication extends Application implements IMainApplication,
 
 	@Override
 	public Object createPersistenceContainer(Class entityClass) {
+		//-- Create JTA JPA Container Entity Provider
+		CustomCachingMutableLocalEntityProvider provider = new CustomCachingMutableLocalEntityProvider(entityClass,
+													this.kernelSystemEntityManagerFactory,
+													this.userTransaction);
+		
 		EntityManager em = this.kernelSystemEntityManagerFactory.createEntityManager();
-		JPAContainer container = JPAContainerFactory.make(entityClass, em);
-		container.getEntityProvider().setEntitiesDetached(false);
+		JPAContainer container = JPAContainerFactory.make(entityClass, (EntityManager)null);
+		container.setEntityProvider(provider);
 		//this.entityManagerPerRequestHelper.addContainer(container);
 		
 		return container;
@@ -395,15 +437,6 @@ public class MainMVPApplication extends Application implements IMainApplication,
 		appServiceInititialized = false;
 	}
 	
-	public void bindKernelSystemTransManager(
-			PlatformTransactionManager kernelSystemTransManager, Map properties) {
-		logger.debug("bindKernelSystemTransManager()");
-		this.kernelSystemTransManager = kernelSystemTransManager;
-		if (!appServiceInititialized)
-			initAppService();		
-	}
-	
-	
 	public void unbindPageFlowEngine(
 			IPageFlowManager pageflowEngine, Map properties) {
 		logger.debug("unbindPageFlowEngine()");
@@ -417,11 +450,31 @@ public class MainMVPApplication extends Application implements IMainApplication,
 		this.pageFlowEngine.setMainApplication(this);
 	}
 
+	public void bindKernelSystemTransManager(
+			PlatformTransactionManager kernelSystemTransManager, Map properties) {
+		logger.debug("bindKernelSystemTransManager()");
+		this.kernelSystemTransManager = kernelSystemTransManager;
+		if (!appServiceInititialized)
+			initAppService();		
+	}
+	
 	public void unbindKernelSystemTransManager(
 			PlatformTransactionManager kernelSystemTransManager, Map properties) {
 		logger.debug("unbindKernelSystemTransManager()");
 		this.kernelSystemTransManager = null;
 		appServiceInititialized = false;
+	}
+	
+	public void bindUserTransaction(
+			UserTransaction userTransaction, Map properties) {
+		logger.debug("bindUserTransaction()");
+		this.userTransaction = userTransaction;		
+	}
+	
+	public void unbindUserTransaction(
+			UserTransaction userTransaction, Map properties) {
+		logger.debug("unbindUserTransaction()");
+		this.userTransaction = null;	
 	}	
 	
 	public void bindKernelSystemEntityManagerFactory(
@@ -536,5 +589,30 @@ public class MainMVPApplication extends Application implements IMainApplication,
 
 	public HashMap<String, Object> getEntityFactoryPresenterParams() {
 		return entityFactoryPresenterParams;
-	}	
+	}
+
+	public IPortalUserService getPortalUserService() {
+		return portalUserService;
+	}
+
+	public void setPortalUserService(IPortalUserService portalUserService) {
+		this.portalUserService = portalUserService;
+	}
+
+	public IPortalOrganizationService getPortalOrganizationService() {
+		return portalOrganizationService;
+	}
+
+	public void setPortalOrganizationService(
+			IPortalOrganizationService portalOrganizationService) {
+		this.portalOrganizationService = portalOrganizationService;
+	}
+
+	public IPortalRoleService getPortalRoleService() {
+		return portalRoleService;
+	}
+
+	public void setPortalRoleService(IPortalRoleService portalRoleService) {
+		this.portalRoleService = portalRoleService;
+	}
 }
