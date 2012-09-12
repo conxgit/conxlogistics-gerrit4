@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 
 import com.conx.logistics.app.whse.rcv.rcv.domain.Receive;
+import com.conx.logistics.app.whse.rcv.rcv.domain.ReceiveLine;
 import com.conx.logistics.kernel.datasource.dao.services.IDataSourceDAOService;
 import com.conx.logistics.kernel.datasource.domain.DataSource;
 import com.conx.logistics.kernel.datasource.domain.DataSourceField;
@@ -21,6 +22,7 @@ public class DataSourceData {
 
 	public static DataSource RCV_BASIC_DS = null;
 	public static DataSource RCV_DEFAULT_DS = null;
+	public static DataSource RCV_LINE_DEFAULT_DS = null;
 	public static DataSource RCV_WEIGHT_DIMS_DS = null;
 
 	public static DataSource FE_DS = null;
@@ -54,6 +56,38 @@ public class DataSourceData {
 
 		return receiveDS;
 	}
+	
+	public final static DataSource provideDefaultReceiveLineDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
+		com.conx.logistics.kernel.metamodel.domain.EntityType rcvLineET = EntityTypeData.provide(entityTypeDAOService, em, ReceiveLine.class);
+
+		DataSource receiveLineDS = dataSourceDAOService.provide(rcvLineET);
+		receiveLineDS.setCode("defaultReceiveLineDS");
+		receiveLineDS.setName("DefaultReceiveLineDS");
+		receiveLineDS = dataSourceDAOService.update(receiveLineDS);
+
+		String[] visibleFieldNames = { "id", "code", "name", "dateCreated", "dateLastUpdated","lineNumber","expectedOuterPackCount","expectedProdTotalWeight","expectedProdTotalVolume","product" };
+		List<String> visibleFieldNamesSet = Arrays.asList(visibleFieldNames);
+		for (DataSourceField fld : receiveLineDS.getDSFields()) {
+			if (visibleFieldNamesSet.contains(fld.getName()))
+				fld.setHidden(false);
+			else
+				fld.setHidden(true);
+
+			if ("product".equals(fld.getName())) {
+				fld.setValueXPath("code");
+			}
+			
+			if ("parentReceive".equals(fld.getName())) {
+				fld.setForeignKey("parentReceive.id");
+			}
+		}
+
+		receiveLineDS = dataSourceDAOService.update(receiveLineDS);
+
+		RCV_LINE_DEFAULT_DS = receiveLineDS;
+
+		return receiveLineDS;
+	}	
 
 	public final static DataSource provideBasicFormReceiveDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
 		com.conx.logistics.kernel.metamodel.domain.EntityType rcvET = EntityTypeData.provide(entityTypeDAOService, em, Receive.class);

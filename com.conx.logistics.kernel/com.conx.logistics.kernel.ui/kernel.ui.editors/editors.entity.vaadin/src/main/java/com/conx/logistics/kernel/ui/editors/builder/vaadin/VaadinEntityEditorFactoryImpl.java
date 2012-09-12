@@ -18,6 +18,7 @@ import com.conx.logistics.kernel.ui.components.domain.form.ConXSimpleForm;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent;
 import com.conx.logistics.kernel.ui.components.domain.note.NoteEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.referencenumber.ReferenceNumberEditorComponent;
+import com.conx.logistics.kernel.ui.components.domain.table.ConXDetailTable;
 import com.conx.logistics.kernel.ui.components.domain.table.ConXTable;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.ConfigurablePresenterFactory;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.MultiLevelEntityEditorEventBus;
@@ -25,6 +26,7 @@ import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.MultiLevelEntityEd
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment.AttachmentEditorPresenter;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.collapsibleForm.CollapsibleFormEditorPresenter;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.customizer.ConfigurablePresenterFactoryCustomizer;
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.lineeditor.grid.EntityLineGridPresenter;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.notes.NotesEditorPresenter;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.refNum.ReferenceNumberEditorPresenter;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.search.grid.EntityGridPresenter;
@@ -103,14 +105,21 @@ public class VaadinEntityEditorFactoryImpl implements IEntityEditorFactory {
 
 			res = new HashMap<IPresenter<?, ? extends EventBus>, EventBus>();
 			res.put(presenter, eventBus);
-		} else if (conXComponent instanceof ConXTable) {
-			params.put(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL, conXComponent);
-			IPresenter<?, ? extends EventBus> presenter = factory.createPresenter(EntityGridPresenter.class);
-			EventBus eventBus = presenter.getEventBus();
+		 } else if (conXComponent instanceof ConXDetailTable) {
+				params.put(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL, conXComponent);
+				IPresenter<?, ? extends EventBus> presenter = factory.createPresenter(EntityLineGridPresenter.class);
+				EventBus eventBus = presenter.getEventBus();
 
-			res = new HashMap<IPresenter<?, ? extends EventBus>, EventBus>();
-			res.put(presenter, eventBus);
-		}
+				res = new HashMap<IPresenter<?, ? extends EventBus>, EventBus>();
+				res.put(presenter, eventBus);
+		 } else if (conXComponent instanceof ConXTable) {
+				params.put(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL, conXComponent);
+				IPresenter<?, ? extends EventBus> presenter = factory.createPresenter(EntityGridPresenter.class);
+				EventBus eventBus = presenter.getEventBus();
+
+				res = new HashMap<IPresenter<?, ? extends EventBus>, EventBus>();
+				res.put(presenter, eventBus);
+		}		
 		return res;
 	}
 

@@ -14,7 +14,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.criteria.Path;
 
+import com.conx.logistics.common.utils.StringUtil;
 import com.conx.logistics.kernel.metamodel.domain.EntityType;
 import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
 
@@ -27,6 +29,9 @@ public class DataSource extends MultitenantBaseEntity {
 	
 	@Transient
 	private Set<String> nestedFieldNames = null;
+	
+	@Transient
+	private String foreignKeyPath = null;
 	
 	
 	@Transient
@@ -69,6 +74,24 @@ public class DataSource extends MultitenantBaseEntity {
 		getVisibleFieldNames();
 		return nestedFieldNames;
 	}
+	
+	public String getForeignKeyPath()
+	{
+		if (this.foreignKeyPath == null)
+		{
+			Set<DataSourceField> dsFields = getDSFields();
+			for (DataSourceField dsf : dsFields)
+			{
+				if (dsf.getForeignKey() != null)
+				{
+					this.foreignKeyPath = dsf.getForeignKey();
+					break;
+				}
+			}
+		}
+
+		return this.foreignKeyPath;
+	}		
 	
 	public Set<String> getVisibleFieldNames()
 	{

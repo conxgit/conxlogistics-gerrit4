@@ -4,13 +4,20 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.UserTransaction;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vaadin.addon.jpacontainer.provider.CachingMutableLocalEntityProvider;
 
 public class CustomCachingMutableLocalEntityProvider<T> extends
 		CachingMutableLocalEntityProvider<T> {
+	
+	protected static Logger logger = LoggerFactory.getLogger(CustomCachingMutableLocalEntityProvider.class);
 
 	private EntityManagerFactory entityManagerFactory;
 	private UserTransaction userTransaction;
+
+	private EntityManager entityManager;
 
 	public CustomCachingMutableLocalEntityProvider(Class<T> entityClass) {
 		super(entityClass);
@@ -21,6 +28,7 @@ public class CustomCachingMutableLocalEntityProvider<T> extends
 												  UserTransaction userTransaction) {
 		super(entityClass);
 		this.entityManagerFactory = entityManagerFactory;
+		this.entityManager = entityManagerFactory.createEntityManager();
 		this.userTransaction = userTransaction;
 	}	
 	
@@ -31,11 +39,23 @@ public class CustomCachingMutableLocalEntityProvider<T> extends
 
     @Override
     protected void runInTransaction(Runnable operation) {
-        Util.runInJTATransaction(userTransaction, operation);
+        try {
+        	this.userTransaction.begin();
+        	this.entityManager.joinTransaction();
+            operation.run();
+            this.userTransaction.commit();
+        } catch (Exception e) {
+            try {
+            	this.userTransaction.rollback();
+            } catch (Exception e2) {
+            	logger.error("Rollback failed", e2);
+            }
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public EntityManager getEntityManager() {
-        return Util.getEntityManager(this.entityManagerFactory);
+        return this.entityManager;
     }
 }

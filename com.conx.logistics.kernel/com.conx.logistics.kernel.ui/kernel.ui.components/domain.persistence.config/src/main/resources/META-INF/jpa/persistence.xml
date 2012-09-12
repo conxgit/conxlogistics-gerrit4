@@ -44,5 +44,7 @@
 		<class>com.conx.logistics.kernel.ui.components.domain.table.ColumnIconPath</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.table.ColumnWidth</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.table.ConXTable</class>
+		<class>com.conx.logistics.kernel.ui.components.domain.table.ConXDetailTable</class>
+		
 	</persistence-unit>
 </persistence>

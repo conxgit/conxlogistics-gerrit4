@@ -109,6 +109,7 @@ public class AttachmentEditorPresenter extends ConfigurableBasePresenter<IAttach
 				predicates.add(criteriaBuilder.equal(pathId, AttachmentEditorPresenter.this.docFolder.getId()));
 			}
 		});
+		this.entityContainer.applyFilters();
 	}
 
 	@SuppressWarnings("rawtypes")

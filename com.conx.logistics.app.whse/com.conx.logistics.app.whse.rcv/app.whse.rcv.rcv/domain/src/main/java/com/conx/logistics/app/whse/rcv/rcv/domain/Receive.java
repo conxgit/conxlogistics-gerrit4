@@ -53,7 +53,7 @@ public class Receive extends MultitenantBaseEntity {
     @JoinColumn
     private PackUnit outerPackUnit;
 
-    @OneToOne(targetEntity = WeightUnit.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = WeightUnit.class, fetch = FetchType.LAZY)
     @JoinColumn
     private WeightUnit weightUnit;
 

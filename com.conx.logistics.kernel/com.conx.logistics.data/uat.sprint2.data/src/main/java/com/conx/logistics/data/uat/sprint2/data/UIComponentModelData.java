@@ -21,6 +21,7 @@ import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorCon
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent;
 import com.conx.logistics.kernel.ui.components.domain.note.NoteEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.referencenumber.ReferenceNumberEditorComponent;
+import com.conx.logistics.kernel.ui.components.domain.table.ConXDetailTable;
 import com.conx.logistics.kernel.ui.components.domain.table.ConXTable;
 import com.conx.logistics.mdm.domain.BaseEntity;
 
@@ -49,6 +50,8 @@ public class UIComponentModelData {
 		FieldSet basicFormFieldSet = createFieldSet("Basic", basicRcvDS, componentDAOService);
 		FieldSet weightDimsFormFieldSet = createFieldSet("Weight & Dimensions", weightDimsRcvDS, componentDAOService);
 
+		
+		
 		// -- Simple Form
 		ConXSimpleForm rcvBasicForm = new ConXSimpleForm(basicRcvDS, "Basic");
 		rcvBasicForm.setFieldSet(basicFormFieldSet);
@@ -66,10 +69,22 @@ public class UIComponentModelData {
 		rcvWeightDimsFormLE.setContent(rcvWeightDimsForm);
 		rcvWeightDimsFormLE = (LineEditorComponent) componentDAOService.add((AbstractConXComponent) rcvWeightDimsFormLE);
 
+		// -- RcvLines
+		DataSource rcvLineDefaultDS = getRcvLineDefaultDS(entityTypeDAOService, dataSourceDAOService, em);
+		ConXTable rcvLinesTable = new ConXDetailTable();
+		rcvLinesTable.setDataSource(rcvLineDefaultDS);
+		rcvLinesTable = (ConXTable) componentDAOService.add((AbstractConXComponent) rcvLinesTable);
+		LineEditorComponent rcvLinesLE = new LineEditorComponent(lecc.getCode() + "-rcvLines", "Receive Lines", lecc);
+		rcvLinesLE.setContent(rcvLinesTable);
+		rcvLinesLE = (LineEditorComponent) componentDAOService.add((AbstractConXComponent) rcvLinesLE);		
+		
+		
+		// -- RefNum's,Attachments, and Notes
 		LineEditorComponent referenceNumbersLE = provideReferenceNumberEditor(componentDAOService, entityTypeDAOService, dataSourceDAOService, em, lecc);
 		LineEditorComponent attachmentsLE = provideAttachmentLineEditor(componentDAOService, entityTypeDAOService, dataSourceDAOService, em, lecc);
 		LineEditorComponent notesLE = provideNotesLineEditor(componentDAOService, entityTypeDAOService, dataSourceDAOService, em, lecc);
 
+		lecc.getLineEditors().add(rcvLinesLE);
 		lecc.getLineEditors().add(rcvWeightDimsFormLE);
 		lecc.getLineEditors().add(rcvBasicFormLE);
 		lecc.getLineEditors().add(referenceNumbersLE);
@@ -80,7 +95,7 @@ public class UIComponentModelData {
 
 		ConXTable rcvSearchTable = new ConXTable();
 		rcvSearchTable.setDataSource(basicRcvDS);
-		rcvSearchTable.setRecordEditor(createReceiveMasterDetail(rcvSearchMDC, componentDAOService, entityTypeDAOService, dataSourceDAOService, em));
+		rcvSearchTable.setRecordEditor(createReceiveFormMasterDetail(rcvSearchMDC, componentDAOService, entityTypeDAOService, dataSourceDAOService, em));
 		rcvSearchTable = (ConXTable) componentDAOService.add((AbstractConXComponent) rcvSearchTable);
 		rcvSearchMDC.setMasterComponent(rcvSearchTable);
 		rcvSearchMDC = (MasterDetailComponent) componentDAOService.update((AbstractConXComponent) rcvSearchMDC);
@@ -132,7 +147,7 @@ public class UIComponentModelData {
 	}
 
 	@SuppressWarnings("unused")
-	public final static MasterDetailComponent createReceiveMasterDetail(MasterDetailComponent searchMDC, IComponentDAOService componentDAOService, IEntityTypeDAOService entityTypeDAOService,
+	public final static MasterDetailComponent createReceiveFormMasterDetail(MasterDetailComponent searchMDC, IComponentDAOService componentDAOService, IEntityTypeDAOService entityTypeDAOService,
 			IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
 		// -- ML E.E.
 		DataSource rcvDefaultDS = getDefaultRCVDS(entityTypeDAOService, dataSourceDAOService, em);
@@ -244,6 +259,14 @@ public class UIComponentModelData {
 
 		return DataSourceData.RCV_BASIC_DS;
 	}
+	
+	private static DataSource getRcvLineDefaultDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
+		if (DataSourceData.RCV_LINE_DEFAULT_DS == null) {
+			DataSourceData.provideDefaultReceiveLineDS(entityTypeDAOService, dataSourceDAOService, em);
+		}
+
+		return DataSourceData.RCV_LINE_DEFAULT_DS;
+	}	
 	
 	private static DataSource getWeightDimsRCVDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
 		if (DataSourceData.RCV_WEIGHT_DIMS_DS == null) {

@@ -16,64 +16,68 @@ public class ConXTable extends AbstractConXField {
 	private static final long serialVersionUID = 8096124154666924743L;
 
 	@OneToMany(mappedBy="table")
-	private Set<ColumnWidth> columnWidths = new HashSet<ColumnWidth>();
+	protected Set<ColumnWidth> columnWidths = new HashSet<ColumnWidth>();
 	
 	//@OneToMany
-	//private Set<ColumnAlignment> columnAlignments = new HashSet<ColumnAlignment>();	
+	//protected Set<ColumnAlignment> columnAlignments = new HashSet<ColumnAlignment>();	
 	
 	@OneToMany(mappedBy="table")
-	private Set<ColumnIconPath> columnIcoPaths = new HashSet<ColumnIconPath>();	
+	protected Set<ColumnIconPath> columnIcoPaths = new HashSet<ColumnIconPath>();	
 	
     /**
      * Holds value of property pageLength. 0 disables paging.
      */
-    private int pageLength = 15;
+    protected int pageLength = 15;
 
     /**
      * Index of the first item on the current page.
      */
-    private int currentPageFirstItemIndex = 0;
+    protected int currentPageFirstItemIndex = 0;
 
     /**
      * Holds value of property selectable.
      */
-    private boolean selectable = false;
+    protected boolean selectable = false;
 
     /**
      * Should the Table footer be visible?
      */
-    private boolean columnFootersVisible = false;
+    protected boolean columnFootersVisible = false;
 
     /**
      * True iff the row captions are hidden.
      */
-    private boolean rowCaptionsAreHidden = true;
+    protected boolean rowCaptionsAreHidden = true;
 
     /**
      * Is table editable.
      */
-    private boolean editable = false;
+    protected boolean editable = false;
 
     /**
      * Current sorting direction.
      */
-    private boolean sortAscending = true;
+    protected boolean sortAscending = true;
 
     /**
      * Is table sorting disabled alltogether; even if some of the properties
      * would be sortable.
      */
-    private boolean sortDisabled = false;
+    protected boolean sortDisabled = false;
     
     /**
      * Editor for each row. Usually used when a row is double clicked.
      */
     @OneToOne
-    private MasterDetailComponent recordEditor;
+    protected MasterDetailComponent recordEditor;
 
 	public ConXTable() {
 		super("table");
 	}
+	
+	public ConXTable(String typeId) {
+		super(typeId);
+	}	
 	
 	public ConXTable(DataSource dataSource) {
 		this();

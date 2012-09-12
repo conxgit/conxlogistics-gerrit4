@@ -41,6 +41,7 @@ public class EntityLineEditorPresenter extends ConfigurableBasePresenter<IEntity
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 	private boolean initialized = false;
 	private Map<IPresenter<?, ? extends EventBus>, EventBus> mvpCache = new HashMap<IPresenter<?, ? extends EventBus>, EventBus>();
+	private Map<IPresenter<?, ? extends EventBus>,String> linePresenter2CaptionCache = new HashMap<IPresenter<?, ? extends EventBus>, String>();
 
 	private IPresenter<?, ? extends EventBus> attachmentsPresenter;
 	private IPresenter<?, ? extends EventBus> refNumPresenter;
@@ -106,7 +107,8 @@ public class EntityLineEditorPresenter extends ConfigurableBasePresenter<IEntity
 	@Override
 	public void bind() {
 		for (IPresenter<?, ? extends EventBus> presenter : mvpCache.keySet()) {
-			((IEntityLineEditorView) getView()).getMainLayout().addTab((Component) presenter.getView(), "Basic");
+			String caption = linePresenter2CaptionCache.get(presenter);
+			((IEntityLineEditorView) getView()).getMainLayout().addTab((Component) presenter.getView(),caption);
 		}
 
 		// - Attachments
@@ -171,6 +173,7 @@ public class EntityLineEditorPresenter extends ConfigurableBasePresenter<IEntity
 				} else if (lec.getContent() instanceof ReferenceNumberEditorComponent) {
 					this.refNumPresenter = presenter;
 				} else {
+					linePresenter2CaptionCache.put(entityMVP.keySet().iterator().next(),lec.getCaption());
 					mvpCache.putAll(entityMVP);
 				}
 			}

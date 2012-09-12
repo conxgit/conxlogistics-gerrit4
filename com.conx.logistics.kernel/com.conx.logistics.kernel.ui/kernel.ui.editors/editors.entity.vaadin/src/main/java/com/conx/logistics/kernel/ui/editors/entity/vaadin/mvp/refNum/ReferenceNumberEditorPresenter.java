@@ -150,6 +150,7 @@ public class ReferenceNumberEditorPresenter extends ConfigurableBasePresenter<IR
 				predicates.add(predicate);
 			}
 		});
+		this.entityContainer.applyFilters();
 	}
 
 	@Override

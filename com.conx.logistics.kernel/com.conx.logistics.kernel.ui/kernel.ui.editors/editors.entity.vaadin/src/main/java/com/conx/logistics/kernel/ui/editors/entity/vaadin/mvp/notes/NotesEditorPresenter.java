@@ -125,6 +125,7 @@ public class NotesEditorPresenter extends ConfigurableBasePresenter<INotesEditor
 				predicates.add(criteriaBuilder.equal(pathId, NotesEditorPresenter.this.note.getId()));
 			}
 		});
+		this.entityContainer.applyFilters();
 	}
 
 	@Override

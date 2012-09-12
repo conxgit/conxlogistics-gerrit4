@@ -40,6 +40,8 @@
 		<class>com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber</class>
 		<class>com.conx.logistics.mdm.domain.referencenumber.ReferenceNumberType</class>
 		
+		<class>com.conx.logistics.mdm.domain.role.Role</class>
+		
 		<class>com.conx.logistics.mdm.domain.task.TaskDefinition</class>	
 		
 		<class>com.conx.logistics.mdm.domain.user.User</class>
