@@ -1,0 +1,125 @@
+<div id="dockbar-wrapper">
+	<div id="dockbar" class="dockbar dockbar-visible">
+		<div class="dockbar-960">
+			<div class="dockbar-position dockbar-position-1">
+				<div class="dockbar-menu">
+					#if ($is_signed_in && $show_my_account)
+						<ul>
+							<li>
+								<span class="label"><span class="icon profile-icon">$htmlUtil.escape($user_name)</span></span>
+							</li>
+							#set ($groupLocalService = $serviceLocator.findService("com.liferay.portal.service.GroupLocalService"))
+							#set ($guestGroup = $groupLocalService.getGroup($company_id, "Guest"))
+						</ul>
+					#end
+				</div>
+			</div>
+			<div class="dockbar-position dockbar-position-2">
+				<div class="dockbar-menu">
+					<ul>
+						<li class="has-menu">
+							<span class="label"><span class="icon globe-icon">#language("language")</span></span>
+							<div class="child-menu">
+								$taglibLiferay.language()
+							</div>
+						</li>
+	
+						#if ($show_sign_in)
+							<li>
+								<a class="label" href="$themeDisplay.getURLCreateAccount()"><span>#language("register")</span></a>
+							</li>
+							<li>
+								<a class="label" href="$sign_in_url"><span>$sign_in_text</span></a>
+							</li>
+						#elseif ($show_sign_out)
+							#set ($sign_out_url = $sign_out_url + "?referer=" + $theme_display.getURLCurrent())
+	
+							
+							
+							#if ($show_control_panel || $show_my_account || $show_add_content || $show_page_settings || $show_staging)						
+								<li class="has-menu">
+									<span class="label"><span>#language("settings")</span></span>
+									<div class="child-menu">
+										<ul>
+											#if ($show_control_panel)
+												<li class="control-panel">
+													<a href="$control_panel_url">$control_panel_text</a>
+												</li>
+											#end
+											#if ($show_my_account)
+												<li class="my-account">
+													<a href="$my_account_url">$my_account_text</a>
+												</li>
+											#end
+											#if ($show_add_content)
+												<li class="add-content">
+													<a href="javascript:void(0);" onclick="$add_content_url">$add_content_text</a>
+												</li>
+												<li class="layout">
+													<a href="javascript:void(0);" onclick="$layout_url">$layout_text</a>
+												</li>
+											#end
+											#if ($show_page_settings)
+												<li class="page-settings">
+													<a href="$page_settings_url">$page_settings_text</a>
+												</li>
+											#end
+											#if ($show_page_settings)
+												<li class="toggle-controls">
+													<a href="$toggle_controls_url">$toggle_controls_text</a>
+												</li>
+											#end
+											#if ($show_staging)
+												<li class="staging">
+													<a>$staging_text</a>
+													$theme.staging()
+												</li>
+											#end
+										</ul>
+									</div>
+								</li>						
+							#end
+							<li class="has-menu">
+								<span class="label"><span>#language("ConX Places")</span></span>
+								<div class="child-menu">
+									<ul>
+										#foreach ($nav_item in $nav_items)
+											#if ($nav_item.isSelected())
+												#set ($nav_item_class = "selected")
+											#else
+												#set ($nav_item_class = "")
+											#end
+								
+											<li class="$nav_item_class">
+												<a href="$nav_item.getURL()" $nav_item.getTarget()><span>$nav_item.getName()</span></a>
+								
+												#if ($nav_item.hasChildren())
+													<ul class="child-menu">
+														#foreach ($nav_child in $nav_item.getChildren())
+															#if ($nav_child.isSelected())
+																#set ($nav_child_class = "selected")
+															#else
+																#set ($nav_child_class = "")
+															#end
+								
+															<li class="$nav_child_class">
+																<a href="$nav_child.getURL()" $nav_child.getTarget()>$nav_child.getName()</a>
+															</li>
+														#end
+													</ul>
+												#end
+											</li>
+										#end
+									</ul>
+								</div>
+							</li>						
+							<li>
+								<a class="label" href="$sign_out_url"><span>$sign_out_text</span></a>
+							</li>
+						#end
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
