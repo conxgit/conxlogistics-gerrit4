@@ -101,6 +101,8 @@ public class WahouseApplicationDAOImpl implements IWarehouseApplicationDAOServic
 			
 			searchFt = new Feature(cpApp,smfs, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_SEARCH_CODE);
 			searchFt.setName(WAREHOUSE_APP_RECEIVING_RCV_SEARCH_NAME);
+			searchFt.setCaption("Receives");
+			searchFt.setIconUrl("breadcrumb/img/conx-bread-crumb-grid-highlighted.png");
 			searchFt.setComponentModelCode(IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_SEARCH_COMPONENT);
 			searchFt = featureDaoService.addFeature(searchFt);
 			smfs.getChildFeatures().add(searchFt);

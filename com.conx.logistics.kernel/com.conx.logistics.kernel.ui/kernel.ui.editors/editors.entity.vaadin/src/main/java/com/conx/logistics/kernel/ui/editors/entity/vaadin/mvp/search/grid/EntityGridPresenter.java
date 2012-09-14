@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
 import com.conx.logistics.kernel.ui.components.domain.table.ConXTable;
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityEditorGrid.IDepletedListener;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityEditorGrid.IEditListener;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityEditorGrid.ISelectListener;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.ConfigurableBasePresenter;
@@ -22,7 +23,7 @@ import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.data.Item;
 
 @Presenter(view = EntityGridView.class)
-public class EntityGridPresenter extends ConfigurableBasePresenter<IEntityGridView, EntityGridEventBus> implements IEditListener, ISelectListener {
+public class EntityGridPresenter extends ConfigurableBasePresenter<IEntityGridView, EntityGridEventBus> implements IEditListener, ISelectListener, IDepletedListener {
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 	private boolean initialized = false;
 	private MultiLevelEntityEditorPresenter parentPresenter;
@@ -52,6 +53,7 @@ public class EntityGridPresenter extends ConfigurableBasePresenter<IEntityGridVi
 		this.getView().setVisibleColumns(visibleFieldNames);
 		this.getView().addEditListener(this);
 		this.getView().addSelectListener(this);
+		this.getView().addDepletedListener(this);
 
 		// -- Done
 		this.setInitialized(true);
@@ -98,6 +100,7 @@ public class EntityGridPresenter extends ConfigurableBasePresenter<IEntityGridVi
 	@Override
 	public void onSelect(Item item) {
 		entityEditorEventListener.entityItemEdit((JPAContainerItem<?>) item);
+		entityEditorEventListener.itemSelected();
 	}
 
 	@Override
@@ -106,8 +109,41 @@ public class EntityGridPresenter extends ConfigurableBasePresenter<IEntityGridVi
 			entityEditorEventListener.editItem(item, this.tableComponent.getRecordEditor());
 		}
 	}
-	
+
 	public void onDelete(Item item) throws Exception {
 		this.getView().deleteItem(item);
 	}
+
+	public void onCreateItem() {
+
+	}
+
+	public void onEditItem() {
+		Item item = this.getView().getSelectedItem();
+		if (this.tableComponent != null && this.tableComponent.getRecordEditor() != null && item != null) {
+			entityEditorEventListener.editItem(item, this.tableComponent.getRecordEditor());
+		}
+	}
+
+	public void onDeleteItem() {
+		Item item = this.getView().getSelectedItem();
+		if (item != null) {
+			try {
+				this.getView().deleteItem(item);
+			} catch (Exception e) {
+				//TODO Handle Exception
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void onPrintGrid() {
+		this.getView().printGrid();
+	}
+
+	@Override
+	public void onDepleted() {
+		entityEditorEventListener.itemsDepleted();
+	}
+
 }

@@ -11,7 +11,7 @@ import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
 import com.conx.logistics.kernel.ui.components.dao.services.IComponentDAOService;
 import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
 import com.conx.logistics.kernel.ui.components.domain.attachment.AttachmentEditorComponent;
-import com.conx.logistics.kernel.ui.components.domain.form.ConXCollapseableSectionForm;
+import com.conx.logistics.kernel.ui.components.domain.form.ConXDetailForm;
 import com.conx.logistics.kernel.ui.components.domain.form.ConXSimpleForm;
 import com.conx.logistics.kernel.ui.components.domain.form.FieldSet;
 import com.conx.logistics.kernel.ui.components.domain.form.FieldSetField;
@@ -172,11 +172,11 @@ public class UIComponentModelData {
 		FieldSet simpleFormFieldSet = createFieldSet("Basic", basicRcvDS, componentDAOService);
 		FieldSet weightDimsFormFieldSet = createFieldSet("Weight & Dimensions", weightDimsRcvDS, componentDAOService);
 
-		ConXCollapseableSectionForm rcvForm = new ConXCollapseableSectionForm(basicRcvDS);
+		ConXDetailForm rcvForm = new ConXDetailForm();
 		rcvForm.setCaption("Receive");
 		rcvForm.getFieldSetSet().add(simpleFormFieldSet);
 		rcvForm.getFieldSetSet().add(weightDimsFormFieldSet);
-		rcvForm = (ConXCollapseableSectionForm) componentDAOService.add((AbstractConXComponent) rcvForm);
+		rcvForm = (ConXDetailForm) componentDAOService.add((AbstractConXComponent) rcvForm);
 
 		simpleFormFieldSet.setForm(rcvForm);
 		simpleFormFieldSet = (FieldSet) componentDAOService.update((AbstractConXComponent) simpleFormFieldSet);

@@ -6211,6 +6211,10 @@ textarea.v-textarea-readonly,
 	background-image: none;
 	outline: none;
 }
+.conx-entity-toolstrip .v-disabled .v-button:active,
+.conx-entity-toolstrip .v-disabled .v-button {
+	background-color: transparent;
+}
 .conx-entity-toolstrip .v-disabled.v-button .v-button-wrap {
 	padding: 6px 6px 6px 6px;
 }
@@ -6398,6 +6402,20 @@ textarea.v-textarea-readonly,
 .conx-entity-grid .v-table-body {
 	border: none;
 	padding-left: 1px;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+.conx-entity-grid .v-table-row {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 .filters-wrap .v-textfield {
 	border-left: none;
@@ -6647,4 +6665,17 @@ textarea.v-textarea-readonly,
 ******************************************************************************/
 .v-splitpanel-vsplitter-conx-entity-grid div {
 	background: url(splitpanel/img/custom/conx-entity-line-editor-split.png) repeat-x;
+}
+.conx-default-panel-message {
+	text-align: center;
+	color: #666;
+}
+.conx-default-panel {
+	background-color: #f3f4f5;
+}
+.conx-line-editor-grid .v-table-body {
+	border-top: none;
+	border-bottom: none;
+	border-left: 1px solid #ddd;
+	border-right: none;
 }

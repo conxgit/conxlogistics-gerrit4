@@ -11,13 +11,17 @@ import org.vaadin.mvp.presenter.PresenterFactory;
 
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent;
-import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.collapsibleForm.CollapsibleFormEditorPresenter;
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.IAbstractFormParentEventBus;
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.IAbstractGridParentEventBus;
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.detail.form.EntityFormPresenter;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.detail.header.EntityFormHeaderPresenter;
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.search.grid.EntityGridPresenter;
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.search.header.EntityGridHeaderPresenter;
 import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.data.Item;
 
-public interface MultiLevelEntityEditorEventBus extends AbstractEntityEditorEventBus {
+public interface MultiLevelEntityEditorEventBus extends AbstractEntityEditorEventBus, IAbstractFormParentEventBus, IAbstractGridParentEventBus {
 	@Event(handlers = { MultiLevelEntityEditorPresenter.class })
 	public void init(EventBusManager ebm, PresenterFactory presenterFactory,MasterDetailComponent md, EntityManager em, HashMap<String,Object> extraParams);
 	
@@ -38,13 +42,27 @@ public interface MultiLevelEntityEditorEventBus extends AbstractEntityEditorEven
 	@Event(handlers = { MultiLevelEntityEditorPresenter.class })
 	public void setItemDataSource(Item item);
 	
-	@Event(handlers = { CollapsibleFormEditorPresenter.class })
+	@Event(handlers = { EntityGridPresenter.class })
+	public void createItem();
+	@Event(handlers = { EntityGridPresenter.class })
+	public void editItem();
+	@Event(handlers = { EntityGridPresenter.class })
+	public void deleteItem();
+	@Event(handlers = { EntityGridPresenter.class })
+	public void printGrid();
+	
+	@Event(handlers = { EntityGridHeaderPresenter.class })
+	public void itemSelected();
+	@Event(handlers = { EntityGridHeaderPresenter.class })
+	public void itemsDepleted();
+	
+	@Event(handlers = { EntityFormPresenter.class })
 	public void saveForm();
-	@Event(handlers = { CollapsibleFormEditorPresenter.class })
+	@Event(handlers = { EntityFormPresenter.class })
 	public void validateForm();
-	@Event(handlers = { CollapsibleFormEditorPresenter.class })
+	@Event(handlers = { EntityFormPresenter.class })
 	public void resetForm();
-	@Event(handlers = { CollapsibleFormEditorPresenter.class })
+	@Event(handlers = { EntityFormPresenter.class })
 	public void resizeForm(int newHeight);
 	
 	@Event(handlers = { EntityFormHeaderPresenter.class })

@@ -3,6 +3,7 @@ package com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.lineeditor;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,8 +41,8 @@ public class EntityLineEditorPresenter extends ConfigurableBasePresenter<IEntity
 
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 	private boolean initialized = false;
-	private Map<IPresenter<?, ? extends EventBus>, EventBus> mvpCache = new HashMap<IPresenter<?, ? extends EventBus>, EventBus>();
-	private Map<IPresenter<?, ? extends EventBus>,String> linePresenter2CaptionCache = new HashMap<IPresenter<?, ? extends EventBus>, String>();
+	private Set<IPresenter<?, ? extends EventBus>> mvpCache = new HashSet<IPresenter<?, ? extends EventBus>>();
+	private Map<IPresenter<?, ? extends EventBus>, String> linePresenter2CaptionCache = new HashMap<IPresenter<?, ? extends EventBus>, String>();
 
 	private IPresenter<?, ? extends EventBus> attachmentsPresenter;
 	private IPresenter<?, ? extends EventBus> refNumPresenter;
@@ -72,8 +73,9 @@ public class EntityLineEditorPresenter extends ConfigurableBasePresenter<IEntity
 	// MultiLevelEntityEditorEventBus implementation
 	@SuppressWarnings("rawtypes")
 	public void onEntityItemEdit(EntityItem item) {
-		for (EventBus elesb : mvpCache.values()) {
-			((AbstractEntityEditorEventBus) elesb).entityItemEdit(item);
+		for (IPresenter<?, ? extends EventBus> presenter : mvpCache) {
+			((AbstractEntityEditorEventBus) presenter.getEventBus()).entityItemEdit(item);
+			break;
 		}
 
 		// - Attachments
@@ -89,8 +91,8 @@ public class EntityLineEditorPresenter extends ConfigurableBasePresenter<IEntity
 
 	@SuppressWarnings("rawtypes")
 	public void onEntityItemAdded(EntityItem item) {
-		for (EventBus elesb : mvpCache.values()) {
-			((AbstractEntityEditorEventBus) elesb).entityItemAdded(item);
+		for (IPresenter<?, ? extends EventBus> presenter : mvpCache) {
+			((AbstractEntityEditorEventBus) presenter.getEventBus()).entityItemAdded(item);
 		}
 
 		// - Attachments
@@ -106,14 +108,15 @@ public class EntityLineEditorPresenter extends ConfigurableBasePresenter<IEntity
 
 	@Override
 	public void bind() {
-		for (IPresenter<?, ? extends EventBus> presenter : mvpCache.keySet()) {
-			String caption = linePresenter2CaptionCache.get(presenter);
-			((IEntityLineEditorView) getView()).getMainLayout().addTab((Component) presenter.getView(),caption);
+		String caption = null;
+		for (IPresenter<?, ? extends EventBus> presenter : mvpCache) {
+			caption = linePresenter2CaptionCache.get(presenter);
+			((IEntityLineEditorView) getView()).getMainLayout().addTab((Component) presenter.getView(), caption);
 		}
 
 		// - Attachments
 		if (attachmentsPresenter != null)
-			((IEntityLineEditorView) getView()).getMainLayout().addTab((Component) attachmentsPresenter.getView(), "Attachements");
+			((IEntityLineEditorView) getView()).getMainLayout().addTab((Component) attachmentsPresenter.getView(), "Attachments");
 		// - Reference Numbers
 		if (refNumPresenter != null)
 			((IEntityLineEditorView) getView()).getMainLayout().addTab((Component) refNumPresenter.getView(), "Reference Numbers");
@@ -144,25 +147,20 @@ public class EntityLineEditorPresenter extends ConfigurableBasePresenter<IEntity
 
 	@Override
 	public void configure() {
+		getConfig().put(IEntityEditorFactory.FACTORY_PARAM_MVP_LINE_EDITOR_SECTION_PRESENTER, this);
+
 		Map<String, Object> config = super.getConfig();
 		LineEditorContainerComponent componentModel = (LineEditorContainerComponent) config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL);
 		ConfigurablePresenterFactory presenterFactory = (ConfigurablePresenterFactory) config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_PRESENTER_FACTORY);
 
-		/**
-		 * 1. Get LineEditor models
-		 * 
-		 * 2. For each, create LineEditorSection presenters
-		 */
-
-		// 1.
+		// 1. Get LineEditor models
 		Set<LineEditorComponent> lecs = componentModel.getLineEditors();
 
-		// 2.
+		// 2. For each, create LineEditorSection presenters
 		VaadinEntityEditorFactoryImpl entityFactory = new VaadinEntityEditorFactoryImpl(presenterFactory);
 		Map<IPresenter<?, ? extends EventBus>, EventBus> entityMVP = null;
 		for (LineEditorComponent lec : lecs) {
-			presenterFactory.getCustomizer().getConfig().put(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL, lec.getContent());
-			entityMVP = entityFactory.create(lec.getContent(), getConfig());
+			entityMVP = entityFactory.create(lec, getConfig());
 			if (entityMVP != null) {
 				IPresenter<?, ? extends EventBus> presenter = entityMVP.keySet().iterator().next();
 
@@ -173,15 +171,15 @@ public class EntityLineEditorPresenter extends ConfigurableBasePresenter<IEntity
 				} else if (lec.getContent() instanceof ReferenceNumberEditorComponent) {
 					this.refNumPresenter = presenter;
 				} else {
-					linePresenter2CaptionCache.put(entityMVP.keySet().iterator().next(),lec.getCaption());
-					mvpCache.putAll(entityMVP);
+					linePresenter2CaptionCache.put(presenter, lec.getCaption());
+					mvpCache.add(presenter);
 				}
 			}
 		}
 
 		this.itemDataSource = (Item) getConfig().get(IEntityEditorFactory.FACTORY_PARAM_MVP_ITEM_DATASOURCE);
 	}
-	
+
 	public void onSetItemDataSource(Item item) {
 		if (item != null) {
 			onEntityItemEdit((EntityItem<?>) item);

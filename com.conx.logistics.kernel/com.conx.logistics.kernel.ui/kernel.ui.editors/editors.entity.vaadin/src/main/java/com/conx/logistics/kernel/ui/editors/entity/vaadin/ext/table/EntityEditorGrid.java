@@ -6,6 +6,7 @@ import java.util.Set;
 import com.conx.logistics.kernel.ui.filteredtable.FilterDecorator;
 import com.conx.logistics.kernel.ui.filteredtable.FilterGenerator;
 import com.conx.logistics.kernel.ui.filteredtable.FilterTable;
+import com.conx.logistics.kernel.ui.filteredtable.FilterTableExcelExport;
 import com.vaadin.data.Container;
 import com.vaadin.data.Container.Filter;
 import com.vaadin.data.Item;
@@ -19,6 +20,7 @@ public class EntityEditorGrid extends VerticalLayout implements FilterDecorator,
 
 	private Set<IEditListener> editListenerSet;
 	private Set<ISelectListener> selectListenerSet;
+	private Set<IDepletedListener> depletedListenerSet;
 
 	private FilterTable grid;
 
@@ -26,6 +28,7 @@ public class EntityEditorGrid extends VerticalLayout implements FilterDecorator,
 		this.grid = new FilterTable();
 		this.editListenerSet = new HashSet<EntityEditorGrid.IEditListener>();
 		this.selectListenerSet = new HashSet<EntityEditorGrid.ISelectListener>();
+		this.depletedListenerSet = new HashSet<EntityEditorGrid.IDepletedListener>();
 
 		initialize();
 	}
@@ -65,6 +68,22 @@ public class EntityEditorGrid extends VerticalLayout implements FilterDecorator,
 			}
 		}
 	}
+	
+	public Item getSelectedItem() {
+		Object id = this.grid.getValue();
+		if (id == null) {
+			return null;
+		} else {
+			return this.grid.getItem(id);
+		}
+	}
+	
+	public void printGrid() {
+		FilterTableExcelExport excelExport = new FilterTableExcelExport(this.grid);
+		excelExport.excludeCollapsedColumns();
+		excelExport.setReportTitle("Demo Report");
+		excelExport.export();	
+	}
 
 	public void addEditListener(IEditListener listener) {
 		editListenerSet.add(listener);
@@ -82,6 +101,16 @@ public class EntityEditorGrid extends VerticalLayout implements FilterDecorator,
 	public void addSelectListener(ISelectListener listener) {
 		selectListenerSet.add(listener);
 	}
+	
+	private void onDepleted() {
+		for (IDepletedListener listener : depletedListenerSet) {
+			listener.onDepleted();
+		}
+	}
+	
+	public void addDepletedListener(IDepletedListener listener) {
+		depletedListenerSet.add(listener);
+	}
 
 	public void setContainerDataSource(Container container) {
 		this.grid.setContainerDataSource(container);
@@ -97,6 +126,10 @@ public class EntityEditorGrid extends VerticalLayout implements FilterDecorator,
 
 	public interface ISelectListener {
 		public void onSelect(Item item);
+	}
+	
+	public interface IDepletedListener {
+		public void onDepleted();
 	}
 
 	@Override
@@ -157,6 +190,10 @@ public class EntityEditorGrid extends VerticalLayout implements FilterDecorator,
 	public void deleteItem(Item item) throws Exception {
 		if (!this.grid.removeItem(item)) {
 			throw new Exception("Could not delete item" + item.toString());
+		} else {
+			if (this.grid.getItemIds().size() == 0) {
+				onDepleted();
+			}
 		}
 	}
 }

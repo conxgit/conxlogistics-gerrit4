@@ -49,4 +49,6 @@
     <inherits name="org.vaadin.sasha.portallayout.PortallayoutWidgetset" />
 
     
+
+    <inherits name="com.conx.logistics.kernel.ui.common.gwt.KernelUICommonWidgetset" />
 </module>

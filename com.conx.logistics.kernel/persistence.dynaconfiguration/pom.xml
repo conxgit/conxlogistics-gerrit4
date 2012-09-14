@@ -108,6 +108,12 @@
 
 		<!-- Hibernate -->
 		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>3.6.0.Final</version>
+			<classifier>sources</classifier>
+		</dependency>
+		<dependency>
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.thirdparty.hibernate.core</artifactId>
 		</dependency>

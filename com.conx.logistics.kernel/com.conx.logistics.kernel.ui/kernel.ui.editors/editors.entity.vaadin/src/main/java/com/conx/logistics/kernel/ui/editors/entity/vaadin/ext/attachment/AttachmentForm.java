@@ -2,9 +2,9 @@ package com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.attachment;
 
 import java.util.Collection;
 
-import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormHeader;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.attachment.view.AttachmentEditorView;
 import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
+import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormHeader;
 import com.conx.logistics.mdm.domain.documentlibrary.DocType;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
@@ -17,6 +17,7 @@ import com.vaadin.ui.Form;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextArea;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.Upload.FinishedEvent;
@@ -28,6 +29,7 @@ public class AttachmentForm extends Form {
 
 	private VaadinFormHeader header;
 	private VerticalLayout layout;
+	private Panel innerLayoutPanel;
 	private GridLayout innerLayout;
 
 	private Button uploadToDocRepoButton;
@@ -49,6 +51,7 @@ public class AttachmentForm extends Form {
 
 	public AttachmentForm() {
 		this.attachedField = null;
+		this.innerLayoutPanel = new Panel();
 		this.innerLayout = new GridLayout(4, 4);
 		this.layout = new VerticalLayout();
 		this.header = new VaadinFormHeader();
@@ -62,6 +65,7 @@ public class AttachmentForm extends Form {
 		initialize();
 	}
 
+	@SuppressWarnings("deprecation")
 	private void initialize() {
 		this.fileNameField.setStyleName("conx-entity-editor-readonly-field");
 		this.fileNameField.setCaption("File");
@@ -153,11 +157,18 @@ public class AttachmentForm extends Form {
 		this.innerLayout.addComponent(fileTypeField, 0, 1, 0, 1);
 		this.innerLayout.addComponent(uploadStateField, 1, 0, 1, 0);
 		this.innerLayout.addComponent(fileDescription, 2, 0, 3, 1);
+		
+		this.innerLayoutPanel = new Panel();
+		this.innerLayoutPanel.setSizeFull();
+		this.innerLayoutPanel.getLayout().setMargin(false, true, false, true);
+		this.innerLayoutPanel.setStyleName("light");
+		this.innerLayoutPanel.addComponent(innerLayout);
 
 		this.layout.setWidth("100%");
 		this.layout.setStyleName("conx-entity-editor-form");
 		this.layout.addComponent(header);
-		this.layout.addComponent(innerLayout);
+		this.layout.addComponent(innerLayoutPanel);
+		this.layout.setExpandRatio(innerLayoutPanel, 1.0f);
 
 		this.setMode(FormMode.CREATING);
 		this.setLayout(layout);

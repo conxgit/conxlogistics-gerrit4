@@ -55,7 +55,11 @@ public class FeatureTabbedView extends TabSheet implements IFeatureView {
 				if (getTab(componentFeature) != null) {
 					this.setSelectedTab(componentFeature);
 				} else {
-					addTab(componentFeature, feature.getName());
+					if (feature.getCaption() != null) {
+						addTab(componentFeature, feature.getCaption(), new ThemeResource(feature.getIconUrl()));
+					} else {
+						addTab(componentFeature, feature.getName());
+					}
 				}
 			}
 			else if (feature instanceof DocViewFeature)

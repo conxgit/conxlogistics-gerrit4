@@ -15,6 +15,7 @@
 		<class>com.conx.logistics.kernel.ui.components.domain.form.AbstractConXTextField</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.form.ConXCollapseableSectionForm</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.form.ConXForm</class>
+		<class>com.conx.logistics.kernel.ui.components.domain.form.ConXDetailForm</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.form.ConXSimpleForm</class>
 		
 		<class>com.conx.logistics.kernel.ui.components.domain.form.ConXTextField</class>

@@ -7,12 +7,16 @@ import java.util.Set;
 
 import org.vaadin.mvp.uibinder.annotation.UiField;
 
-import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.EntityEditorToolStrip;
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.EntityEditorToolStrip.EntityEditorToolStripButton;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.fieldfactory.ConXFieldFactory;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.notes.NoteEditorForm;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.notes.NotesEditorToolStrip;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityGridFilterManager;
 import com.conx.logistics.kernel.ui.filteredtable.FilterTable;
+import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
+import com.conx.logistics.kernel.ui.vaadin.common.ConXAbstractSplitPanel.ISplitPositionChangeListener;
+import com.conx.logistics.kernel.ui.vaadin.common.ConXVerticalSplitPanel;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.event.ItemClickEvent;
@@ -23,15 +27,14 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.VerticalSplitPanel;
 
-public class NotesEditorView extends VerticalLayout implements INotesEditorView {
+public class NotesEditorView extends VerticalLayout implements INotesEditorView, ISplitPositionChangeListener {
 	private static final long serialVersionUID = 1L;
 	
 	@UiField
 	private VerticalLayout mainLayout;
 
-	private VerticalSplitPanel splitPanel;
+	private ConXVerticalSplitPanel splitPanel;
 	private NotesEditorToolStrip toolStrip;
 	private VerticalLayout masterLayout;
 	private VerticalLayout detailLayout;
@@ -44,9 +47,14 @@ public class NotesEditorView extends VerticalLayout implements INotesEditorView 
 	private Set<ICreateNoteListener> createNoteListenerSet;
 	private Set<ISaveNoteListener> saveNoteListenerSet;
 	
+	private EntityEditorToolStrip formToolStrip;
+	private EntityEditorToolStripButton validateButton;
+	private EntityEditorToolStripButton saveButton;
+	private EntityEditorToolStripButton resetButton;
+	
 	public NotesEditorView() {
 		this.grid = new FilterTable();
-		this.splitPanel = new VerticalSplitPanel();
+		this.splitPanel = new ConXVerticalSplitPanel();
 		this.toolStrip = new NotesEditorToolStrip();
 		this.masterLayout = new VerticalLayout();
 		this.detailLayout = new VerticalLayout();
@@ -55,6 +63,35 @@ public class NotesEditorView extends VerticalLayout implements INotesEditorView 
 		this.detailHidden = true;
 		this.createNoteListenerSet = new HashSet<ICreateNoteListener>();
 		this.saveNoteListenerSet = new HashSet<ISaveNoteListener>();
+		
+		this.formToolStrip = new EntityEditorToolStrip();
+		this.validateButton = this.formToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_VERIFY_PNG);
+		this.validateButton.setEnabled(false);
+		this.validateButton.addListener(new ClickListener() {
+			private static final long serialVersionUID = 2217714313753854212L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+			}
+		});
+		this.saveButton = this.formToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_SAVE_PNG);
+		this.saveButton.addListener(new ClickListener() {
+			private static final long serialVersionUID = 2217714313753854212L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				NotesEditorView.this.form.commit();
+			}
+		});
+		this.resetButton = this.formToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_RESET_PNG);
+		this.resetButton.setEnabled(false);
+		this.resetButton.addListener(new ClickListener() {
+			private static final long serialVersionUID = 2217714313753854212L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+			}
+		});
 	}
 
 	@Override
@@ -74,6 +111,7 @@ public class NotesEditorView extends VerticalLayout implements INotesEditorView 
 		this.grid.setNullSelectionAllowed(false);
 		this.grid.setFilterDecorator(gridManager);
 		this.grid.setFiltersVisible(true);
+		this.grid.addStyleName("conx-line-editor-grid");
 		this.grid.addListener(new ItemClickListener() {
 			private static final long serialVersionUID = -7680485120452162721L;
 
@@ -120,13 +158,17 @@ public class NotesEditorView extends VerticalLayout implements INotesEditorView 
 		this.form.setFormFieldFactory(new ConXFieldFactory());
 		
 		this.detailLayout.setSizeFull();
+		this.detailLayout.addComponent(formToolStrip);
 		this.detailLayout.addComponent(form);
+		this.detailLayout.setExpandRatio(form, 1.0f);
 		
 		this.splitPanel.removeAllComponents();
-		this.splitPanel.setStyleName("conx-entity-grid");
+		this.splitPanel.setStyleName("conx-entity-editor");
 		this.splitPanel.addComponent(masterLayout);
 		this.splitPanel.addComponent(detailLayout);
+		this.splitPanel.setImmediate(true);
 		this.splitPanel.setSizeFull();
+		this.splitPanel.addSplitPositionChangeListener(this);
 		
 		hideDetail();
 		hideContent();
@@ -208,5 +250,18 @@ public class NotesEditorView extends VerticalLayout implements INotesEditorView 
 	
 	public interface ISaveNoteListener {
 		public void onSaveNote(Item item);
+	}
+
+	@Override
+	public void onSplitPositionChanged(Integer newPos, int posUnit, boolean posReversed) {
+	}
+
+	@Override
+	public void onFirstComponentHeightChanged(int height) {
+	}
+
+	@Override
+	public void onSecondComponentHeightChanged(int height) {
+		this.form.getLayout().setHeight((height - 41) + "px");
 	}
 }

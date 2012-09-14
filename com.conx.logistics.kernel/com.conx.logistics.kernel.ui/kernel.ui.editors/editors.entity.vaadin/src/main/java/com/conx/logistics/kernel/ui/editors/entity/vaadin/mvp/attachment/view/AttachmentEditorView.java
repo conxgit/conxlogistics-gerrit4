@@ -7,12 +7,16 @@ import java.util.Set;
 
 import org.vaadin.mvp.uibinder.annotation.UiField;
 
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.EntityEditorToolStrip;
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.EntityEditorToolStrip.EntityEditorToolStripButton;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.attachment.AttachmentEditorToolStrip;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.attachment.AttachmentForm;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.fieldfactory.ConXFieldFactory;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityGridFilterManager;
 import com.conx.logistics.kernel.ui.filteredtable.FilterTable;
 import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
+import com.conx.logistics.kernel.ui.vaadin.common.ConXAbstractSplitPanel.ISplitPositionChangeListener;
+import com.conx.logistics.kernel.ui.vaadin.common.ConXVerticalSplitPanel;
 import com.conx.logistics.mdm.domain.documentlibrary.DocType;
 import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.vaadin.addon.jpacontainer.EntityItem;
@@ -21,18 +25,19 @@ import com.vaadin.data.Item;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.VerticalSplitPanel;
 
-public class AttachmentEditorView extends VerticalLayout implements IAttachmentEditorView {
+public class AttachmentEditorView extends VerticalLayout implements IAttachmentEditorView, ISplitPositionChangeListener {
 	private static final long serialVersionUID = 1L;
 
 	@UiField
 	private VerticalLayout mainLayout;
 
-	private VerticalSplitPanel splitPanel;
+	private ConXVerticalSplitPanel splitPanel;
 	private AttachmentEditorToolStrip toolStrip;
 	private VerticalLayout masterLayout;
 	private VerticalLayout detailLayout;
@@ -45,10 +50,15 @@ public class AttachmentEditorView extends VerticalLayout implements IAttachmentE
 	private Set<ICreateAttachmentListener> createAttachmentListenerSet;
 	private Set<ISaveAttachmentListener> saveAttachmentListenerSet;
 	private Set<IInspectAttachmentListener> inspectAttachmentListenerSet;
+	
+	private EntityEditorToolStrip formToolStrip;
+	private EntityEditorToolStripButton validateButton;
+	private EntityEditorToolStripButton saveButton;
+	private EntityEditorToolStripButton resetButton;
 
 	public AttachmentEditorView() {
 		this.grid = new FilterTable();
-		this.splitPanel = new VerticalSplitPanel();
+		this.splitPanel = new ConXVerticalSplitPanel();
 		this.toolStrip = new AttachmentEditorToolStrip();
 		this.masterLayout = new VerticalLayout();
 		this.detailLayout = new VerticalLayout();
@@ -58,6 +68,35 @@ public class AttachmentEditorView extends VerticalLayout implements IAttachmentE
 		this.createAttachmentListenerSet = new HashSet<ICreateAttachmentListener>();
 		this.saveAttachmentListenerSet = new HashSet<ISaveAttachmentListener>();
 		this.inspectAttachmentListenerSet = new HashSet<IInspectAttachmentListener>();
+		
+		this.formToolStrip = new EntityEditorToolStrip();
+		this.validateButton = this.formToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_VERIFY_PNG);
+		this.validateButton.setEnabled(false);
+		this.validateButton.addListener(new ClickListener() {
+			private static final long serialVersionUID = 2217714313753854212L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+			}
+		});
+		this.saveButton = this.formToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_SAVE_PNG);
+		this.saveButton.addListener(new ClickListener() {
+			private static final long serialVersionUID = 2217714313753854212L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				AttachmentEditorView.this.form.commit();
+			}
+		});
+		this.resetButton = this.formToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_RESET_PNG);
+		this.resetButton.setEnabled(false);
+		this.resetButton.addListener(new ClickListener() {
+			private static final long serialVersionUID = 2217714313753854212L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+			}
+		});
 	}
 
 	@Override
@@ -75,6 +114,7 @@ public class AttachmentEditorView extends VerticalLayout implements IAttachmentE
 		this.grid.setSizeFull();
 		this.grid.setSelectable(true);
 		this.grid.setNullSelectionAllowed(false);
+		this.grid.addStyleName("conx-line-editor-grid");
 		this.grid.setFilterDecorator(gridManager);
 		this.grid.setFiltersVisible(true);
 
@@ -95,10 +135,12 @@ public class AttachmentEditorView extends VerticalLayout implements IAttachmentE
 		this.detailLayout.addComponent(form);
 
 		this.splitPanel.removeAllComponents();
-		this.splitPanel.setStyleName("conx-entity-grid");
+		this.splitPanel.setStyleName("conx-entity-editor");
 		this.splitPanel.addComponent(masterLayout);
 		this.splitPanel.addComponent(detailLayout);
 		this.splitPanel.setSizeFull();
+		this.splitPanel.setImmediate(true);
+		this.splitPanel.addSplitPositionChangeListener(this);
 
 		hideDetail();
 		hideContent();
@@ -166,6 +208,7 @@ public class AttachmentEditorView extends VerticalLayout implements IAttachmentE
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private void onInspectAttachment(FileEntry fileEntry) {
 		for (IInspectAttachmentListener listener : this.inspectAttachmentListenerSet) {
 			listener.onInspectAttachment(fileEntry);
@@ -201,6 +244,7 @@ public class AttachmentEditorView extends VerticalLayout implements IAttachmentE
 		this.grid.addListener(clickListener);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void entityItemSingleClicked(EntityItem item) {
 		if (visibleFormFields == null) {
@@ -230,5 +274,18 @@ public class AttachmentEditorView extends VerticalLayout implements IAttachmentE
 		} else {
 			hideDetail();
 		}
+	}
+	
+	@Override
+	public void onSplitPositionChanged(Integer newPos, int posUnit, boolean posReversed) {
+	}
+
+	@Override
+	public void onFirstComponentHeightChanged(int height) {
+	}
+
+	@Override
+	public void onSecondComponentHeightChanged(int height) {
+		this.form.getLayout().setHeight((height - 41) + "px");
 	}
 }

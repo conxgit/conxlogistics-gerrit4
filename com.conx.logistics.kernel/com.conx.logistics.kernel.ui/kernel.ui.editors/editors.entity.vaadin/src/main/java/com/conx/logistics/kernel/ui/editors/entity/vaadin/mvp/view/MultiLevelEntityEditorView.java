@@ -4,19 +4,24 @@ import org.vaadin.mvp.uibinder.annotation.UiField;
 
 import com.conx.logistics.kernel.ui.vaadin.common.ConXAbstractSplitPanel.ISplitPositionChangeListener;
 import com.conx.logistics.kernel.ui.vaadin.common.ConXVerticalSplitPanel;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 public class MultiLevelEntityEditorView extends VerticalLayout implements IMultiLevelEntityEditorView {
 	private static final long serialVersionUID = 1L;
-	
+
 	@UiField
 	VerticalLayout mainLayout;
 
 	private Component breadCrumb; // Index 0
 	private Component header; // Index 1
 	private ConXVerticalSplitPanel splitPanel; // Index 2
+	private Component detail;
 	private Component footer; // Index 3
+
+	private VerticalLayout defaultPanel;
 
 	public MultiLevelEntityEditorView() {
 		setSizeFull();
@@ -31,7 +36,7 @@ public class MultiLevelEntityEditorView extends VerticalLayout implements IMulti
 		mainLayout.addComponent(splitPanel);
 		mainLayout.setExpandRatio(splitPanel, 1.0f);
 	}
-	
+
 	@Override
 	public void setBreadCrumb(Component component) {
 		if (breadCrumb != null) {
@@ -60,8 +65,24 @@ public class MultiLevelEntityEditorView extends VerticalLayout implements IMulti
 	}
 
 	@Override
-	public void setDetail(Component component) {
-		splitPanel.setSecondComponent(component);
+	public void setDetail(Component component, boolean showDefaultPanel) {
+		this.detail = component;
+		if (showDefaultPanel) {
+			if (defaultPanel == null) {
+				Label defaultMessage = new Label("Select an Item to see its detail.");
+				defaultMessage.setContentMode(Label.CONTENT_XHTML);
+				defaultMessage.setStyleName("conx-default-panel-message");
+	
+				this.defaultPanel = new VerticalLayout();
+				this.defaultPanel.setStyleName("conx-default-panel");
+				this.defaultPanel.setSizeFull();
+				this.defaultPanel.addComponent(defaultMessage);
+				this.defaultPanel.setComponentAlignment(defaultMessage, Alignment.MIDDLE_CENTER);
+			}
+			splitPanel.setSecondComponent(this.defaultPanel);
+		} else {
+			splitPanel.setSecondComponent(this.detail);
+		}
 	}
 
 	@Override
@@ -83,5 +104,12 @@ public class MultiLevelEntityEditorView extends VerticalLayout implements IMulti
 	@Override
 	public void addSplitPositionChangeListener(ISplitPositionChangeListener listener) {
 		this.splitPanel.addSplitPositionChangeListener(listener);
+	}
+
+	@Override
+	public void showDetail() {
+		if (this.detail != null) {
+			splitPanel.setSecondComponent(this.detail);
+		}
 	}
 }

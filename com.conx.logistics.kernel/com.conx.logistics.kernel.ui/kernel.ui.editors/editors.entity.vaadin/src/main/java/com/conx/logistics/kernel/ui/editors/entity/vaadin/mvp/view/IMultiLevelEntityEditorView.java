@@ -8,7 +8,8 @@ public interface IMultiLevelEntityEditorView extends IEntityEditorComponentView 
 	public void setBreadCrumb(Component component);
 	public void setHeader(Component component);
 	public void setMaster(Component component);
-	public void setDetail(Component component);
+	public void showDetail();
+	public void setDetail(Component component, boolean showDefaultPanel);
 	public void setFooter(Component component);
 	public void addSplitPositionChangeListener(ISplitPositionChangeListener listener);
 }

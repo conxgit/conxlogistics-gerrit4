@@ -3,6 +3,7 @@ package com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.search.grid.view;
 import org.vaadin.mvp.uibinder.annotation.UiField;
 
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityEditorGrid;
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityEditorGrid.IDepletedListener;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityEditorGrid.IEditListener;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityEditorGrid.ISelectListener;
 import com.vaadin.data.Container;
@@ -54,5 +55,20 @@ public class EntityGridView extends VerticalLayout implements IEntityGridView {
 	@Override
 	public void deleteItem(Item item) throws Exception {
 		this.grid.deleteItem(item);
+	}
+
+	@Override
+	public Item getSelectedItem() {
+		return grid.getSelectedItem();
+	}
+
+	@Override
+	public void printGrid() {
+		this.grid.printGrid();
+	}
+
+	@Override
+	public void addDepletedListener(IDepletedListener listener) {
+		this.grid.addDepletedListener(listener);
 	}
 }

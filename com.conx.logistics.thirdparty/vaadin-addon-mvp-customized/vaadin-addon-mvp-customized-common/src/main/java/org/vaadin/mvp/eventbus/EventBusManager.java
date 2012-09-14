@@ -16,7 +16,7 @@ public class EventBusManager {
 
   private Map<Class<? extends EventBus>, EventBus> eventBusses;
 
-  private EventReceiverRegistry handlerRegistry = new EventReceiverRegistry();
+  private CustomizedEventReceiverRegistry handlerRegistry = new CustomizedEventReceiverRegistry();
 
   public EventBusManager() {
     // busHandlers = new HashMap<EventBus, EventBusHandler>();

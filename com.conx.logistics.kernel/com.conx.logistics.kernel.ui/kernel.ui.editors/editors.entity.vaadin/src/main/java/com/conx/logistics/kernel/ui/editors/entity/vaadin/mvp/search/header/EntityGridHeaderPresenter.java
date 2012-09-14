@@ -21,6 +21,7 @@ public class EntityGridHeaderPresenter extends ConfigurableBasePresenter<IEntity
 	private MultiLevelEntityEditorPresenter parentPresenter;
 
 	private MultiLevelEntityEditorPresenter multiLevelEntityEditorPresenter;
+	@SuppressWarnings("unused")
 	private IMainApplication mainApplication;
 	private MultiLevelEntityEditorEventBus entityEditorEventListener;
 
@@ -45,6 +46,7 @@ public class EntityGridHeaderPresenter extends ConfigurableBasePresenter<IEntity
 
 			@Override
 			public void buttonClick(ClickEvent event) {
+				entityEditorEventListener.createItem();
 			}
 		});
 		this.getView().addEditListener(new ClickListener() {
@@ -52,6 +54,7 @@ public class EntityGridHeaderPresenter extends ConfigurableBasePresenter<IEntity
 
 			@Override
 			public void buttonClick(ClickEvent event) {
+				entityEditorEventListener.editItem();
 			}
 		});
 		this.getView().addDeleteListener(new ClickListener() {
@@ -59,6 +62,7 @@ public class EntityGridHeaderPresenter extends ConfigurableBasePresenter<IEntity
 
 			@Override
 			public void buttonClick(ClickEvent event) {
+				entityEditorEventListener.deleteItem();
 			}
 		});
 		this.getView().addPrintListener(new ClickListener() {
@@ -66,6 +70,7 @@ public class EntityGridHeaderPresenter extends ConfigurableBasePresenter<IEntity
 
 			@Override
 			public void buttonClick(ClickEvent event) {
+				entityEditorEventListener.printGrid();
 			}
 		});
 	}
@@ -83,5 +88,17 @@ public class EntityGridHeaderPresenter extends ConfigurableBasePresenter<IEntity
 		this.multiLevelEntityEditorPresenter = (MultiLevelEntityEditorPresenter) getConfig().get(IEntityEditorFactory.FACTORY_PARAM_MVP_CURRENT_MLENTITY_EDITOR_PRESENTER);
 		this.mainApplication = (IMainApplication) getConfig().get(IEntityEditorFactory.FACTORY_PARAM_MAIN_APP);
 		this.entityEditorEventListener = multiLevelEntityEditorPresenter.getEventBus();
+	}
+	
+	public void onItemSelected() {
+		this.getView().setEditEnabled(true);
+		this.getView().setDeleteEnabled(true);
+		this.getView().setPrintEnabled(true);
+	}
+	
+	public void onItemsDepleted() {
+		this.getView().setEditEnabled(false);
+		this.getView().setDeleteEnabled(false);
+		this.getView().setPrintEnabled(false);
 	}
 }

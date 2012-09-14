@@ -17,58 +17,57 @@ import com.conx.logistics.common.utils.Validator;
 import com.conx.logistics.mdm.domain.BaseEntity;
 
 @Entity
-@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-@Table(name="sysfeature")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Table(name = "sysfeature")
 public class Feature extends BaseEntity {
-    @ManyToOne(targetEntity = Application.class)
-    @JoinColumn
-    protected Application parentApplication;    
-    
-    @ManyToOne(targetEntity = Feature.class)
-    @JoinColumn
-    protected Feature parentFeature;   
-    
-    @OneToOne(targetEntity = Feature.class)
-    @JoinColumn
-    protected Feature onCompletionFeature;     
-    
-    @OneToMany(targetEntity = Feature.class, mappedBy="parentFeature", cascade=CascadeType.ALL,fetch=FetchType.EAGER)
-    private Set<Feature> childFeatures= new java.util.HashSet<Feature>();  
-    
-    protected boolean featureSet = false;
-    
-    protected boolean taskFeature;
-    
-    protected String componentModelCode;
-    
-    protected Long entityId;//In case of inline editor launch
-    
-    public Feature()
-    {
-    }
-    
-    public Feature(Application parentApplication, Feature parentFeature, String featureCode)
-    {
-    	setParentApplication(parentApplication);
-    	setParentFeature(parentFeature);
-    	if (Validator.isNotNull(parentFeature))
-    		setCode(parentFeature.getCode()+"."+featureCode);
-    	else
-    	{
-    		setCode(parentApplication.getCode()+"."+featureCode);
-    		setFeatureSet(true);
-    	}
-    }
-      
-    
-    public Feature(Application parentApplication, Feature parentFeature, String featureCode, boolean isFeatuteset)
-    {
-    	setParentApplication(parentApplication);
-    	setParentFeature(parentFeature);
-    	setCode(parentFeature.getCode()+"."+featureCode);
-    	this.featureSet = isFeatuteset;
-    }   
-    
+	@ManyToOne(targetEntity = Application.class)
+	@JoinColumn
+	protected Application parentApplication;
+
+	@ManyToOne(targetEntity = Feature.class)
+	@JoinColumn
+	protected Feature parentFeature;
+
+	@OneToOne(targetEntity = Feature.class)
+	@JoinColumn
+	protected Feature onCompletionFeature;
+
+	@OneToMany(targetEntity = Feature.class, mappedBy = "parentFeature", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<Feature> childFeatures = new java.util.HashSet<Feature>();
+
+	protected boolean featureSet = false;
+
+	protected boolean taskFeature;
+
+	protected String componentModelCode;
+
+	protected Long entityId;// In case of inline editor launch
+
+	private String caption;
+
+	private String iconUrl;
+
+	public Feature() {
+	}
+
+	public Feature(Application parentApplication, Feature parentFeature, String featureCode) {
+		setParentApplication(parentApplication);
+		setParentFeature(parentFeature);
+		if (Validator.isNotNull(parentFeature))
+			setCode(parentFeature.getCode() + "." + featureCode);
+		else {
+			setCode(parentApplication.getCode() + "." + featureCode);
+			setFeatureSet(true);
+		}
+	}
+
+	public Feature(Application parentApplication, Feature parentFeature, String featureCode, boolean isFeatuteset) {
+		setParentApplication(parentApplication);
+		setParentFeature(parentFeature);
+		setCode(parentFeature.getCode() + "." + featureCode);
+		this.featureSet = isFeatuteset;
+	}
+
 	public Long getId() {
 		return this.id;
 	}
@@ -84,15 +83,15 @@ public class Feature extends BaseEntity {
 	public void setParentFeature(Feature parentFeature) {
 		this.parentFeature = parentFeature;
 	}
-	
+
 	public Application getParentApplication() {
 		return parentApplication;
 	}
 
 	public void setParentApplication(Application parentApplication) {
 		this.parentApplication = parentApplication;
-	} 
-	
+	}
+
 	public Set<Feature> getChildFeatures() {
 		return childFeatures;
 	}
@@ -139,5 +138,21 @@ public class Feature extends BaseEntity {
 
 	public void setEntityId(Long entityId) {
 		this.entityId = entityId;
-	}   
+	}
+
+	public String getCaption() {
+		return caption;
+	}
+
+	public void setCaption(String caption) {
+		this.caption = caption;
+	}
+
+	public String getIconUrl() {
+		return iconUrl;
+	}
+
+	public void setIconUrl(String iconUrl) {
+		this.iconUrl = iconUrl;
+	}
 }

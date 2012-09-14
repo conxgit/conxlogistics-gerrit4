@@ -10,6 +10,7 @@ import com.conx.logistics.kernel.ui.components.domain.form.FieldSet;
 import com.conx.logistics.kernel.ui.components.domain.form.FieldSetField;
 import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
 import com.conx.logistics.kernel.ui.forms.vaadin.IVaadinForm;
+import com.conx.logistics.kernel.ui.forms.vaadin.listeners.IFormChangeListener;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.event.MouseEvents.ClickListener;
@@ -41,7 +42,7 @@ public class VaadinCollapsibleSectionForm extends Form implements IVaadinForm {
 		this.headers = new HashMap<FieldSet, VaadinCollapsibleSectionFormSectionHeader>();
 		this.fields = new HashMap<Field, FieldSetField>();
 		this.innerLayout = new VerticalLayout();
-		this.formChangeListeners = new HashSet<VaadinCollapsibleSectionForm.IFormChangeListener>();
+		this.formChangeListeners = new HashSet<IFormChangeListener>();
 
 		initialize();
 	}
@@ -219,9 +220,5 @@ public class VaadinCollapsibleSectionForm extends Form implements IVaadinForm {
 	public void resetForm() {
 		this.alertPanel.setVisible(false);
 		setItemDataSource(getItemDataSource());
-	}
-
-	public interface IFormChangeListener {
-		public void onFormChanged();
 	}
 }
