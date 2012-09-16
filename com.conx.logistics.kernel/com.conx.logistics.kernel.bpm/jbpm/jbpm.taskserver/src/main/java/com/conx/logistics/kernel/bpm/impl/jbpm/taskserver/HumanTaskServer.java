@@ -177,19 +177,27 @@ public class HumanTaskServer implements IBPMTaskService {
 			Map vars = new HashMap();
 			Reader reader;
 			URL usersURL;
+			boolean adminUserProvided = false;
 			try {
 				List<com.conx.logistics.mdm.domain.user.User> portalusers = portalUserService.getUsersByDefaultCompany();
 				for (com.conx.logistics.mdm.domain.user.User user : portalusers)
 				{
+					String screenName = user.getScreenName();
+					if ("Administrator".equalsIgnoreCase(screenName))
+						adminUserProvided = true;
 					ts.addUser(new User(user.getScreenName()));
 				}
+				
+				// Also provide 'Administrator'
+				if (!adminUserProvided)
+					ts.addUser(new User("Administrator"));
 			} catch (Exception e) {
 				StringWriter sw = new StringWriter();
 				e.printStackTrace(new PrintWriter(sw));
 				String stacktrace = sw.toString();
 				logger.error(stacktrace);
 			}
-
+			
 
 			URL grpsURL = null;
 			

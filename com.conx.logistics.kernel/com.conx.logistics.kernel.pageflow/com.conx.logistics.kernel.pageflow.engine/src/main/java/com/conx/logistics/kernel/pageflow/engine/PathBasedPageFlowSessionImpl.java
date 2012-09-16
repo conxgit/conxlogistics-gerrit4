@@ -13,11 +13,10 @@ import javax.persistence.EntityManagerFactory;
 import javax.transaction.UserTransaction;
 
 import org.jboss.bpm.console.client.model.ProcessInstanceRef;
-import org.jboss.bpm.console.client.model.TaskRef;
-import org.jboss.bpm.console.client.model.TaskRef.STATE;
 import org.jbpm.task.AccessType;
 import org.jbpm.task.Status;
 import org.jbpm.task.Task;
+import org.jbpm.task.query.TaskSummary;
 import org.jbpm.task.service.ContentData;
 import org.jbpm.workflow.core.node.HumanTaskNode;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -264,8 +263,9 @@ public class PathBasedPageFlowSessionImpl implements IPageFlowSession {
 			currentTask = waitForNextTask();
 			
 			//Get current HT node
-			HashMap<String,Object> res = (HashMap<String,Object>)this.bpmService.getTaskContentObject(currentTask);
-			String taskName = (String)res.get("TaskName");
+			TaskSummary ts = this.bpmService.getTaskSummaryByTaskId(currentTask.getId());
+			Object res = this.bpmService.getTaskContentObject(currentTask);
+			String taskName = ts.getName();
 			HumanTaskNode htTaskNode = this.bpmService.findHumanTaskNodeForTask(taskName, processInstance.getDefinitionId());
 			
 			//Reset path and pages

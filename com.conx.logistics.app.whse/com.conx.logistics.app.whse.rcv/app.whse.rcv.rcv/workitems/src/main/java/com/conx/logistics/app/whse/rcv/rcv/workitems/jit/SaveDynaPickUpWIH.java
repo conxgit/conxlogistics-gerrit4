@@ -14,34 +14,38 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveDAOService;
+import com.conx.logistics.app.whse.rcv.asn.domain.ASNDropOff;
+import com.conx.logistics.app.whse.rcv.rcv.dao.services.IArrivalDAOService;
 import com.conx.logistics.app.whse.rcv.rcv.domain.Arrival;
-import com.conx.logistics.app.whse.rcv.rcv.domain.Receive;
+import com.conx.logistics.app.whse.rcv.rcv.domain.DropOff;
 import com.conx.logistics.mdm.dao.services.IOrganizationDAOService;
 
 @Transactional
 @Repository
-public class AttachNewDynaArrivalWIH implements WorkItemHandler {
-	private static final Logger logger = LoggerFactory.getLogger(AttachNewDynaArrivalWIH.class);
+public class SaveDynaPickUpWIH implements WorkItemHandler {
+	private static final Logger logger = LoggerFactory.getLogger(SaveDynaPickUpWIH.class);
 	
 	@Autowired
 	private IOrganizationDAOService orgDao;
 	
 	@Autowired
-	private IReceiveDAOService receiveDAOService;
+	private IArrivalDAOService arrivalDAOService;
 
 
 	@Override
 	public void executeWorkItem(WorkItem workItem, WorkItemManager manager) {
 		try
 		{
-			Receive newDynaRcv = new Receive();
-			newDynaRcv = receiveDAOService.add(newDynaRcv);
+			Arrival arvl = (Arrival)workItem.getParameter("arrivalIn");
 			
-			Arrival arrival = receiveDAOService.attachArrival(newDynaRcv);
+			//-- DropOff
+/*			DropOff actualDropoff = new DropOff();
+			arvl.setActualDropOff(actualDropoff);
+			
+			arvl = arrivalDAOService.update(arvl);*/
 			
 			Map<String, Object> results = new HashMap<String, Object>();
-			results.put("arrivalOut",arrival);
+			results.put("arrivalOut",arvl);
 			manager.completeWorkItem(workItem.getId(), results);
 		}
 		catch (Exception e)
@@ -51,7 +55,7 @@ public class AttachNewDynaArrivalWIH implements WorkItemHandler {
 			String stacktrace = sw.toString();
 			logger.error(stacktrace);
 			
-			throw new IllegalStateException("AttachNewDynaArrivalWIH:\r\n"+stacktrace, e);
+			throw new IllegalStateException("SaveDynaPickupWIH:\r\n"+stacktrace, e);
 		}	
 		catch (Error e)
 		{
@@ -60,7 +64,7 @@ public class AttachNewDynaArrivalWIH implements WorkItemHandler {
 			String stacktrace = sw.toString();
 			logger.error(stacktrace);
 			
-			throw new IllegalStateException("AttachNewDynaArrivalWIH:\r\n"+stacktrace, e);			
+			throw new IllegalStateException("SaveDynaPickupWIH:\r\n"+stacktrace, e);			
 		}			
 	}
 

@@ -18,6 +18,7 @@ import com.conx.logistics.kernel.ui.service.contribution.IViewContribution;
 import com.conx.logistics.mdm.domain.application.DocViewFeature;
 import com.conx.logistics.mdm.domain.application.Feature;
 import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
+import com.conx.logistics.mdm.domain.user.User;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
@@ -34,8 +35,11 @@ public class FeatureTabbedView extends TabSheet implements IFeatureView {
 
 	private HashMap<String, Object> entityFactoryPresenterParams;
 	
+	private User currentUser = null;
+	
 	public FeatureTabbedView(MainMVPApplication app, IPresenter<?, ? extends EventBus> viewPresenter) {
 		this.app = app;
+		this.currentUser = this.app.getCurrentUser();
 		this.viewPresenter = viewPresenter;
 		this.entityEditorFactory = app.getEntityEditorFactory();
 		this.viewCache = new HashMap<Feature, Component>();
@@ -110,7 +114,7 @@ public class FeatureTabbedView extends TabSheet implements IFeatureView {
 
 			if (viewCode != null && processId != null && ac != null) {
 				Map<String, Object> props = new HashMap<String, Object>();
-				props.put("userId", "john");
+				props.put("userId", this.currentUser.getScreenName());
 				props.put("processId", processId);
 				props.put("onCompletionFeature", feature.getOnCompletionFeature());
 				props.put("onCompletionViewPresenter", this.viewPresenter);

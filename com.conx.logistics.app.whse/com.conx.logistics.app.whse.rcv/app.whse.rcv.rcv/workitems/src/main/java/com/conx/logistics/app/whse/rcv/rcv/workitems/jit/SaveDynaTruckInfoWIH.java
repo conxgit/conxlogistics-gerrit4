@@ -38,11 +38,11 @@ public class SaveDynaTruckInfoWIH implements WorkItemHandler {
 			Arrival arvl = (Arrival)workItem.getParameter("arrivalIn");
 			
 			//-- Pickup
-			Pickup actualPickUp = new Pickup();
+/*			Pickup actualPickUp = new Pickup();
 			
 			arvl.setActualPickUp(actualPickUp);
 			
-			arvl = arrivalDAOService.update(arvl);
+			arvl = arrivalDAOService.update(arvl);*/
 			
 			Map<String, Object> results = new HashMap<String, Object>();
 			results.put("arrivalOut",arvl);

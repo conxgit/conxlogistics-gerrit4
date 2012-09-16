@@ -36,7 +36,7 @@ public class SaveDynaDropOffWIH implements WorkItemHandler {
 		{
 			Arrival arvl = (Arrival)workItem.getParameter("arrivalIn");
 			
-			arvl = arrivalDAOService.update(arvl);
+			//arvl = arrivalDAOService.update(arvl);
 			
 			Map<String, Object> results = new HashMap<String, Object>();
 			results.put("arrivalOut",arvl);

@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.persistence.EntityManagerFactory;
 
 import org.drools.definition.process.Node;
+import org.drools.process.instance.WorkItemHandler;
 import org.jboss.bpm.console.client.model.ProcessDefinitionRef;
 import org.jboss.bpm.console.client.model.ProcessInstanceRef;
 import org.jboss.bpm.console.client.model.ProcessInstanceRef.RESULT;
@@ -56,6 +57,8 @@ public interface IBPMService {
 	
 	public List<HumanTaskNode> getProcessHumanTaskNodes(String definitionId);
 	
+	public Map<String,WorkItemHandler> getRegisteredWIHByDefinitionId(String definitionId);
+	
 	public List<Node> getActiveNode(String instanceId);
 	
     public Map<String, Object> getProcessInstanceVariables(String processInstanceId);
@@ -89,6 +92,7 @@ public interface IBPMService {
 	public List<Task> getReadyTasksByProcessId(Long processInstanceId);
 	public List<Task> getReservedTasksByProcessId(Long processInstanceId);
 	public List<Task> getReadyAndReservedTasksByProcessId(Long processInstanceId);
+	public TaskSummary getTaskSummaryByTaskId(Long taskId);
 	public Content getTaskContent(long taskId);
 	public Object getTaskContentObject(Task task) throws IOException,
 			ClassNotFoundException;
@@ -102,6 +106,8 @@ public interface IBPMService {
 	public List<NodeInstanceLog> getAllNodeInstances(String instanceId);
 	public Map<String, List<HumanTaskNode>> findAllHumanTaskPaths(String definitionId);
 	public Map<String, List<Node>> findAllNodePaths(String definitionId);
+
+
 
 	
 }

@@ -44,10 +44,17 @@ public class PageFlowPathAssessor {
 		//Find next path
 		for (String pathKey : possibleNextPaths.keySet())
 		{
-			if (pathKey.startsWith(name+"-->"+currentTask.getName()))
+			if (pathKey.startsWith(name+"-->"+currentTask.getName()))//Partial path
 			{
 				name_ = pathKey;
 				nodePath_ = possibleNextPaths.get(pathKey);
+				break;
+			}
+			else if (pathKey.equalsIgnoreCase(name))//Complete path
+			{
+				name_ = pathKey;
+				nodePath_ = possibleNextPaths.get(pathKey);
+				break;				
 			}
 		}
 		

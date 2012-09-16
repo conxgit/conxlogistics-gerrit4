@@ -30,14 +30,16 @@
 	<tx:annotation-driven mode="aspectj" transaction-manager="globalTransactionManager"/>	
 
 	<!-- ========================= BUSINESS OBJECT DEFINITIONS ========================= -->
+	<bean id="finalizeArrivalWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.FinalizeArrivalWIH"/>
 		
-	<bean id="attachNewArrivalWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.AttachNewArrivalWIH"/>
+		
+	<bean id="attachNewArrivalWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.expected.AttachNewArrivalWIH"/>
 	<bean id="saveDropOffWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.expected.SaveDropOffWIH"/>
-	<bean id="savePickupWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.expected.SavePickupWIH"/>
+	<bean id="savePickUpWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.expected.SavePickUpWIH"/>
 	<bean id="saveTruckInfoWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.expected.SaveTruckInfoWIH"/>
 	
-	<bean id="attachNewDynaArrivalWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.jit.AttachNewDynaArrivalWIH"/>
+	<bean id="attachNewDynaArrivalWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.jit.CreateNewDynaArrivalWIH"/>
 	<bean id="saveDynaDropOffWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.jit.SaveDynaDropOffWIH"/>
-	<bean id="saveDynaPickupWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.jit.SaveDynaPickupWIH"/>
+	<bean id="saveDynaPickUpWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.jit.SaveDynaPickUpWIH"/>
 	<bean id="saveDynaTruckInfoWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.jit.SaveDynaTruckInfoWIH"/>
 </beans>

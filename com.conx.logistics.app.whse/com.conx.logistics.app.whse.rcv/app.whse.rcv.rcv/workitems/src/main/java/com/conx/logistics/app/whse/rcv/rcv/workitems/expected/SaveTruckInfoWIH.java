@@ -39,14 +39,14 @@ public class SaveTruckInfoWIH implements WorkItemHandler {
 			Arrival arvl = (Arrival)workItem.getParameter("arrivalIn");
 			
 			//-- Pickup
-			ASNPickup expectedPickup = arvl.getReceive().getAsn().getPickup();
+/*			ASNPickup expectedPickup = arvl.getReceive().getAsn().getPickup();
 			Pickup actualPickUp = new Pickup();
 			actualPickUp.setActualLocalTrans(expectedPickup.getLocalTrans());
 			actualPickUp.setActualLocalTransAddress(expectedPickup.getLocalTransAddress());
 			
 			arvl.setActualPickUp(actualPickUp);
 			
-			arvl = arrivalDAOService.update(arvl);
+			arvl = arrivalDAOService.update(arvl);*/
 			
 			Map<String, Object> results = new HashMap<String, Object>();
 			results.put("arrivalOut",arvl);

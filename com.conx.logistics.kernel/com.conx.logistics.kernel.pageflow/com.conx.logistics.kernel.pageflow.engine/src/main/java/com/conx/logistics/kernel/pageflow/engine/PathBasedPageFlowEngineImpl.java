@@ -16,6 +16,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.transaction.UserTransaction;
 
 import org.drools.definition.process.Node;
+import org.drools.process.instance.WorkItemHandler;
 import org.jboss.bpm.console.client.model.ProcessInstanceRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -217,9 +218,11 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 
 			//Get registered pages
 			Map<String,PageFlowPage> pageList = pageCache.get(processId);
+			Map<String,WorkItemHandler> wihCache = this.bpmService.getRegisteredWIHByDefinitionId(processId);			
 			
 			//All process paths
 			Map<String, List<Node>> paths = this.bpmService.findAllNodePaths(processId);
+
 			
 			//Create start path
 			if (paths.size() == 1)//No splits

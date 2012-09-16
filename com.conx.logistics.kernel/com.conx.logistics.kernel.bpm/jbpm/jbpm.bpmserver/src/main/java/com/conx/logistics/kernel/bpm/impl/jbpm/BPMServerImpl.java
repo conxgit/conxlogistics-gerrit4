@@ -681,7 +681,7 @@ public class BPMServerImpl implements IBPMService {
 			ksession.getWorkItemManager().registerWorkItemHandler(workItemId, wih);
 			
 			String processId = (String)properties.get("PROCESS_ID");		
-			logger.debug("registerWIH("+processId+")");		
+			logger.info("registerWIH("+processId+"/"+workItemId+")");		
 			Map<String,WorkItemHandler> list = this.wihCache.get(processId);
 			if (list == null) {
 				list = new HashMap<String,WorkItemHandler>();
@@ -715,7 +715,7 @@ public class BPMServerImpl implements IBPMService {
 			String processId = (String)properties.get("PROCESS_ID");
 			String workItemId = (String)properties.get("TASK_NAME");
 			
-			logger.debug("unregisterWIH("+processId+")");	
+			logger.info("unregisterWIH("+processId+"/"+workItemId+")");	
 			Map<String,WorkItemHandler> list = this.wihCache.get(processId);
 			if (list != null) {
 				list.remove(workItemId);
@@ -737,7 +737,13 @@ public class BPMServerImpl implements IBPMService {
 			String stacktrace = sw.toString();
 			logger.error(stacktrace);			
 		}			
-	}    
+	}   
+	
+	@Override
+	public Map<String,WorkItemHandler> getRegisteredWIHByDefinitionId(String definitionId) {
+		return this.wihCache.get(definitionId);
+	}
+	
 
 	public CustomJPAProcessInstanceDbLog getJpaProcessInstanceDbLog() {
 		return jpaProcessInstanceDbLog;
@@ -969,6 +975,17 @@ public class BPMServerImpl implements IBPMService {
 		List<TaskSummary> result = emQuery.getResultList();
 		return result;
 	}	
+	
+	@Override
+	public TaskSummary getTaskSummaryByTaskId(Long taskId) {
+		//return taskManager.getCreatedTasksByProcessId(processInstanceId);
+		//String query = "select new org.jbpm.task.query.TaskSummary( t.id, t.taskData.processInstanceId, name.text, subject.text, description.text, t.taskData.status, t.priority, t.taskData.skipable, t.taskData.actualOwner, t.taskData.createdBy, t.taskData.createdOn, t.taskData.activationTime, t.taskData.expirationTime, t.taskData.processId, t.taskData.processSessionId) from Task t  left join t.taskData.createdBy left join t.subjects as subject left join t.descriptions as description left join t.names as name where t.archived = 0 and t.id = :taskId and ( name.language = :language or t.names.size = 0 ) and  ( subject.language = :language or t.subjects.size = 0 ) and  ( description.language = :language or t.descriptions.size = 0 ) and  t.taskData.expirationTime is null";
+		Query emQuery = getHumanTaskManager().getLocalService().createSession().getTaskPersistenceManager().createQuery("TaskSummaryByTaskId");
+		//Query emQuery = getHumanTaskManager().getLocalService().createSession().getTaskPersistenceManager().createNewQuery(query);
+		emQuery.setParameter("taskId", taskId);
+		TaskSummary result = (TaskSummary)emQuery.getSingleResult();
+		return result;
+	}		
 
 	@Override
 	public List<Task> getCreatedTasksByProcessId(Long processInstanceId) {

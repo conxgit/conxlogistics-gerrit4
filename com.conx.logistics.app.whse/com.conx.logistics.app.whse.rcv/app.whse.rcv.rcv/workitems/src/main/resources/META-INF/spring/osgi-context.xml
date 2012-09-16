@@ -4,6 +4,18 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd"
 	xmlns:osgi="http://www.springframework.org/schema/osgi">
+	
+	<!-- Shared -->
+	<osgi:service ref="finalizeArrivalWIH"
+		interface="org.drools.process.instance.WorkItemHandler">
+		<osgi:service-properties>
+			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0" />
+			<entry key="TASK_NAME" value="FinalizeArrivalWIH" />
+		</osgi:service-properties>
+	</osgi:service>		
+	
+		
+	<!-- Expected -->
 	<osgi:service ref="attachNewArrivalWIH"
 		interface="org.drools.process.instance.WorkItemHandler">
 		<osgi:service-properties>
@@ -18,11 +30,11 @@
 			<entry key="TASK_NAME" value="SaveDropOffWIH" />
 		</osgi:service-properties>
 	</osgi:service>
-	<osgi:service ref="savePickupWIH"
+	<osgi:service ref="savePickUpWIH"
 		interface="org.drools.process.instance.WorkItemHandler">
 		<osgi:service-properties>
 			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0" />
-			<entry key="TASK_NAME" value="SavePickupWIH" />
+			<entry key="TASK_NAME" value="SavePickUpWIH" />
 		</osgi:service-properties>
 	</osgi:service>	
 	<osgi:service ref="saveTruckInfoWIH"
@@ -31,7 +43,9 @@
 			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0" />
 			<entry key="TASK_NAME" value="SaveTruckInfoWIH" />
 		</osgi:service-properties>
-	</osgi:service>		
+	</osgi:service>
+	
+	<!-- JIT -->		
 	<osgi:service ref="attachNewDynaArrivalWIH"
 		interface="org.drools.process.instance.WorkItemHandler">
 		<osgi:service-properties>
@@ -46,18 +60,18 @@
 			<entry key="TASK_NAME" value="SaveDynaDropOffWIH" />
 		</osgi:service-properties>
 	</osgi:service>
-	<osgi:service ref="saveDynaPickupWIH"
+	<osgi:service ref="saveDynaPickUpWIH"
 		interface="org.drools.process.instance.WorkItemHandler">
 		<osgi:service-properties>
 			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0" />
-			<entry key="TASK_NAME" value="SaveDynaPickupWIH" />
+			<entry key="TASK_NAME" value="SaveDynaPickUpWIH" />
 		</osgi:service-properties>
 	</osgi:service>	
-	<osgi:service ref="saveDynaTruckInfoWIH"
+	<osgi:service ref="createNewDynaArrivalWIH"
 		interface="org.drools.process.instance.WorkItemHandler">
 		<osgi:service-properties>
 			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0" />
-			<entry key="TASK_NAME" value="SaveDynaTruckInfoWIH" />
+			<entry key="TASK_NAME" value="CreateNewDynaArrivalWIH" />
 		</osgi:service-properties>
 	</osgi:service>			
 
@@ -77,4 +91,6 @@
 	</osgi:reference>		
 	
 	<osgi:reference id="orgDao"  interface="com.conx.logistics.mdm.dao.services.IOrganizationDAOService"/>
+	<osgi:reference id="rcvDao"  interface="com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveDAOService"/>
+	<osgi:reference id="arrvlDao"  interface="com.conx.logistics.app.whse.rcv.rcv.dao.services.IArrivalDAOService"/>
 </beans>

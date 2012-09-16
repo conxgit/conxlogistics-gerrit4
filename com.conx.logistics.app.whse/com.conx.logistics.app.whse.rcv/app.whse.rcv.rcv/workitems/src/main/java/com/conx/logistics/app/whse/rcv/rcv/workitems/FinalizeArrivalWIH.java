@@ -20,8 +20,8 @@ import com.conx.logistics.mdm.dao.services.IOrganizationDAOService;
 
 @Transactional
 @Repository
-public class SaveArrivalWIH implements WorkItemHandler {
-	private static final Logger logger = LoggerFactory.getLogger(SaveArrivalWIH.class);
+public class FinalizeArrivalWIH implements WorkItemHandler {
+	private static final Logger logger = LoggerFactory.getLogger(FinalizeArrivalWIH.class);
 	
 	@Autowired
 	private IOrganizationDAOService orgDao;
@@ -36,7 +36,7 @@ public class SaveArrivalWIH implements WorkItemHandler {
 		{
 			Arrival arvl = (Arrival)workItem.getParameter("arrivalIn");
 			
-			arvl = arrivalDAOService.update(arvl);
+			//arvl = arrivalDAOService.update(arvl);
 			
 			Map<String, Object> results = new HashMap<String, Object>();
 			results.put("arrivalOut",arrival);
@@ -49,7 +49,7 @@ public class SaveArrivalWIH implements WorkItemHandler {
 			String stacktrace = sw.toString();
 			logger.error(stacktrace);
 			
-			throw new IllegalStateException("SaveArrivalWIH:\r\n"+stacktrace, e);
+			throw new IllegalStateException("FinalizeArrivalWIH:\r\n"+stacktrace, e);
 		}	
 		catch (Error e)
 		{
@@ -58,7 +58,7 @@ public class SaveArrivalWIH implements WorkItemHandler {
 			String stacktrace = sw.toString();
 			logger.error(stacktrace);
 			
-			throw new IllegalStateException("SaveArrivalWIH:\r\n"+stacktrace, e);			
+			throw new IllegalStateException("FinalizeArrivalWIH:\r\n"+stacktrace, e);			
 		}			
 	}
 

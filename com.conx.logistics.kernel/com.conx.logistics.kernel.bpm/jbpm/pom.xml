@@ -32,5 +32,6 @@
   		<!-- <module>jbpm.core.mock</module> -->
 
   		<!-- <module>jbpm.taskserver.mina.fragment</module> -->
+  		<module>jbpm.guvnor.archives</module>
 	</modules>
 </project>

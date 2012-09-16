@@ -112,7 +112,7 @@ public class MainMVPApplication extends Application implements IMainApplication,
 	
 	private IPortalOrganizationService portalOrganizationService;
 	
-	private User currentUser;
+	private User currentUser = null;
 
 	@Override
 	public void init() {
@@ -191,8 +191,20 @@ public class MainMVPApplication extends Application implements IMainApplication,
     public void onRequestStart(HttpServletRequest request, HttpServletResponse response) {
 		//authenticate(request);
 		Map pns = request.getParameterMap();//email,pwd
-		String email = (String)pns.get("email");
-		String pwd = (String)pns.get("pwd");
+		String email = null;
+		
+		if (pns.containsKey("email"))
+		{
+			String[] emailArray = (String[])pns.get("email");
+			email = emailArray[0];
+		}
+		
+		if (pns.containsKey("pwd"))
+		{
+			String[] emailArray = (String[])pns.get("pwd");
+			email = emailArray[0];
+		}		
+		
 		String screenName = null;
 		
 		if (Validator.isNull(currentUser))
@@ -617,5 +629,13 @@ public class MainMVPApplication extends Application implements IMainApplication,
 
 	public void setPortalRoleService(IPortalRoleService portalRoleService) {
 		this.portalRoleService = portalRoleService;
+	}
+
+	public User getCurrentUser() {
+		return currentUser;
+	}
+
+	public void setCurrentUser(User currentUser) {
+		this.currentUser = currentUser;
 	}
 }

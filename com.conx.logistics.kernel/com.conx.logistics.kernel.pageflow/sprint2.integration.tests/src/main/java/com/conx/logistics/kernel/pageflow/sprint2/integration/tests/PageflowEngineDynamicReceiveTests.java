@@ -18,7 +18,7 @@ import com.conx.logistics.kernel.pageflow.services.IPageFlowManager;
 import com.conx.logistics.kernel.pageflow.services.ITaskWizard;
 
 @Transactional
-public class PageflowEngineTests {
+public class PageflowEngineDynamicReceiveTests {
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired
@@ -43,48 +43,48 @@ public class PageflowEngineTests {
 			Map<String, Object> res = wiz.getProperties();
 			
 			//-- 2. Complete FindReceive Task
-			Receive rcv = new Receive();
+			Receive rcv = null;
 			HashMap<String,Object> outParams = new HashMap<String, Object>();
-			outParams.put("receiveOut",rcv);
+			//outParams.put("receiveOut",rcv);
 			wiz = defaultPageFlowEngine.executeTaskWizard(wiz, outParams);
 			
 			
-			//-- 3.  Get output vars from AttachNewArrivalWIH and complete ConfirmTruckInfo Task
+			//-- 3.  Get output vars from CreateNewDynaArrivalWIH and complete AddDynaTruckInfo Task
 			res = wiz.getProperties();
-			Arrival arvl = (Arrival)res.get("Content");// output of AttachNewArrivalWIH/input of ConfirmTruckInfo
+			Arrival arvl = (Arrival)res.get("Content");// output of CreateNewDynaArrivalWIH/input of AddDynaTruckInfo
 			
 			outParams = new HashMap<String, Object>();
 			outParams.put("arrivalOut",arvl);
 			wiz = defaultPageFlowEngine.executeTaskWizard(wiz, outParams);
 			
-			//-- 4.  Get output vars (w/ new PickUp) from SaveTruckInfoWIH and complete ConfirmPickUp Task
+			//-- 4.  Get output vars (w/ new PickUp) from SaveDynaTruckInfoWIH and complete AddDynaPickUp Task
 			res = wiz.getProperties();
-			arvl = (Arrival)res.get("Content");// output of SaveTruckInfoWIH/input of ConfirmPickUp
+			arvl = (Arrival)res.get("Content");// output of SaveDynaTruckInfoWIH/input of AddDynaPickUp
 			
 			outParams = new HashMap<String, Object>();
 			outParams.put("arrivalOut",arvl);
 			wiz = defaultPageFlowEngine.executeTaskWizard(wiz, outParams);	
 			
-			//-- 5.  Get output vars (w/ new DropOff) from SavePickUpWIH and complete ConfirmDropOff Task
+			//-- 5.  Get output vars (w/ new DropOff) from SaveDynaPickUpWIH and complete AddDynaDropOff Task
 			res = wiz.getProperties();
-			arvl = (Arrival)res.get("Content");// output of SavePickUpWIH/input of ConfirmDropOff
+			arvl = (Arrival)res.get("Content");// output of SaveDynaPickUpWIH/input of AddDynaDropOff
 			
 			outParams = new HashMap<String, Object>();
 			outParams.put("arrivalOut",arvl);
 			wiz = defaultPageFlowEngine.executeTaskWizard(wiz, outParams);				
 			
-			//-- 6.  Get output vars from SaveDropOffWIH and complete ProcessArrivalReceipts Task
+			//-- 6.  Get output vars from SaveDynaDropOffWIH and complete ProcessDynaArrivalReceipts Task
 			res = wiz.getProperties();
-			arvl = (Arrival)res.get("Content");// output of SaveDropOffWIH/input of ProcessArrivalReceipts			
+			arvl = (Arrival)res.get("Content");// output of SaveDynaDropOffWIH/input of ProcessDynaArrivalReceipts			
 			
 			outParams = new HashMap<String, Object>();
 			outParams.put("arrivalOut",arvl);
 			wiz = defaultPageFlowEngine.executeTaskWizard(wiz, outParams);	
 			
 			
-			//-- 7.  Complete FinalizeArrival
+			//-- 7.  Get output vars from ProcessDynaArrivalReceipts and complete FinalizeArrival Task
 			res = wiz.getProperties();
-			arvl = (Arrival)res.get("Content");// output of ProcessArrivalReceipts
+			arvl = (Arrival)res.get("Content");// output of ProcessDynaArrivalReceipts/input of FinalizeArrival			
 			
 			outParams = new HashMap<String, Object>();
 			outParams.put("arrivalOut",arvl);

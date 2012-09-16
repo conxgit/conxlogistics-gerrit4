@@ -22,8 +22,8 @@ import com.conx.logistics.mdm.dao.services.IOrganizationDAOService;
 
 @Transactional
 @Repository
-public class SavePickupWIH implements WorkItemHandler {
-	private static final Logger logger = LoggerFactory.getLogger(SavePickupWIH.class);
+public class SavePickUpWIH implements WorkItemHandler {
+	private static final Logger logger = LoggerFactory.getLogger(SavePickUpWIH.class);
 	
 	@Autowired
 	private IOrganizationDAOService orgDao;
@@ -39,13 +39,13 @@ public class SavePickupWIH implements WorkItemHandler {
 			Arrival arvl = (Arrival)workItem.getParameter("arrivalIn");
 			
 			//-- DropOff
-			ASNDropOff expectedDropoff = arvl.getReceive().getAsn().getDropOff();
+/*			ASNDropOff expectedDropoff = arvl.getReceive().getAsn().getDropOff();
 			DropOff actualDropoff = new DropOff();
 			actualDropoff.setActualDropOff(expectedDropoff.getEstimatedDropOff());
 			
 			arvl.setActualDropOff(actualDropoff);
 			
-			arvl = arrivalDAOService.update(arvl);
+			arvl = arrivalDAOService.update(arvl);*/
 			
 			Map<String, Object> results = new HashMap<String, Object>();
 			results.put("arrivalOut",arvl);

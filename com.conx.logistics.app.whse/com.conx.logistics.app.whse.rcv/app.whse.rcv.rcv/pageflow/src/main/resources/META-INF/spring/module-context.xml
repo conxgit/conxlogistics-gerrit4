@@ -10,10 +10,17 @@
 			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
 			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
-	<bean id="findReceivePage" class="com.conx.logistics.app.whse.rcv.rcv.pageflow.pages.FindReceivePage"/>		
-	<bean id="confirmReceivePage" class="com.conx.logistics.app.whse.rcv.rcv.pageflow.pages.ConfirmReceivePage"/>
-	<bean id="processArrivalReceipts" class="com.conx.logistics.app.whse.rcv.rcv.pageflow.pages.ProcessArrivalReceiptsPage"/>
-	<bean id="createDynamicReceiveFromBOLPage" class="com.conx.logistics.app.whse.rcv.rcv.pageflow.pages.CreateDynamicReceiveFromBOLPage"/>
-	<bean id="processDynamicArrivalReceiptsPage" class="com.conx.logistics.app.whse.rcv.rcv.pageflow.pages.ProcessDynamicArrivalReceiptsPage"/>
-	<bean id="confirmArrivalPage" class="com.conx.logistics.app.whse.rcv.rcv.pageflow.pages.ConfirmArrivalPage"/>
+	<bean id="findReceivePage" class="com.conx.logistics.app.whse.rcv.rcv.pageflow.pages.FindReceivePage"/>	
+		
+	<bean id="confirmDropOffPage" class="com.conx.logistics.app.whse.rcv.rcv.pageflow.pages.expected.ConfirmDropOffPage"/>
+	<bean id="confirmPickUpPage" class="com.conx.logistics.app.whse.rcv.rcv.pageflow.pages.expected.ConfirmPickUpPage"/>
+	<bean id="confirmTruckInfoPage" class="com.conx.logistics.app.whse.rcv.rcv.pageflow.pages.expected.ConfirmTruckInfoPage"/>
+	<bean id="processArrivalReceiptsPage" class="com.conx.logistics.app.whse.rcv.rcv.pageflow.pages.expected.ProcessArrivalReceiptsPage"/>
+	
+	<bean id="addDynaDropOffPage" class="com.conx.logistics.app.whse.rcv.rcv.pageflow.pages.jit.AddDynaDropOffPage"/>
+	<bean id="addDynaPickUpPage" class="com.conx.logistics.app.whse.rcv.rcv.pageflow.pages.jit.AddDynaPickUpPage"/>
+	<bean id="addDynaTruckInfoPage" class="com.conx.logistics.app.whse.rcv.rcv.pageflow.pages.jit.AddDynaTruckInfoPage"/>
+	<bean id="processDynamicArrivalReceiptsPage" class="com.conx.logistics.app.whse.rcv.rcv.pageflow.pages.jit.ProcessDynamicArrivalReceiptsPage"/>
+	
+	<bean id="finalizeArrivalPage" class="com.conx.logistics.app.whse.rcv.rcv.pageflow.pages.FinalizeArrivalPage"/>	
 </beans>
