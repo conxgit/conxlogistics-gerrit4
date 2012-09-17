@@ -38,7 +38,7 @@
 	<bean id="savePickUpWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.expected.SavePickUpWIH"/>
 	<bean id="saveTruckInfoWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.expected.SaveTruckInfoWIH"/>
 	
-	<bean id="attachNewDynaArrivalWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.jit.CreateNewDynaArrivalWIH"/>
+	<bean id="createNewDynaArrivalWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.jit.CreateNewDynaArrivalWIH"/>
 	<bean id="saveDynaDropOffWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.jit.SaveDynaDropOffWIH"/>
 	<bean id="saveDynaPickUpWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.jit.SaveDynaPickUpWIH"/>
 	<bean id="saveDynaTruckInfoWIH" class="com.conx.logistics.app.whse.rcv.rcv.workitems.jit.SaveDynaTruckInfoWIH"/>
