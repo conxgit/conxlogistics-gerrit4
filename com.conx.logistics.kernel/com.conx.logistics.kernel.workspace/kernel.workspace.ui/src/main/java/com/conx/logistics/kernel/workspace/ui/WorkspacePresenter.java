@@ -8,7 +8,7 @@ import org.vaadin.mvp.presenter.annotation.Presenter;
 
 import com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication;
 import com.conx.logistics.kernel.ui.common.mvp.view.feature.FeatureTabbedView;
-import com.conx.logistics.kernel.ui.vaadin.common.ConXEntityEditor;
+import com.conx.logistics.kernel.workspace.ui.dashboard.DashboardEventBus;
 import com.conx.logistics.kernel.workspace.ui.dashboard.DashboardPresenter;
 import com.conx.logistics.kernel.workspace.ui.navigation.WorkspaceNavigationPresenter;
 import com.conx.logistics.kernel.workspace.ui.navigation.view.IWorkspaceNavigationView;
@@ -44,8 +44,9 @@ public class WorkspacePresenter extends BasePresenter<IWorkspaceView, WorkspaceE
 		IWorkspaceNavigationView navView = this.navPresenter.getView();
 		this.view.setNavigation(navView);
 		
-		IPresenter<?, ? extends EventBus> db = pf.createPresenter(DashboardPresenter.class);
-		Component dbView = (Component)db.getView();
+		IPresenter<?, ? extends EventBus> dbpresenter = pf.createPresenter(DashboardPresenter.class);
+		((DashboardEventBus)dbpresenter.getEventBus()).launch(application);
+		Component dbView = (Component)dbpresenter.getView();
 		
 		this.view.setContent(dbView);
 	}

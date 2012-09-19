@@ -882,6 +882,11 @@ public class BPMServerImpl implements IBPMService {
 	public Properties getJbpmProperties() {
 		return jbpmProperties;
 	}
+	
+	@Override
+	public void addTaskComment(long taskId, String comment) {
+		taskManager.addTaskComment(taskId, comment);
+	}
 
 	@Override
 	public TaskRef getTaskById(long taskId) {

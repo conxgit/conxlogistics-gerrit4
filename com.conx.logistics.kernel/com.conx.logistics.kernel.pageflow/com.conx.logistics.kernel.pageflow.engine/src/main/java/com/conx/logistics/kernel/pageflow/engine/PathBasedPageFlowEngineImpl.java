@@ -18,6 +18,7 @@ import javax.transaction.UserTransaction;
 import org.drools.definition.process.Node;
 import org.drools.process.instance.WorkItemHandler;
 import org.jboss.bpm.console.client.model.ProcessInstanceRef;
+import org.jbpm.task.query.TaskSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jndi.JndiTemplate;
@@ -195,8 +196,13 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 		try
 		{
 			ut.begin();
-
-			pi = bpmService.newInstance(processId);
+			
+			Map<String, Object> input = new HashMap<String, Object>();
+			Map<String, Object> paramsMap = new HashMap<String, Object>();
+			paramsMap.put("onCompletionFeatureId", onCompletionFeature.getId());
+			input.put("paramsMap", paramsMap);
+			pi = bpmService.newInstance(processId,input);
+			
 
 			ut.commit();
 		}
@@ -272,7 +278,8 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 		{
 			ut.rollback();
 			throw e;
-		}			
+		}		
+		
 		
 		// 4. Create wizard
 		TaskWizard wizard = new TaskWizard(session);
@@ -281,6 +288,102 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 
 		return wizard;
 	}
+	
+	@Override
+	public ITaskWizard resumeProcessInstanceTaskWizard(String processInstanceId, Map<String, Object> properties) throws Exception {
+		ProcessInstanceRef pi = null;
+		IPageFlowSession session = null;
+
+		String processId = (String)properties.get("processId");
+		String userId = (String)properties.get("userId");
+		Feature   onCompletionFeature = (Feature)properties.get("onCompletionFeature");
+		IPresenter<?, ? extends EventBus>   onCompletionCompletionViewPresenter = (IPresenter<?, ? extends EventBus>)properties.get("onCompletionViewPresenter");
+		
+
+		Context ctx = jndiTemplate.getContext();
+		UserTransaction ut = this.userTransaction;//(UserTransaction)ctx.lookup( "java:comp/UserTransaction" );
+
+		// 1. Create process instance		
+		try
+		{
+			ut.begin();
+
+			pi = bpmService.getProcessInstance(processInstanceId);
+
+			ut.commit();
+		}
+		catch(Exception e)
+		{
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			String stacktrace = sw.toString();
+			logger.error(stacktrace);				 
+			ut.rollback();
+			throw e;
+		}
+
+		// 2. Create session
+		PageFlowPathAssessor pathAssessor = null;	
+		try
+		{
+			ut.begin();
+
+			//Get registered pages
+			Map<String,PageFlowPage> pageList = pageCache.get(processId);
+			Map<String,WorkItemHandler> wihCache = this.bpmService.getRegisteredWIHByDefinitionId(processId);			
+			
+			//All process paths
+			Map<String, List<Node>> paths = this.bpmService.findAllNodePaths(processId);
+
+			
+			//Create start path
+			if (paths.size() == 1)//No splits
+			{
+				pathAssessor = new PageFlowPathAssessor(paths.keySet().iterator().next(),
+									     paths.values().iterator().next(),
+									     paths,
+									     pageCache.get(processId));
+			}
+			else //At least one split is in the process
+			{
+				SortedSet<String> orderedPathSet = new TreeSet<String>(paths.keySet());
+				String startPathKey = orderedPathSet.iterator().next();//Get smallest
+				pathAssessor = new PageFlowPathAssessor(startPathKey,
+					     paths.get(startPathKey),
+					     paths,
+					     pageCache.get(processId));				
+			}
+	
+			
+			session = new PathBasedPageFlowSessionImpl(userId,
+													   pi,
+													   this, 
+													   pathAssessor,
+													   onCompletionFeature,
+													   onCompletionCompletionViewPresenter);
+			
+			//-- Reset session to instance state
+			session.getNextTaskAndUpdatePagesPath(ut);			
+
+			sessions.add(session);	
+
+			ut.commit();
+		}
+		catch(Exception e)
+		{
+			ut.rollback();
+			throw e;
+		}		 
+		
+		
+		// 3. Create wizard
+		TaskWizard wizard = new TaskWizard(session);
+		wizard.setSizeFull();
+
+
+		return wizard;
+	}
+	
 
 	@Override
 	public ITaskWizard executeTaskWizard(ITaskWizard tw, Object data) throws Exception {

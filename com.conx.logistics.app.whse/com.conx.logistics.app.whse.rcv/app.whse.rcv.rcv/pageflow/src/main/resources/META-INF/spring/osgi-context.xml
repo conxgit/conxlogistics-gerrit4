@@ -68,7 +68,7 @@
 	<osgi:service ref="processDynamicArrivalReceiptsPage"  interface="com.conx.logistics.kernel.pageflow.services.PageFlowPage">
 		<osgi:service-properties>
 			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0"/>
-			<entry key="TASK_NAME" value="ProcessDynamicArrivalReceipts"/>
+			<entry key="TASK_NAME" value="ProcessDynaArrivalReceipts"/>
 		  </osgi:service-properties>		
 	</osgi:service>
 </beans>

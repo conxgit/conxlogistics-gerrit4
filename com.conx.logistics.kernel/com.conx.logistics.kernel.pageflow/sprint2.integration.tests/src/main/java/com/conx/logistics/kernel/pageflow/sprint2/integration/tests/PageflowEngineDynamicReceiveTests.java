@@ -48,7 +48,6 @@ public class PageflowEngineDynamicReceiveTests {
 			//outParams.put("receiveOut",rcv);
 			wiz = defaultPageFlowEngine.executeTaskWizard(wiz, outParams);
 			
-			
 			//-- 3.  Get output vars from CreateNewDynaArrivalWIH and complete AddDynaTruckInfo Task
 			res = wiz.getProperties();
 			Arrival arvl = (Arrival)res.get("Content");// output of CreateNewDynaArrivalWIH/input of AddDynaTruckInfo

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import javax.persistence.EntityManagerFactory;
+import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.springframework.transaction.PlatformTransactionManager;
@@ -27,8 +28,8 @@ public interface IPageFlowSession {
 	public IPageFlowManager getPageFlowEngine();
 	
 	public void completeProcess(UserTransaction userTransaction, Object data) throws Exception;
+	public boolean getNextTaskAndUpdatePagesPath(UserTransaction ut) throws SystemException, Exception;	
 	public boolean executeNext(UserTransaction userTransaction, Object data) throws Exception;
 	public Map<String, Object> updateProcessInstanceVariables(
 			UserTransaction userTransaction, Map<String, Object> varsToUpdate) throws Exception;
-	
 }

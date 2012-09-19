@@ -57,6 +57,6 @@
 	<!-- <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/> -->
 	
 		
-	<bean id="pageFlowImpl" class="com.conx.logistics.kernel.pageflow.sprint2.integration.tests.PageflowEngineDynamicReceiveTests" init-method="start" destroy-method="stop">
+	<bean id="pageFlowImpl" class="com.conx.logistics.kernel.pageflow.sprint2.integration.tests.PageflowEngineTests" init-method="start" destroy-method="stop">
 	</bean>
 </beans>

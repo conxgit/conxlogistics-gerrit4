@@ -290,19 +290,23 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 		List<WizardStep> stepsCopy = new ArrayList<WizardStep>();
 		stepsCopy.addAll(steps);
 		//Remove steps
-		for (WizardStep step_ : stepsCopy)
-		{
-			removeStep(step_);
-		}
+		//for (WizardStep step_ : stepsCopy)
+		//{
+		//	removeStep(step_);
+		//}
 		
 		//Add pages from path
 		if (session.getPages() != null) {
 			for (PageFlowPage page : session.getPages()) {
-				page.initialize(session.getConXEntityManagerfactory(), 
-							    session.getJTAGlobalTransactionManager(), 
-						        (IPageFlowPageChangedEventHandler)this,
-						        (ITaskWizard)this);
-				addStep(page);
+				boolean stepAlreadyExists = getCurrentStep() != null && page.getCaption().equalsIgnoreCase(getCurrentStep().getCaption());
+				if (!stepAlreadyExists)
+				{		
+					page.initialize(session.getConXEntityManagerfactory(), 
+								    session.getJTAGlobalTransactionManager(), 
+							        (IPageFlowPageChangedEventHandler)this,
+							        (ITaskWizard)this);
+					addStep(page);
+				}
 			}
 		}	
 	}

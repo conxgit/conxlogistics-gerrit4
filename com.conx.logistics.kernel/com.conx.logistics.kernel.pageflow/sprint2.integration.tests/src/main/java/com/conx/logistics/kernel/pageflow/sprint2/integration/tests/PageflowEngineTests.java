@@ -16,6 +16,7 @@ import com.conx.logistics.app.whse.rcv.rcv.domain.Arrival;
 import com.conx.logistics.app.whse.rcv.rcv.domain.Receive;
 import com.conx.logistics.kernel.pageflow.services.IPageFlowManager;
 import com.conx.logistics.kernel.pageflow.services.ITaskWizard;
+import com.conx.logistics.mdm.domain.application.Feature;
 
 @Transactional
 public class PageflowEngineTests {
@@ -30,6 +31,10 @@ public class PageflowEngineTests {
 	public void start() {
 		try {
 			Map<String,Object> params = new HashMap<String, Object>();
+			
+			Feature   onCompletionFeature = new Feature();
+			onCompletionFeature.setId(100000L);
+			params.put("onCompletionFeature",onCompletionFeature);
 			params.put("processId", "whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0");
 			params.put("userId", "conxuser");
 			

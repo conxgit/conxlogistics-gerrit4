@@ -25,5 +25,4 @@ public interface DashboardEventBus extends LaunchableViewEventBus {
   
   @Event(handlers = { DashboardPresenter.class })
   public void cancelEditUser();
-
 }

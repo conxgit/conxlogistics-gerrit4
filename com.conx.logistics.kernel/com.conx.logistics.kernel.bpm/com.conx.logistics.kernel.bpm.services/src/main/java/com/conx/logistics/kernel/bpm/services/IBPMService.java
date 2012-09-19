@@ -82,7 +82,7 @@ public interface IBPMService {
 	public List<TaskRef> getAssignedTasks(String idRef);
 	public List<TaskRef> getUnassignedTasks(String idRef, String participationType);
 	public void skipTask(long taskId, String userId);
-	
+	public void addTaskComment(long taskId, String comment);
 	
 	/**
 	 * Task Amdin methiods
@@ -106,8 +106,4 @@ public interface IBPMService {
 	public List<NodeInstanceLog> getAllNodeInstances(String instanceId);
 	public Map<String, List<HumanTaskNode>> findAllHumanTaskPaths(String definitionId);
 	public Map<String, List<Node>> findAllNodePaths(String definitionId);
-
-
-
-	
 }

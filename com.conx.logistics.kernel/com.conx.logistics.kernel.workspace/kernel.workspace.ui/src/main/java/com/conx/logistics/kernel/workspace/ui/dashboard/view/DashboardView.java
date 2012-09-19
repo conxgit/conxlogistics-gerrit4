@@ -2,6 +2,10 @@ package com.conx.logistics.kernel.workspace.ui.dashboard.view;
 
 import org.vaadin.sasha.portallayout.PortalLayout;
 
+import com.conx.logistics.kernel.ui.filteredtable.FilterTable;
+import com.conx.logistics.kernel.workspace.ui.ext.task.grid.TaskGrid;
+import com.vaadin.event.ItemClickEvent;
+import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
@@ -16,7 +20,7 @@ import com.vaadin.ui.VerticalLayout;
 public class DashboardView extends VerticalLayout implements IDashboardView {
 	
 	private GridLayout mainLayout = new GridLayout(1,2);
-	private Table myTasksTable;
+	private TaskGrid myTasksTable;
 	private Table myAlertsTable;
 	
     public class DashboardPortal extends PortalLayout {
@@ -68,7 +72,8 @@ public class DashboardView extends VerticalLayout implements IDashboardView {
 
 
 	private void buildTaskTable() {
-		this.myTasksTable = new Table();
+		this.myTasksTable = new TaskGrid();
+		
 		this.myTasksPortal.addComponent(this.myTasksTable);
 		this.myTasksTable.setCaption("My Tasks");
 		this.myTasksPortal.setIcon(new ThemeResource("chart.png"));
@@ -107,5 +112,10 @@ public class DashboardView extends VerticalLayout implements IDashboardView {
         header.setComponentAlignment(caption, Alignment.MIDDLE_LEFT);
         header.setComponentAlignment(filterType, Alignment.MIDDLE_LEFT);
         //myAlertsPortal.setHeaderComponent(this.myAlertsTable, header);
+	}
+
+
+	public TaskGrid getMyTasksTable() {
+		return myTasksTable;
 	}	
 }

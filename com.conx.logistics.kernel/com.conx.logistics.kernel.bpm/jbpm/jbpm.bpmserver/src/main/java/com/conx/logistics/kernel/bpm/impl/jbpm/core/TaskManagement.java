@@ -34,6 +34,7 @@ import javax.security.jacc.PolicyContext;
 
 import org.jboss.bpm.console.client.model.TaskRef;
 import org.jbpm.task.AccessType;
+import org.jbpm.task.Comment;
 import org.jbpm.task.Content;
 import org.jbpm.task.OrganizationalEntity;
 import org.jbpm.task.Status;
@@ -187,6 +188,13 @@ public class TaskManagement implements org.jboss.bpm.console.server.integration.
   
 		service.complete(taskId, userId, contentData);
 	}
+	
+	public void addTaskComment(long taskId, String comment) {
+		Comment comment_ = new Comment();
+		comment_.setText(comment);
+		connect();
+		service.addComment(taskId, comment_);
+	}	
 	
 	public void completeTask(long taskId, ContentData contentData, String userId) {
 		/*

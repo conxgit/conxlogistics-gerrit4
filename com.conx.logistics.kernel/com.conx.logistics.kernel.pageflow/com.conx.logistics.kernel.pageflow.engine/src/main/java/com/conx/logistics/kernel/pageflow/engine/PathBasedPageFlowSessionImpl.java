@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManagerFactory;
+import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.jboss.bpm.console.client.model.ProcessInstanceRef;
@@ -76,9 +77,14 @@ public class PathBasedPageFlowSessionImpl implements IPageFlowSession {
 			//Get current task
 			currentTask = waitForNextTask();
 			
+
 			//Get task name
 			HashMap<String,Object> res = (HashMap<String,Object>)this.bpmService.getTaskContentObject(currentTask);
 			String taskName = (String)res.get("TaskName");
+			
+			// Update current task description
+			this.bpmService.addTaskComment(pathAssessor.getCurrentTaskId(),"Receive RL123/Confirm TruckInfo" /*pathAssessor.getCurrentPage().getDescription()*/);
+						
 			
 			//Nominate task
 			bpmService.nominate(currentTask.getId(), userId);
@@ -255,7 +261,41 @@ public class PathBasedPageFlowSessionImpl implements IPageFlowSession {
 		
 		waitForTaskCompleteness(ut);		
 		
+		// 2. getNextTaskAndUpdatePagesPath
+		pagesChanged = getNextTaskAndUpdatePagesPath(ut);
+		
+		// 3. If the next task exists, nominate and start it
+		if (Validator.isNotNull(currentTask)) {
+			// 3.1 Nominate the current user for this task
+			try {
+				ut.begin();
+				bpmService.nominate(currentTask.getId(), userId);	
+				// Update current task description
+				this.bpmService.addTaskComment(pathAssessor.getCurrentTaskId(),"Receive RL456/Confirm TruckInfo" /*pathAssessor.getCurrentPage().getDescription()*/);
+				ut.commit();
+			} catch (Exception e) {
+				ut.rollback();
+				throw e;
+			}
 
+			// 3.2 Start the task
+			try {
+				ut.begin();
+				bpmService.startTask(currentTask.getId(), userId);
+				ut.commit();
+			} catch (Exception e) {
+				ut.rollback();
+				throw e;
+			}
+		}
+
+		
+		return pagesChanged;
+	}
+	
+	@Override
+	public boolean getNextTaskAndUpdatePagesPath(UserTransaction ut) throws SystemException, Exception {
+		boolean pagesChanged = false;
 		// 2. Get the next task after Proc resume
 		try {
 			ut.begin();
@@ -265,11 +305,11 @@ public class PathBasedPageFlowSessionImpl implements IPageFlowSession {
 			//Get current HT node
 			TaskSummary ts = this.bpmService.getTaskSummaryByTaskId(currentTask.getId());
 			Object res = this.bpmService.getTaskContentObject(currentTask);
-			String taskName = ts.getName();
-			HumanTaskNode htTaskNode = this.bpmService.findHumanTaskNodeForTask(taskName, processInstance.getDefinitionId());
+			//String taskName = ts.getName();
+			//HumanTaskNode htTaskNode = this.bpmService.findHumanTaskNodeForTask(taskName, processInstance.getDefinitionId());
 			
 			//Reset path and pages
-			pagesChanged = pathAssessor.restActivePages(htTaskNode);
+			pagesChanged = pathAssessor.restActivePages(ts);
 			
 
 			//Apply vars
@@ -280,31 +320,6 @@ public class PathBasedPageFlowSessionImpl implements IPageFlowSession {
 			ut.rollback();
 			throw e;
 		}
-		
-		// 3. If the next task exists, nominate and start it
-		if (Validator.isNotNull(currentTask)) {
-			// 3.1 Nominate the current user for this task
-			try {
-				ut.begin();
-				bpmService.nominate(currentTask.getId(), userId);				
-				ut.commit();
-			} catch (Exception e) {
-				ut.rollback();
-				throw e;
-			}
-
-			// 3.2 Start the task
-			try {
-				ut.begin();
-				bpmService.startTask(currentTask.getId(), userId);	
-				ut.commit();
-			} catch (Exception e) {
-				ut.rollback();
-				throw e;
-			}
-		}
-
-		
 		return pagesChanged;
 	}
 
