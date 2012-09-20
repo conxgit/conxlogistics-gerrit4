@@ -18,6 +18,10 @@
 		<class>com.conx.logistics.kernel.ui.components.domain.form.ConXDetailForm</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.form.ConXSimpleForm</class>
 		
+		<class>com.conx.logistics.kernel.ui.components.domain.form.ConXSimpleForm</class>
+		<class>com.conx.logistics.kernel.ui.components.domain.page.TaskPage</class>
+		<class>com.conx.logistics.kernel.ui.components.domain.search.SearchGrid</class>
+		
 		<class>com.conx.logistics.kernel.ui.components.domain.form.ConXTextField</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.form.FieldSet</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.form.FieldSetField</class>

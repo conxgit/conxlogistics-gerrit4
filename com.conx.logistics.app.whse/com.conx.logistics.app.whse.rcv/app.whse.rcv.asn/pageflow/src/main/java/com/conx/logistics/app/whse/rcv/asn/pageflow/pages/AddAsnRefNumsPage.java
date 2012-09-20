@@ -11,7 +11,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import com.conx.logistics.kernel.pageflow.event.IPageFlowPageChangedEventHandler;
 import com.conx.logistics.kernel.pageflow.services.ITaskWizard;
-import com.conx.logistics.kernel.pageflow.services.PageFlowPage;
+import com.conx.logistics.kernel.pageflow.services.BasePageFlowPage;
 import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber;
 import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumberType;
 import com.vaadin.addon.jpacontainer.EntityItem;
@@ -31,7 +31,7 @@ import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-public class AddAsnRefNumsPage extends PageFlowPage {
+public class AddAsnRefNumsPage extends BasePageFlowPage {
 	private static final String VIEW_HEIGHT = "100%";
 
 	private int pageMode = LIST_PAGE_MODE;

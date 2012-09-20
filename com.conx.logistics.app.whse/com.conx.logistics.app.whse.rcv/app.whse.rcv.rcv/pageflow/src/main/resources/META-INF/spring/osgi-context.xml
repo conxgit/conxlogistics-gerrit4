@@ -6,14 +6,14 @@
 	xmlns:osgi="http://www.springframework.org/schema/osgi">
 
 	<!-- Shared -->
-	<osgi:service ref="findReceivePage"  interface="com.conx.logistics.kernel.pageflow.services.PageFlowPage">
+	<osgi:service ref="findReceivePage"  interface="com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage">
 		<osgi:service-properties>
 			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0"/>
 			<entry key="TASK_NAME" value="FindReceive"/>
 		  </osgi:service-properties>		
 	</osgi:service>	
 	
-	<osgi:service ref="finalizeArrivalPage"  interface="com.conx.logistics.kernel.pageflow.services.PageFlowPage">
+	<osgi:service ref="finalizeArrivalPage"  interface="com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage">
 		<osgi:service-properties>
 			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0"/>
 			<entry key="TASK_NAME" value="FinalizeArrival"/>
@@ -21,25 +21,25 @@
 	</osgi:service>	
 		
 	<!-- Expected -->
-	<osgi:service ref="confirmDropOffPage"  interface="com.conx.logistics.kernel.pageflow.services.PageFlowPage">
+	<osgi:service ref="confirmDropOffPage"  interface="com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage">
 		<osgi:service-properties>
 			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0"/>
 			<entry key="TASK_NAME" value="ConfirmDropOff"/>
 		  </osgi:service-properties>		
 	</osgi:service>		
-	<osgi:service ref="confirmPickUpPage"  interface="com.conx.logistics.kernel.pageflow.services.PageFlowPage">
+	<osgi:service ref="confirmPickUpPage"  interface="com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage">
 		<osgi:service-properties>
 			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0"/>
 			<entry key="TASK_NAME" value="ConfirmPickUp"/>
 		  </osgi:service-properties>		
 	</osgi:service>		
-	<osgi:service ref="confirmTruckInfoPage"  interface="com.conx.logistics.kernel.pageflow.services.PageFlowPage">
+	<osgi:service ref="confirmTruckInfoPage"  interface="com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage">
 		<osgi:service-properties>
 			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0"/>
 			<entry key="TASK_NAME" value="ConfirmTruckInfo"/>
 		  </osgi:service-properties>		
 	</osgi:service>	
-	<osgi:service ref="processArrivalReceiptsPage"  interface="com.conx.logistics.kernel.pageflow.services.PageFlowPage">
+	<osgi:service ref="processArrivalReceiptsPage"  interface="com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage">
 		<osgi:service-properties>
 			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0"/>
 			<entry key="TASK_NAME" value="ProcessArrivalReceipts"/>
@@ -47,25 +47,25 @@
 	</osgi:service>
 	
 	<!--  JIT -->
-	<osgi:service ref="addDynaDropOffPage"  interface="com.conx.logistics.kernel.pageflow.services.PageFlowPage">
+	<osgi:service ref="addDynaDropOffPage"  interface="com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage">
 		<osgi:service-properties>
 			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0"/>
 			<entry key="TASK_NAME" value="AddDynaDropOff"/>
 		  </osgi:service-properties>		
 	</osgi:service>
-	<osgi:service ref="addDynaPickUpPage"  interface="com.conx.logistics.kernel.pageflow.services.PageFlowPage">
+	<osgi:service ref="addDynaPickUpPage"  interface="com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage">
 		<osgi:service-properties>
 			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0"/>
 			<entry key="TASK_NAME" value="AddDynaPickUp"/>
 		  </osgi:service-properties>		
 	</osgi:service>
-	<osgi:service ref="addDynaTruckInfoPage"  interface="com.conx.logistics.kernel.pageflow.services.PageFlowPage">
+	<osgi:service ref="addDynaTruckInfoPage"  interface="com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage">
 		<osgi:service-properties>
 			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0"/>
 			<entry key="TASK_NAME" value="AddDynaTruckInfo"/>
 		  </osgi:service-properties>		
 	</osgi:service>
-	<osgi:service ref="processDynamicArrivalReceiptsPage"  interface="com.conx.logistics.kernel.pageflow.services.PageFlowPage">
+	<osgi:service ref="processDynamicArrivalReceiptsPage"  interface="com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage">
 		<osgi:service-properties>
 			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0"/>
 			<entry key="TASK_NAME" value="ProcessDynaArrivalReceipts"/>

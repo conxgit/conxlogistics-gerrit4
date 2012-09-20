@@ -16,8 +16,11 @@
 		  </osgi:service-properties>		
 	</osgi:service>	
 	<!-- Listen to IPageFlowPage registrations -->
-	<osgi:list id="pageRegistrations" cardinality="0..N" interface="com.conx.logistics.kernel.pageflow.services.PageFlowPage" >
-		<osgi:listener ref="pageFlowImpl" bind-method="registerPageFlowPage" unbind-method="unregisterPageFlowPage"/>
+	<osgi:list id="modelDrivenPageRegistrations" cardinality="0..N" interface="com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage" >
+		<osgi:listener ref="pageFlowImpl" bind-method="registerModelDrivenPageFlowPage" unbind-method="unregisterModelDrivenPageFlowPage"/>
+	</osgi:list>
+	<osgi:list id="customDrivenPageRegistrations" cardinality="0..N" interface="com.conx.logistics.kernel.pageflow.services.ICustomDrivenPageFlowPage" >
+		<osgi:listener ref="pageFlowImpl" bind-method="registerCustomDrivenPageFlowPage" unbind-method="unregisterCustomDrivenPageFlowPage"/>
 	</osgi:list>
 	<!-- Subscribe to BpmServerInstance -->
 	<osgi:reference id="bpmService" cardinality="1..1" interface="com.conx.logistics.kernel.bpm.services.IBPMService">

@@ -10,7 +10,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import com.conx.logistics.app.whse.rcv.asn.domain.ASN;
 import com.conx.logistics.kernel.pageflow.event.IPageFlowPageChangedEventHandler;
 import com.conx.logistics.kernel.pageflow.services.ITaskWizard;
-import com.conx.logistics.kernel.pageflow.services.PageFlowPage;
+import com.conx.logistics.kernel.pageflow.services.BasePageFlowPage;
 import com.conx.logistics.mdm.domain.organization.Organization;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerFactory;
@@ -25,7 +25,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 
-public class ConfirmAsnOrgPage extends PageFlowPage {
+public class ConfirmAsnOrgPage extends BasePageFlowPage {
 	private static final String VIEW_HEIGHT = "100%";
 	
 	@SuppressWarnings("unused")

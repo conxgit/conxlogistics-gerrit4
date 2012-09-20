@@ -26,7 +26,7 @@ import com.conx.logistics.kernel.pageflow.engine.PageFlowEngineImpl;
 import com.conx.logistics.kernel.pageflow.engine.PathBasedPageFlowEngineImpl;
 import com.conx.logistics.kernel.pageflow.engine.ui.TaskWizard;
 import com.conx.logistics.kernel.pageflow.services.ITaskWizard;
-import com.conx.logistics.kernel.pageflow.services.PageFlowPage;
+import com.conx.logistics.kernel.pageflow.services.BasePageFlowPage;
 import com.conx.logistics.mdm.dao.services.IOrganizationDAOService;
 import com.conx.logistics.mdm.dao.services.product.IProductDAOService;
 import com.conx.logistics.mdm.dao.services.referencenumber.IReferenceNumberTypeDAOService;
@@ -139,35 +139,35 @@ public class PageFlowSessionTests extends AbstractTestNGSpringContextTests {
          * Register Page's
          */   
         props = new HashMap();
-        PageFlowPage page = (PageFlowPage) applicationContext.getBean("confirmAsnOrgPage");
+        BasePageFlowPage page = (BasePageFlowPage) applicationContext.getBean("confirmAsnOrgPage");
         Assert.assertNotNull(page);
         props.put("PROCESS_ID","whse.rcv.asn.CreateNewASNByOrgV1.0");
         props.put("TASK_NAME","ConfirmASNOrg");        
         pageFlowImpl.registerPageFlowPage(page, props);
         
         props = new HashMap();
-        page = (PageFlowPage) applicationContext.getBean("addAsnRefNumsPage");
+        page = (BasePageFlowPage) applicationContext.getBean("addAsnRefNumsPage");
         Assert.assertNotNull(page);        
         props.put("PROCESS_ID","whse.rcv.asn.CreateNewASNByOrgV1.0");
         props.put("TASK_NAME","AddASNRefNums");        
         pageFlowImpl.registerPageFlowPage(page, props);
         
         props = new HashMap();
-        page = (PageFlowPage) applicationContext.getBean("addAsnLinesPage");
+        page = (BasePageFlowPage) applicationContext.getBean("addAsnLinesPage");
         Assert.assertNotNull(page);           
         props.put("PROCESS_ID","whse.rcv.asn.CreateNewASNByOrgV1.0");
         props.put("TASK_NAME","AddASNLines");        
         pageFlowImpl.registerPageFlowPage(page, props);
         
         props = new HashMap();
-        page = (PageFlowPage) applicationContext.getBean("addAsnLocalTransPage");
+        page = (BasePageFlowPage) applicationContext.getBean("addAsnLocalTransPage");
         Assert.assertNotNull(page);           
         props.put("PROCESS_ID","whse.rcv.asn.CreateNewASNByOrgV1.0");
         props.put("TASK_NAME","AddASNLocalTrans");        
         pageFlowImpl.registerPageFlowPage(page, props);
         
         props = new HashMap();
-        page = (PageFlowPage) applicationContext.getBean("confirmAsnPage");
+        page = (BasePageFlowPage) applicationContext.getBean("confirmAsnPage");
         Assert.assertNotNull(page);           
         props.put("PROCESS_ID","whse.rcv.asn.CreateNewASNByOrgV1.0");
         props.put("TASK_NAME","ConfirmASN");        

@@ -13,7 +13,7 @@ import com.conx.logistics.app.whse.rcv.asn.domain.ASNPickup;
 import com.conx.logistics.kernel.pageflow.event.IPageFlowPageChangedEventHandler;
 import com.conx.logistics.kernel.pageflow.event.PageFlowPageChangedEvent;
 import com.conx.logistics.kernel.pageflow.services.ITaskWizard;
-import com.conx.logistics.kernel.pageflow.services.PageFlowPage;
+import com.conx.logistics.kernel.pageflow.services.BasePageFlowPage;
 import com.conx.logistics.mdm.domain.geolocation.Address;
 import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber;
 import com.vaadin.data.util.BeanContainer;
@@ -28,7 +28,7 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
 
-public class ConfirmAsnPage extends PageFlowPage {
+public class ConfirmAsnPage extends BasePageFlowPage {
 	private static final String VIEW_HEIGHT = "100%";
 
 	private TabSheet entityTabSheet;

@@ -15,11 +15,6 @@
 			<artifactId>vaadin</artifactId>
 			<version>6.7.5</version>
 		</dependency>
-		<dependency>
-			<groupId>org.vaadin.addons</groupId>
-			<artifactId>wizards-for-vaadin</artifactId>
-			<version>0.4.4</version>
-		</dependency>
 
 		<!-- ConX -->
 		<dependency>
@@ -70,6 +65,20 @@
 			<groupId>org.apache.catalina</groupId>
 			<artifactId>com.springsource.org.apache.catalina</artifactId>
 			<version>7.0.26</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>
+				com.conx.logistics.kernel.ui.editors.entity.vaadin
+			</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>
+				com.conx.logistics.thirdparty.org.vaadin.addons.wizard-customized-osgi
+			</artifactId>
+			<version>0.4.4</version>
 		</dependency>
 	</dependencies>
 	<build>

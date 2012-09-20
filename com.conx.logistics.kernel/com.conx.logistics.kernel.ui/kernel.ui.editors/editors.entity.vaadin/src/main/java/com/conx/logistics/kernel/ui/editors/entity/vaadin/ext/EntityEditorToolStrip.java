@@ -17,6 +17,10 @@ public class EntityEditorToolStrip extends HorizontalLayout {
 	public static final String TOOLSTRIP_IMG_PRINT_PNG = "toolstrip/img/print.png";
 	public static final String TOOLSTRIP_IMG_VERIFY_PNG = "toolstrip/img/verify.png";
 	public static final String TOOLSTRIP_IMG_RESET_PNG = "toolstrip/img/reset.png";
+	public static final String TOOLSTRIP_IMG_SEARCH_PNG = "toolstrip/img/search.png";
+	public static final String TOOLSTRIP_IMG_HIDE_FILTER_PNG = "toolstrip/img/hide-filter.png";
+	public static final String TOOLSTRIP_IMG_FILTER_PNG = "toolstrip/img/filter.png";
+	public static final String TOOLSTRIP_IMG_CLEAR_PNG = "toolstrip/img/clear.png";
 
 	private HorizontalLayout leftLayout;
 	private HorizontalLayout rightLayout;

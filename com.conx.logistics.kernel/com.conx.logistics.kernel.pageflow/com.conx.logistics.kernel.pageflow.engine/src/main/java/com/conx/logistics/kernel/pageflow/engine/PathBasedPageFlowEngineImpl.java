@@ -3,7 +3,6 @@ package com.conx.logistics.kernel.pageflow.engine;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +17,6 @@ import javax.transaction.UserTransaction;
 import org.drools.definition.process.Node;
 import org.drools.process.instance.WorkItemHandler;
 import org.jboss.bpm.console.client.model.ProcessInstanceRef;
-import org.jbpm.task.query.TaskSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jndi.JndiTemplate;
@@ -29,12 +27,13 @@ import org.vaadin.mvp.presenter.IPresenter;
 import com.conx.logistics.kernel.bpm.services.IBPMService;
 import com.conx.logistics.kernel.pageflow.engine.path.PageFlowPathAssessor;
 import com.conx.logistics.kernel.pageflow.engine.ui.TaskWizard;
-import com.conx.logistics.kernel.pageflow.event.IPageFlowPageChangedEventHandler;
 import com.conx.logistics.kernel.pageflow.event.PageFlowPageChangedEvent;
+import com.conx.logistics.kernel.pageflow.services.ICustomDrivenPageFlowPage;
+import com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage;
 import com.conx.logistics.kernel.pageflow.services.IPageFlowManager;
+import com.conx.logistics.kernel.pageflow.services.IPageFlowPage;
 import com.conx.logistics.kernel.pageflow.services.IPageFlowSession;
 import com.conx.logistics.kernel.pageflow.services.ITaskWizard;
-import com.conx.logistics.kernel.pageflow.services.PageFlowPage;
 import com.conx.logistics.kernel.ui.service.contribution.IMainApplication;
 import com.conx.logistics.mdm.domain.application.Feature;
 import com.conx.logistics.mdm.domain.task.TaskDefinition;
@@ -51,8 +50,8 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 	private UserTransaction userTransaction;
 	
 	/** EntityManagerFactories */
-	private final Map<String, Map<String,PageFlowPage>> pageCache = Collections
-			.synchronizedMap(new HashMap<String, Map<String,PageFlowPage>>());
+	private final Map<String, Map<String,IPageFlowPage>> pageCache = Collections
+			.synchronizedMap(new HashMap<String, Map<String,IPageFlowPage>>());
 	private IMainApplication mainApp;
 
 	public PathBasedPageFlowEngineImpl() {
@@ -111,7 +110,7 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 		return mainApp;
 	}
 
-	private Map<String,PageFlowPage> getPages(String processId) {
+	private Map<String,IPageFlowPage> getPages(String processId) {
 		return pageCache.get(processId);
 	}
 
@@ -129,25 +128,49 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 		return null;
 	}
 
-	public void registerPageFlowPage(
-			PageFlowPage page, Map<String, Object> properties) {
-		String processId = (String)properties.get(PageFlowPage.PROCESS_ID);
-		String taskName = (String)properties.get(PageFlowPage.TASK_NAME);
-		logger.debug("registerPageFlowPage("+processId+","+taskName+")");		
-		Map<String,PageFlowPage> map = this.pageCache.get(processId);
+	public void registerModelDrivenPageFlowPage(
+			IModelDrivenPageFlowPage page, Map<String, Object> properties) {
+		String processId = (String)properties.get(IPageFlowPage.PROCESS_ID);
+		String taskName = (String)properties.get(IPageFlowPage.TASK_NAME);
+		logger.debug("registerModelDrivenPageFlowPage("+processId+","+taskName+")");		
+		Map<String,IPageFlowPage> map = this.pageCache.get(processId);
 		if (map == null) {
-			map = new HashMap<String,PageFlowPage>();
+			map = new HashMap<String,IPageFlowPage>();
 			pageCache.put(processId, map);
 		} 
 		map.put(taskName,page);	
 	}
 
-	public void unregisterPageFlowPage(
-			PageFlowPage page, Map<String, Object> properties) {
-		String processId = (String)properties.get(PageFlowPage.PROCESS_ID);
-		logger.debug("unregisterPageFlowPage("+processId+")");	
-		Map<String,PageFlowPage> map = this.pageCache.get(processId);
-		String taskName = (String)properties.get(PageFlowPage.TASK_NAME);
+	public void unregisterModelDrivenPageFlowPage(
+			IModelDrivenPageFlowPage page, Map<String, Object> properties) {
+		String processId = (String)properties.get(IPageFlowPage.PROCESS_ID);
+		logger.debug("unregisterModelDrivenPageFlowPage("+processId+")");	
+		Map<String,IPageFlowPage> map = this.pageCache.get(processId);
+		String taskName = (String)properties.get(IPageFlowPage.TASK_NAME);
+		if (map != null) {
+			map.remove(taskName);
+		}
+	}
+	
+	public void registerCustomDrivenPageFlowPage(
+			ICustomDrivenPageFlowPage page, Map<String, Object> properties) {
+		String processId = (String)properties.get(IPageFlowPage.PROCESS_ID);
+		String taskName = (String)properties.get(IPageFlowPage.TASK_NAME);
+		logger.debug("registerCustomDrivenPageFlowPage("+processId+","+taskName+")");		
+		Map<String,IPageFlowPage> map = this.pageCache.get(processId);
+		if (map == null) {
+			map = new HashMap<String,IPageFlowPage>();
+			pageCache.put(processId, map);
+		} 
+		map.put(taskName,page);	
+	}
+
+	public void unregisterCustomDrivenPageFlowPage(
+			ICustomDrivenPageFlowPage page, Map<String, Object> properties) {
+		String processId = (String)properties.get(IPageFlowPage.PROCESS_ID);
+		logger.debug("unregisterCustomDrivenPageFlowPage("+processId+")");	
+		Map<String,IPageFlowPage> map = this.pageCache.get(processId);
+		String taskName = (String)properties.get(IPageFlowPage.TASK_NAME);
 		if (map != null) {
 			map.remove(taskName);
 		}
@@ -223,7 +246,7 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 			ut.begin();
 
 			//Get registered pages
-			Map<String,PageFlowPage> pageList = pageCache.get(processId);
+			Map<String,IPageFlowPage> pageList = pageCache.get(processId);
 			Map<String,WorkItemHandler> wihCache = this.bpmService.getRegisteredWIHByDefinitionId(processId);			
 			
 			//All process paths
@@ -329,7 +352,7 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 			ut.begin();
 
 			//Get registered pages
-			Map<String,PageFlowPage> pageList = pageCache.get(processId);
+			Map<String,IPageFlowPage> pageList = pageCache.get(processId);
 			Map<String,WorkItemHandler> wihCache = this.bpmService.getRegisteredWIHByDefinitionId(processId);			
 			
 			//All process paths

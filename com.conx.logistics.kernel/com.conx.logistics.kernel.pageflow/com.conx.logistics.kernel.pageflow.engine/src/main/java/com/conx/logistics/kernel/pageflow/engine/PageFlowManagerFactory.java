@@ -3,8 +3,10 @@ package com.conx.logistics.kernel.pageflow.engine;
 import com.conx.logistics.kernel.pageflow.engine.PageFlowEngineImpl;
 import com.conx.logistics.kernel.pageflow.services.IPageFlowManager;
 
+@Deprecated
 public class PageFlowManagerFactory {
 	public static IPageFlowManager createPageFlowManager() {
-		return new PageFlowEngineImpl();
+//		return new PageFlowEngineImpl();
+		return null;
 	}
 }

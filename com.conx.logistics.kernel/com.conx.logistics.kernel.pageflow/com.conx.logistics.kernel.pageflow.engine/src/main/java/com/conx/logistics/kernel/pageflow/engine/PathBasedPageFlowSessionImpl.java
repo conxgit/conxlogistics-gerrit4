@@ -19,7 +19,6 @@ import org.jbpm.task.Status;
 import org.jbpm.task.Task;
 import org.jbpm.task.query.TaskSummary;
 import org.jbpm.task.service.ContentData;
-import org.jbpm.workflow.core.node.HumanTaskNode;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.vaadin.mvp.eventbus.EventBus;
 import org.vaadin.mvp.presenter.IPresenter;
@@ -30,15 +29,15 @@ import com.conx.logistics.kernel.bpm.services.IBPMService;
 import com.conx.logistics.kernel.pageflow.engine.path.PageFlowPathAssessor;
 import com.conx.logistics.kernel.pageflow.engine.ui.TaskWizard;
 import com.conx.logistics.kernel.pageflow.services.IPageFlowManager;
+import com.conx.logistics.kernel.pageflow.services.IPageFlowPage;
 import com.conx.logistics.kernel.pageflow.services.IPageFlowSession;
-import com.conx.logistics.kernel.pageflow.services.PageFlowPage;
 import com.conx.logistics.mdm.domain.application.Feature;
 import com.vaadin.ui.Component;
 
 public class PathBasedPageFlowSessionImpl implements IPageFlowSession {
 	private static final int WAIT_DELAY = 1000;
 
-	private Map<String, PageFlowPage> pages;
+	private Map<String, IPageFlowPage> pages;
 	private ProcessInstanceRef processInstance;
 	private TaskWizard wizard;
 	private IBPMService bpmService;
@@ -180,7 +179,7 @@ public class PathBasedPageFlowSessionImpl implements IPageFlowSession {
 	}
 
 	@Override
-	public Collection<PageFlowPage> getPages() {
+	public Collection<IPageFlowPage> getPages() {
 		return pathAssessor.getCurrentOrderedPageList();
 	}
 
@@ -323,7 +322,7 @@ public class PathBasedPageFlowSessionImpl implements IPageFlowSession {
 		return pagesChanged;
 	}
 
-	private PageFlowPage getNextPage(PageFlowPage currentPage) {
+	private IPageFlowPage getNextPage(IPageFlowPage currentPage) {
 		for (int i = 0; i < pathAssessor.getCurrentOrderedPageList().size(); i++) {
 			if (pathAssessor.getCurrentOrderedPageList().get(i).equals(currentPage)) {
 				if (i != pathAssessor.getCurrentOrderedPageList().size() - 1) {
@@ -442,4 +441,8 @@ public class PathBasedPageFlowSessionImpl implements IPageFlowSession {
 		return engine;
 	}
 
+	@Override
+	public boolean isOnLastPage() {
+		return this.pathAssessor.isOnLastPage();
+	}
 }

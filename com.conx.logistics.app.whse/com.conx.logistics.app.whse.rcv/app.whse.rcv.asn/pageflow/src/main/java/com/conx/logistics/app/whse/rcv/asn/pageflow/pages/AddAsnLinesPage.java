@@ -13,7 +13,7 @@ import com.conx.logistics.app.whse.rcv.asn.domain.ASNLine;
 import com.conx.logistics.kernel.pageflow.event.IPageFlowPageChangedEventHandler;
 import com.conx.logistics.kernel.pageflow.event.PageFlowPageChangedEvent;
 import com.conx.logistics.kernel.pageflow.services.ITaskWizard;
-import com.conx.logistics.kernel.pageflow.services.PageFlowPage;
+import com.conx.logistics.kernel.pageflow.services.BasePageFlowPage;
 import com.conx.logistics.mdm.domain.currency.CurrencyUnit;
 import com.conx.logistics.mdm.domain.product.DimUnit;
 import com.conx.logistics.mdm.domain.product.PackUnit;
@@ -52,7 +52,7 @@ import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-public class AddAsnLinesPage extends PageFlowPage {
+public class AddAsnLinesPage extends BasePageFlowPage {
 	private static final String VIEW_HEIGHT = "100%";
 
 	private int pageMode;

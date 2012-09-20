@@ -38,7 +38,7 @@ import com.conx.logistics.kernel.pageflow.engine.PageFlowEngineImpl;
 import com.conx.logistics.kernel.pageflow.engine.PathBasedPageFlowEngineImpl;
 import com.conx.logistics.kernel.pageflow.engine.ui.TaskWizard;
 import com.conx.logistics.kernel.pageflow.services.ITaskWizard;
-import com.conx.logistics.kernel.pageflow.services.PageFlowPage;
+import com.conx.logistics.kernel.pageflow.services.BasePageFlowPage;
 
 @ContextConfiguration(locations = { "/META-INF/tm.jta-module-context.xml",
         "/META-INF/persistence.datasource-module-context.xml",
@@ -119,37 +119,37 @@ public class DynamicArrivalProcessingTests extends AbstractTestNGSpringContextTe
          * Register Page's
          */   
         props = new HashMap();
-        PageFlowPage page = (PageFlowPage) applicationContext.getBean("findReceivePage");
+        BasePageFlowPage page = (BasePageFlowPage) applicationContext.getBean("findReceivePage");
         Assert.assertNotNull(page);
         props.put("PROCESS_ID","whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0");
         props.put("TASK_NAME","FindReceive");        
         pageFlowImpl.registerPageFlowPage(page, props);    
         
-        page = (PageFlowPage) applicationContext.getBean("confirmReceivePage");
+        page = (BasePageFlowPage) applicationContext.getBean("confirmReceivePage");
         Assert.assertNotNull(page);
         props.put("PROCESS_ID","whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0");
         props.put("TASK_NAME","ConfirmReceive");        
         pageFlowImpl.registerPageFlowPage(page, props);  
         
-        page = (PageFlowPage) applicationContext.getBean("processArrivalReceipts");
+        page = (BasePageFlowPage) applicationContext.getBean("processArrivalReceipts");
         Assert.assertNotNull(page);
         props.put("PROCESS_ID","whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0");
         props.put("TASK_NAME","ProcessArrivalReceipts");        
         pageFlowImpl.registerPageFlowPage(page, props);         
           
-        page = (PageFlowPage) applicationContext.getBean("createDynamicReceiveFromBOLPage");
+        page = (BasePageFlowPage) applicationContext.getBean("createDynamicReceiveFromBOLPage");
         Assert.assertNotNull(page);
         props.put("PROCESS_ID","whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0");
         props.put("TASK_NAME","CreateDynamicReceiveFromBOL");        
         pageFlowImpl.registerPageFlowPage(page, props);  
         
-        page = (PageFlowPage) applicationContext.getBean("processDynamicArrivalReceiptsPage");
+        page = (BasePageFlowPage) applicationContext.getBean("processDynamicArrivalReceiptsPage");
         Assert.assertNotNull(page);
         props.put("PROCESS_ID","whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0");
         props.put("TASK_NAME","ProcessDynamicArrivalReceipts");        
         pageFlowImpl.registerPageFlowPage(page, props);   
         
-        page = (PageFlowPage) applicationContext.getBean("confirmArrivalPage");
+        page = (BasePageFlowPage) applicationContext.getBean("confirmArrivalPage");
         Assert.assertNotNull(page);
         props.put("PROCESS_ID","whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0");
         props.put("TASK_NAME","ConfirmArrival");        
@@ -193,7 +193,7 @@ public class DynamicArrivalProcessingTests extends AbstractTestNGSpringContextTe
 		stepNames.add("CreateDynamicReceiveFromBOL");
 		stepNames.add("ProcessDynamicArrivalReceipts");
 		stepNames.add("ConfirmArrival");
-		for (PageFlowPage pf : ((TaskWizard)wiz).getSession().getPages())
+		for (BasePageFlowPage pf : ((TaskWizard)wiz).getSession().getPages())
 		{
 			Assert.assertEquals(stepNames.contains(pf.getTaskName()), "true");
 		}

@@ -15,7 +15,7 @@ import com.vaadin.ui.Component;
 
 public interface IPageFlowSession {
 	public IBPMProcessInstance getBPMProcessInstance();
-	public Collection<PageFlowPage> getPages();
+	public Collection<IPageFlowPage> getPages();
 	public Component getWizardComponent();
 	public Feature getOnCompletionFeature();
 	public void nextPage();
@@ -26,6 +26,7 @@ public interface IPageFlowSession {
 	public EntityManagerFactory getConXEntityManagerfactory();
 	public PlatformTransactionManager getJTAGlobalTransactionManager();
 	public IPageFlowManager getPageFlowEngine();
+	public boolean isOnLastPage();
 	
 	public void completeProcess(UserTransaction userTransaction, Object data) throws Exception;
 	public boolean getNextTaskAndUpdatePagesPath(UserTransaction ut) throws SystemException, Exception;	

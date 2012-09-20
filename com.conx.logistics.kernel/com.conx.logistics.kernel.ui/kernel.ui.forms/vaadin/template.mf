@@ -33,6 +33,7 @@ Import-Template: com.conx.logistics.mdm.domain.application;version="[1.0.0,2.0.0
   com.vaadin.addon.jpacontainer;version="2.0.0",
   com.vaadin.addon.jpacontainer.provider;version="2.0.0",
   com.vaadin.addon.jpacontainer.fieldfactory;version="[2.0.0,3.0.0)",
+  com.vaadin.addon.jpacontainer.util;version="[2.0.0,3.0.0)",
   javax.persistence;version="[1.0.0, 3.0.0)",
   javax.persistence.criteria;version="[1.0.0, 3.0.0)",
   org.springframework.transaction;version="[3.0,3.1)",

@@ -12,7 +12,7 @@ import org.jbpm.workflow.core.node.HumanTaskNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.conx.logistics.kernel.pageflow.services.PageFlowPage;
+import com.conx.logistics.kernel.pageflow.services.IPageFlowPage;
 
 public class PageFlowPathAssessor {
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -21,12 +21,14 @@ public class PageFlowPathAssessor {
 	private List<Node> nodePath;
 	private Map<String,List<Node>> possibleNextPaths;
 	
-	private List<PageFlowPage> currentOrderedPageList;
+	private List<IPageFlowPage> currentOrderedPageList;
 	
-	private Map<String,PageFlowPage> pageCache;
-	private PageFlowPage currentPage;
+	private Map<String,IPageFlowPage> pageCache;
+	private IPageFlowPage currentPage;
 	private long currentTaskId;
 	private boolean pagesChanged;
+
+	private String currentTaskName;
 	
 	public PageFlowPathAssessor(){
 	}
@@ -35,7 +37,7 @@ public class PageFlowPathAssessor {
 			    String name, 
 				List<Node> nodePath,
 			    Map<String, List<Node>> possibleNextPaths,
-			    Map<String,PageFlowPage> pageCache) {
+			    Map<String,IPageFlowPage> pageCache) {
 		super();
 		this.name = name;
 		this.nodePath = nodePath;
@@ -49,6 +51,7 @@ public class PageFlowPathAssessor {
 	public boolean restActivePages(TaskSummary ts)
 	{
 		this.currentTaskId = ts.getId();
+		this.currentTaskName = ts.getName();
 		String name_ = null;
 		List<Node> nodePath_ = null;
 		
@@ -97,10 +100,14 @@ public class PageFlowPathAssessor {
 		
 		return this.pagesChanged;
 	}
+	
+	public boolean isOnLastPage() {
+		return this.name.endsWith(this.currentTaskName + "-->End");
+	}
 
 	private void createOrderedPageList() {
 		//Create currentOrderedPageList
-		this.currentOrderedPageList = new ArrayList<PageFlowPage>();
+		this.currentOrderedPageList = new ArrayList<IPageFlowPage>();
 		for (Node node : nodePath)
 		{
 			if (node instanceof HumanTaskNode)
@@ -112,7 +119,7 @@ public class PageFlowPathAssessor {
 	
 	private void updateCurrentPageInfo(String currentTaskName) {
 		//Create currentOrderedPageList
-		this.currentOrderedPageList = new ArrayList<PageFlowPage>();
+		this.currentOrderedPageList = new ArrayList<IPageFlowPage>();
 		String firstTaskName = null;
 		for (Node node : nodePath)
 		{
@@ -123,6 +130,7 @@ public class PageFlowPathAssessor {
 				{
 					firstTaskName = node.getName();
 					this.currentTaskId = ((HumanTaskNode)node).getId();
+					this.currentTaskName = ((HumanTaskNode)node).getName();
 					currentPage = pageCache.get(node.getName());
 				}
 				else if (currentTaskName.equalsIgnoreCase(node.getName()))
@@ -145,11 +153,11 @@ public class PageFlowPathAssessor {
 		return possibleNextPaths;
 	}
 
-	public List<PageFlowPage> getCurrentOrderedPageList() {
+	public List<IPageFlowPage> getCurrentOrderedPageList() {
 		return currentOrderedPageList;
 	}
 
-	public Map<String, PageFlowPage> getPageCache() {
+	public Map<String, IPageFlowPage> getPageCache() {
 		return pageCache;
 	}
 
@@ -157,7 +165,7 @@ public class PageFlowPathAssessor {
 		return pagesChanged;
 	}
 
-	public PageFlowPage getCurrentPage() {
+	public IPageFlowPage getCurrentPage() {
 		return currentPage;
 	}
 

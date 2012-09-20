@@ -1,0 +1,32 @@
+<module>
+    <inherits name="org.vaadin.hene.popupbutton.widgetset.PopupbuttonWidgetset" />
+
+    <inherits name="org.vaadin.teemu.wizards.WizardsforvaadinWidgetset" />
+
+    <inherits name="com.vaadin.terminal.gwt.DefaultWidgetSet" />
+
+    
+
+    <inherits name="com.vaadin.addon.toolbar.widgetset.ToolbarWidgetset" />
+
+    
+
+    <inherits name="org.vaadin.peter.contextmenu.ContextmenuWidgetset" />
+
+    <inherits name="org.vaadin.csstools.CssToolsWidgetset" />
+
+    <inherits name="org.vaadin.weelayout.WeelayoutWidgetset" />
+
+    
+	<set-property name="user.agent" value="gecko1_8" />
+
+    
+
+    
+
+    
+
+    
+
+    
+</module>
