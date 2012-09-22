@@ -17,7 +17,6 @@ import org.vaadin.teemu.wizards.Wizard;
 import org.vaadin.teemu.wizards.WizardStep;
 
 import com.conx.logistics.common.utils.Validator;
-import com.conx.logistics.kernel.pageflow.engine.PageFlowSessionImpl;
 import com.conx.logistics.kernel.pageflow.engine.builder.VaadinPageFactoryImpl;
 import com.conx.logistics.kernel.pageflow.event.IPageFlowPageChangedEventHandler;
 import com.conx.logistics.kernel.pageflow.event.IPageFlowPageChangedListener;
@@ -37,7 +36,6 @@ import com.vaadin.addon.jpacontainer.JPAContainerFactory;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Window.Notification;
 
-@SuppressWarnings("deprecation")
 public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChangedEventHandler {
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -66,8 +64,8 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 	public TaskWizard(IPageFlowSession session) {
 		this.session = session;
 		this.engine = session.getPageFlowEngine();
-		this.pageFactory = new VaadinPageFactoryImpl();
 		this.pageComponentMap = new HashMap<IPageFlowPage, IPageComponent>();
+		this.pageFactory = new VaadinPageFactoryImpl();
 
 		getNextButton().setImmediate(true);
 		getBackButton().setImmediate(true);
@@ -181,6 +179,7 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 		super.back();
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public void finish() {
 		try {
@@ -192,7 +191,7 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 			return;
 		}
 
-		IMainApplication mainApp = this.engine.getMainApplication();
+		IMainApplication mainApp = null;
 		if (Validator.isNotNull(mainApp)) {
 			com.conx.logistics.mdm.domain.application.Application parentApp = onCompletionCompletionFeature.getParentApplication();
 

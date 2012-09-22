@@ -80,6 +80,13 @@
 			</artifactId>
 			<version>0.4.4</version>
 		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>
+				com.conx.logistics.kernel.pageflow.ui
+			</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

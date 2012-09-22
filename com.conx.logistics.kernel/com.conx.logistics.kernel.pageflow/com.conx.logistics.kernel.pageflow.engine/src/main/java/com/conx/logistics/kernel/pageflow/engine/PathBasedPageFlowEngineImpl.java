@@ -432,11 +432,6 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 		Map<String, Object> procInstVars = ((TaskWizard)tw).getSession().updateProcessInstanceVariables(this.userTransaction,varsToUpdate);
 		((TaskWizard) tw).fireOnPageFlowChanged(new PageFlowPageChangedEvent(procInstVars));
 		return procInstVars;
-	}	
-
-	@Override
-	public void setMainApplication(IMainApplication mainApp) {
-		this.mainApp = mainApp;
 	}
 
 	@Override
@@ -452,10 +447,5 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 	@Override
 	public IBPMService getBPMService() {
 		return bpmService;
-	}
-
-	@Override
-	public IMainApplication getMainApplication() {
-		return mainApp;
 	}
 }

@@ -21,7 +21,7 @@ public class VaadinFormAlertPanel extends HorizontalLayout {
 	}
 
 	private void initialize() {
-		this.icon.setStyleName("conx-entity-alert-panel-icon");
+		this.icon.setStyleName("conx-entity-alert-panel-error-icon");
 		this.icon.setHeight("14px");
 		this.icon.setWidth("16px");
 		
@@ -32,7 +32,7 @@ public class VaadinFormAlertPanel extends HorizontalLayout {
 		this.closeButton.setHeight("20px");
 		this.closeButton.setWidth("20px");
 		
-		setStyleName("conx-entity-alert-panel");
+		setStyleName("conx-entity-alert-panel-error");
 		setWidth("100%");
 		setHeight("33px");
 		setSpacing(true);
@@ -53,5 +53,42 @@ public class VaadinFormAlertPanel extends HorizontalLayout {
 	
 	public void addCloseListener(com.vaadin.event.MouseEvents.ClickListener listener) {
 		this.closeButton.addListener(listener);
+	}
+	
+	public void setAlertType(AlertType type) {
+		switch (type) {
+		case ERROR:
+			this.icon.setStyleName("conx-entity-alert-panel-error-icon");
+			setStyleName("conx-entity-alert-panel-error");
+			break;
+		case WARNING:
+			this.icon.setStyleName("conx-entity-alert-panel-warning-icon");
+			setStyleName("conx-entity-alert-panel-warning");
+			break;
+		case SUCCESS:
+			this.icon.setStyleName("conx-entity-alert-panel-success-icon");
+			setStyleName("conx-entity-alert-panel-success");
+			break;
+		case INFO:
+			this.icon.setStyleName("conx-entity-alert-panel-info-icon");
+			setStyleName("conx-entity-alert-panel-info");
+			break;
+		case STATUS:
+			this.icon.setStyleName("conx-entity-alert-panel-status-icon");
+			setStyleName("conx-entity-alert-panel-status");
+			break;
+		}
+	}
+	
+	public void setCloseable(boolean closeable) {
+		this.closeButton.setVisible(closeable);
+	}
+	
+	public enum AlertType {
+		ERROR,
+		WARNING,
+		INFO,
+		STATUS,
+		SUCCESS
 	}
 }

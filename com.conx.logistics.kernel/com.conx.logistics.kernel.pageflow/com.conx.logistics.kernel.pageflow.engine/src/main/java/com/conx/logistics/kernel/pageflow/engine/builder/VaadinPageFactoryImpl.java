@@ -1,7 +1,12 @@
 package com.conx.logistics.kernel.pageflow.engine.builder;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+
+import org.vaadin.mvp.eventbus.EventBusManager;
+import org.vaadin.mvp.presenter.IPresenterFactory;
+import org.vaadin.mvp.presenter.PresenterFactory;
 
 import com.conx.logistics.kernel.datasource.domain.DataSource;
 import com.conx.logistics.kernel.pageflow.services.BasePageComponent;
@@ -9,44 +14,53 @@ import com.conx.logistics.kernel.pageflow.services.ICustomDrivenPageFlowPage;
 import com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage;
 import com.conx.logistics.kernel.pageflow.services.IPageComponent;
 import com.conx.logistics.kernel.pageflow.services.IPageFlowPage;
+import com.conx.logistics.kernel.pageflow.ui.mvp.IPageDataHandler;
+import com.conx.logistics.kernel.pageflow.ui.mvp.PagePresenter;
 import com.conx.logistics.kernel.ui.components.domain.page.TaskPage;
 import com.conx.logistics.kernel.ui.components.domain.search.SearchGrid;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.search.EntitySearchGrid;
 import com.vaadin.data.Container;
 
 public class VaadinPageFactoryImpl {
-	public static final String CONX_ENTITY_MANAGER_FACTORY = "CONX_ENTITY_MANAGER_FACTORY";
-	public static final String JTA_GLOBAL_TRANSACTION_MANAGER = "JTA_GLOBAL_TRANSACTION_MANAGER";
-	public static final String ENTITY_CONTAINER_PROVIDER = "ENTITY_CONTAINER_PROVIDER";
-	public static final String TASK_WIZARD = "TASK_WIZARD";
-	public static final String PAGE_FLOW_PAGE_CHANGE_EVENT_HANDLER = "PAGE_FLOW_PAGE_CHANGE_EVENT_HANDLER";
+	
+	public VaadinPageFactoryImpl() {
+	}
 
 	public IPageComponent create(final IPageFlowPage page, Map<String, Object> initParams) {
 		IPageComponent pageComponent = null;
 		if (isInstanceOf(page, IModelDrivenPageFlowPage.class)) {
+			PresenterFactory presenterFactory = new PresenterFactory(new EventBusManager(), Locale.getDefault());
+			PagePresenter pagePresenter = (PagePresenter) presenterFactory.createPresenter(PagePresenter.class);
 			TaskPage taskPage = ((IModelDrivenPageFlowPage) page).getComponentModel();
 			if (taskPage.getContent() instanceof SearchGrid) {
-				pageComponent = new BasePageComponent((IPageFlowPage) page, new EntitySearchGrid((SearchGrid) taskPage.getContent())) {
-
+				EntitySearchGrid vaadinComponent =  new EntitySearchGrid((SearchGrid) taskPage.getContent());
+				vaadinComponent.setStatusEnabled(true);
+				
+				pagePresenter.setPage(page);
+				pagePresenter.setPageContent(vaadinComponent);
+				pagePresenter.setDataHandler(new IPageDataHandler() {
+					
 					@Override
-					public void setParameterData(Map<String, Object> params) {
+					public void setParameterData(PagePresenter source, Map<String, Object> params) {
 						try {
-							DataSource ds = ((IModelDrivenPageFlowPage) this.getPage()).getComponentModel().getContent().getDataSource();
-							Container container = (Container) this.getContainerProvider().createPersistenceContainer(ds.getEntityType().getJavaType());
-							((EntitySearchGrid) this.getContent()).setContainerDataSource(container);
+							DataSource ds = ((IModelDrivenPageFlowPage) source.getPage()).getComponentModel().getContent().getDataSource();
+							Container container = (Container) source.getContainerProvider().createPersistenceContainer(ds.getEntityType().getJavaType());
+							((EntitySearchGrid) source.getPageContent()).setContainerDataSource(container);
 						} catch (ClassNotFoundException e) {
 							e.printStackTrace();
 						}
 					}
-
+					
 					@Override
-					public Map<String, Object> getResultData() {
+					public Map<String, Object> getResultData(PagePresenter source) {
 						HashMap<String, Object> res = new HashMap<String, Object>();
-						res.put("receive", ((EntitySearchGrid) getContent()).getSelectedEntity());
+						res.put("receive", ((EntitySearchGrid) source.getView()).getSelectedEntity());
 						return res;
 					}
-				};
+				});
 			}
+			pageComponent = pagePresenter;
+			
 			if (pageComponent == null) {
 				return null;
 			}

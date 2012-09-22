@@ -5,11 +5,14 @@ import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.EntityEditorToolSt
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.EntityEditorToolStrip.EntityEditorToolStripButton;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityGridFilterManager;
 import com.conx.logistics.kernel.ui.filteredtable.FilterTable;
+import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormAlertPanel;
+import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormAlertPanel.AlertType;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinSearchForm;
 import com.conx.logistics.kernel.ui.vaadin.common.ConXVerticalSplitPanel;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.data.Container;
+import com.vaadin.data.Property;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.terminal.ThemeResource;
@@ -26,6 +29,8 @@ public class EntitySearchGrid extends VerticalLayout {
 	private EntityEditorToolStrip formToolStrip;
 	private EntityEditorToolStrip gridToolStrip;
 	private SearchGrid componentModel;
+	private VaadinFormAlertPanel gridStatus;
+	private boolean statusEnabled;
 
 	public EntitySearchGrid(SearchGrid componentModel) {
 		this.componentModel = componentModel;
@@ -34,6 +39,7 @@ public class EntitySearchGrid extends VerticalLayout {
 		this.splitPanel = new ConXVerticalSplitPanel();
 		this.formToolStrip = new EntityEditorToolStrip();
 		this.gridToolStrip = new EntityEditorToolStrip();
+		this.gridStatus = new VaadinFormAlertPanel();
 
 		initialize();
 	}
@@ -49,6 +55,7 @@ public class EntitySearchGrid extends VerticalLayout {
 				((JPAContainer) EntitySearchGrid.this.grid.getContainerDataSource()).removeAllContainerFilters();
 				EntitySearchGrid.this.searchForm.buildQuery();
 				((JPAContainer) EntitySearchGrid.this.grid.getContainerDataSource()).applyFilters();
+				updateGridStatus();
 			}
 		});
 
@@ -71,6 +78,7 @@ public class EntitySearchGrid extends VerticalLayout {
 			public void buttonClick(ClickEvent event) {
 				EntitySearchGrid.this.searchForm.clearForm();
 				((JPAContainer) EntitySearchGrid.this.grid.getContainerDataSource()).removeAllContainerFilters();
+				updateGridStatus();
 			}
 		});
 
@@ -98,9 +106,13 @@ public class EntitySearchGrid extends VerticalLayout {
 
 		EntityGridFilterManager gridManager = new EntityGridFilterManager();
 
+		this.gridStatus.setVisible(false);
+		this.gridStatus.setCloseable(false);
+		
 		this.grid.setSizeFull();
 		this.grid.setMultiSelect(false);
 		this.grid.setSelectable(true);
+		this.grid.setImmediate(true);
 		this.grid.setNullSelectionAllowed(false);
 		this.grid.setFilterDecorator(gridManager);
 		this.grid.setFilterGenerator(gridManager);
@@ -112,7 +124,7 @@ public class EntitySearchGrid extends VerticalLayout {
 			@Override
 			public void itemClick(ItemClickEvent event) {
 				if (event.getButton() == ItemClickEvent.BUTTON_LEFT) {
-					EntitySearchGrid.this.searchForm.setItemDataSource(EntitySearchGrid.this.grid.getItem(event.getItemId()));
+					updateGridStatus();
 				}
 			}
 		});
@@ -129,6 +141,7 @@ public class EntitySearchGrid extends VerticalLayout {
 		gridWrapper.setSizeFull();
 		gridWrapper.setStyleName("conx-entity-grid");
 		gridWrapper.addComponent(this.gridToolStrip);
+		gridWrapper.addComponent(this.gridStatus);
 		gridWrapper.addComponent(this.grid);
 		gridWrapper.setExpandRatio(this.grid, 1.0f);
 
@@ -144,6 +157,7 @@ public class EntitySearchGrid extends VerticalLayout {
 		setWidth("100%");
 		// setHeight("400px");
 		setHeight("100%");
+		addComponent(this.gridStatus);
 		addComponent(this.splitPanel);
 		setExpandRatio(this.splitPanel, 1.0f);
 	}
@@ -159,5 +173,38 @@ public class EntitySearchGrid extends VerticalLayout {
 			return ((JPAContainerItem<?>) this.grid.getItem(this.grid.getValue())).getEntity();
 		}
 		return null;
+	}
+	
+	public void setStatusEnabled(boolean enabled) {
+		this.statusEnabled = enabled;
+		if (this.statusEnabled) {
+			updateGridStatus();
+			this.gridStatus.setVisible(true);
+		} else {
+			this.gridStatus.setVisible(false);
+		}
+	}
+	
+	private void updateGridStatus() {
+		if (this.statusEnabled) {
+			Object id = EntitySearchGrid.this.grid.getValue();
+			if (id != null) {
+				JPAContainerItem<?> item = (JPAContainerItem<?>) EntitySearchGrid.this.grid.getItem(id);
+				if (item != null) {
+					Property nameProperty = item.getItemProperty("name");
+					if (nameProperty != null) {
+						String name = nameProperty.getValue().toString();
+						if (name != null) {
+							EntitySearchGrid.this.gridStatus.setAlertType(AlertType.SUCCESS);
+							EntitySearchGrid.this.gridStatus.setMessage(name + " is currently selected.");
+							return;
+						}
+					}
+				}
+			}
+			
+			this.gridStatus.setAlertType(AlertType.ERROR);
+			this.gridStatus.setMessage("No item is currently selected.");
+		}
 	}
 }

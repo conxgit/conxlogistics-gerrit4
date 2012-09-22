@@ -48,17 +48,6 @@ public interface IPageFlowManager {
 	
 	
 	/**
-	 * Main App
-	 */
-	public void setMainApplication(IMainApplication mainApp);
-	
-	/**
-	 * Get the Main App
-	 */
-	public IMainApplication getMainApplication();
-	
-	
-	/**
 	 * Other
 	 */
 	public EntityManagerFactory getConXEntityManagerfactory();

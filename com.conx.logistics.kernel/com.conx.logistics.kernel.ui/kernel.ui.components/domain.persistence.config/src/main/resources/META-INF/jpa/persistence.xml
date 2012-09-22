@@ -17,6 +17,7 @@
 		<class>com.conx.logistics.kernel.ui.components.domain.form.ConXForm</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.form.ConXDetailForm</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.form.ConXSimpleForm</class>
+		<class>com.conx.logistics.kernel.ui.components.domain.form.ConfirmActualsForm</class>
 		
 		<class>com.conx.logistics.kernel.ui.components.domain.form.ConXSimpleForm</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.page.TaskPage</class>
@@ -25,6 +26,8 @@
 		<class>com.conx.logistics.kernel.ui.components.domain.form.ConXTextField</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.form.FieldSet</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.form.FieldSetField</class>
+		<class>com.conx.logistics.kernel.ui.components.domain.form.ConfirmActualsFieldSet</class>
+		<class>com.conx.logistics.kernel.ui.components.domain.form.ConfirmActualsFieldSetField</class>
 		
 		<class>com.conx.logistics.kernel.ui.components.domain.layout.AbstractConXLayout</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.layout.AbstractConXOrderedLayout</class>

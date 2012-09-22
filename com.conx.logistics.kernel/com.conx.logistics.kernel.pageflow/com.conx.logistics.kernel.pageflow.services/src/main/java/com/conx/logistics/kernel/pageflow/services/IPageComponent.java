@@ -10,6 +10,7 @@ public interface IPageComponent extends WizardStep {
 	public static final String ENTITY_CONTAINER_PROVIDER = "ENTITY_CONTAINER_PROVIDER";
 	public static final String TASK_WIZARD = "TASK_WIZARD";
 	public static final String PAGE_FLOW_PAGE_CHANGE_EVENT_HANDLER = "PAGE_FLOW_PAGE_CHANGE_EVENT_HANDLER";
+	public static final String MVP_PRESENTER_FACTORY = "MVP_PRESENTER_FACTORY";
 	
 	public void init(Map<String, Object> initParams);
 	public void setParameterData(Map<String, Object> params);

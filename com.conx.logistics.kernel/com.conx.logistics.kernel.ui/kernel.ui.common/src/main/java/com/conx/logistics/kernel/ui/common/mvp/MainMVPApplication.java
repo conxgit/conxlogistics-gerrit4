@@ -462,7 +462,6 @@ public class MainMVPApplication extends Application implements IMainApplication,
 			IPageFlowManager pageflowEngine, Map properties) {
 		logger.debug("bindPageFlowEngine()");
 		this.pageFlowEngine  = pageflowEngine;
-		this.pageFlowEngine.setMainApplication(this);
 	}
 
 	public void bindKernelSystemTransManager(

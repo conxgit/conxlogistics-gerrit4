@@ -6668,16 +6668,60 @@ textarea.v-textarea-readonly,
 /******************************************************************************
 *******************************************************************************
 ******************************************************************************/
-.conx-entity-alert-panel {
+.conx-entity-alert-panel-error {
 	background: url(formlayout/img/custom/conx-form-alert-panel-red-background.png) repeat-x;
 	color: #fff;
 	font-size: 12px;
 }
-.conx-entity-alert-panel .v-label {
+.conx-entity-alert-panel-error .v-label {
 	padding-left: 4px;
 }
-.conx-entity-alert-panel-icon {
+.conx-entity-alert-panel-warning {
+	background: url(formlayout/img/custom/conx-form-alert-panel-red-background.png) repeat-x;
+	color: #fff;
+	font-size: 12px;
+}
+.conx-entity-alert-panel-warning .v-label {
+	padding-left: 4px;
+}
+.conx-entity-alert-panel-status {
+	background: url(formlayout/img/custom/conx-form-alert-panel-red-background.png) repeat-x;
+	color: #fff;
+	font-size: 12px;
+}
+.conx-entity-alert-panel-status .v-label {
+	padding-left: 4px;
+}
+.conx-entity-alert-panel-success {
+	background: url(formlayout/img/custom/conx-form-alert-panel-green-background.png) repeat-x;
+	color: #fff;
+	font-size: 12px;
+}
+.conx-entity-alert-panel-success .v-label {
+	padding-left: 4px;
+}
+.conx-entity-alert-panel-info {
+	background: url(formlayout/img/custom/conx-form-alert-panel-red-background.png) repeat-x;
+	color: #fff;
+	font-size: 12px;
+}
+.conx-entity-alert-panel-info .v-label {
+	padding-left: 4px;
+}
+.conx-entity-alert-panel-error-icon {
 	background: url(formlayout/img/custom/conx-form-alert-panel-warning-icon.png) left center no-repeat;
+}
+.conx-entity-alert-panel-warning-icon {
+	background: url(formlayout/img/custom/conx-form-alert-panel-warning-icon.png) left center no-repeat;
+}
+.conx-entity-alert-panel-status-icon {
+	background: url(formlayout/img/custom/conx-form-alert-panel-warning-icon.png) left center no-repeat;
+}
+.conx-entity-alert-panel-info-icon {
+	background: url(formlayout/img/custom/conx-form-alert-panel-info-icon.png) left center no-repeat;
+}
+.conx-entity-alert-panel-success-icon {
+	background: url(formlayout/img/custom/conx-form-alert-panel-success-icon.png) left center no-repeat;
 }
 .conx-entity-alert-panel-message {
 	padding-top: 8px;
