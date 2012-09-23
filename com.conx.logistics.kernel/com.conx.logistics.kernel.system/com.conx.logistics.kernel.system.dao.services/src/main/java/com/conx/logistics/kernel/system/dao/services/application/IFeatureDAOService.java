@@ -14,4 +14,6 @@ public interface IFeatureDAOService {
 	public Feature updateFeature(Feature app);
 
 	public Feature getFeature(long id);
+
+	public Feature findFeatureByCode(String code);
 }

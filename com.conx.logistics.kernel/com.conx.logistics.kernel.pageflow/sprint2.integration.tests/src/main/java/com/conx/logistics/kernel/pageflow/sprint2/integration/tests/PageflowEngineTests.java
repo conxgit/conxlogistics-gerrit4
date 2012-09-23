@@ -36,7 +36,7 @@ public class PageflowEngineTests {
 			onCompletionFeature.setId(100000L);
 			params.put("onCompletionFeature",onCompletionFeature);
 			params.put("processId", "whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0");
-			params.put("userId", "conxuser");
+			params.put("userId", "test");
 			
 			/**
 			 * 

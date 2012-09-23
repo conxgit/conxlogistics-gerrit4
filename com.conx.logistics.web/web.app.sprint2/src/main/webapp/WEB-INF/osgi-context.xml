@@ -21,9 +21,21 @@
 		<osgi:listener ref="mainApp" bind-method="bindKernelSystemEntityManagerFactory" unbind-method="unbindKernelSystemEntityManagerFactory"/>
 	</osgi:reference>	
 	
+	<osgi:reference id="conxJbpmEntityManagerFactory" interface="javax.persistence.EntityManagerFactory" filter="(module=KERNEL.SYSTEM.BPM)">
+		<osgi:listener ref="mainApp" bind-method="bindConxJbpmEntityManagerFactory" unbind-method="unbindConxJbpmEntityManagerFactory"/>
+	</osgi:reference>	
+	
+	<osgi:reference id="conxHumanTaskEntityManagerFactory" interface="javax.persistence.EntityManagerFactory" filter="(module=KERNEL.SYSTEM.BPM.TASK)">
+		<osgi:listener ref="mainApp" bind-method="bindConxHumanTaskEntityManagerFactory" unbind-method="unbindConxHumanTaskEntityManagerFactory"/>
+	</osgi:reference>			
+	
 	<osgi:reference id="applicationDAOService" cardinality="0..1" interface="com.conx.logistics.kernel.system.dao.services.application.IApplicationDAOService">
 		<osgi:listener ref="mainApp" bind-method="bindApplicationDAOService" unbind-method="unbindApplicationDAOService"/>
 	</osgi:reference>	
+	
+	<osgi:reference id="featureDAOService" cardinality="0..1" interface="ccom.conx.logistics.kernel.system.dao.services.application.IFeatureDAOService">
+		<osgi:listener ref="mainApp" bind-method="bindFeatureDAOService" unbind-method="unbindFeatureDAOService"/>
+	</osgi:reference>		
 	
 	<osgi:reference id="entityEditorFactory" cardinality="1..1" interface="com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory">
 		<osgi:listener ref="mainApp" bind-method="bindEntityEditorFactory" unbind-method="unbindEntityEditorFactory"/>

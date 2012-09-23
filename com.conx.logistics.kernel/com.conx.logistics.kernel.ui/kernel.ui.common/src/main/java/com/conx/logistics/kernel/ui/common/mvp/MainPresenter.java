@@ -16,11 +16,14 @@ import org.vaadin.mvp.presenter.IPresenter;
 import org.vaadin.mvp.presenter.IPresenterFactory;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
+import com.conx.logistics.common.utils.Validator;
 import com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication;
 import com.conx.logistics.kernel.ui.common.mvp.view.IMainView;
 import com.conx.logistics.kernel.ui.common.mvp.view.MainView;
 import com.conx.logistics.kernel.ui.common.ui.menu.app.AppMenuEntry;
+import com.conx.logistics.kernel.ui.service.contribution.IApplicationViewContribution;
 import com.conx.logistics.mdm.domain.application.Application;
+import com.conx.logistics.mdm.domain.application.Feature;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerFactory;
 import com.vaadin.data.Container.Filter;
@@ -57,7 +60,8 @@ public class MainPresenter extends BasePresenter<IMainView, MainEventBus>
 
 	private JPAContainer<Application> launchableAppsContainer;
 
-	private Map<String, Tab> appTabMap = new HashMap<String, Tab>();
+	private Map<String, Tab> appName2TabMap = new HashMap<String, Tab>();
+	private Map<String, Class<? extends BasePresenter<?, ? extends EventBus>>> appName2PresenterMap = new HashMap<String, Class<? extends BasePresenter<?, ? extends EventBus>>>();
 
 	private IndexedContainer appSelectionContainer;
 
@@ -90,23 +94,25 @@ public class MainPresenter extends BasePresenter<IMainView, MainEventBus>
 			this.application.setMainWindow((Window) this.view);
 
 			// load the workspace presenter
-
-			IPresenterFactory pf = application.getPresenterFactory();
-			// this.workspacePresenter = (WorkspacePresenter)
-			// pf.createPresenter(WorkspacePresenter.class);
-			// WorkspaceEventBus wsEventBus = (WorkspaceEventBus)
-			// this.workspacePresenter.getEventBus();
-			// wsEventBus.start(app);
-			// Component ws = (Component)workspacePresenter.getView();
-			// ((Layout)ws).setSizeFull();
-			// mainTabSheet.addTab(ws, "", new ThemeResource(
-			// "custom/img/home.png"));
+			
+			//By default, add workspace
+			IApplicationViewContribution ac = app.getApplicationContributionByCode("KERNEL.WORKSPACE");
+			if (Validator.isNotNull(ac))
+			{
+				Class<? extends BasePresenter<?, ? extends EventBus>> acClass = ac.getPresenterClass();
+				onOpenApplication(acClass,ac.getName(),ac.getIcon(),false);
+			}
+			
+			initialized = true;
+			//AppMenuEntry[] entries = createAppMenuEntries();
+			//mainEventBus.updateAppContributions(entries);	
 			appSelectionContainer = new IndexedContainer();			
 			appSelectionContainer.addContainerProperty("code", String.class, null);
 			appSelectionContainer.addContainerProperty("name", String.class, null);
 			appSelectionContainer.addContainerProperty("id", String.class, null);
 			appSelectionContainer.addContainerProperty("icon", Resource.class, null);
 			appSelectionContainer.addContainerProperty("launchable", Component.class, null);
+			appSelectionContainer.addContainerProperty("presenterClass", Object.class, null);
 			Filter filter = new Not(new SimpleStringFilter("id","KERNEL.WORKSPACE", true, false));
 			appSelectionContainer.addContainerFilter(filter);
 			AppMenuEntry[] menuEntries = this.application.createAppMenuEntries();	
@@ -173,7 +179,7 @@ public class MainPresenter extends BasePresenter<IMainView, MainEventBus>
 	}		
 
 	private void removeAppComponent(String caption) {
-		Tab tab = appTabMap.get(caption);
+		Tab tab = appName2TabMap.get(caption);
 		this.view.getApplicationTabSheet().removeTab(tab);
 	}
 
@@ -196,6 +202,8 @@ public class MainPresenter extends BasePresenter<IMainView, MainEventBus>
 			Item item = container.addItem(id);
 			item.getItemProperty("launchable").setValue(
 					appMenuEntries[i].getLaunchableAppComponent());
+			item.getItemProperty("presenterClass").setValue(
+					appMenuEntries[i].getAppPresenterClass());			
 			item.getItemProperty("name").setValue(name);
 			item.getItemProperty("id").setValue(id);
 			item.getItemProperty("icon").setValue(
@@ -217,16 +225,7 @@ public class MainPresenter extends BasePresenter<IMainView, MainEventBus>
 			String name, String iconPath,
 			boolean closable) {
 		try {
-			IPresenterFactory pf = application.getPresenterFactory();
-			IPresenter<?, ? extends EventBus> appPresenter = pf
-					.createPresenter(appPresenterClass);
-			StartableApplicationEventBus wsEventBus = (StartableApplicationEventBus) appPresenter
-					.getEventBus();
-			wsEventBus.start(this.application);
-			Component ws = (Component) appPresenter.getView();
-			((Layout) ws).setSizeFull();
-			Tab appTab = this.view.getApplicationTabSheet().addTab(ws, name, new ThemeResource(iconPath));
-			appTab.setClosable(closable);
+			openApplicationTab(appPresenterClass,name,iconPath,true);
 		} catch (Exception e) {
 			StringWriter sw = new StringWriter();
 			e.printStackTrace(new PrintWriter(sw));
@@ -234,18 +233,94 @@ public class MainPresenter extends BasePresenter<IMainView, MainEventBus>
 			logger.error(stacktrace);
 		}
 	}
-
-	public void onOpenApplicationComponent(Component appComponent, String id,
-			String name, String iconPath,boolean closable) {
+	
+	public void onOpenApplicationFeature(Feature appFeature) {
 		try {
-			if (appTabMap.containsKey(name)) {
-				Tab selectedTab = appTabMap.get(name);
+			Application app = appFeature.getParentApplication();
+			IApplicationViewContribution ac = application.getApplicationContributionByCode(app.getCode());
+			IPresenter<?, ? extends EventBus> appPresenter = null;
+			StartableApplicationEventBus wsEventBus = null;
+			if (Validator.isNotNull(ac))
+			{
+				if (appName2TabMap.containsKey(ac.getName()))
+				{
+					Class<? extends BasePresenter<?, ? extends EventBus>> appPresenterClass = appName2PresenterMap.get(ac.getName());
+					IPresenterFactory pf = application.getPresenterFactory();
+					appPresenter = pf.createPresenter(appPresenterClass);
+					wsEventBus = (StartableApplicationEventBus) appPresenter.getEventBus();					
+				}
+				else
+				{
+					appPresenter = openApplicationTab(ac.getPresenterClass(), ac.getName(), ac.getIcon(), true);
+					wsEventBus = (StartableApplicationEventBus)appPresenter.getEventBus();
+				}
+				
+				wsEventBus.openFeatureView(appFeature);
+			}
+		} catch (Exception e) {
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			String stacktrace = sw.toString();
+			logger.error(stacktrace);
+		}
+	}	
+	
+	private IPresenter<?, ? extends EventBus> openApplicationTab(
+			Class<? extends BasePresenter<?, ? extends EventBus>> appPresenterClass,
+			String name, String iconPath,
+			boolean closable) {
+		IPresenter<?, ? extends EventBus> appPresenter = null;
+		try {
+			appPresenter = createAndStartApplication(appPresenterClass, name, iconPath, closable);
+			Component ws = (Component) appPresenter.getView();
+			((Layout) ws).setSizeFull();
+			onOpenApplicationComponent(ws,name,iconPath,appPresenterClass,closable);			
+		} catch (Exception e) {
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			String stacktrace = sw.toString();
+			logger.error(stacktrace);
+		}
+		
+		return appPresenter;
+	}	
+	
+	private IPresenter<?, ? extends EventBus> createAndStartApplication(Class<? extends BasePresenter<?, ? extends EventBus>> appPresenterClass,
+			String name, String iconPath,
+			boolean closable)
+	{
+		IPresenter<?, ? extends EventBus> appPresenter = null;
+		try {
+			IPresenterFactory pf = application.getPresenterFactory();
+			appPresenter = pf
+					.createPresenter(appPresenterClass);
+			StartableApplicationEventBus wsEventBus = (StartableApplicationEventBus) appPresenter
+					.getEventBus();
+			wsEventBus.start(this.application);
+		} catch (Exception e) {
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			String stacktrace = sw.toString();
+			logger.error(stacktrace);
+		}	
+		
+		return appPresenter;
+	}
+	
+
+	public void onOpenApplicationComponent(Component appComponent,
+			String name, String iconPath,Class<? extends BasePresenter<?, ? extends EventBus>> presenterClass, boolean closable) {
+		try {
+			if (appName2TabMap.containsKey(name)) {
+				Tab selectedTab = appName2TabMap.get(name);
 				this.view.getApplicationTabSheet().setSelectedTab(selectedTab.getComponent());
 			} else {
 				appComponent.setSizeFull();
 				Tab newTab = this.view.getApplicationTabSheet().addTab(appComponent, name, new ThemeResource(iconPath));
 				newTab.setClosable(closable);
 				this.view.getApplicationTabSheet().setSelectedTab(appComponent);
+				appName2TabMap.put(name, newTab);
+				appName2PresenterMap.put(name, presenterClass);
 			}
 		} catch (Exception e) {
 			StringWriter sw = new StringWriter();
@@ -272,9 +347,9 @@ public class MainPresenter extends BasePresenter<IMainView, MainEventBus>
 		Item menuEntry = (Item) this.appSelectionContainer.getItem(id);
 		onOpenApplicationComponent(
 				(Component) menuEntry.getItemProperty("launchable").getValue(),
-				(String) menuEntry.getItemProperty("id").getValue(),
 				(String) menuEntry.getItemProperty("name").getValue(),
 				((ThemeResource) menuEntry.getItemProperty("icon").getValue()).getResourceId(),
+				(Class<? extends BasePresenter<?, ? extends EventBus>>)menuEntry.getItemProperty("presenterClass").getValue(),
 				true);
 	}
 }

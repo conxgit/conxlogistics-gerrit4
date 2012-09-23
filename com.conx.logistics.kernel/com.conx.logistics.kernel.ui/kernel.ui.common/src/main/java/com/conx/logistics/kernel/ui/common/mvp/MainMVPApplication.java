@@ -2,7 +2,6 @@ package com.conx.logistics.kernel.ui.common.mvp;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,7 +21,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.vaadin.mvp.eventbus.EventBus;
 import org.vaadin.mvp.eventbus.EventBusManager;
-import org.vaadin.mvp.presenter.BasePresenter;
 import org.vaadin.mvp.presenter.IPresenter;
 import org.vaadin.mvp.presenter.IPresenterFactory;
 import org.vaadin.mvp.presenter.PresenterFactory;
@@ -35,6 +33,7 @@ import com.conx.logistics.kernel.portal.remote.services.IPortalOrganizationServi
 import com.conx.logistics.kernel.portal.remote.services.IPortalRoleService;
 import com.conx.logistics.kernel.portal.remote.services.IPortalUserService;
 import com.conx.logistics.kernel.system.dao.services.application.IApplicationDAOService;
+import com.conx.logistics.kernel.system.dao.services.application.IFeatureDAOService;
 import com.conx.logistics.kernel.ui.common.data.container.EntityTypeContainerFactory;
 import com.conx.logistics.kernel.ui.common.entityprovider.jta.CustomCachingMutableLocalEntityProvider;
 import com.conx.logistics.kernel.ui.common.ui.menu.app.AppMenuEntry;
@@ -46,7 +45,6 @@ import com.conx.logistics.kernel.ui.service.contribution.IMainApplication;
 import com.conx.logistics.kernel.ui.service.contribution.IViewContribution;
 import com.conx.logistics.mdm.dao.services.IEntityMetadataDAOService;
 import com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService;
-import com.conx.logistics.mdm.domain.constants.RoleCustomCONSTANTS;
 import com.conx.logistics.mdm.domain.user.User;
 import com.sun.syndication.io.impl.Base64;
 import com.vaadin.Application;
@@ -70,6 +68,8 @@ public class MainMVPApplication extends Application implements IMainApplication,
 
 	private IApplicationDAOService applicationDAOService;
 	
+	private IFeatureDAOService featureDAOService;	
+	
 	private IFolderDAOService folderDAOService;
 	
 	private IRemoteDocumentRepository remoteDocumentRepository;
@@ -81,6 +81,8 @@ public class MainMVPApplication extends Application implements IMainApplication,
 	private UserTransaction userTransaction;
 
 	private EntityManagerFactory kernelSystemEntityManagerFactory;	
+	
+	private EntityManagerFactory conxJBpmEntityManagerFactory;		
 	
 	private IPageFlowManager pageFlowEngine;
 	
@@ -114,6 +116,8 @@ public class MainMVPApplication extends Application implements IMainApplication,
 	
 	private User currentUser = null;
 
+	private EntityManagerFactory conxHumanTaskEntityManagerFactory;
+
 	@Override
 	public void init() {
 		try 
@@ -144,23 +148,6 @@ public class MainMVPApplication extends Application implements IMainApplication,
 			this.entityFactoryPresenterParams.put(IEntityEditorFactory.FACTORY_PARAM_IENTITY_METADATA_SERVICE, entityMetaDataDAOService);
 			
 			mainEventBus.start(this);
-			
-			//By default, add workspace
-			IApplicationViewContribution ac = appContributions.get("KERNEL.WORKSPACE");
-			if (Validator.isNotNull(ac))
-			{
-				Class<? extends BasePresenter<?, ? extends EventBus>> acClass = ac.getPresenterClass();
-				//IPresenter acPresenter = this.presenterFactory.createPresenter(acClass);
-				//StartableApplicationEventBus acSB = (StartableApplicationEventBus)acPresenter.getEventBus();
-				//acSB.start(this);
-				mainEventBus.openApplication(acClass,ac.getName(),ac.getIcon(),false);
-			}
-			
-			initialized = true;
-			//AppMenuEntry[] entries = createAppMenuEntries();
-			//mainEventBus.updateAppContributions(entries);		
-			
-
 		} catch (Exception e) {
 			StringWriter sw = new StringWriter();
 			e.printStackTrace(new PrintWriter(sw));
@@ -170,6 +157,12 @@ public class MainMVPApplication extends Application implements IMainApplication,
 
 	}
 	
+	public MainEventBus getMainEventBus() {
+		return mainEventBus;
+	}
+
+
+
 	public void bindEntityMetaDataDAOService(
 			IEntityMetadataDAOService entityMetaDataDAOService, Map properties) {
 			logger.debug("bindEntityMetaDataDAOService()");
@@ -220,7 +213,7 @@ public class MainMVPApplication extends Application implements IMainApplication,
 			else//Test/Dev login
 			{
 				email = "test@liferay.com";
-				screenName = "ConX Test Admin";
+				screenName = "test";
 				currentUser = new User();
 				currentUser.setEmailAddress(email);
 				currentUser.setScreenName(screenName);
@@ -393,6 +386,8 @@ public class MainMVPApplication extends Application implements IMainApplication,
 		}
 	}	
 	
+	
+	
 	private AppMenuEntry createAppMenuEntry(IApplicationViewContribution avc) throws UiBinderException {
 		return new AppMenuEntry(avc.getCode(),avc.getName(), avc.getIcon(), avc.getApplicationComponent(this));
 	}
@@ -405,20 +400,14 @@ public class MainMVPApplication extends Application implements IMainApplication,
 			ArrayList<AppMenuEntry> entries = new ArrayList<AppMenuEntry>();
 			for (IApplicationViewContribution ac : appContributions.values())
 			{
-				entries.add(new AppMenuEntry(ac.getCode(),ac.getName(), ac.getIcon(), ac.getApplicationComponent(this)));
+				entries.add(new AppMenuEntry(ac.getCode(),ac.getName(), ac.getIcon(), ac.getApplicationComponent(this),ac.getPresenterClass()));
 			}
 			return entries.toArray(new AppMenuEntry[]{});
 		}
 	}
 
 	
-	public void bindApplicationDAOService(
-			IApplicationDAOService applicationDAOService, Map properties) {
-		logger.debug("bindApplicationDAOService()");
-		this.applicationDAOService = applicationDAOService;
-		if (!appServiceInititialized)
-			initAppService();
-	}
+
 
 	private void initAppService() {
 		if (Validator.isNotNull(this.kernelSystemTransManager) && Validator.isNotNull(this.applicationDAOService))
@@ -445,12 +434,35 @@ public class MainMVPApplication extends Application implements IMainApplication,
 		}
 	}
 
+	public void bindApplicationDAOService(
+			IApplicationDAOService applicationDAOService, Map properties) {
+		logger.debug("bindApplicationDAOService()");
+		this.applicationDAOService = applicationDAOService;
+		if (!appServiceInititialized)
+			initAppService();
+	}
+	
 	public void unbindApplicationDAOService(
 			IApplicationDAOService applicationDAOService, Map properties) {
 		logger.debug("unbindApplicationDAOService()");
 		this.applicationDAOService = null;
 		appServiceInititialized = false;
 	}
+	
+	public void bindFeatureDAOService(
+			IFeatureDAOService featureDAOService, Map properties) {
+		logger.debug("bindFeatureDAOService()");
+		this.featureDAOService = featureDAOService;
+		if (!appServiceInititialized)
+			initAppService();
+	}
+	
+	public void unbindFeatureDAOService(
+			IFeatureDAOService featureDAOService, Map properties) {
+		logger.debug("unbindFeatureDAOService()");
+		this.featureDAOService = null;
+		appServiceInititialized = false;
+	}	
 	
 	public void unbindPageFlowEngine(
 			IPageFlowManager pageflowEngine, Map properties) {
@@ -462,6 +474,7 @@ public class MainMVPApplication extends Application implements IMainApplication,
 			IPageFlowManager pageflowEngine, Map properties) {
 		logger.debug("bindPageFlowEngine()");
 		this.pageFlowEngine  = pageflowEngine;
+//		this.pageFlowEngine.setMainApplication(this);
 	}
 
 	public void bindKernelSystemTransManager(
@@ -503,7 +516,32 @@ public class MainMVPApplication extends Application implements IMainApplication,
 		logger.debug("unbindKernelSystemEntityManagerFactory()");
 		this.entityTypeContainerFactory  = null;
 		this.kernelSystemEntityManagerFactory = null;
-	}		
+	}	
+	
+	public void bindConxJbpmEntityManagerFactory(
+			EntityManagerFactory conxJBpmEntityManagerFactory, Map properties) {
+		logger.debug("bindConxJbpmEntityManagerFactory()");
+		this.conxJBpmEntityManagerFactory = conxJBpmEntityManagerFactory;
+	}
+
+	public void unbindConxJbpmEntityManagerFactory(
+			PlatformTransactionManager conxJBpmEntityManagerFactory, Map properties) {
+		logger.debug("unbindConxJbpmEntityManagerFactory()");
+		this.conxJBpmEntityManagerFactory = null;
+	}	
+	
+	public void bindConxHumanTaskEntityManagerFactory(
+			EntityManagerFactory conxHumanTaskEntityManagerFactory, Map properties) {
+		logger.debug("bindConxHumanTaskEntityManagerFactory()");
+		this.conxHumanTaskEntityManagerFactory = conxHumanTaskEntityManagerFactory;
+	}
+
+	public void unbindConxHumanTaskEntityManagerFactory(
+			PlatformTransactionManager conxHumanTaskEntityManagerFactory, Map properties) {
+		logger.debug("unbindConxHumanTaskntityManagerFactory()");
+		this.conxHumanTaskEntityManagerFactory = null;
+	}	
+	
 	
 	public void bindEntityEditorFactory(
 			IEntityEditorFactory entityEditorFactory, Map properties) {
@@ -636,5 +674,17 @@ public class MainMVPApplication extends Application implements IMainApplication,
 
 	public void setCurrentUser(User currentUser) {
 		this.currentUser = currentUser;
+	}
+
+	public EntityManagerFactory getConxJBpmEntityManagerFactory() {
+		return conxJBpmEntityManagerFactory;
+	}
+
+	public EntityManagerFactory getConxHumanTaskEntityManagerFactory() {
+		return conxHumanTaskEntityManagerFactory;
+	}
+
+	public IFeatureDAOService getFeatureDAOService() {
+		return featureDAOService;
 	}
 }

@@ -35,6 +35,7 @@ public class FeatureDAOImpl implements IFeatureDAOService {
 		return em.createQuery("select o from Feature o order by o.id",Feature.class).getResultList();
 	}
 	
+	@Override
 	public Feature findFeatureByCode(String code) {
 		TypedQuery<Feature> q = em.createQuery("select o from Feature o WHERE o.code = :code",Feature.class);
 		q.setParameter("code", code);

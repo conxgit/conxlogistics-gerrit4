@@ -38,6 +38,8 @@ public class Feature extends BaseEntity {
 	protected boolean featureSet = false;
 
 	protected boolean taskFeature;
+	
+	protected String taskId;
 
 	protected String componentModelCode;
 
@@ -110,6 +112,15 @@ public class Feature extends BaseEntity {
 
 	public boolean isTaskFeature() {
 		return taskFeature;
+	}
+
+	
+	public String getTaskId() {
+		return taskId;
+	}
+
+	public void setTaskId(String taskId) {
+		this.taskId = taskId;
 	}
 
 	public void setTaskFeature(boolean taskFeature) {

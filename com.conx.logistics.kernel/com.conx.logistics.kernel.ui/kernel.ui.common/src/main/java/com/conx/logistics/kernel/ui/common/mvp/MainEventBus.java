@@ -7,6 +7,7 @@ import org.vaadin.mvp.presenter.BasePresenter;
 import com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication;
 import com.conx.logistics.kernel.ui.common.ui.menu.app.AppMenuEntry;
 import com.conx.logistics.kernel.ui.service.contribution.IApplicationViewContribution;
+import com.conx.logistics.mdm.domain.application.Feature;
 
 public interface MainEventBus extends EventBus {
 
@@ -28,4 +29,8 @@ public interface MainEventBus extends EventBus {
   
   @Event(handlers = { MainPresenter.class })
   public void openApplication(Class<? extends BasePresenter<?, ? extends EventBus>> appPresenterClass,String name,String iconPath,boolean closable);
+  
+  
+  @Event(handlers = { MainPresenter.class })
+  public void onOpenApplicationFeature(Feature appFeature);
 }

@@ -115,7 +115,17 @@ public class WahouseApplicationDAOImpl implements IWarehouseApplicationDAOServic
 			ft.setExternalCode("KERNEL.PAGEFLOW.STARTTASK");
 			ft.setName("New");
 			ft = featureDaoService.addFeature(ft);
-			smfs.getChildFeatures().add(ft);				
+			smfs.getChildFeatures().add(ft);	
+			
+			ft = new Feature(cpApp,smfs, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_NEW_CODE);
+			ft.setName(WAREHOUSE_APP_RECEIVING_ARVL_NEW_NAME);
+			ft.setTaskFeature(true);
+			ft.setOnCompletionFeature(searchFt);
+			ft.setCode("whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0");
+			ft.setExternalCode("KERNEL.PAGEFLOW.STARTTASK");
+			ft.setName("New");
+			ft = featureDaoService.addFeature(ft);
+			smfs.getChildFeatures().add(ft);			
 
 			cpApp = applicationDaoService.updateApplication(cpApp);					
 			try {

@@ -39,6 +39,15 @@ public interface IWarehouseApplicationDAOService {
 	//========= Receiving RCV :: New ASN Feature
 	public static final String WAREHOUSE_APP_RECEIVING_RCV_NEW_NAME = "New";
 	public static final String WAREHOUSE_APP_RECEIVING_RCV_NEW_CODE = "NEW";	
+	
+	//========= Receiving ARVL :: Search Feature
+	public static final String WAREHOUSE_APP_RECEIVING_ARVL_SEARCH_NAME = "Search";
+	public static final String WAREHOUSE_APP_RECEIVING_ARVL_SEARCH_CODE = "SEARCH";	
+	public static final String WAREHOUSE_APP_RECEIVING_ARVL_SEARCH_COMPONENT = "searchArrivals";
+	
+	//========= Receiving ARVL :: New ASN Feature
+	public static final String WAREHOUSE_APP_RECEIVING_ARVL_NEW_NAME = "New";
+	public static final String WAREHOUSE_APP_RECEIVING_ARVL_NEW_CODE = "NEW";		
 
 	public Application provideApplicationMetadata();	
 }

@@ -3,6 +3,7 @@ package com.conx.logistics.kernel.workspace.ui.ext.task.grid;
 import com.conx.logistics.kernel.ui.filteredtable.FilterDecorator;
 import com.conx.logistics.kernel.ui.filteredtable.FilterGenerator;
 import com.conx.logistics.kernel.ui.filteredtable.FilterTable;
+import com.conx.logistics.kernel.workspace.ui.dashboard.view.DashboardView;
 import com.vaadin.data.Container.Filter;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
@@ -17,6 +18,8 @@ public class TaskGrid extends VerticalLayout implements FilterDecorator,
 	}
 	
 	private void initialize() {
+		this.grid = new FilterTable();
+		
 		this.grid.setSizeFull();
 		this.grid.setMultiSelect(false);
 		this.grid.setSelectable(true);
@@ -36,13 +39,16 @@ public class TaskGrid extends VerticalLayout implements FilterDecorator,
 				}
 			}
 		});
-
+		
 		setSizeFull();
 		setStyleName("conx-entity-grid");
 		addComponent(grid);
 		setExpandRatio(grid, 1.0f);
 	}
-
+	
+	public FilterTable getFilterTable() {
+		return grid;
+	}
 
 	@Override
 	public Filter generateFilter(Object propertyId, Object value) {
