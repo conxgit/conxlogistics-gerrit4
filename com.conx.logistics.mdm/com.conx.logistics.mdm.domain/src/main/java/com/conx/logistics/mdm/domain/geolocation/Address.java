@@ -47,11 +47,7 @@ public class Address extends BaseEntity implements Serializable {
     @ManyToOne(targetEntity = CountryState.class)
     @JoinColumn
     private CountryState countryState;
-
-    private String ownerEntityType;
-
-    private Long ownerEntityId;
-
+    
 	public Set<AddressCapability> getAddressCapabilities() {
 		return addressCapabilities;
 	}
@@ -138,21 +134,5 @@ public class Address extends BaseEntity implements Serializable {
 
 	public void setCountryState(CountryState countryState) {
 		this.countryState = countryState;
-	}
-
-	public String getOwnerEntityType() {
-		return ownerEntityType;
-	}
-
-	public void setOwnerEntityType(String ownerEntityType) {
-		this.ownerEntityType = ownerEntityType;
-	}
-
-	public Long getOwnerEntityId() {
-		return ownerEntityId;
-	}
-
-	public void setOwnerEntityId(Long ownerEntityId) {
-		this.ownerEntityId = ownerEntityId;
 	}
 }

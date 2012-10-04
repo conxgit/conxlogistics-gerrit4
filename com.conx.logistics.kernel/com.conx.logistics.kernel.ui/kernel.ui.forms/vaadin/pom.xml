@@ -14,11 +14,6 @@
 		<!-- Under Test -->
 		<dependency>
 			<groupId>com.conx.logistics</groupId>
-			<artifactId>com.conx.logistics.kernel.metamodel.domain</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.kernel.datasource.domain</artifactId>
 			<version>1.0.0</version>
 		</dependency>
@@ -738,6 +733,13 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.6.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>
+				com.conx.logistics.kernel.metamodel.dao.services
+			</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 	<build>

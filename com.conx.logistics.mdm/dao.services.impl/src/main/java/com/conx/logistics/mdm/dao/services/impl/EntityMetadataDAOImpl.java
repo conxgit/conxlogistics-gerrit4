@@ -68,7 +68,6 @@ public class EntityMetadataDAOImpl implements IEntityMetadataDAOService {
 			// entityClass.getSimpleName());
 			// record = q.getSingleResult();
 		} catch (NoResultException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} catch (Error e) {

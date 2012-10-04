@@ -16,10 +16,14 @@
 		<property name="globalTransactionManager" ref="globalTransManager"></property>
 				
 		<property name="addressDaoService" ref="addressDao"></property>
+		<property name="addressTypeDaoService" ref="addressTypeDao"></property>
+		<property name="addressTypeAddressDaoService" ref="addressTypeAddressDao"></property>
 		<property name="asnDaoService" ref="asnDao"></property>
 		<property name="asnPickupDAOService" ref="asnPickupDao"></property>
 		<property name="asnDropOffDAOService" ref="asnDropOffDao"></property>
 		<property name="contactDAOService" ref="contactDao"></property>
+		<property name="contactTypeDAOService" ref="contactTypeDao"></property>
+		<property name="contactTypeContactDAOService" ref="contactTypeContactDao"></property>
 		<property name="componentDAOService" ref="componentDao"></property>
 		<property name="countryDaoService" ref="countryDao"></property>
 		<property name="countryStateDaoService" ref="countryStateDao"></property>

@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -15,12 +15,9 @@ import javax.persistence.EntityManagerFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.conx.logistics.app.whse.dao.services.IDockTypeDAOService;
@@ -36,14 +33,17 @@ import com.conx.logistics.app.whse.rcv.asn.domain.ASNLine;
 import com.conx.logistics.app.whse.rcv.asn.domain.ASNPickup;
 import com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveDAOService;
 import com.conx.logistics.app.whse.rcv.rcv.domain.Receive;
-import com.conx.logistics.common.utils.Validator;
 import com.conx.logistics.kernel.datasource.dao.services.IDataSourceDAOService;
+import com.conx.logistics.kernel.datasource.domain.DataSource;
 import com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository;
-import com.conx.logistics.kernel.documentlibrary.remote.services.impl.LiferayPortalDocumentRepositoryImpl;
 import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
 import com.conx.logistics.kernel.ui.components.dao.services.IComponentDAOService;
 import com.conx.logistics.mdm.dao.services.IAddressDAOService;
+import com.conx.logistics.mdm.dao.services.IAddressTypeAddressDAOService;
+import com.conx.logistics.mdm.dao.services.IAddressTypeDAOService;
 import com.conx.logistics.mdm.dao.services.IContactDAOService;
+import com.conx.logistics.mdm.dao.services.IContactTypeContactDAOService;
+import com.conx.logistics.mdm.dao.services.IContactTypeDAOService;
 import com.conx.logistics.mdm.dao.services.ICountryDAOService;
 import com.conx.logistics.mdm.dao.services.ICountryStateDAOService;
 import com.conx.logistics.mdm.dao.services.IEntityMetadataDAOService;
@@ -60,7 +60,8 @@ import com.conx.logistics.mdm.dao.services.product.IProductTypeDAOService;
 import com.conx.logistics.mdm.dao.services.product.IWeightUnitDAOService;
 import com.conx.logistics.mdm.dao.services.referencenumber.IReferenceNumberDAOService;
 import com.conx.logistics.mdm.dao.services.referencenumber.IReferenceNumberTypeDAOService;
-import com.conx.logistics.mdm.domain.constants.AddressCustomCONSTANTS;
+import com.conx.logistics.mdm.domain.constants.AddressTypeCustomCONSTANTS;
+import com.conx.logistics.mdm.domain.constants.ContactTypeCustomCONSTANTS;
 import com.conx.logistics.mdm.domain.constants.DimUnitCustomCONSTANTS;
 import com.conx.logistics.mdm.domain.constants.DocTypeCustomCONSTANTS;
 import com.conx.logistics.mdm.domain.constants.NoteTypeCustomCONSTANTS;
@@ -71,13 +72,18 @@ import com.conx.logistics.mdm.domain.constants.WeightUnitCustomCONSTANTS;
 import com.conx.logistics.mdm.domain.documentlibrary.DocType;
 import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.conx.logistics.mdm.domain.geolocation.Address;
+import com.conx.logistics.mdm.domain.geolocation.AddressType;
+import com.conx.logistics.mdm.domain.geolocation.AddressTypeAddress;
 import com.conx.logistics.mdm.domain.geolocation.Country;
 import com.conx.logistics.mdm.domain.geolocation.CountryState;
 import com.conx.logistics.mdm.domain.geolocation.Unloco;
 import com.conx.logistics.mdm.domain.metadata.DefaultEntityMetadata;
+import com.conx.logistics.mdm.domain.metamodel.EntityType;
 import com.conx.logistics.mdm.domain.note.NoteItem;
 import com.conx.logistics.mdm.domain.note.NoteType;
 import com.conx.logistics.mdm.domain.organization.Contact;
+import com.conx.logistics.mdm.domain.organization.ContactType;
+import com.conx.logistics.mdm.domain.organization.ContactTypeContact;
 import com.conx.logistics.mdm.domain.organization.Organization;
 import com.conx.logistics.mdm.domain.product.Product;
 import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber;
@@ -95,6 +101,8 @@ public class TestDataManager {
 	private ICountryStateDAOService countryStateDaoService;
 	private IUnlocoDAOService unlocoDaoService;
 	private IAddressDAOService addressDaoService;
+	private IAddressTypeDAOService addressTypeDaoService;
+	private IAddressTypeAddressDAOService addressTypeAddressDaoService;
 	
 	private IPackUnitDAOService packUnitDaoService;
 	private IDimUnitDAOService dimUnitDaoService;
@@ -107,6 +115,8 @@ public class TestDataManager {
 	private IASNDropOffDAOService asnDropOffDAOService;
 	
 	private IContactDAOService contactDAOService;
+	private IContactTypeDAOService contactTypeDAOService;
+	private IContactTypeContactDAOService contactTypeContactDAOService;
 	private IDocTypeDAOService docTypeDOAService;
 	private IDockTypeDAOService dockTypeDOAService;
 	private IEntityMetadataDAOService entityMetadataDAOService;
@@ -137,7 +147,7 @@ public class TestDataManager {
 		TransactionStatus status = this.globalTransactionManager.getTransaction(def);	
 		try
 		{
-			TestDataManager.generateData(em, orgDaoService,countryDaoService, countryStateDaoService, unlocoDaoService, addressDaoService, packUnitDaoService, dimUnitDaoService, weightUnitDaoService, productTypeDaoService, productDaoService, currencyUnitDAOService, asnDaoService, asnPickupDAOService, asnDropOffDAOService, contactDAOService, docTypeDOAService, dockTypeDOAService, entityMetadataDAOService, referenceNumberTypeDaoService, referenceNumberDaoService, rcvDaoService, componentDAOService, entityTypeDAOService, dataSourceDAOService, whseDAOService,documentRepositoryService, folderDAOService, noteDAOService);
+			TestDataManager.generateData(em, orgDaoService,countryDaoService, countryStateDaoService, unlocoDaoService, addressDaoService, addressTypeDaoService, addressTypeAddressDaoService, packUnitDaoService, dimUnitDaoService, weightUnitDaoService, productTypeDaoService, productDaoService, currencyUnitDAOService, asnDaoService, asnPickupDAOService, asnDropOffDAOService, contactDAOService, contactTypeDAOService, contactTypeContactDAOService, docTypeDOAService, dockTypeDOAService, entityMetadataDAOService, referenceNumberTypeDaoService, referenceNumberDaoService, rcvDaoService, componentDAOService, entityTypeDAOService, dataSourceDAOService, whseDAOService,documentRepositoryService, folderDAOService, noteDAOService);
 			
 			this.globalTransactionManager.commit(status);
 		}
@@ -167,6 +177,8 @@ public class TestDataManager {
 			ICountryStateDAOService countryStateDaoService,
 			IUnlocoDAOService unlocoDaoService,
 			IAddressDAOService addressDaoService,
+			IAddressTypeDAOService addressTypeDaoService,
+			IAddressTypeAddressDAOService addressTypeAddressDaoService,
 			IPackUnitDAOService packUnitDaoService,
 			IDimUnitDAOService dimUnitDaoService,
 			IWeightUnitDAOService weightUnitDaoService,
@@ -177,6 +189,8 @@ public class TestDataManager {
 			IASNPickupDAOService asnPickupDAOService,
 			IASNDropOffDAOService asnDropOffDAOService,
 			IContactDAOService contactDAOService,
+			IContactTypeDAOService contactTypeDAOService,
+			IContactTypeContactDAOService contactTypeContactDAOService,
 			IDocTypeDAOService docTypeDOAService,
 			IDockTypeDAOService dockTypeDOAService,
 			IEntityMetadataDAOService entityMetadataDAOService,
@@ -192,7 +206,7 @@ public class TestDataManager {
 			INoteDAOService noteDAOService) throws Exception {
 		
 		//Required for ASN
-		ASN[] asn = createSprint1Data(null, em, orgDaoService, countryDaoService, countryStateDaoService, unlocoDaoService, addressDaoService, packUnitDaoService, dimUnitDaoService, weightUnitDaoService, productTypeDaoService, productDaoService, currencyUnitDAOService, asnDaoService, asnPickupDAOService, asnDropOffDAOService, contactDAOService, docTypeDOAService, dockTypeDOAService, entityMetadataDAOService, referenceNumberTypeDaoService, referenceNumberDaoService, rcvDaoService, componentDAOService, entityTypeDAOService, dataSourceDAOService, whseDAOService);		
+		ASN[] asn = createSprint1Data(null, em, orgDaoService, countryDaoService, countryStateDaoService, unlocoDaoService, addressDaoService, addressTypeDaoService, addressTypeAddressDaoService, packUnitDaoService, dimUnitDaoService, weightUnitDaoService, productTypeDaoService, productDaoService, currencyUnitDAOService, asnDaoService, asnPickupDAOService, asnDropOffDAOService, contactDAOService, contactTypeDAOService, contactTypeContactDAOService, docTypeDOAService, dockTypeDOAService, entityMetadataDAOService, referenceNumberTypeDaoService, referenceNumberDaoService, rcvDaoService, componentDAOService, entityTypeDAOService, dataSourceDAOService, whseDAOService);		
 		createPrint2Data(asn, null, em, orgDaoService, countryDaoService, countryStateDaoService, unlocoDaoService, addressDaoService, packUnitDaoService, dimUnitDaoService, weightUnitDaoService, productTypeDaoService, productDaoService, currencyUnitDAOService, asnDaoService, asnPickupDAOService, asnDropOffDAOService, contactDAOService, docTypeDOAService, dockTypeDOAService, entityMetadataDAOService, referenceNumberTypeDaoService, referenceNumberDaoService, rcvDaoService, componentDAOService, entityTypeDAOService, dataSourceDAOService, whseDAOService,documentRepositoryService,folderDAOService,noteDAOService);
 
 		
@@ -355,6 +369,8 @@ public class TestDataManager {
 			ICountryStateDAOService countryStateDaoService,
 			IUnlocoDAOService unlocoDaoService,
 			IAddressDAOService addressDaoService,
+			IAddressTypeDAOService addressTypeDaoService,
+			IAddressTypeAddressDAOService addressTypeAddressDaoService,
 			IPackUnitDAOService packUnitDaoService,
 			IDimUnitDAOService dimUnitDaoService,
 			IWeightUnitDAOService weightUnitDaoService,
@@ -365,6 +381,8 @@ public class TestDataManager {
 			IASNPickupDAOService asnPickupDAOService,
 			IASNDropOffDAOService asnDropOffDAOService,
 			IContactDAOService contactDAOService,
+			IContactTypeDAOService contactTypeDAOService,
+			IContactTypeContactDAOService contactTypeContactDAOService,
 			IDocTypeDAOService docTypeDOAService,
 			IDockTypeDAOService dockTypeDOAService,
 			IEntityMetadataDAOService entityMetadataDAOService,
@@ -418,6 +436,8 @@ public class TestDataManager {
 				CountryState csussfo = countryStateDaoService.provide("CA","California", us.getId());
 				Unloco ussfo = unlocoDaoService.provide("USSFO", "", "San Francisco", de.getId(), csdefra.getId());
 				
+				EntityType type = entityTypeDAOService.provide(Organization.class);
+				
 				//-- Orgs:
 				DefaultEntityMetadata orgEMD = entityMetadataDAOService.getByClass(Organization.class);
 				//------------ 1.0-TESCUS1:
@@ -426,14 +446,22 @@ public class TestDataManager {
 				tescus1.setCode("TESCUS1");
 				tescus1 = orgDaoService.add(tescus1);
 				
-				Address tescus1_addr = addressDaoService.provide(Organization.class.getName(),tescus1.getId(),"123 Main St	Suite 1",null,null,null,"USDFW",null,us.getCode(),us.getName(),null,null);
-				tescus1.setMainAddress(tescus1_addr);
+				Address tescus1_addr = addressDaoService.provide(type, tescus1.getId(), "123 Main St Suite 1", null, null, null, "USDFW", null, us.getCode(), us.getName(), null, null);
+				AddressType tescus1_addr_type = addressTypeDaoService.provide(AddressTypeCustomCONSTANTS.TYPE_MAIN, AddressTypeCustomCONSTANTS.TYPE_MAIN_DESCRIPTION);
+				AddressTypeAddress tescus1_ata = addressTypeAddressDaoService.provide(tescus1_addr_type, tescus1_addr);
+				tescus1_ata.setOwnerEntityId(tescus1.getId());
+				tescus1_ata.setOwnerEntityTypeId(type.getId());
+				addressTypeAddressDaoService.update(tescus1_ata);
+				tescus1.getAddressTypeAddresses().add(tescus1_ata);
+				tescus1 = orgDaoService.update(tescus1);
 				
 				Contact tescus1_contact = new Contact();
 				tescus1_contact.setFirstName("Aaron");
 				tescus1_contact.setLastName("Anderson");
 				tescus1_contact = contactDAOService.provide(orgEMD, tescus1.getId(), tescus1_contact);
-				tescus1.setMainContact(tescus1_contact);
+				ContactType tescus1_contact_type = contactTypeDAOService.provide(ContactTypeCustomCONSTANTS.TYPE_MAIN, ContactTypeCustomCONSTANTS.TYPE_MAIN_DESCRIPTION);
+				ContactTypeContact tescus1_ctc = contactTypeContactDAOService.provide(tescus1_contact_type, tescus1_contact);
+				tescus1.getContactTypeContacts().add(tescus1_ctc);
 				
 				tescus1 = orgDaoService.update(tescus1);
 
@@ -442,15 +470,24 @@ public class TestDataManager {
 				tescar1.setName("Test Carrier 1");
 				tescar1.setCode("TESCAR1");
 				tescar1 = orgDaoService.add(tescar1);
-				
-				Address tescar1_addr = addressDaoService.provide(Organization.class.getName(),tescar1.getId(),"123 Main St	Suite 1",null,null,null,"USDFW",null,us.getCode(),us.getName(),null,null);
-				tescar1.setMainAddress(tescar1_addr);
+
+				Address tescar1_addr = addressDaoService.provide(entityTypeDAOService.provide(Organization.class), tescar1.getId(), "123 Main St	Suite 1", null, null, null, "USDFW", null,
+						us.getCode(), us.getName(), null, null);
+				AddressType tescar1_addr_type = addressTypeDaoService.provide(AddressTypeCustomCONSTANTS.TYPE_MAIN, AddressTypeCustomCONSTANTS.TYPE_MAIN_DESCRIPTION);
+				AddressTypeAddress tescar1_ata = addressTypeAddressDaoService.provide(tescar1_addr_type, tescar1_addr);
+				tescar1_ata.setOwnerEntityId(tescar1.getId());
+				tescar1_ata.setOwnerEntityTypeId(type.getId());
+				addressTypeAddressDaoService.update(tescar1_ata);
+				tescar1.getAddressTypeAddresses().add(tescar1_ata);
+				tescar1 = orgDaoService.update(tescar1);
 				
 				Contact tescar1_contact = new Contact();
 				tescar1_contact.setFirstName("Don");
 				tescar1_contact.setLastName("Davis");
 				tescar1_contact = contactDAOService.provide(orgEMD, tescar1.getId(), tescar1_contact);
-				tescar1.setMainContact(tescar1_contact);		
+				ContactType tescar1_contact_type = contactTypeDAOService.provide(ContactTypeCustomCONSTANTS.TYPE_MAIN, ContactTypeCustomCONSTANTS.TYPE_MAIN_DESCRIPTION);
+				ContactTypeContact tescar1_ctc = contactTypeContactDAOService.provide(tescar1_contact_type, tescar1_contact);
+				tescar1.getContactTypeContacts().add(tescar1_ctc);
 				
 				tescar1 = orgDaoService.update(tescar1);
 				
@@ -460,14 +497,23 @@ public class TestDataManager {
 				tesloc1.setCode("TESLOC1");
 				tesloc1 = orgDaoService.add(tesloc1);
 				
-				Address tesloc1_addr = addressDaoService.provide(Organization.class.getName(),tesloc1.getId(),"7 West Penn St",null,null,null,"USNTN",null,us.getCode(),us.getName(),null,null);
-				tesloc1.setMainAddress(tesloc1_addr);
+				Address tesloc1_addr = addressDaoService.provide(entityTypeDAOService.provide(Organization.class), tesloc1.getId(), "7 West Penn St", null, null, null, "USNTN", null, us.getCode(),
+						us.getName(), null, null);
+				AddressType tesloc1_addr_type = addressTypeDaoService.provide(AddressTypeCustomCONSTANTS.TYPE_MAIN, AddressTypeCustomCONSTANTS.TYPE_MAIN_DESCRIPTION);
+				AddressTypeAddress tesloc1_ata = addressTypeAddressDaoService.provide(tesloc1_addr_type, tesloc1_addr);
+				tesloc1_ata.setOwnerEntityId(tesloc1.getId());
+				tesloc1_ata.setOwnerEntityTypeId(type.getId());
+				addressTypeAddressDaoService.update(tesloc1_ata);
+				tesloc1.getAddressTypeAddresses().add(tesloc1_ata);
+				tesloc1 = orgDaoService.update(tesloc1);
 				
 				Contact tesloc1_contact = new Contact();
 				tesloc1_contact.setFirstName("Jon");
 				tesloc1_contact.setLastName("Drews");
 				tesloc1_contact = contactDAOService.provide(orgEMD, tesloc1.getId(), tesloc1_contact);
-				tesloc1.setMainContact(tesloc1_contact);	
+				ContactType tesloc1_contact_type = contactTypeDAOService.provide(ContactTypeCustomCONSTANTS.TYPE_MAIN, ContactTypeCustomCONSTANTS.TYPE_MAIN_DESCRIPTION);
+				ContactTypeContact tesloc1_ctc = contactTypeContactDAOService.provide(tesloc1_contact_type, tesloc1_contact);
+				tesloc1.getContactTypeContacts().add(tesloc1_ctc);
 				
 				tesloc1 = orgDaoService.update(tesloc1);	
 				
@@ -485,6 +531,8 @@ public class TestDataManager {
 				currencyUnitDAOService.provideDefaults();
 				docTypeDOAService.provideDefaults();
 				dockTypeDOAService.provideDefaults();
+				addressTypeDaoService.provideDefaults();
+				contactTypeDAOService.provideDefaults();
 				/**
 				 * Ref IDs: TD RIDTYP 2.0, 3.0, 4.0
 				 */
@@ -582,15 +630,18 @@ public class TestDataManager {
 				
 				Warehouse warehouse = whseDAOService.getByCode(WarehouseCustomCONSTANTS.DEFAULT_WAREHOUSE_CODE);
 				asn.setWarehouse(warehouse);
+				
+				asn = asnDaoService.addLines(asn, asnLineList);
+				asn = asnDaoService.addLocalTrans(asn, pickup1, dropOff1);
 				asn = asnDaoService.update(asn);
 				
 				//rn1.setEntityPK(asn.getId());
 				//rn2.setEntityPK(asn.getId());
 				//referenceNumberDaoService.update(rn1);
 				//referenceNumberDaoService.update(rn2);
-
-				asnDaoService.addLines(asn.getId(), asnLineList);
-				asn = asnDaoService.addLocalTrans(asn.getId(), pickup1, dropOff1);
+				
+				
+//				asn = asnDaoService.update(asn);
 				
 				asns[0] = asn;
 				
@@ -681,10 +732,12 @@ public class TestDataManager {
 				dropOff1 = asnDropOffDAOService.add(dropOff1);
 				
 				asn.setWarehouse(warehouse);
+				
+				asn = asnDaoService.addLines(asn, asnLineList2);
+				asn = asnDaoService.addLocalTrans(asn, pickup1, dropOff1);
 				asn = asnDaoService.update(asn);
-
-				asnDaoService.addLines(asn.getId(), asnLineList2);
-				asn = asnDaoService.addLocalTrans(asn.getId(), pickup1, dropOff1);		
+				
+//				asn = asnDaoService.update(asn);
 				
 				asns[1] = asn;
 			}
@@ -701,7 +754,20 @@ public class TestDataManager {
 		
 		return asns;
 	}
-
+	
+	public static Collection<DataSource> createDataSourceSprint2Data(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
+		HashSet<DataSource> dataSources = new HashSet<DataSource>();
+		dataSources.add(DataSourceData.provideDefaultReceiveDS(entityTypeDAOService, dataSourceDAOService, em));
+		dataSources.add(DataSourceData.provideBasicFormReceiveDS(entityTypeDAOService, dataSourceDAOService, em));
+		dataSources.add(DataSourceData.provideFileEntryDS(entityTypeDAOService, dataSourceDAOService, em));
+		dataSources.add(DataSourceData.provideNoteItemDS(entityTypeDAOService, dataSourceDAOService, em));
+		dataSources.add(DataSourceData.provideReferenceNumberDS(entityTypeDAOService, dataSourceDAOService, em));
+		dataSources.add(DataSourceData.provideDefaultReceiveLineDS(entityTypeDAOService, dataSourceDAOService, em));
+		dataSources.add(DataSourceData.provideWeightDimsFormReceiveDS(entityTypeDAOService, dataSourceDAOService, em));
+		
+		return dataSources;
+	}
+	
 	public static void setLogger(Logger logger) {
 		TestDataManager.logger = logger;
 	}
@@ -832,5 +898,37 @@ public class TestDataManager {
 
 	public void setNoteDAOService(INoteDAOService noteDAOService) {
 		this.noteDAOService = noteDAOService;
+	}
+
+	public IAddressTypeDAOService getAddressTypeDaoService() {
+		return addressTypeDaoService;
+	}
+
+	public void setAddressTypeDaoService(IAddressTypeDAOService addressTypeDaoService) {
+		this.addressTypeDaoService = addressTypeDaoService;
+	}
+
+	public IAddressTypeAddressDAOService getAddressTypeAddressDaoService() {
+		return addressTypeAddressDaoService;
+	}
+
+	public void setAddressTypeAddressDaoService(IAddressTypeAddressDAOService addressTypeAddressDaoService) {
+		this.addressTypeAddressDaoService = addressTypeAddressDaoService;
+	}
+
+	public IContactTypeDAOService getContactTypeDAOService() {
+		return contactTypeDAOService;
+	}
+
+	public void setContactTypeDAOService(IContactTypeDAOService contactTypeDAOService) {
+		this.contactTypeDAOService = contactTypeDAOService;
+	}
+
+	public IContactTypeContactDAOService getContactTypeContactDAOService() {
+		return contactTypeContactDAOService;
+	}
+
+	public void setContactTypeContactDAOService(IContactTypeContactDAOService contactTypeContactDAOService) {
+		this.contactTypeContactDAOService = contactTypeContactDAOService;
 	}
 }

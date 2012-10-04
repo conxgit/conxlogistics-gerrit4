@@ -3,12 +3,10 @@ package com.conx.logistics.kernel.datasource.dao.services;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.metamodel.IdentifiableType;
-
 import com.conx.logistics.kernel.datasource.domain.DataSource;
 import com.conx.logistics.kernel.datasource.domain.DataSourceField;
-import com.conx.logistics.kernel.metamodel.domain.EntityType;
-import com.conx.logistics.kernel.metamodel.domain.EntityTypeAttribute;
+import com.conx.logistics.mdm.domain.metamodel.EntityType;
+import com.conx.logistics.mdm.domain.metamodel.EntityTypeAttribute;
 
 
 

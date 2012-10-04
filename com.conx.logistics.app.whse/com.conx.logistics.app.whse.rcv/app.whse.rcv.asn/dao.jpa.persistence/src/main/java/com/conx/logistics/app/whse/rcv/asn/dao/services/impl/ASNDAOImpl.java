@@ -35,29 +35,30 @@ import com.conx.logistics.mdm.domain.product.Product;
 import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber;
 import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumberType;
 
-
 /**
- * Implementation of {@link ASN} that uses JPA for persistence.<p />
+ * Implementation of {@link ASN} that uses JPA for persistence.
+ * <p />
  * <p/>
- * This class is marked as {@link Transactional}. The Spring configuration for this module, enables AspectJ weaving for
- * adding transaction demarcation to classes annotated with <code>@Transactional</code>.
+ * This class is marked as {@link Transactional}. The Spring configuration for
+ * this module, enables AspectJ weaving for adding transaction demarcation to
+ * classes annotated with <code>@Transactional</code>.
  */
 @Transactional
 @Repository
 public class ASNDAOImpl implements IASNDAOService {
-	protected Logger logger = LoggerFactory.getLogger(this.getClass());	
-    /**
-     * Spring will inject a managed JPA {@link EntityManager} into this field.
-     */
-    @PersistenceContext
-    private EntityManager em;	
-    
-    @Autowired
-    private IEntityMetadataDAOService entityMetadataDAOService;
-    
-    @Autowired
-    private IReferenceNumberDAOService referenceNumberDAOService;
-    
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
+	/**
+	 * Spring will inject a managed JPA {@link EntityManager} into this field.
+	 */
+	@PersistenceContext
+	private EntityManager em;
+
+	@Autowired
+	private IEntityMetadataDAOService entityMetadataDAOService;
+
+	@Autowired
+	private IReferenceNumberDAOService referenceNumberDAOService;
+
 	public void setEm(EntityManager em) {
 		this.em = em;
 	}
@@ -65,12 +66,12 @@ public class ASNDAOImpl implements IASNDAOService {
 	@Override
 	public ASN get(long id) {
 		return em.getReference(ASN.class, id);
-	}    
+	}
 
 	@Override
 	public List<ASN> getAll() {
-		return em.createQuery("select o from com.conx.logistics.app.whse.rcv.asn.domain.ASN o record by o.id",ASN.class).getResultList();
-	}	
+		return em.createQuery("select o from com.conx.logistics.app.whse.rcv.asn.domain.ASN o record by o.id", ASN.class).getResultList();
+	}
 
 	@Override
 	public ASN add(ASN record) {
@@ -91,50 +92,48 @@ public class ASNDAOImpl implements IASNDAOService {
 	@Override
 	public ASN addLines(Long asnId, Set<ASNLine> lines) throws Exception {
 		ASN asn = null;
-		try {		
+		try {
 			asn = em.getReference(ASN.class, asnId);
-			Product prod = null;
-			for (ASNLine line : lines)
-			{
-					line.setParentASN(asn);
-					
-					prod = em.merge(line.getProduct());
-					line.setProduct(prod);
-					
-					line = (ASNLine)em.merge(line);
-					asn.getAsnLines().add(line);
+			// Product prod = null;
+			for (ASNLine line : lines) {
+				// line.setParentASN(asn);
+
+				// prod = em.merge(line.getProduct());
+				// line.setProduct(prod);
+
+				line = (ASNLine) em.merge(line);
+				asn.getAsnLines().add(line);
 			}
-	
+
 			asn = update(asn);
 		} catch (Exception e) {
 			StringWriter sw = new StringWriter();
 			e.printStackTrace(new PrintWriter(sw));
 			String stacktrace = sw.toString();
 			logger.error(stacktrace);
-			
+
 			throw e;
-		}	
-		
+		}
+
 		return asn;
 	}
 
 	@Override
 	public ASN addRefNums(Long asnId, Set<ReferenceNumber> numbers) throws Exception {
 		ASN asn = null;
-		try {			
+		try {
 			asn = em.getReference(ASN.class, asnId);
 			DefaultEntityMetadata emd = entityMetadataDAOService.provide(ASN.class);
 			ReferenceNumberType rnt = null;
-			for (ReferenceNumber number : numbers)
-			{
+			for (ReferenceNumber number : numbers) {
 				number.setEntityMetadata(emd);
-				number.setCode(asn.getCode()+"-"+number.getType().getCode()+"-"+number.getValue());
+				number.setCode(asn.getCode() + "-" + number.getType().getCode() + "-" + number.getValue());
 				number.setEntityPK(asnId);
-				
-				//rnt = em.merge(number.getType());
+
+				// rnt = em.merge(number.getType());
 				number.setType(rnt);
-				
-				//number = em.merge(number);
+
+				// number = em.merge(number);
 				asn.getRefNumbers().add(number);
 			}
 			asn = update(asn);
@@ -143,54 +142,51 @@ public class ASNDAOImpl implements IASNDAOService {
 			e.printStackTrace(new PrintWriter(sw));
 			String stacktrace = sw.toString();
 			logger.error(stacktrace);
-			
+
 			throw e;
-		}	
-		
-		return asn;		
+		}
+
+		return asn;
 	}
 
 	@Override
 	public ASN addLocalTrans(Long asnId, ASNPickup pickUp, ASNDropOff dropOff) throws Exception {
 		ASN asn = null;
-		
+
 		try {
 			asn = em.getReference(ASN.class, asnId);
-		
-			if (Validator.isNotNull(pickUp))
-			{
-				pickUp = (ASNPickup)em.merge(pickUp);
+
+			if (Validator.isNotNull(pickUp)) {
+				pickUp = (ASNPickup) em.merge(pickUp);
 				asn.setPickup(pickUp);
 			}
-			
-			if (Validator.isNotNull(dropOff))
-			{		
-				dropOff = (ASNDropOff)em.merge(dropOff);
-				asn.setDropOff(dropOff);	
+
+			if (Validator.isNotNull(dropOff)) {
+				dropOff = (ASNDropOff) em.merge(dropOff);
+				asn.setDropOff(dropOff);
 			}
-			
+
 			asn.setPickup(pickUp);
 			asn.setDropOff(dropOff);
-			
+
 			asn = update(asn);
 		} catch (Exception e) {
 			StringWriter sw = new StringWriter();
 			e.printStackTrace(new PrintWriter(sw));
 			String stacktrace = sw.toString();
 			logger.error(stacktrace);
-			
+
 			throw e;
-		}		
-		
+		}
+
 		return asn;
 	}
 
 	@Override
 	public ASN getByCode(String code) {
 		ASN asn = null;
-		
-		try
-		{
+
+		try {
 			CriteriaBuilder builder = em.getCriteriaBuilder();
 			CriteriaQuery<ASN> query = builder.createQuery(ASN.class);
 			Root<ASN> rootEntity = query.from(ASN.class);
@@ -199,29 +195,110 @@ public class ASNDAOImpl implements IASNDAOService {
 
 			TypedQuery<ASN> typedQuery = em.createQuery(query);
 			typedQuery.setParameter(p, code);
-			
+
 			asn = typedQuery.getSingleResult();
-/*			TypedQuery<Organization> q = em.createQuery("select o from com.conx.logistics.mdm.domain.organization.Organization o WHERE o.code = :code",Organization.class);
-			q.setParameter("code", code);
-						
-			org = q.getSingleResult();*/
-		}
-		catch(NoResultException e){}
-		catch(Exception e)
-		{
+			/*
+			 * TypedQuery<Organization> q = em.createQuery(
+			 * "select o from com.conx.logistics.mdm.domain.organization.Organization o WHERE o.code = :code"
+			 * ,Organization.class); q.setParameter("code", code);
+			 * 
+			 * org = q.getSingleResult();
+			 */
+		} catch (NoResultException e) {
+		} catch (Exception e) {
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			String stacktrace = sw.toString();
+			logger.error(stacktrace);
+		} catch (Error e) {
 			StringWriter sw = new StringWriter();
 			e.printStackTrace(new PrintWriter(sw));
 			String stacktrace = sw.toString();
 			logger.error(stacktrace);
 		}
-		catch(Error e)
-		{
-			StringWriter sw = new StringWriter();
-			e.printStackTrace(new PrintWriter(sw));
-			String stacktrace = sw.toString();
-			logger.error(stacktrace);
-		}		
-		
+
 		return asn;
-	}	
+	}
+
+	@Override
+	public ASN addLines(ASN asn, Set<ASNLine> lines) throws Exception {
+		try {
+			// Product prod = null;
+			for (ASNLine line : lines) {
+				// line.setParentASN(asn);
+
+				// prod = em.merge(line.getProduct());
+				// line.setProduct(prod);
+
+				line = (ASNLine) em.merge(line);
+				asn.getAsnLines().add(line);
+			}
+
+			asn = update(asn);
+			return asn;
+		} catch (Exception e) {
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			String stacktrace = sw.toString();
+			logger.error(stacktrace);
+
+			throw e;
+		}
+	}
+
+	@Override
+	public ASN addRefNums(ASN asn, Set<ReferenceNumber> numbers) throws Exception {
+		try {
+			DefaultEntityMetadata emd = entityMetadataDAOService.provide(ASN.class);
+			ReferenceNumberType rnt = null;
+			for (ReferenceNumber number : numbers) {
+				number.setEntityMetadata(emd);
+				number.setCode(asn.getCode() + "-" + number.getType().getCode() + "-" + number.getValue());
+				number.setEntityPK(asn.getId());
+
+				// rnt = em.merge(number.getType());
+				number.setType(rnt);
+
+				// number = em.merge(number);
+				asn.getRefNumbers().add(number);
+			}
+			asn = update(asn);
+			return asn;
+		} catch (Exception e) {
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			String stacktrace = sw.toString();
+			logger.error(stacktrace);
+
+			throw e;
+		}
+	}
+
+	@Override
+	public ASN addLocalTrans(ASN asn, ASNPickup pickUp, ASNDropOff dropOff) throws Exception {
+		try {
+			if (Validator.isNotNull(pickUp)) {
+				pickUp = (ASNPickup) em.merge(pickUp);
+				asn.setPickup(pickUp);
+			}
+
+			if (Validator.isNotNull(dropOff)) {
+				dropOff = (ASNDropOff) em.merge(dropOff);
+				asn.setDropOff(dropOff);
+			}
+
+			asn.setPickup(pickUp);
+			asn.setDropOff(dropOff);
+
+			asn = update(asn);
+			return asn;
+		} catch (Exception e) {
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			String stacktrace = sw.toString();
+			logger.error(stacktrace);
+
+			throw e;
+		}
+	}
 }

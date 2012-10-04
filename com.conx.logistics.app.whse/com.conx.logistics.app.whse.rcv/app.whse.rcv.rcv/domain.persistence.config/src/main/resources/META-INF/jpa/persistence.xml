@@ -12,5 +12,6 @@
 		<class>com.conx.logistics.app.whse.rcv.rcv.domain.ReceiveLine</class>
 		<class>com.conx.logistics.app.whse.rcv.rcv.domain.ReceiveLineStockItemSet</class>
 		<class>com.conx.logistics.app.whse.rcv.rcv.domain.StockItem</class>
+		<class>com.conx.logistics.app.whse.domain.docktype.DockType</class>
 	</persistence-unit>
 </persistence>

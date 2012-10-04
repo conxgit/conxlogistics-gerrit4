@@ -10,7 +10,7 @@ import com.conx.logistics.mdm.domain.organization.Organization;
 
 @MappedSuperclass
 public class MultitenantBaseEntity  extends  BaseEntity{
-    @ManyToOne(targetEntity = Organization.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = Organization.class, fetch = FetchType.LAZY)
     @JoinColumn
     private Organization tenant;
 

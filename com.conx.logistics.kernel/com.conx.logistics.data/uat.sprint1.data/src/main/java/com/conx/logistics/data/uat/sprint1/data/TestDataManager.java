@@ -2,7 +2,6 @@ package com.conx.logistics.data.uat.sprint1.data;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,8 +24,13 @@ import com.conx.logistics.app.whse.rcv.asn.domain.ASN;
 import com.conx.logistics.app.whse.rcv.asn.domain.ASNDropOff;
 import com.conx.logistics.app.whse.rcv.asn.domain.ASNLine;
 import com.conx.logistics.app.whse.rcv.asn.domain.ASNPickup;
+import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
 import com.conx.logistics.mdm.dao.services.IAddressDAOService;
+import com.conx.logistics.mdm.dao.services.IAddressTypeAddressDAOService;
+import com.conx.logistics.mdm.dao.services.IAddressTypeDAOService;
 import com.conx.logistics.mdm.dao.services.IContactDAOService;
+import com.conx.logistics.mdm.dao.services.IContactTypeContactDAOService;
+import com.conx.logistics.mdm.dao.services.IContactTypeDAOService;
 import com.conx.logistics.mdm.dao.services.ICountryDAOService;
 import com.conx.logistics.mdm.dao.services.ICountryStateDAOService;
 import com.conx.logistics.mdm.dao.services.IEntityMetadataDAOService;
@@ -41,36 +45,44 @@ import com.conx.logistics.mdm.dao.services.product.IProductTypeDAOService;
 import com.conx.logistics.mdm.dao.services.product.IWeightUnitDAOService;
 import com.conx.logistics.mdm.dao.services.referencenumber.IReferenceNumberDAOService;
 import com.conx.logistics.mdm.dao.services.referencenumber.IReferenceNumberTypeDAOService;
-import com.conx.logistics.mdm.domain.constants.AddressCustomCONSTANTS;
+import com.conx.logistics.mdm.domain.constants.AddressTypeCustomCONSTANTS;
+import com.conx.logistics.mdm.domain.constants.ContactTypeCustomCONSTANTS;
 import com.conx.logistics.mdm.domain.constants.DimUnitCustomCONSTANTS;
 import com.conx.logistics.mdm.domain.constants.PackUnitCustomCONSTANTS;
 import com.conx.logistics.mdm.domain.constants.ProductTypeCustomCONSTANTS;
 import com.conx.logistics.mdm.domain.constants.ReferenceNumberTypeCustomCONSTANTS;
 import com.conx.logistics.mdm.domain.constants.WeightUnitCustomCONSTANTS;
 import com.conx.logistics.mdm.domain.geolocation.Address;
+import com.conx.logistics.mdm.domain.geolocation.AddressType;
+import com.conx.logistics.mdm.domain.geolocation.AddressTypeAddress;
 import com.conx.logistics.mdm.domain.geolocation.Country;
 import com.conx.logistics.mdm.domain.geolocation.CountryState;
 import com.conx.logistics.mdm.domain.geolocation.Unloco;
 import com.conx.logistics.mdm.domain.metadata.DefaultEntityMetadata;
+import com.conx.logistics.mdm.domain.metamodel.EntityType;
 import com.conx.logistics.mdm.domain.organization.Contact;
+import com.conx.logistics.mdm.domain.organization.ContactType;
+import com.conx.logistics.mdm.domain.organization.ContactTypeContact;
 import com.conx.logistics.mdm.domain.organization.Organization;
 import com.conx.logistics.mdm.domain.product.Product;
 import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber;
 import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumberType;
 
 public class TestDataManager {
-	protected Logger logger = LoggerFactory.getLogger(this.getClass());	
-	
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
+
 	private EntityManagerFactory conxlogisticsEMF;
 
 	private PlatformTransactionManager globalTransactionManager;
-	
+
 	private IOrganizationDAOService orgDaoService;
 	private ICountryDAOService countryDaoService;
 	private ICountryStateDAOService countryStateDaoService;
 	private IUnlocoDAOService unlocoDaoService;
 	private IAddressDAOService addressDaoService;
-	
+	private IAddressTypeDAOService addressTypeDaoService;
+	private IAddressTypeAddressDAOService addressTypeAddressDaoService;
+
 	private IPackUnitDAOService packUnitDaoService;
 	private IDimUnitDAOService dimUnitDaoService;
 	private IWeightUnitDAOService weightUnitDaoService;
@@ -80,89 +92,97 @@ public class TestDataManager {
 	private IASNDAOService asnDaoService;
 	private IASNPickupDAOService asnPickupDAOService;
 	private IASNDropOffDAOService asnDropOffDAOService;
-	
+
 	private IContactDAOService contactDAOService;
+	private IContactTypeDAOService contactTypeDAOService;
+	private IContactTypeContactDAOService contactTypeContactDAOService;
 	private IDocTypeDAOService docTypeDOAService;
 	private IDockTypeDAOService dockTypeDOAService;
 	private IEntityMetadataDAOService entityMetadataDAOService;
-	
+	private IEntityTypeDAOService entityTypeDAOService;
+
 	private IReferenceNumberTypeDAOService referenceNumberTypeDaoService;
 	private IReferenceNumberDAOService referenceNumberDaoService;
-	
+
 	public void setOrgDaoService(IOrganizationDAOService orgDaoService) {
 		this.orgDaoService = orgDaoService;
 	}
+
 	public void setCountryDaoService(ICountryDAOService countryDaoService) {
 		this.countryDaoService = countryDaoService;
 	}
-	public void setCountryStateDaoService(
-			ICountryStateDAOService countryStateDaoService) {
+
+	public void setCountryStateDaoService(ICountryStateDAOService countryStateDaoService) {
 		this.countryStateDaoService = countryStateDaoService;
 	}
+
 	public void setUnlocoDaoService(IUnlocoDAOService unlocoDaoService) {
 		this.unlocoDaoService = unlocoDaoService;
 	}
+
 	public void setAddressDaoService(IAddressDAOService addressDaoService) {
 		this.addressDaoService = addressDaoService;
 	}
-	
+
 	public void setProductDaoService(IProductDAOService productDaoService) {
 		this.productDaoService = productDaoService;
 	}
-	public void setReferenceNumberTypeDaoService(
-			IReferenceNumberTypeDAOService referenceNumberTypeDaoService) {
+
+	public void setReferenceNumberTypeDaoService(IReferenceNumberTypeDAOService referenceNumberTypeDaoService) {
 		this.referenceNumberTypeDaoService = referenceNumberTypeDaoService;
 	}
-	public void setReferenceNumberDaoService(
-			IReferenceNumberDAOService referenceNumberDaoService) {
+
+	public void setReferenceNumberDaoService(IReferenceNumberDAOService referenceNumberDaoService) {
 		this.referenceNumberDaoService = referenceNumberDaoService;
-	}	
+	}
+
 	public void setPackUnitDaoService(IPackUnitDAOService packUnitDaoService) {
 		this.packUnitDaoService = packUnitDaoService;
 	}
+
 	public void setDimUnitDaoService(IDimUnitDAOService dimUnitDaoService) {
 		this.dimUnitDaoService = dimUnitDaoService;
 	}
+
 	public void setWeightUnitDaoService(IWeightUnitDAOService weightUnitDaoService) {
 		this.weightUnitDaoService = weightUnitDaoService;
 	}
-	public void setProductTypeDaoService(
-			IProductTypeDAOService productTypeDaoService) {
+
+	public void setProductTypeDaoService(IProductTypeDAOService productTypeDaoService) {
 		this.productTypeDaoService = productTypeDaoService;
 	}
-	public void setCurrencyUnitDaoService(
-			ICurrencyUnitDAOService currencyUnitDAOService) {
+
+	public void setCurrencyUnitDaoService(ICurrencyUnitDAOService currencyUnitDAOService) {
 		this.currencyUnitDAOService = currencyUnitDAOService;
 	}
-	
+
 	public void setContactDAOService(IContactDAOService contactDAOService) {
 		this.contactDAOService = contactDAOService;
 	}
-	
+
 	public void setDocTypeDOAService(IDocTypeDAOService docTypeDOAService) {
 		this.docTypeDOAService = docTypeDOAService;
 	}
-	
+
 	public void setDockTypeDOAService(IDockTypeDAOService dockTypeDOAService) {
 		this.dockTypeDOAService = dockTypeDOAService;
 	}
-	
-	public void setEntityMetadataDAOService(
-			IEntityMetadataDAOService entityMetadataDAOService) {
+
+	public void setEntityMetadataDAOService(IEntityMetadataDAOService entityMetadataDAOService) {
 		this.entityMetadataDAOService = entityMetadataDAOService;
 	}
+
 	public void setConxlogisticsEMF(EntityManagerFactory conxlogisticsEMF) {
 		this.conxlogisticsEMF = conxlogisticsEMF;
 	}
 
-	public void setGlobalTransactionManager(
-			PlatformTransactionManager globalTransactionManager) {
+	public void setGlobalTransactionManager(PlatformTransactionManager globalTransactionManager) {
 		this.globalTransactionManager = globalTransactionManager;
 	}
-	
+
 	public void start() {
 		EntityManager em = conxlogisticsEMF.createEntityManager();
-		
+
 		/**
 		 * Org Data: TD ORG 1.0, 4.0, 6.0, 7.0
 		 * 
@@ -171,100 +191,125 @@ public class TestDataManager {
 		 * Ref IDs: TD RIDTYP 2.0, 3.0, 4.0
 		 * 
 		 */
-		
+
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setName("uat.sprint1.data");
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-		TransactionStatus status = this.globalTransactionManager.getTransaction(def);			
+		TransactionStatus status = this.globalTransactionManager.getTransaction(def);
 		try {
 			Organization record = this.orgDaoService.getByCode("TESCUS1");
 			logger.info("Checking Sprint # 1 UAT data");
-			if (record == null)
-			{
+			if (record == null) {
 				logger.info("Generating Sprint # 1 UAT ");
 				/**
 				 * Org Data: TD ORG 1.0, 4.0, 6.0, 7.0
 				 */
-				//-- Unlocos: 
+				// -- Unlocos:
 				Country de = countryDaoService.provide("DE", "Germany");
-				CountryState csdefra = countryStateDaoService.provide("HE","Hessen", de.getId());
+				CountryState csdefra = countryStateDaoService.provide("HE", "Hessen", de.getId());
 				Unloco defra = unlocoDaoService.provide("DEFRA", "", "Frankfurt am Main", de.getId(), csdefra.getId());
-				
+
 				Country gb = countryDaoService.provide("GB", "United Kingdom");
-				CountryState csgbhlr = countryStateDaoService.provide("GTL","Greater London", de.getId());
-				Unloco gbhlr = unlocoDaoService.provide("GBLHR", "", "Heathrow Apt/London	LHR", de.getId(), csdefra.getId());				
-				
+				CountryState csgbhlr = countryStateDaoService.provide("GTL", "Greater London", de.getId());
+				Unloco gbhlr = unlocoDaoService.provide("GBLHR", "", "Heathrow Apt/London	LHR", de.getId(), csdefra.getId());
+
 				Country us = countryDaoService.provide("US", "United States");
-				CountryState csusbwi = countryStateDaoService.provide("MD","Maryland", us.getId());
-				Unloco usbwi = unlocoDaoService.provide("USBWI", "", "Washington-Baltimore Int Apt", de.getId(), csdefra.getId());				
-				
-				CountryState csusdfw = countryStateDaoService.provide("TX","Texas", us.getId());
-				Unloco usdfw = unlocoDaoService.provide("USDFW", "", "Dallas-Fort Worth Int Apt", de.getId(), csdefra.getId());	
-				
-				CountryState csusntn = countryStateDaoService.provide("MA","Massachusetts", us.getId());
-				Unloco usntn = unlocoDaoService.provide("USNTN", "", "Newton", de.getId(), csdefra.getId());					
-				
-				CountryState csussfo = countryStateDaoService.provide("CA","California", us.getId());
+				CountryState csusbwi = countryStateDaoService.provide("MD", "Maryland", us.getId());
+				Unloco usbwi = unlocoDaoService.provide("USBWI", "", "Washington-Baltimore Int Apt", de.getId(), csdefra.getId());
+
+				CountryState csusdfw = countryStateDaoService.provide("TX", "Texas", us.getId());
+				Unloco usdfw = unlocoDaoService.provide("USDFW", "", "Dallas-Fort Worth Int Apt", de.getId(), csdefra.getId());
+
+				CountryState csusntn = countryStateDaoService.provide("MA", "Massachusetts", us.getId());
+				Unloco usntn = unlocoDaoService.provide("USNTN", "", "Newton", de.getId(), csdefra.getId());
+
+				CountryState csussfo = countryStateDaoService.provide("CA", "California", us.getId());
 				Unloco ussfo = unlocoDaoService.provide("USSFO", "", "San Francisco", de.getId(), csdefra.getId());
-				
-				//-- Orgs:
+
+				// -- Orgs:
 				DefaultEntityMetadata orgEMD = entityMetadataDAOService.getByClass(Organization.class);
-				//------------ 1.0-TESCUS1:
+				// ------------ 1.0-TESCUS1:
 				Organization tescus1 = new Organization();
 				tescus1.setName("Test Customer 1");
 				tescus1.setCode("TESCUS1");
 				tescus1 = this.orgDaoService.add(tescus1);
-				
-				Address tescus1_addr = addressDaoService.provide(Organization.class.getName(),tescus1.getId(),"123 Main St	Suite 1",null,null,null,"USDFW",null,us.getCode(),us.getName(),null,null);
+
+				EntityType type = entityTypeDAOService.provide(Organization.class);
+				Address tescus1_addr = addressDaoService.provide(type, tescus1.getId(), "123 Main St Suite 1", null, null, null, "USDFW", null, us.getCode(), us.getName(), null, null);
+				tescus1_addr.setOwnerEntityId(tescus1.getId());
+				addressDaoService.update(tescus1_addr);
+				AddressType tescus1_addr_type = addressTypeDaoService.provide(AddressTypeCustomCONSTANTS.TYPE_MAIN, AddressTypeCustomCONSTANTS.TYPE_MAIN_DESCRIPTION);
+				AddressTypeAddress tescus1_ata = addressTypeAddressDaoService.provide(tescus1_addr_type, tescus1_addr);
+				tescus1.getAddressTypeAddresses().add(tescus1_ata);
 				tescus1.setMainAddress(tescus1_addr);
-				
+
 				Contact tescus1_contact = new Contact();
 				tescus1_contact.setFirstName("Aaron");
 				tescus1_contact.setLastName("Anderson");
 				tescus1_contact = contactDAOService.provide(orgEMD, tescus1.getId(), tescus1_contact);
+				ContactType tescus1_contact_type = contactTypeDAOService.provide(ContactTypeCustomCONSTANTS.TYPE_MAIN, ContactTypeCustomCONSTANTS.TYPE_MAIN_DESCRIPTION);
+				ContactTypeContact tescus1_ctc = contactTypeContactDAOService.provide(tescus1_contact_type, tescus1_contact);
+				tescus1.getContactTypeContacts().add(tescus1_ctc);
 				tescus1.setMainContact(tescus1_contact);
-				
+
 				tescus1 = this.orgDaoService.update(tescus1);
 
-				//------------ 4.0-TESCAR1:		
+				// ------------ 4.0-TESCAR1:
 				Organization tescar1 = new Organization();
 				tescar1.setName("Test Carrier 1");
 				tescar1.setCode("TESCAR1");
 				tescar1 = this.orgDaoService.add(tescar1);
-				
-				Address tescar1_addr = addressDaoService.provide(Organization.class.getName(),tescar1.getId(),"123 Main St	Suite 1",null,null,null,"USDFW",null,us.getCode(),us.getName(),null,null);
+
+				Address tescar1_addr = addressDaoService.provide(entityTypeDAOService.provide(Organization.class), tescar1.getId(), "123 Main St	Suite 1", null, null, null, "USDFW", null,
+						us.getCode(), us.getName(), null, null);
+				tescar1_addr.setOwnerEntityId(tescar1.getId());
+				addressDaoService.update(tescar1_addr);
+				AddressType tescar1_addr_type = addressTypeDaoService.provide(AddressTypeCustomCONSTANTS.TYPE_MAIN, AddressTypeCustomCONSTANTS.TYPE_MAIN_DESCRIPTION);
+				AddressTypeAddress tescar1_ata = addressTypeAddressDaoService.provide(tescar1_addr_type, tescar1_addr);
+				tescar1.getAddressTypeAddresses().add(tescar1_ata);
 				tescar1.setMainAddress(tescar1_addr);
-				
+
 				Contact tescar1_contact = new Contact();
 				tescar1_contact.setFirstName("Don");
 				tescar1_contact.setLastName("Davis");
 				tescar1_contact = contactDAOService.provide(orgEMD, tescar1.getId(), tescar1_contact);
-				tescar1.setMainContact(tescar1_contact);		
-				
+				ContactType tescar1_contact_type = contactTypeDAOService.provide(ContactTypeCustomCONSTANTS.TYPE_MAIN, ContactTypeCustomCONSTANTS.TYPE_MAIN_DESCRIPTION);
+				ContactTypeContact tescar1_ctc = contactTypeContactDAOService.provide(tescar1_contact_type, tescar1_contact);
+				tescar1.getContactTypeContacts().add(tescar1_ctc);
+				tescar1.setMainContact(tescar1_contact);
+
 				tescar1 = this.orgDaoService.update(tescar1);
-				
-				//------------ 6.0-TESLOC1:		
+
+				// ------------ 6.0-TESLOC1:
 				Organization tesloc1 = new Organization();
 				tesloc1.setName("Test Location 1");
 				tesloc1.setCode("TESLOC1");
 				tesloc1 = this.orgDaoService.add(tesloc1);
-				
-				Address tesloc1_addr = addressDaoService.provide(Organization.class.getName(),tesloc1.getId(),"7 West Penn St",null,null,null,"USNTN",null,us.getCode(),us.getName(),null,null);
+
+				Address tesloc1_addr = addressDaoService.provide(entityTypeDAOService.provide(Organization.class), tesloc1.getId(), "7 West Penn St", null, null, null, "USNTN", null, us.getCode(),
+						us.getName(), null, null);
+				tesloc1_addr.setOwnerEntityId(tesloc1.getId());
+				addressDaoService.update(tesloc1_addr);
+				AddressType tesloc1_addr_type = addressTypeDaoService.provide(AddressTypeCustomCONSTANTS.TYPE_MAIN, AddressTypeCustomCONSTANTS.TYPE_MAIN_DESCRIPTION);
+				AddressTypeAddress tesloc1_ata = addressTypeAddressDaoService.provide(tesloc1_addr_type, tesloc1_addr);
+				tesloc1.getAddressTypeAddresses().add(tesloc1_ata);
 				tesloc1.setMainAddress(tesloc1_addr);
-				
+
 				Contact tesloc1_contact = new Contact();
 				tesloc1_contact.setFirstName("Jon");
 				tesloc1_contact.setLastName("Drews");
 				tesloc1_contact = contactDAOService.provide(orgEMD, tesloc1.getId(), tesloc1_contact);
-				tesloc1.setMainContact(tesloc1_contact);	
-				
-				tesloc1 = this.orgDaoService.update(tesloc1);	
-				
-				
+				ContactType tesloc1_contact_type = contactTypeDAOService.provide(ContactTypeCustomCONSTANTS.TYPE_MAIN, ContactTypeCustomCONSTANTS.TYPE_MAIN_DESCRIPTION);
+				ContactTypeContact tesloc1_ctc = contactTypeContactDAOService.provide(tesloc1_contact_type, tesloc1_contact);
+				tesloc1.getContactTypeContacts().add(tesloc1_ctc);
+				tesloc1.setMainContact(tesloc1_contact);
+
+				tesloc1 = this.orgDaoService.update(tesloc1);
+
 				/**
 				 * Prod Data: TD PRD 2.0, 3.0, 4.0
 				 */
-				//-- PRD 2.0
+				// -- PRD 2.0
 				packUnitDaoService.provideDefaults();
 				dimUnitDaoService.provideDefaults();
 				weightUnitDaoService.provideDefaults();
@@ -273,36 +318,39 @@ public class TestDataManager {
 				currencyUnitDAOService.provideDefaults();
 				docTypeDOAService.provideDefaults();
 				dockTypeDOAService.provideDefaults();
-				Product prd2 = productDaoService.provide("fooite1", "banana's",ProductTypeCustomCONSTANTS.TYPE_Food_Item,PackUnitCustomCONSTANTS.TYPE_PCE,WeightUnitCustomCONSTANTS.TYPE_LB,DimUnitCustomCONSTANTS.TYPE_FT,DimUnitCustomCONSTANTS.TYPE_CF,"GEN",null);
-				Product prd3 = productDaoService.provide("hazmat1", "Jet Fuel",ProductTypeCustomCONSTANTS.TYPE_Hazardous_Material,PackUnitCustomCONSTANTS.TYPE_PCE,WeightUnitCustomCONSTANTS.TYPE_LB,DimUnitCustomCONSTANTS.TYPE_FT,DimUnitCustomCONSTANTS.TYPE_CF,"GEN",null);
-				Product prd4 = productDaoService.provide("textil1", "Clothing",ProductTypeCustomCONSTANTS.TYPE_Textiles,PackUnitCustomCONSTANTS.TYPE_PCE,WeightUnitCustomCONSTANTS.TYPE_LB,DimUnitCustomCONSTANTS.TYPE_FT,DimUnitCustomCONSTANTS.TYPE_CF,"GEN",null);
-				
+				Product prd2 = productDaoService.provide("fooite1", "banana's", ProductTypeCustomCONSTANTS.TYPE_Food_Item, PackUnitCustomCONSTANTS.TYPE_PCE, WeightUnitCustomCONSTANTS.TYPE_LB,
+						DimUnitCustomCONSTANTS.TYPE_FT, DimUnitCustomCONSTANTS.TYPE_CF, "GEN", null);
+				Product prd3 = productDaoService.provide("hazmat1", "Jet Fuel", ProductTypeCustomCONSTANTS.TYPE_Hazardous_Material, PackUnitCustomCONSTANTS.TYPE_PCE,
+						WeightUnitCustomCONSTANTS.TYPE_LB, DimUnitCustomCONSTANTS.TYPE_FT, DimUnitCustomCONSTANTS.TYPE_CF, "GEN", null);
+				Product prd4 = productDaoService.provide("textil1", "Clothing", ProductTypeCustomCONSTANTS.TYPE_Textiles, PackUnitCustomCONSTANTS.TYPE_PCE, WeightUnitCustomCONSTANTS.TYPE_LB,
+						DimUnitCustomCONSTANTS.TYPE_FT, DimUnitCustomCONSTANTS.TYPE_CF, "GEN", null);
+
 				/**
 				 * 
 				 * Sample ASN
 				 * 
 				 */
 				DefaultEntityMetadata asnEMD = entityMetadataDAOService.getByClass(ASN.class);
-				//- Ref Numbers
+				// - Ref Numbers
 				ReferenceNumberType fedexRefType = referenceNumberTypeDaoService.getByCode(ReferenceNumberTypeCustomCONSTANTS.TYPE_FEDEX);
 				ReferenceNumber rn1 = new ReferenceNumber();
 				rn1.setCode("122345678899");
 				rn1.setValue("122345678899");
 				rn1.setType(fedexRefType);
 				rn1.setEntityMetadata(asnEMD);
-				rn1  = referenceNumberDaoService.add(rn1);
-				
+				rn1 = referenceNumberDaoService.add(rn1);
+
 				ReferenceNumber rn2 = new ReferenceNumber();
 				rn2.setCode("998877665544332211");
 				rn2.setValue("122345678899");
 				rn2.setType(fedexRefType);
 				rn2.setEntityMetadata(asnEMD);
-				rn2  = referenceNumberDaoService.add(rn2);				
-				
+				rn2 = referenceNumberDaoService.add(rn2);
+
 				Set<ReferenceNumber> refNumList = new HashSet<ReferenceNumber>();
 				refNumList.add(rn1);
 				refNumList.add(rn2);
-				
+
 				ASNLine al1 = new ASNLine();
 				al1.setCode("AL1");
 				al1.setProduct(prd2);
@@ -316,7 +364,7 @@ public class TestDataManager {
 				al1.setExpectedTotalWidth(1.0);
 				al1.setExpectedTotalHeight(1.39);
 				al1.setDescription("A90234708-3292389 Laptop Package");
-				
+
 				ASNLine al2 = new ASNLine();
 				al2.setCode("AL2");
 				al2.setProduct(prd3);
@@ -330,14 +378,14 @@ public class TestDataManager {
 				al2.setExpectedTotalWidth(1.0);
 				al2.setExpectedTotalHeight(1.39);
 				al2.setDescription("AODK-DLKDJ WKIWKWI");
-				
+
 				Set<ASNLine> asnLineList = new HashSet<ASNLine>();
 				asnLineList.add(al1);
 				asnLineList.add(al2);
-				
+
 				ASNPickup pickup1 = new ASNPickup();
 				ASNDropOff dropOff1 = new ASNDropOff();
-				
+
 				pickup1.setCode("PKUP1");
 				pickup1.setPickUpFrom(tescus1);
 				pickup1.setPickUpFromAddress(tescus1_addr);
@@ -348,69 +396,70 @@ public class TestDataManager {
 				pickup1.setBolNumber("DRV001");
 				pickup1.setVehicleId("DRV001");
 				pickup1.setEstimatedPickup(new Date());
-				
+
 				pickup1 = asnPickupDAOService.add(pickup1);
-				
-				
+
 				dropOff1.setDropOffAt(tescus1);
 				dropOff1.setCode("DRPOF1");
 				dropOff1.setDropOffAtAddress(tescus1_addr);
 				dropOff1.setEstimatedDropOff(new Date());
 				dropOff1 = asnDropOffDAOService.add(dropOff1);
-				
+
 				ASN asn1 = new ASN();
 				asn1.setCode("ASN1");
 				asn1 = asnDaoService.add(asn1);
-				
+
 				rn1.setEntityPK(asn1.getId());
 				rn2.setEntityPK(asn1.getId());
 				referenceNumberDaoService.update(rn1);
 				referenceNumberDaoService.update(rn2);
-				
+
 				asnDaoService.addRefNums(asn1.getId(), refNumList);
 				asnDaoService.addLines(asn1.getId(), asnLineList);
 				asnDaoService.addLocalTrans(asn1.getId(), pickup1, dropOff1);
-				
+
 				/**
 				 * Ref IDs: TD RIDTYP 2.0, 3.0, 4.0
 				 */
 				referenceNumberTypeDaoService.provideDefaults();
-				
+
 				this.globalTransactionManager.commit(status);
 			}
-		} 
-		catch (Exception e) 
-		{
+		} catch (Exception e) {
 			StringWriter sw = new StringWriter();
 			e.printStackTrace(new PrintWriter(sw));
 			String stacktrace = sw.toString();
 			logger.error(stacktrace);
-			
+
 			this.globalTransactionManager.rollback(status);
 		}
-		
 
-		
 	}
-	
+
 	public void stop() {
-		
+
 	}
+
 	public IASNDAOService getAsnDaoService() {
 		return asnDaoService;
 	}
+
 	public void setAsnDaoService(IASNDAOService asnDaoService) {
 		this.asnDaoService = asnDaoService;
 	}
+
 	public IASNPickupDAOService getAsnPickupDAOService() {
 		return asnPickupDAOService;
 	}
+
 	public void setAsnPickupDAOService(IASNPickupDAOService asnPickupDAOService) {
 		this.asnPickupDAOService = asnPickupDAOService;
 	}
+
 	public IASNDropOffDAOService getAsnDropOffDAOService() {
 		return asnDropOffDAOService;
 	}
+
 	public void setAsnDropOffDAOService(IASNDropOffDAOService asnDropOffDAOService) {
 		this.asnDropOffDAOService = asnDropOffDAOService;
 	}

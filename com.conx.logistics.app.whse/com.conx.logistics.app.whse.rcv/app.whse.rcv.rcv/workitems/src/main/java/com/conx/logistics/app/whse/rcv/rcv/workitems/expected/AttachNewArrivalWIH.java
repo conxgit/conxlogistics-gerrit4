@@ -38,6 +38,7 @@ public class AttachNewArrivalWIH implements WorkItemHandler {
 			Receive rcv = (Receive)workItem.getParameter("receiveIn");
 			
 			Arrival arrival = new Arrival();//receiveDAOService.attachArrival(rcv);
+			arrival.setReceive(rcv);
 			
 			Map<String, Object> results = new HashMap<String, Object>();
 			results.put("arrivalOut",arrival);

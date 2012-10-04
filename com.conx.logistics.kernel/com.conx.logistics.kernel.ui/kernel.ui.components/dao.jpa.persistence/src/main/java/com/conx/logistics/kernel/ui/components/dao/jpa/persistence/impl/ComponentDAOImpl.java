@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -23,12 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.conx.logistics.kernel.datasource.domain.DataSource;
 import com.conx.logistics.kernel.metamodel.dao.services.IBasicTypeDAOService;
 import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
-import com.conx.logistics.kernel.metamodel.domain.BasicType;
 import com.conx.logistics.kernel.ui.components.dao.services.IComponentDAOService;
 import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent;
-
-
 
 /**
  * Implementation of {@link AbstractConXComponent} that uses JPA for persistence.<p />

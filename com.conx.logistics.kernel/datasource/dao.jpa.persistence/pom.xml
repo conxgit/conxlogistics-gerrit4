@@ -30,16 +30,6 @@
 			<artifactId>com.conx.logistics.kernel.datasource.dao.services</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-		<dependency>
-			<groupId>com.conx.logistics</groupId>
-			<artifactId>com.conx.logistics.kernel.metamodel.domain</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.conx.logistics</groupId>
-			<artifactId>com.conx.logistics.kernel.metamodel.dao.services</artifactId>
-			<version>1.0.0</version>
-		</dependency>
 
 
 		<!-- Spring and AspectJ -->
@@ -75,6 +65,13 @@
 		<dependency>
 			<groupId>javax.persistence</groupId>
 			<artifactId>com.springsource.javax.persistence</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>
+				com.conx.logistics.kernel.metamodel.dao.services
+			</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 	<build>

@@ -9,9 +9,10 @@ import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormAlertPanel;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormAlertPanel.AlertType;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinSearchForm;
 import com.conx.logistics.kernel.ui.vaadin.common.ConXVerticalSplitPanel;
+import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.addon.jpacontainer.JPAContainer;
-import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.data.Container;
+import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
@@ -31,6 +32,7 @@ public class EntitySearchGrid extends VerticalLayout {
 	private SearchGrid componentModel;
 	private VaadinFormAlertPanel gridStatus;
 	private boolean statusEnabled;
+	private Object selectedEntity;
 
 	public EntitySearchGrid(SearchGrid componentModel) {
 		this.componentModel = componentModel;
@@ -42,6 +44,10 @@ public class EntitySearchGrid extends VerticalLayout {
 		this.gridStatus = new VaadinFormAlertPanel();
 
 		initialize();
+	}
+	
+	public SearchGrid getComponentModel() {
+		return this.componentModel;
 	}
 
 	private void initialize() {
@@ -108,7 +114,7 @@ public class EntitySearchGrid extends VerticalLayout {
 
 		this.gridStatus.setVisible(false);
 		this.gridStatus.setCloseable(false);
-		
+
 		this.grid.setSizeFull();
 		this.grid.setMultiSelect(false);
 		this.grid.setSelectable(true);
@@ -123,9 +129,7 @@ public class EntitySearchGrid extends VerticalLayout {
 
 			@Override
 			public void itemClick(ItemClickEvent event) {
-				if (event.getButton() == ItemClickEvent.BUTTON_LEFT) {
-					updateGridStatus();
-				}
+				updateGridStatus(event.getItem());
 			}
 		});
 
@@ -157,7 +161,7 @@ public class EntitySearchGrid extends VerticalLayout {
 		setWidth("100%");
 		// setHeight("400px");
 		setHeight("100%");
-		addComponent(this.gridStatus);
+		// addComponent(this.gridStatus);
 		addComponent(this.splitPanel);
 		setExpandRatio(this.splitPanel, 1.0f);
 	}
@@ -169,12 +173,9 @@ public class EntitySearchGrid extends VerticalLayout {
 	}
 
 	public Object getSelectedEntity() {
-		if (this.grid.getValue() != null) {
-			return ((JPAContainerItem<?>) this.grid.getItem(this.grid.getValue())).getEntity();
-		}
-		return null;
+		return this.selectedEntity;
 	}
-	
+
 	public void setStatusEnabled(boolean enabled) {
 		this.statusEnabled = enabled;
 		if (this.statusEnabled) {
@@ -184,27 +185,28 @@ public class EntitySearchGrid extends VerticalLayout {
 			this.gridStatus.setVisible(false);
 		}
 	}
-	
+
 	private void updateGridStatus() {
-		if (this.statusEnabled) {
-			Object id = EntitySearchGrid.this.grid.getValue();
-			if (id != null) {
-				JPAContainerItem<?> item = (JPAContainerItem<?>) EntitySearchGrid.this.grid.getItem(id);
-				if (item != null) {
-					Property nameProperty = item.getItemProperty("name");
-					if (nameProperty != null) {
-						String name = nameProperty.getValue().toString();
-						if (name != null) {
-							EntitySearchGrid.this.gridStatus.setAlertType(AlertType.SUCCESS);
-							EntitySearchGrid.this.gridStatus.setMessage(name + " is currently selected.");
-							return;
-						}
-					}
-				}
-			}
-			
+		Object id = EntitySearchGrid.this.grid.getValue();
+		if (id != null) {
+			Item item = this.grid.getItem(id);
+			updateGridStatus(item);
+		} else {
 			this.gridStatus.setAlertType(AlertType.ERROR);
 			this.gridStatus.setMessage("No item is currently selected.");
+		}
+	}
+
+	private void updateGridStatus(Item item) {
+		if (this.statusEnabled) {
+			this.selectedEntity = ((EntityItem<?>) item).getEntity();
+			Property nameProperty = item.getItemProperty("name");
+			String name = nameProperty.getValue().toString();
+			if (name != null) {
+				EntitySearchGrid.this.gridStatus.setAlertType(AlertType.SUCCESS);
+				EntitySearchGrid.this.gridStatus.setMessage(name + " is currently selected.");
+				return;
+			}
 		}
 	}
 }

@@ -11,10 +11,13 @@ public interface IPageComponent extends WizardStep {
 	public static final String TASK_WIZARD = "TASK_WIZARD";
 	public static final String PAGE_FLOW_PAGE_CHANGE_EVENT_HANDLER = "PAGE_FLOW_PAGE_CHANGE_EVENT_HANDLER";
 	public static final String MVP_PRESENTER_FACTORY = "MVP_PRESENTER_FACTORY";
+	public static final String ENTITY_TYPE_DAO_SERVICE = "ENTITY_TYPE_DAO_SERVICE";
+	public static final String FOLDER_DAO_SERVICE = "FOLDER_DAO_SERVICE";
+	public static final String REMOTE_DOCUMENT_REPOSITORY = "REMOTE_DOCUMENT_REPOSITORY";
 	
 	public void init(Map<String, Object> initParams);
 	public void setParameterData(Map<String, Object> params);
-	public Map<String, Object> getResultData();
+	public Object getResultData();
 	public boolean isExecuted();
 	public void setExecuted(boolean executed);
 }

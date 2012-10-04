@@ -18,12 +18,7 @@
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.mdm.domain</artifactId>
 			<version>${project.version}</version>
-		</dependency>		
-		<dependency>
-			<groupId>com.conx.logistics</groupId>
-			<artifactId>com.conx.logistics.kernel.metamodel.domain</artifactId>
-			<version>${project.version}</version>
-		</dependency>		
+		</dependency>	
 		<dependency>
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.kernel.metamodel.dao.services</artifactId>

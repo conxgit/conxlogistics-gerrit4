@@ -9,7 +9,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 
-class VaadinCollapsibleSectionFormSectionHeader extends HorizontalLayout {
+public class VaadinCollapsibleSectionFormSectionHeader extends HorizontalLayout {
 	private static final long serialVersionUID = 1010002929298L;
 
 	private Embedded arrow;

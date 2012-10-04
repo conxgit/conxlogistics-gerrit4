@@ -19,7 +19,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
@@ -40,13 +39,12 @@ import com.conx.logistics.common.utils.HTTPUtil;
 import com.conx.logistics.common.utils.StringUtil;
 import com.conx.logistics.common.utils.Validator;
 import com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository;
-import com.conx.logistics.kernel.metamodel.domain.EntityType;
 import com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService;
 import com.conx.logistics.mdm.domain.BaseEntity;
 import com.conx.logistics.mdm.domain.documentlibrary.DocType;
 import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.conx.logistics.mdm.domain.documentlibrary.Folder;
-import com.conx.logistics.common.utils.HTMLUtil;
+import com.conx.logistics.mdm.domain.metamodel.EntityType;
 
 import flexjson.JSONDeserializer;
 

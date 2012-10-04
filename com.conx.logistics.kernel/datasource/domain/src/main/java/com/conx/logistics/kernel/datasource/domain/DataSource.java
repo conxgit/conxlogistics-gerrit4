@@ -14,11 +14,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.criteria.Path;
 
-import com.conx.logistics.common.utils.StringUtil;
-import com.conx.logistics.kernel.metamodel.domain.EntityType;
 import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
+import com.conx.logistics.mdm.domain.metamodel.EntityType;
 
 @Entity
 @Table(name="sysdsdatasource")

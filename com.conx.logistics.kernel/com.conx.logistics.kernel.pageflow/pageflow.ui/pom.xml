@@ -35,7 +35,12 @@
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.kernel.pageflow.services</artifactId>
 			<version>${project.version}</version>
-		</dependency>			
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.rcv.rcv.domain</artifactId>
+			<version>${project.version}</version>
+		</dependency>	
 				
 		<!-- GWT/Vaadin -->
         <dependency>
@@ -108,7 +113,28 @@
 			<groupId>org.vaadin.addons</groupId>
 			<artifactId>css-tools</artifactId>
 			<version>0.3</version>
-		</dependency>		
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>
+				com.conx.logistics.kernel.ui.forms.vaadin
+			</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>
+				com.conx.logistics.kernel.ui.editors.entity.vaadin
+			</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>
+				com.conx.logistics.kernel.metamodel.dao.services
+			</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<resources>

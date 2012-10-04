@@ -93,7 +93,7 @@
 			<version>${project.version}</version>
 		</dependency>
 		
-		<dependency>
+<!-- 		<dependency>
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.app.whse.domain</artifactId>
 			<version>1.0.0</version>
@@ -115,38 +115,20 @@
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.app.whse.domain.persistence.config</artifactId>
 			<version>${project.version}</version>
-		</dependency>		
-				
-		<dependency>
-			<groupId>com.conx.logistics</groupId>
-			<artifactId>com.conx.logistics.kernel.metamodel.domain</artifactId>
-			<version>1.0.0</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>com.conx.logistics</groupId>
-			<artifactId>com.conx.logistics.kernel.metamodel.dao.services</artifactId>
+			<artifactId>com.conx.logistics.mdm.dao.services</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+		 -->
 		<dependency>
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.kernel.metamodel.dao.jpa.persistence</artifactId>
 			<version>${project.version}</version>
 		</dependency>		
-		
-		<dependency>
-			<groupId>com.conx.logistics</groupId>
-			<artifactId>com.conx.logistics.kernel.metamodel.domain.persistence.config</artifactId>
-			<version>${project.version}</version>
-		</dependency>	
-			
-		<dependency>
-			<groupId>com.conx.logistics</groupId>
-			<artifactId>com.conx.logistics.kernel.datasource.domain</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		
+
 		<dependency>
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.kernel.datasource.dao.services</artifactId>
@@ -158,12 +140,7 @@
 			<artifactId>com.conx.logistics.kernel.datasource.dao.jpa.persistence</artifactId>
 			<version>${project.version}</version>
 		</dependency>		
-		
-		<dependency>
-			<groupId>com.conx.logistics</groupId>
-			<artifactId>com.conx.logistics.kernel.datasource.domain.persistence.config</artifactId>
-			<version>${project.version}</version>
-		</dependency>			
+					
 		
 		<dependency>
 			<groupId>com.conx.logistics</groupId>
@@ -237,11 +214,11 @@
 			<artifactId>com.conx.logistics.mdm.domain.persistence.config</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-		<dependency>
+<!-- 		<dependency>
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.app.whse.domain.persistence.config</artifactId>
 			<version>1.0.0</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.mdm.dao.services.impl</artifactId>
@@ -1044,7 +1021,28 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.6.4</version>
 		</dependency>
-	</dependencies>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>
+				com.conx.logistics.kernel.metamodel.dao.services
+			</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>
+				com.conx.logistics.kernel.datasource.domain
+			</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>
+				com.conx.logistics.kernel.datasource.domain.persistence.config
+			</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+  </dependencies>
 	<build>
 		<plugins>
 			<plugin>

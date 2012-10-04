@@ -3,16 +3,15 @@ Bundle-ManifestVersion: 2
 Bundle-Name: ConX UI Component
 Bundle-SymbolicName: com.conx.logistics.kernel.ui.components.dao.jpa.persistence
 Bundle-Vendor: ConX
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Import-Package: 
   com.conx.logistics.kernel.datasource.dao.services;version="1.0.0",
   com.conx.logistics.kernel.datasource.domain;version="1.0.0",
   com.conx.logistics.common.utils;version="1.0.0",
-  com.conx.logistics.kernel.metamodel.dao.services;version="1.0.0",
-  com.conx.logistics.kernel.metamodel.domain;version="1.0.0",
   com.conx.logistics.kernel.ui.components.dao.services;version="1.0.0",
   com.conx.logistics.kernel.ui.components.domain;version="1.0.0",
   com.conx.logistics.kernel.ui.components.domain.masterdetail;version="1.0.0",
+  com.conx.logistics.kernel.metamodel.dao.services;version="[1.0.0,2.0.0)",
   org.hibernate.hql.ast;version="3.6.0.Final",
   javax.persistence;version="0",
   javax.persistence.criteria;version="0",
@@ -32,5 +31,3 @@ Import-Package:
   org.springframework.aop;version="[3.0,3.1)",
   org.aopalliance.aop;version="1.0.0",
   org.springframework.aop.framework;version="[3.0,3.1)"
-Excluded-Imports: 
-  com.conx.logistics.kernel.metamodel.dao.services.impl

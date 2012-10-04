@@ -6759,3 +6759,8 @@ textarea.v-textarea-readonly,
 .v-splitpanel-vsplitter-discrete {
 	display: none;
 }
+.conx-confirm-actuals-field-caption {
+	font-size: 12px;
+	color: #222;
+	font-weight: bold;
+}

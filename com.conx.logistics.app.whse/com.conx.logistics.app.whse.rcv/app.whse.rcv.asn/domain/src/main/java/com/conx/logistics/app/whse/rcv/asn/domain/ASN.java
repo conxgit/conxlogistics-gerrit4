@@ -10,7 +10,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -37,55 +36,31 @@ import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber;
 @Table(name="whasn")
 public class ASN extends MultitenantBaseEntity {
     @OneToOne(targetEntity = PackUnit.class)
-    @JoinColumn
     private PackUnit outerPackUnit;
 
     @OneToOne(targetEntity = WeightUnit.class)
-    @JoinColumn
     private WeightUnit weightUnit;
 
     @OneToOne(targetEntity = DimUnit.class)
-    @JoinColumn
     private DimUnit dimUnit;
 
     @OneToOne(targetEntity = DimUnit.class)
-    @JoinColumn
     private DimUnit volUnit;
 
     @OneToOne(targetEntity = Organization.class)
-    @JoinColumn
     private Organization shippedFrom;
 
     @ManyToOne(targetEntity = Organization.class)
-    @JoinColumn
-    private Organization billTo;
-
-    @ManyToOne(targetEntity = Organization.class)
-    @JoinColumn
     private Organization consignee;
 
-    @OneToOne(targetEntity = Address.class)
-    @JoinColumn
-    private Address consigneeDocAddress;
-
-    @OneToOne(targetEntity = Address.class)
-    @JoinColumn
-    private Address consigneeDelAddress;
-
     @ManyToOne(targetEntity = Organization.class)
-    @JoinColumn
     private Organization consignor;
 
     @ManyToOne(targetEntity = Address.class)
-    @JoinColumn
     private Address shipperAddress;
 
     @OneToMany(mappedBy="parentASN",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<ASNLine> asnLines = new java.util.HashSet<ASNLine>();
-
-    @OneToOne(targetEntity = CommercialRecord.class)
-    @JoinColumn
-    private CommercialRecord commercialRecord;
 
     private Integer expectedTotalOuterPackCount;
 
@@ -130,11 +105,9 @@ public class ASN extends MultitenantBaseEntity {
      * Pickup and Delivery
      */
     @OneToOne(targetEntity = ASNPickup.class,fetch=FetchType.EAGER)
-    @JoinColumn
     private ASNPickup pickup;
     
     @OneToOne(targetEntity = ASNDropOff.class,fetch=FetchType.EAGER)
-    @JoinColumn
     private ASNDropOff dropOff;
 
     @OneToOne
@@ -189,17 +162,6 @@ public class ASN extends MultitenantBaseEntity {
 		this.shippedFrom = shippedFrom;
 	}
 
-
-	public Organization getBillTo() {
-		return billTo;
-	}
-
-
-	public void setBillTo(Organization billTo) {
-		this.billTo = billTo;
-	}
-
-
 	public Organization getConsignee() {
 		return consignee;
 	}
@@ -208,27 +170,6 @@ public class ASN extends MultitenantBaseEntity {
 	public void setConsignee(Organization consignee) {
 		this.consignee = consignee;
 	}
-
-
-	public Address getConsigneeDocAddress() {
-		return consigneeDocAddress;
-	}
-
-
-	public void setConsigneeDocAddress(Address consigneeDocAddress) {
-		this.consigneeDocAddress = consigneeDocAddress;
-	}
-
-
-	public Address getConsigneeDelAddress() {
-		return consigneeDelAddress;
-	}
-
-
-	public void setConsigneeDelAddress(Address consigneeDelAddress) {
-		this.consigneeDelAddress = consigneeDelAddress;
-	}
-
 
 	public Organization getConsignor() {
 		return consignor;
@@ -255,16 +196,6 @@ public class ASN extends MultitenantBaseEntity {
 	public void setAsnLines(Set<ASNLine> asnLines) {
 		this.asnLines = asnLines;
 	}
-
-	public CommercialRecord getCommercialRecord() {
-		return commercialRecord;
-	}
-
-
-	public void setCommercialRecord(CommercialRecord commercialRecord) {
-		this.commercialRecord = commercialRecord;
-	}
-
 
 	public Integer getExpectedTotalOuterPackCount() {
 		return expectedTotalOuterPackCount;

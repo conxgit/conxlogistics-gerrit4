@@ -16,12 +16,16 @@
 		<class>com.conx.logistics.mdm.domain.documentlibrary.FileEntry</class>
 		<class>com.conx.logistics.mdm.domain.documentlibrary.Folder</class>
 		<class>com.conx.logistics.mdm.domain.geolocation.Address</class>
+		<class>com.conx.logistics.mdm.domain.geolocation.AddressType</class>
+		<class>com.conx.logistics.mdm.domain.geolocation.AddressTypeAddress</class>
 		<class>com.conx.logistics.mdm.domain.geolocation.AddressCapability</class>
 		<class>com.conx.logistics.mdm.domain.geolocation.Country</class>
 		<class>com.conx.logistics.mdm.domain.geolocation.CountryState</class>
 		<class>com.conx.logistics.mdm.domain.geolocation.Unloco</class>
 		<class>com.conx.logistics.mdm.domain.metadata.DefaultEntityMetadata</class>
 		<class>com.conx.logistics.mdm.domain.organization.Contact</class>
+		<class>com.conx.logistics.mdm.domain.organization.ContactType</class>
+		<class>com.conx.logistics.mdm.domain.organization.ContactTypeContact</class>
 		<class>com.conx.logistics.mdm.domain.organization.Organization</class>
 		
 		<class>com.conx.logistics.mdm.domain.note.Note</class>
@@ -45,5 +49,22 @@
 		<class>com.conx.logistics.mdm.domain.task.TaskDefinition</class>	
 		
 		<class>com.conx.logistics.mdm.domain.user.User</class>
+		
+		<class>com.conx.logistics.mdm.domain.metamodel.AbstractAttribute</class>
+		<class>com.conx.logistics.mdm.domain.metamodel.AbstractIdentifiableType</class>
+		<class>com.conx.logistics.mdm.domain.metamodel.AbstractManagedType</class>
+		<class>com.conx.logistics.mdm.domain.metamodel.AbstractType</class>
+		<class>com.conx.logistics.mdm.domain.metamodel.BasicAttribute</class>
+		<class>com.conx.logistics.mdm.domain.metamodel.BasicType</class>
+		<class>com.conx.logistics.mdm.domain.metamodel.CollectionAttribute</class>
+		<class>com.conx.logistics.mdm.domain.metamodel.EntityType</class>	
+		<class>com.conx.logistics.mdm.domain.metamodel.EntityTypeAttribute</class>
+		<class>com.conx.logistics.mdm.domain.metamodel.IdentifierAttribute</class>
+		<class>com.conx.logistics.mdm.domain.metamodel.ListAttribute</class>
+		<class>com.conx.logistics.mdm.domain.metamodel.MapAttribute</class>
+		<class>com.conx.logistics.mdm.domain.metamodel.PluralAttribute</class>
+		<class>com.conx.logistics.mdm.domain.metamodel.SetAttribute</class>
+		<class>com.conx.logistics.mdm.domain.metamodel.SingularAttribute</class>
+		<class>com.conx.logistics.mdm.domain.metamodel.VersionAttribute</class>
 	</persistence-unit>
 </persistence>

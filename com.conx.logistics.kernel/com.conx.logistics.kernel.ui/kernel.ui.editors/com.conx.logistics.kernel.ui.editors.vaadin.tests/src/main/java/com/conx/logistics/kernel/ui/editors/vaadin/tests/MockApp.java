@@ -32,7 +32,7 @@ import com.conx.logistics.app.whse.rcv.rcv.domain.Receive;
 import com.conx.logistics.data.uat.sprint2.data.TestDataManager;
 import com.conx.logistics.data.uat.sprint2.data.UIComponentModelData;
 import com.conx.logistics.kernel.datasource.dao.services.IDataSourceDAOService;
-import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
+import com.conx.logistics.mdm.dao.services.metamodel.IEntityTypeDAOService;
 import com.conx.logistics.kernel.ui.components.dao.services.IComponentDAOService;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorContainerComponent;

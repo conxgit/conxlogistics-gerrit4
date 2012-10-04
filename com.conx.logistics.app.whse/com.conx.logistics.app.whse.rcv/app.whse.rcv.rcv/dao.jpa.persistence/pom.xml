@@ -37,11 +37,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.conx.logistics</groupId>
-			<artifactId>com.conx.logistics.kernel.metamodel.dao.services</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.app.whse.rcv.asn.dao.services</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -84,6 +79,13 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>org.springframework.context</artifactId>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>
+				com.conx.logistics.kernel.metamodel.dao.services
+			</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 	<build>

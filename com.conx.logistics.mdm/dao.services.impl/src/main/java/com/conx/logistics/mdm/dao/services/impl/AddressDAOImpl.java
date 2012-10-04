@@ -3,7 +3,6 @@ package com.conx.logistics.mdm.dao.services.impl;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -25,6 +24,7 @@ import com.conx.logistics.mdm.domain.geolocation.Address;
 import com.conx.logistics.mdm.domain.geolocation.Country;
 import com.conx.logistics.mdm.domain.geolocation.CountryState;
 import com.conx.logistics.mdm.domain.geolocation.Unloco;
+import com.conx.logistics.mdm.domain.metamodel.EntityType;
 
 @Transactional
 @Repository
@@ -44,7 +44,7 @@ public class AddressDAOImpl implements IAddressDAOService {
 
 	@Autowired
 	private IUnlocoDAOService unlocoDao;
-
+	
 	public void setEm(EntityManager em) {
 		this.em = em;
 	}
@@ -63,14 +63,14 @@ public class AddressDAOImpl implements IAddressDAOService {
 	}
 
 	@Override
-	public Address getByTypeAndId(String entityType, Long entityId) {
+	public Address getByTypeAndId(Long entityTypeId, Long entityId) {
 		Address res = null;
 		try {
 			TypedQuery<Address> q = em
 					.createQuery(
-							"SELECT Address FROM com.conx.logistics.mdm.domain.geolocation.Address AS address WHERE address.ownerEntityType = :ownerEntityType AND address.ownerEntityId = :ownerEntityId",
+							"SELECT Address FROM com.conx.logistics.mdm.domain.geolocation.Address AS address WHERE address.ownerEntityTypeId = :ownerEntityTypeId AND address.ownerEntityId = :ownerEntityId",
 							Address.class);
-			q.setParameter("ownerEntityType", entityType);
+			q.setParameter("ownerEntityTypeId", entityTypeId);
 			q.setParameter("ownerEntityId", entityId);
 			res = q.getSingleResult();
 		} catch (NoResultException e) {
@@ -130,9 +130,9 @@ public class AddressDAOImpl implements IAddressDAOService {
 
 	@Override
 	public Address provide(Address record) {
-		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-		Thread.currentThread().setContextClassLoader(
-				this.getClass().getClassLoader());
+//		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+//		Thread.currentThread().setContextClassLoader(
+//				this.getClass().getClassLoader());
 		Address existingRecord = getByCode(record.getCode());
 		if (Validator.isNull(existingRecord)) {
 			record = update(record);
@@ -147,17 +147,17 @@ public class AddressDAOImpl implements IAddressDAOService {
 	}
 
 	@Override
-	public Address provide(String entityType, Long entityId, String street1,
+	public Address provide(EntityType entityType, Long entityId, String street1,
 			String street2, String zipCode, String stateOrProvince,
 			String unlocoCode, String unlocoPortCity, String countryCode,
 			String countryName, String stateCode, String stateName) {
 
 		Address res = null;
 
-		res = getByTypeAndId(entityType, entityId);
+		res = getByTypeAndId(entityType.getId(), entityId);
 		if (Validator.isNull(res)) {
 			res = new Address();
-			res.setOwnerEntityType(entityType);
+			res.setOwnerEntityTypeId(entityType.getId());
 			res.setOwnerEntityId(entityId);
 			res.setCode(street1+"@"+entityType+"@"+entityId);
 			res.setDescription(street1);

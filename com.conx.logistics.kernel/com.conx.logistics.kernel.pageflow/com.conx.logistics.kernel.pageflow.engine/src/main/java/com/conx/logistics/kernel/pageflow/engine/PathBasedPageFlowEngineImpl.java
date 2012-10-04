@@ -26,7 +26,6 @@ import org.vaadin.mvp.presenter.IPresenter;
 
 import com.conx.logistics.kernel.bpm.services.IBPMService;
 import com.conx.logistics.kernel.pageflow.engine.path.PageFlowPathAssessor;
-import com.conx.logistics.kernel.pageflow.engine.ui.TaskWizard;
 import com.conx.logistics.kernel.pageflow.event.PageFlowPageChangedEvent;
 import com.conx.logistics.kernel.pageflow.services.ICustomDrivenPageFlowPage;
 import com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage;
@@ -34,6 +33,7 @@ import com.conx.logistics.kernel.pageflow.services.IPageFlowManager;
 import com.conx.logistics.kernel.pageflow.services.IPageFlowPage;
 import com.conx.logistics.kernel.pageflow.services.IPageFlowSession;
 import com.conx.logistics.kernel.pageflow.services.ITaskWizard;
+import com.conx.logistics.kernel.pageflow.ui.wizard.TaskWizard;
 import com.conx.logistics.kernel.ui.service.contribution.IMainApplication;
 import com.conx.logistics.mdm.domain.application.Feature;
 import com.conx.logistics.mdm.domain.task.TaskDefinition;

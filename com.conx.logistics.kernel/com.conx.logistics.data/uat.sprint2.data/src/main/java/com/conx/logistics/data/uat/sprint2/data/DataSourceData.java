@@ -1,11 +1,16 @@
 package com.conx.logistics.data.uat.sprint2.data;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.conx.logistics.app.whse.rcv.rcv.domain.Receive;
 import com.conx.logistics.app.whse.rcv.rcv.domain.ReceiveLine;
@@ -15,10 +20,13 @@ import com.conx.logistics.kernel.datasource.domain.DataSourceField;
 import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
 import com.conx.logistics.mdm.domain.BaseEntity;
 import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
+import com.conx.logistics.mdm.domain.metamodel.EntityType;
 import com.conx.logistics.mdm.domain.note.NoteItem;
 import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber;
 
 public class DataSourceData {
+	/** Logger available to subclasses */
+	protected static final Log logger = LogFactory.getLog(DataSourceData.class);
 
 	public static DataSource RCV_BASIC_DS = null;
 	public static DataSource RCV_DEFAULT_DS = null;
@@ -30,16 +38,22 @@ public class DataSourceData {
 	public static DataSource RN_DS = null;
 
 	public final static DataSource provideDefaultReceiveDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
-		com.conx.logistics.kernel.metamodel.domain.EntityType rcvET = EntityTypeData.provide(entityTypeDAOService, em, Receive.class);
+		EntityType rcvET = EntityTypeData.provide(entityTypeDAOService, em, Receive.class);
 
 		DataSource receiveDS = dataSourceDAOService.provide(rcvET);
 		receiveDS.setCode("defaultReceiveDS");
 		receiveDS.setName("DefaultReceiveDS");
 		receiveDS = dataSourceDAOService.update(receiveDS);
+		
+		String testString = "";
+		for (DataSourceField dsf : receiveDS.getDSFields()) {
+			testString += dsf.getName() + ";";
+		}
 
 		String[] visibleFieldNames = { "id", "code", "name", "dateCreated", "dateLastUpdated", "warehouse" };
 		List<String> visibleFieldNamesSet = Arrays.asList(visibleFieldNames);
-		for (DataSourceField fld : receiveDS.getDSFields()) {
+		HashSet<DataSourceField> flds = new HashSet<DataSourceField>(receiveDS.getDSFields());
+		for (DataSourceField fld : flds) {
 			if (visibleFieldNamesSet.contains(fld.getName()))
 				fld.setHidden(false);
 			else
@@ -48,6 +62,8 @@ public class DataSourceData {
 			if ("warehouse".equals(fld.getName())) {
 				fld.setValueXPath("name");
 			}
+			
+//			dataSourceDAOService.update(fld);
 		}
 
 		receiveDS = dataSourceDAOService.update(receiveDS);
@@ -58,39 +74,50 @@ public class DataSourceData {
 	}
 	
 	public final static DataSource provideDefaultReceiveLineDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
-		com.conx.logistics.kernel.metamodel.domain.EntityType rcvLineET = EntityTypeData.provide(entityTypeDAOService, em, ReceiveLine.class);
+		EntityType rcvLineET = EntityTypeData.provide(entityTypeDAOService, em, ReceiveLine.class);
 
-		DataSource receiveLineDS = dataSourceDAOService.provide(rcvLineET);
-		receiveLineDS.setCode("defaultReceiveLineDS");
-		receiveLineDS.setName("DefaultReceiveLineDS");
-		receiveLineDS = dataSourceDAOService.update(receiveLineDS);
+		DataSource receiveLineDS;
+		try {
+			receiveLineDS = dataSourceDAOService.provide(rcvLineET);
+			receiveLineDS.setCode("defaultReceiveLineDS");
+			receiveLineDS.setName("DefaultReceiveLineDS");
+			receiveLineDS = dataSourceDAOService.update(receiveLineDS);
 
-		String[] visibleFieldNames = { "id", "code", "name", "dateCreated", "dateLastUpdated","lineNumber","expectedOuterPackCount","expectedProdTotalWeight","expectedProdTotalVolume","product" };
-		List<String> visibleFieldNamesSet = Arrays.asList(visibleFieldNames);
-		for (DataSourceField fld : receiveLineDS.getDSFields()) {
-			if (visibleFieldNamesSet.contains(fld.getName()))
-				fld.setHidden(false);
-			else
-				fld.setHidden(true);
+			String[] visibleFieldNames = { "id", "code", "name", "dateCreated", "dateLastUpdated","lineNumber","expectedOuterPackCount","expectedProdTotalWeight","expectedProdTotalVolume","product" };
+			List<String> visibleFieldNamesSet = Arrays.asList(visibleFieldNames);
+			for (DataSourceField fld : receiveLineDS.getDSFields()) {
+				if (visibleFieldNamesSet.contains(fld.getName()))
+					fld.setHidden(false);
+				else
+					fld.setHidden(true);
 
-			if ("product".equals(fld.getName())) {
-				fld.setValueXPath("code");
+				if ("product".equals(fld.getName())) {
+					fld.setValueXPath("code");
+				}
+				
+				if ("parentReceive".equals(fld.getName())) {
+					fld.setForeignKey("parentReceive.id");
+				}
 			}
-			
-			if ("parentReceive".equals(fld.getName())) {
-				fld.setForeignKey("parentReceive.id");
-			}
+
+			receiveLineDS = dataSourceDAOService.update(receiveLineDS);
+
+			RCV_LINE_DEFAULT_DS = receiveLineDS;
 		}
-
-		receiveLineDS = dataSourceDAOService.update(receiveLineDS);
-
-		RCV_LINE_DEFAULT_DS = receiveLineDS;
+		catch (Exception e) 
+		{
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			String stacktrace = sw.toString();
+			logger.error(stacktrace);
+			throw e;
+		}	
 
 		return receiveLineDS;
 	}	
 
 	public final static DataSource provideBasicFormReceiveDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
-		com.conx.logistics.kernel.metamodel.domain.EntityType rcvET = EntityTypeData.provide(entityTypeDAOService, em, Receive.class);
+		EntityType rcvET = EntityTypeData.provide(entityTypeDAOService, em, Receive.class);
 		DataSource receiveDS = new DataSource("receiveBasicAttrDS", rcvET);
 		receiveDS = dataSourceDAOService.add(receiveDS);
 
@@ -116,7 +143,7 @@ public class DataSourceData {
 	}
 	
 	public final static DataSource provideWeightDimsFormReceiveDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
-		com.conx.logistics.kernel.metamodel.domain.EntityType rcvET = EntityTypeData.provide(entityTypeDAOService, em, Receive.class);
+		EntityType rcvET = EntityTypeData.provide(entityTypeDAOService, em, Receive.class);
 		DataSource receiveDS = new DataSource("receiveWeightDimsAttrDS", rcvET);
 		receiveDS = dataSourceDAOService.add(receiveDS);
 
@@ -146,7 +173,7 @@ public class DataSourceData {
 	}
 
 	public final static DataSource provideFileEntryDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
-		com.conx.logistics.kernel.metamodel.domain.EntityType feET = EntityTypeData.provide(entityTypeDAOService, em, FileEntry.class);
+		EntityType feET = EntityTypeData.provide(entityTypeDAOService, em, FileEntry.class);
 
 		DataSource feDS = dataSourceDAOService.provide(feET);
 		feDS.setCode("fileEntryDS");
@@ -174,7 +201,7 @@ public class DataSourceData {
 	}
 
 	public final static DataSource provideNoteItemDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
-		com.conx.logistics.kernel.metamodel.domain.EntityType niET = EntityTypeData.provide(entityTypeDAOService, em, NoteItem.class);
+		EntityType niET = EntityTypeData.provide(entityTypeDAOService, em, NoteItem.class);
 
 		DataSource niDS = dataSourceDAOService.provide(niET);
 		niDS.setCode("noteDS");
@@ -198,7 +225,7 @@ public class DataSourceData {
 	}
 
 	public final static DataSource provideReferenceNumberDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
-		com.conx.logistics.kernel.metamodel.domain.EntityType rnET = EntityTypeData.provide(entityTypeDAOService, em, ReferenceNumber.class);
+		EntityType rnET = EntityTypeData.provide(entityTypeDAOService, em, ReferenceNumber.class);
 
 		DataSource rnDS = dataSourceDAOService.provide(rnET);
 		rnDS.setCode("referenceNumberDS");

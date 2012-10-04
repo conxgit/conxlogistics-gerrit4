@@ -8,7 +8,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.UserTransaction;
 
-import org.apache.http.entity.mime.content.InputStreamBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -106,7 +105,7 @@ public class LiferayPortalDocumentRepositoryTests extends AbstractTestNGSpringCo
     	if (!res)
     	{
     		InputStream is = new ByteArrayInputStream("test string".getBytes());
-    		FileEntry fe = docRepoRemoteService.addFileEntry(Long.toString(fldr.getFolderId()), "C:/dev/gitrepos/conxlogistics-gerrit4/com.conx.logistics.kernel/documentlibrary/remote.services.impl/src/test/resources/bol.pdf", "application/pdf", "BoL", "BoL");
+    		FileEntry fe = docRepoRemoteService.addFileEntry(Long.toString(fldr.getFolderId()), "src/test/resources/bol.pdf", "application/pdf", "BoL", "BoL");
 /*	    	fldr = docRepoRemoteService.addFolder(docRepoRemoteService.getConxlogiFolderId(),"Receive123", "Receive123");
 	    	Assert.assertNotNull(fldr);
 	    	

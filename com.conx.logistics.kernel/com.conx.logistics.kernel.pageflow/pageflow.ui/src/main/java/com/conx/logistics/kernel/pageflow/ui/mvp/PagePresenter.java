@@ -6,6 +6,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.vaadin.mvp.presenter.BasePresenter;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
+import com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository;
+import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
 import com.conx.logistics.kernel.pageflow.event.IPageFlowPageChangedEventHandler;
 import com.conx.logistics.kernel.pageflow.services.IPageComponent;
 import com.conx.logistics.kernel.pageflow.services.IPageFlowPage;
@@ -13,6 +15,7 @@ import com.conx.logistics.kernel.pageflow.services.ITaskWizard;
 import com.conx.logistics.kernel.pageflow.ui.mvp.view.IPageView;
 import com.conx.logistics.kernel.pageflow.ui.mvp.view.PageView;
 import com.conx.logistics.kernel.persistence.services.IEntityContainerProvider;
+import com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService;
 import com.vaadin.ui.Component;
 
 @Presenter(view = PageView.class)
@@ -26,6 +29,10 @@ public class PagePresenter extends BasePresenter<IPageView, PageEventBus> implem
 	private ITaskWizard wizard;
 	private IEntityContainerProvider containerProvider;
 	private Map<String, Object> parameterData;
+	
+	private IEntityTypeDAOService entityTypeDAOService;
+	private IFolderDAOService docFolderDAOService;
+	private IRemoteDocumentRepository docRepo;
 	
 	public void setPageContent(Component content) {
 		this.getView().setContent(content);
@@ -72,6 +79,10 @@ public class PagePresenter extends BasePresenter<IPageView, PageEventBus> implem
 		this.pfpEventHandler = (IPageFlowPageChangedEventHandler) initParams.get(IPageComponent.PAGE_FLOW_PAGE_CHANGE_EVENT_HANDLER);
 		this.wizard = (ITaskWizard) initParams.get(IPageComponent.TASK_WIZARD);
 		this.containerProvider = (IEntityContainerProvider) initParams.get(IPageComponent.ENTITY_CONTAINER_PROVIDER);
+		
+		this.entityTypeDAOService = (IEntityTypeDAOService) initParams.get(IPageComponent.ENTITY_TYPE_DAO_SERVICE);
+		this.docFolderDAOService = (IFolderDAOService) initParams.get(IPageComponent.FOLDER_DAO_SERVICE);
+		this.docRepo = (IRemoteDocumentRepository) initParams.get(IPageComponent.REMOTE_DOCUMENT_REPOSITORY);
 	}
 
 	@Override
@@ -87,7 +98,7 @@ public class PagePresenter extends BasePresenter<IPageView, PageEventBus> implem
 	}
 
 	@Override
-	public Map<String, Object> getResultData() {
+	public Object getResultData() {
 		if (this.dataHandler != null) {
 			return this.dataHandler.getResultData(this);
 		} else {
@@ -127,5 +138,17 @@ public class PagePresenter extends BasePresenter<IPageView, PageEventBus> implem
 
 	public void setDataHandler(IPageDataHandler dataHandler) {
 		this.dataHandler = dataHandler;
+	}
+
+	public IEntityTypeDAOService getEntityTypeDAOService() {
+		return entityTypeDAOService;
+	}
+
+	public IFolderDAOService getDocFolderDAOService() {
+		return docFolderDAOService;
+	}
+
+	public IRemoteDocumentRepository getDocRepo() {
+		return docRepo;
 	}
 }

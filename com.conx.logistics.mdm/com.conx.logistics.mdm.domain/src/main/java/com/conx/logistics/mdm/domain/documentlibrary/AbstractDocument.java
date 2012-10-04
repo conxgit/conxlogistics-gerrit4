@@ -1,5 +1,7 @@
 package com.conx.logistics.mdm.domain.documentlibrary;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -11,8 +13,9 @@ import javax.persistence.MappedSuperclass;
 
 import com.conx.logistics.mdm.domain.organization.Organization;
 
+@SuppressWarnings("serial")
 @MappedSuperclass
-public class AbstractDocument {
+public class AbstractDocument implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")

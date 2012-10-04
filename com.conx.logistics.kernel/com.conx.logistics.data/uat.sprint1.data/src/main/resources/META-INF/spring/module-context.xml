@@ -16,10 +16,14 @@
 		<property name="globalTransactionManager" ref="globalTransManager"></property>
 				
 		<property name="addressDaoService" ref="addressDao"></property>
+		<property name="addressTypeDaoService" ref="addressTypeDao"></property>
+		<property name="addressTypeAddressDaoService" ref="addressTypeAddressDao"></property>
 		<property name="asnDaoService" ref="asnDao"></property>
 		<property name="asnPickupDAOService" ref="asnPickupDao"></property>
 		<property name="asnDropOffDAOService" ref="asnDropOffDao"></property>
 		<property name="contactDAOService" ref="contactDao"></property>
+		<property name="contactTypeDAOService" ref="contactTypeDao"></property>
+		<property name="contactTypeContactDAOService" ref="contactTypeContactDao"></property>
 		<property name="countryDaoService" ref="countryDao"></property>
 		<property name="countryStateDaoService" ref="countryStateDao"></property>
 		<property name="currencyUnitDaoService" ref="currencyUnitDao"></property>
@@ -27,6 +31,7 @@
 		<property name="docTypeDOAService" ref="docTypeDao"></property>
 		<property name="dockTypeDOAService" ref="dockTypeDao"></property>
 		<property name="entityMetadataDAOService" ref="entityMetadataDao"></property>
+		<property name="entityTypeDAOService" ref="entityTypeDao"></property>
 		<property name="orgDaoService" ref="orgDao"></property>
 		<property name="packUnitDaoService" ref="packUnitDao"></property>
 		<property name="productDaoService" ref="productDao"></property>

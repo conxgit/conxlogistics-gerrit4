@@ -1,8 +1,10 @@
 package com.conx.logistics.kernel.pageflow.ui.mvp.view;
 
+import org.vaadin.mvp.uibinder.IUiBindable;
+
 import com.vaadin.ui.Component;
 
-public interface IPageView {
+public interface IPageView extends IUiBindable {
 	public void setContent(Component content);
 	public Component getContent();
 }

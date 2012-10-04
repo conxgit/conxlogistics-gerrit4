@@ -31,7 +31,7 @@ import com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveDAOService;
 import com.conx.logistics.data.uat.sprint2.data.UIComponentModelData;
 import com.conx.logistics.kernel.datasource.dao.services.IDataSourceDAOService;
 import com.conx.logistics.kernel.datasource.domain.DataSource;
-import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
+import com.conx.logistics.mdm.dao.services.metamodel.IEntityTypeDAOService;
 import com.conx.logistics.kernel.metamodel.domain.AbstractAttribute;
 import com.conx.logistics.kernel.metamodel.domain.BasicAttribute;
 import com.conx.logistics.kernel.metamodel.domain.PluralAttribute;

@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import com.conx.logistics.mdm.domain.documentlibrary.Folder;
@@ -33,6 +35,13 @@ public class BaseEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     protected Long id;
+	
+	private Long ownerEntityId;
+	
+	private Long ownerEntityTypeId;
+	
+	@Transient
+	private EntityManager entityManager;
     	
     @Version
     @Column(name = "version")
@@ -199,5 +208,29 @@ public class BaseEntity implements Serializable {
 
 	public void setNote(Note note) {
 		this.note = note;
+	}
+
+	public Long getOwnerEntityId() {
+		return ownerEntityId;
+	}
+
+	public void setOwnerEntityId(Long ownerEntityId) {
+		this.ownerEntityId = ownerEntityId;
+	}
+
+	public Long getOwnerEntityTypeId() {
+		return ownerEntityTypeId;
+	}
+
+	public void setOwnerEntityTypeId(Long ownerEntityTypeId) {
+		this.ownerEntityTypeId = ownerEntityTypeId;
+	}
+
+	public EntityManager getEntityManager() {
+		return entityManager;
+	}
+
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
 	}
 }

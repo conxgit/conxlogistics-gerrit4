@@ -27,10 +27,10 @@ import com.conx.logistics.common.utils.Validator;
 import com.conx.logistics.kernel.bpm.services.IBPMProcessInstance;
 import com.conx.logistics.kernel.bpm.services.IBPMService;
 import com.conx.logistics.kernel.pageflow.engine.path.PageFlowPathAssessor;
-import com.conx.logistics.kernel.pageflow.engine.ui.TaskWizard;
 import com.conx.logistics.kernel.pageflow.services.IPageFlowManager;
 import com.conx.logistics.kernel.pageflow.services.IPageFlowPage;
 import com.conx.logistics.kernel.pageflow.services.IPageFlowSession;
+import com.conx.logistics.kernel.pageflow.ui.wizard.TaskWizard;
 import com.conx.logistics.mdm.domain.application.Feature;
 import com.vaadin.ui.Component;
 

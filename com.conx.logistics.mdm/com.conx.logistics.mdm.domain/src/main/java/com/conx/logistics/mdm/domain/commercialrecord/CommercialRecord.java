@@ -11,8 +11,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
 import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
 import com.conx.logistics.mdm.domain.metadata.DefaultEntityMetadata;
+import com.conx.logistics.mdm.domain.metamodel.EntityType;
 import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber;
 
 @Entity
@@ -38,10 +40,6 @@ public class CommercialRecord extends MultitenantBaseEntity {
 
     @OneToMany(cascade = CascadeType.ALL)
     private Set<ReferenceNumber> refNumbers = new java.util.HashSet<ReferenceNumber>();
-
-    private String ownerEntityType;
-
-    private Long ownerEntityId;
 
 	public DefaultEntityMetadata getParentEntityMetadata() {
 		return parentEntityMetadata;
@@ -90,21 +88,5 @@ public class CommercialRecord extends MultitenantBaseEntity {
 
 	public void setRefNumbers(Set<ReferenceNumber> refNumbers) {
 		this.refNumbers = refNumbers;
-	}
-
-	public String getOwnerEntityType() {
-		return ownerEntityType;
-	}
-
-	public void setOwnerEntityType(String ownerEntityType) {
-		this.ownerEntityType = ownerEntityType;
-	}
-
-	public Long getOwnerEntityId() {
-		return ownerEntityId;
-	}
-
-	public void setOwnerEntityId(Long ownerEntityId) {
-		this.ownerEntityId = ownerEntityId;
 	}
 }

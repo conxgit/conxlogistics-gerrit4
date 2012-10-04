@@ -1,6 +1,6 @@
 package com.conx.logistics.kernel.ui.forms.vaadin.impl;
 
-import com.conx.logistics.kernel.ui.components.domain.form.FieldSetField;
+import com.conx.logistics.kernel.ui.components.domain.AbstractConXField;
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
@@ -11,7 +11,7 @@ import com.vaadin.ui.Field;
 import com.vaadin.ui.TextField;
 
 public class VaadinFormFieldAugmenter {
-	public static void augment(Field field, FieldSetField componentModel) {
+	public static void augment(Field field, AbstractConXField componentModel) {
 		if (componentModel.isReadOnly()) {
 			field.setEnabled(false);
 		} 
@@ -24,7 +24,7 @@ public class VaadinFormFieldAugmenter {
 		}
 	}
 	
-	public static void augment(final Field field, FieldSetField componentModel, final ValueChangeListener valueChangeListener) {
+	public static void augment(final Field field, AbstractConXField componentModel, final ValueChangeListener valueChangeListener) {
 		augment(field, componentModel);
 		if (field instanceof TextField) {
 			((TextField) field).addListener(new FieldEvents.TextChangeListener() {

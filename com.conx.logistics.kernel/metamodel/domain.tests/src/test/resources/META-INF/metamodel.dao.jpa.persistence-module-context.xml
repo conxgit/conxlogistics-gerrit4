@@ -33,5 +33,5 @@
 		EntityManager will be auto-injected due to @PersistenceContext.
 		PersistenceExceptions will be auto-translated due to @Repository.
 	-->
-	<bean id="entityTypeDao" class="com.conx.logistics.kernel.metamodel.dao.services.impl.EntityTypeDAOImpl"/>
+	<bean id="entityTypeDao" class="com.conx.logistics.mdm.dao.services.metamodel.impl.EntityTypeDAOImpl"/>
 </beans>

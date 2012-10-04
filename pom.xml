@@ -22,5 +22,6 @@
 		<module>com.conx.logistics.web</module>		
 		<module>tests</module>
 		<module>server.tools</module>
+		<module>com.conx.logistics.itests</module>
 	</modules>
 </project>

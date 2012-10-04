@@ -9,9 +9,9 @@
   <artifactId>com.conx.logistics.kernel.metamodel</artifactId>
   <packaging>pom</packaging>
   <modules>
-  	<module>domain</module>
+  	<!-- <module>domain</module>
   	<module>domain.tests</module>
-  	<module>domain.persistence.config</module>
+  	<module>domain.persistence.config</module> -->
   	<module>dao.services</module>
   	<module>dao.jpa.persistence</module>
   </modules>

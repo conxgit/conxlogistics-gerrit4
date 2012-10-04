@@ -15,11 +15,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.conx.logistics</groupId>
-			<artifactId>com.conx.logistics.kernel.metamodel.domain</artifactId>
-			<version>1.0.0</version>
-		</dependency>	
-		<dependency>
-			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.kernel.datasource.domain</artifactId>
 			<version>1.0.0</version>
 		</dependency>

@@ -19,7 +19,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.conx.logistics.app.whse.rcv.rcv.domain.Receive;
-import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
+import com.conx.logistics.mdm.dao.services.metamodel.IEntityTypeDAOService;
 import com.conx.logistics.kernel.metamodel.dao.services.impl.EntityTypeDAOImpl;
 import com.conx.logistics.kernel.metamodel.domain.AbstractAttribute;
 import com.conx.logistics.kernel.metamodel.domain.BasicAttribute;

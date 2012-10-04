@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -15,14 +14,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.Attribute.PersistentAttributeType;
-import javax.persistence.metamodel.IdentifiableType;
-import javax.persistence.metamodel.MappedSuperclassType;
-import javax.persistence.metamodel.Metamodel;
-import javax.persistence.metamodel.PluralAttribute;
-import javax.persistence.metamodel.PluralAttribute.CollectionType;
-import javax.persistence.metamodel.SingularAttribute;
-import javax.persistence.metamodel.Type.PersistenceType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,13 +21,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.conx.logistics.kernel.metamodel.dao.services.IBasicTypeDAOService;
-import com.conx.logistics.kernel.metamodel.dao.services.IBasicTypeDAOService;
-import com.conx.logistics.kernel.metamodel.domain.AbstractAttribute;
-import com.conx.logistics.kernel.metamodel.domain.BasicAttribute;
-import com.conx.logistics.kernel.metamodel.domain.BasicType;
-import com.conx.logistics.kernel.metamodel.domain.ListAttribute;
-import com.conx.logistics.kernel.metamodel.domain.MapAttribute;
-import com.conx.logistics.kernel.metamodel.domain.SetAttribute;
+import com.conx.logistics.mdm.domain.metamodel.BasicType;
 
 
 /**

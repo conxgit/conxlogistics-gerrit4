@@ -22,7 +22,7 @@ public class ConfirmActualsFieldSet extends AbstractConXComponent {
 	private Map<String, ConfirmActualsFieldSetField> fieldSetFieldMap = null;
 	
 	@OneToOne
-	private ConfirmActualsForm form;
+	private ConXForm form;
 	
 	@OneToMany(mappedBy = "fieldSet", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<ConfirmActualsFieldSetField> fields = new HashSet<ConfirmActualsFieldSetField>();
@@ -35,11 +35,11 @@ public class ConfirmActualsFieldSet extends AbstractConXComponent {
 		return fields;
 	}
 
-	public ConfirmActualsForm getForm() {
+	public ConXForm getForm() {
 		return form;
 	}
 
-	public void setForm(ConfirmActualsForm form) {
+	public void setForm(ConXForm form) {
 		this.form = form;
 	}
 
@@ -48,6 +48,7 @@ public class ConfirmActualsFieldSet extends AbstractConXComponent {
 			fieldSetFieldMap = new HashMap<String, ConfirmActualsFieldSetField>();
 			for (ConfirmActualsFieldSetField field : getFields()) {
 				fieldSetFieldMap.put(field.getExpectedDataSourceField().getName(), field);
+				fieldSetFieldMap.put(field.getActualDataSourceField().getName(), field);
 			}
 		}
 		return fieldSetFieldMap;
@@ -55,5 +56,14 @@ public class ConfirmActualsFieldSet extends AbstractConXComponent {
 	
 	public ConfirmActualsFieldSetField getFieldSetField(String fieldName) {
 		return getFieldSetFieldMap().get(fieldName);
+	}
+	
+	public boolean isExpected(Object propertyId) {
+		for (ConfirmActualsFieldSetField field : getFields()) {
+			if (field.getExpectedDataSourceField().getName().equals(propertyId)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

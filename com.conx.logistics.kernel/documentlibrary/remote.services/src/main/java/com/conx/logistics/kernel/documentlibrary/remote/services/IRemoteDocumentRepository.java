@@ -2,14 +2,13 @@ package com.conx.logistics.kernel.documentlibrary.remote.services;
 
 import java.io.File;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 
-import com.conx.logistics.kernel.metamodel.domain.EntityType;
 import com.conx.logistics.mdm.domain.BaseEntity;
 import com.conx.logistics.mdm.domain.documentlibrary.DocType;
 import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.conx.logistics.mdm.domain.documentlibrary.Folder;
+import com.conx.logistics.mdm.domain.metamodel.EntityType;
 
 
 public interface IRemoteDocumentRepository {

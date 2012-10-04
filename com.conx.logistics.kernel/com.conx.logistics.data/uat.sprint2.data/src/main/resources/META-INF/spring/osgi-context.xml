@@ -16,10 +16,14 @@
 	
 	<!-- BUSINESS SERVICES -->
 	<osgi:reference id="addressDao" interface="com.conx.logistics.mdm.dao.services.IAddressDAOService"/>
+	<osgi:reference id="addressTypeDao" interface="com.conx.logistics.mdm.dao.services.IAddressTypeDAOService"/>
+	<osgi:reference id="addressTypeAddressDao" interface="com.conx.logistics.mdm.dao.services.IAddressTypeAddressDAOService"/>
 	<osgi:reference id="asnDao" interface="com.conx.logistics.app.whse.rcv.asn.dao.services.IASNDAOService"/>
 	<osgi:reference id="asnPickupDao" interface="com.conx.logistics.app.whse.rcv.asn.dao.services.IASNPickupDAOService"/>
 	<osgi:reference id="asnDropOffDao" interface="com.conx.logistics.app.whse.rcv.asn.dao.services.IASNDropOffDAOService"/>
 	<osgi:reference id="contactDao" interface="com.conx.logistics.mdm.dao.services.IContactDAOService"/>
+	<osgi:reference id="contactTypeDao" interface="com.conx.logistics.mdm.dao.services.IContactTypeDAOService"/>
+	<osgi:reference id="contactTypeContactDao" interface="com.conx.logistics.mdm.dao.services.IContactTypeContactDAOService"/>		
 	<osgi:reference id="componentDao" interface="com.conx.logistics.kernel.ui.components.dao.services.IComponentDAOService"/>		
 	<osgi:reference id="countryDao" interface="com.conx.logistics.mdm.dao.services.ICountryDAOService"/>
 	<osgi:reference id="currencyUnitDao" interface="com.conx.logistics.mdm.dao.services.currency.ICurrencyUnitDAOService"/>	

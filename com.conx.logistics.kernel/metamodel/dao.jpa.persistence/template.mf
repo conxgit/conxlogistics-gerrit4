@@ -6,7 +6,7 @@ Bundle-Vendor: ConX
 Bundle-Version: 1.0.0
 Import-Package: 
   com.conx.logistics.kernel.metamodel.dao.services;version="1.0.0",
-  com.conx.logistics.kernel.metamodel.domain;version="1.0.0",
+ com.conx.logistics.mdm.domain.metamodel;version="1.0.0",
   com.conx.logistics.common.utils;version="1.0.0",
   org.hibernate.hql.ast;version="3.6.0.Final",
   javax.persistence;version="2.0.0",

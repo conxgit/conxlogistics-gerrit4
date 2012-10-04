@@ -34,6 +34,6 @@
 		PersistenceExceptions will be auto-translated due to @Repository.
 	-->
 	<bean id="dsDao" class="com.conx.logistics.kernel.datasource.dao.services.impl.DataSourceDAOImpl"/>
-	<bean id="entityTypeDao" class="com.conx.logistics.kernel.metamodel.dao.services.impl.EntityTypeDAOImpl"/>
-	<bean id="basicTypeDao" class="com.conx.logistics.kernel.metamodel.dao.services.impl.BasicTypeDAOImpl"/>
+	<bean id="entityTypeDao" class="com.conx.logistics.mdm.dao.services.metamodel.impl.EntityTypeDAOImpl"/>
+	<bean id="basicTypeDao" class="com.conx.logistics.mdm.dao.services.metamodel.impl.BasicTypeDAOImpl"/>
 </beans>

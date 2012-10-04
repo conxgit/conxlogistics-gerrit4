@@ -5,7 +5,6 @@ Bundle-SymbolicName: com.conx.logistics.kernel.portal.remote.services.impl
 Bundle-Vendor: ConX
 Bundle-Version: 1.0.0
 Import-Package: 
-  com.conx.logistics.kernel.metamodel.domain;version="1.0.0",
   com.conx.logistics.kernel.portal.remote.services;version="1.0.0",
   com.conx.logistics.common.utils;version="1.0.0",
   com.conx.logistics.mdm.domain;version="1.0.0",

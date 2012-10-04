@@ -1,13 +1,15 @@
 package com.conx.logistics.kernel.ui.components.domain.form;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 
 import com.conx.logistics.kernel.datasource.domain.DataSourceField;
-import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
+import com.conx.logistics.kernel.ui.components.domain.AbstractConXField;
 
 @Entity
-public class ConfirmActualsFieldSetField extends AbstractConXComponent {
+public class ConfirmActualsFieldSetField extends AbstractConXField implements Serializable {
 	private static final long serialVersionUID = -6947507271706691279L;
 
 	@OneToOne
