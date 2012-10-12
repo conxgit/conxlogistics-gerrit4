@@ -6162,12 +6162,93 @@ textarea.v-textarea-readonly,
 	border-top: 1px solid #6293ca;
 	padding-left: 8px;
 }
+.conx-inner-form-toolstrip {
+	background: #ffffff url('toolstrip/img/inner-form-toolstrip-background.png') repeat-x;
+	padding-left: 8px;
+}
+.conx-inner-form-field-caption {
+	font-weight: bold;
+	font-size: 12px;
+	color: #222;
+}
 .conx-entity-toolstrip-button {
 	background: none;
 	padding: 0 0 0 0px;
 	border: 1px solid #5884b5;
 	cursor: pointer;
 	overflow: hidden;
+}
+.conx-inner-form {
+	border-top: none;
+	border-left: 1px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+.conx-inner-form-toolstrip-button {
+	background: none;
+	background-color: #efefef;
+	padding: 0 0 0 0px;
+	border: 1px solid #bcbcbc;
+	cursor: pointer;
+	overflow: hidden;
+}
+.conx-inner-form-toolstrip-button .v-button-wrap {
+	background: none;
+	padding: 6px 6px 6px 6px;
+}
+.conx-inner-form-toolstrip-button .v-button-wrap .v-icon {
+	margin-right: 0px;
+}
+.conx-inner-form-toolstrip .v-button:focus {
+  	background-image: none;
+	outline: none;
+}
+.conx-inner-form-toolstrip .v-button:focus .v-button-wrap {
+ 	background-image: none;
+	outline: none;
+}
+.conx-inner-form-toolstrip .v-button:active,
+.conx-inner-form-toolstrip .v-button.v-pressed {
+	background-color: #e0e0e0;
+	background-image: none;
+	outline: none;
+}
+.conx-inner-form-toolstrip .v-button:active .v-button-wrap,
+.conx-inner-form-toolstrip .v-button.v-pressed .v-button-wrap {
+	background-color: #e0e0e0;
+	background-image: none;
+	outline: none;
+}
+.conx-inner-form-toolstrip .v-disabled.v-button {
+	border: 1px solid transparent;
+	padding-left: 3px;
+}
+.conx-inner-form-toolstrip .v-disabled.v-button:active {
+	background-color: transparent;
+}
+.conx-inner-form-toolstrip .v-disabled.v-button:hover {
+	background-color: transparent;
+}
+.conx-inner-form-toolstrip .v-button,
+.conx-inner-form-toolstrip .v-disabled.v-button {
+	background-image: none;
+	outline: none;
+}
+.conx-inner-form-toolstrip .v-disabled .v-button:active,
+.conx-inner-form-toolstrip .v-disabled .v-button {
+	background-color: transparent;
+}
+.conx-inner-form-toolstrip .v-disabled.v-button .v-button-wrap {
+	padding: 6px 6px 6px 6px;
+}
+.conx-inner-form-toolstrip .v-button-wrap,
+.conx-inner-form-toolstrip .v-disabled.v-button .v-button-wrap {
+	background-image: none;
+	outline: none;
+}
+.conx-inner-form-toolstrip .v-button:hover {
+	background-color: #e0e0e0;
+	outline: none;
 }
 .conx-entity-toolstrip-button .v-button-wrap {
 	background: none;

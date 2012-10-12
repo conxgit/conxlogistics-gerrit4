@@ -38,6 +38,8 @@ public class ConfirmTruckInfoPage extends BasePageFlowPage implements IModelDriv
 			EntityType type = new EntityType("Arrival", Arrival.class, null, null, null, "wharrival");
 			DataSource ds = new DataSource("searchgriddatasource", type);
 			
+			CollapsibleConfirmActualsForm truckInfoForm = new CollapsibleConfirmActualsForm(ds, "Confirm Truck Info");
+			
 			fieldSet = new ConfirmActualsFieldSet();
 			fieldSet.setCaption("Driver Info");
 			
@@ -85,16 +87,19 @@ public class ConfirmTruckInfoPage extends BasePageFlowPage implements IModelDriv
 			fieldSet.getFields().add(fieldSetField);
 			fieldSetField.setFieldSet(fieldSet);
 			
+			truckInfoForm.getFieldSetSet().add(fieldSet);
+			fieldSet.setForm(truckInfoForm);
+			
 			fieldSet = new ConfirmActualsFieldSet();
 			fieldSet.setCaption("Contact & Address");
 			
 			expectedDsField = new DataSourceField("receive", ds, ds, type, "expectedCfs", null);
 			expectedDsField.setValueXPath("expectedPickUp/cfs");
 			ds.getDSFields().add(expectedDsField);
-			actualDsField = new DataSourceField("actualPickUp", ds, ds, type, "actualCfs", null);
-			actualDsField.setValueXPath("actualCfs");
-			ds.getDSFields().add(actualDsField);
-			fieldSetField = new ConfirmActualsFieldSetField(0, expectedDsField, actualDsField);
+			DataSourceField actualOrgDsField = new DataSourceField("actualPickUp", ds, ds, type, "actualCfs", null);
+			actualOrgDsField.setValueXPath("actualCfs");
+			ds.getDSFields().add(actualOrgDsField);
+			fieldSetField = new ConfirmActualsFieldSetField(0, expectedDsField, actualOrgDsField);
 			fieldSetField.setCaption("Organization");
 			fieldSet.getFields().add(fieldSetField);
 			fieldSetField.setFieldSet(fieldSet);
@@ -102,13 +107,44 @@ public class ConfirmTruckInfoPage extends BasePageFlowPage implements IModelDriv
 			expectedDsField = new DataSourceField("receive", ds, ds, type, "expectedCfsAddress", null);
 			expectedDsField.setValueXPath("expectedPickUp/cfsAddress");
 			ds.getDSFields().add(expectedDsField);
-			actualDsField = new DataSourceField("actualPickUp", ds, ds, type, "actualCfsAddress", null);
-			actualDsField.setValueXPath("actualCfsAddress");
-			ds.getDSFields().add(actualDsField);
-			fieldSetField = new ConfirmActualsFieldSetField(0, expectedDsField, actualDsField);
-			fieldSetField.setCaption("Organization");
+			DataSourceField actualAddressDsField = new DataSourceField("actualPickUp", ds, ds, type, "actualCfsAddress", null);
+			actualAddressDsField.setValueXPath("actualCfsAddress");
+			actualAddressDsField.setParentDataSourceField(actualOrgDsField);
+			actualOrgDsField.getChildDataSourceFields().add(actualAddressDsField);
+			ds.getDSFields().add(actualAddressDsField);
+			fieldSetField = new ConfirmActualsFieldSetField(0, expectedDsField, actualAddressDsField);
+			fieldSetField.setCaption("Address");
 			fieldSet.getFields().add(fieldSetField);
 			fieldSetField.setFieldSet(fieldSet);
+			
+			expectedDsField = new DataSourceField("receive", ds, ds, type, "expectedCfsContact", null);
+			expectedDsField.setValueXPath("expectedPickUp/cfsContact");
+			ds.getDSFields().add(expectedDsField);
+			DataSourceField actualContactDsField = new DataSourceField("actualPickUp", ds, ds, type, "actualCfsContact", null);
+			actualContactDsField.setValueXPath("actualCfsContact");
+			actualContactDsField.setParentDataSourceField(actualAddressDsField);
+			actualAddressDsField.getChildDataSourceFields().add(actualContactDsField);
+			ds.getDSFields().add(actualContactDsField);
+			fieldSetField = new ConfirmActualsFieldSetField(0, expectedDsField, actualContactDsField);
+			fieldSetField.setCaption("Contact");
+			fieldSet.getFields().add(fieldSetField);
+			fieldSetField.setFieldSet(fieldSet);
+			
+			truckInfoForm.getFieldSetSet().add(fieldSet);
+			fieldSet.setForm(truckInfoForm);
+			
+//			expectedDsField = new DataSourceField("receive", ds, ds, type, "expectedCfsAddress", null);
+//			expectedDsField.setValueXPath("expectedPickUp/cfsAddress");
+//			ds.getDSFields().add(expectedDsField);
+//			actualDsField = new DataSourceField("actualPickUp", ds, ds, type, "actualCfsAddress", null);
+//			actualDsField.setValueXPath("actualCfsAddress");
+//			ds.getDSFields().add(actualDsField);
+//			fieldSetField = new ConfirmActualsFieldSetField(0, expectedDsField, actualDsField);
+//			fieldSetField.setCaption("Cfs Address");
+//			fieldSet.getFields().add(fieldSetField);
+//			fieldSetField.setFieldSet(fieldSet);
+			
+			
 //			
 //			DataSourceField expectedDriverNameDSField = new DataSourceField("driverId", ds, ds, type, "expectedDriverNameDSField", null);
 //			DataSourceField actualDriverNameDSField = new DataSourceField("actualDriverNameDSField", ds, ds, type, "actualDriverNameDSField", null);
@@ -132,10 +168,6 @@ public class ConfirmTruckInfoPage extends BasePageFlowPage implements IModelDriv
 //			ConfirmActualsForm truckInfoForm = new ConfirmActualsForm(ds, "Confirm Truck Info");
 //			truckInfoForm.setFieldSet(truckInfoFieldSet);
 //			truckInfoFieldSet.setForm(truckInfoForm);
-			
-			CollapsibleConfirmActualsForm truckInfoForm = new CollapsibleConfirmActualsForm(ds, "Confirm Truck Info");
-			truckInfoForm.getFieldSetSet().add(fieldSet);
-			fieldSet.setForm(truckInfoForm);
 			
 			LineEditorContainerComponent lineEditorContainer = new LineEditorContainerComponent("confirmtruckinfolineeditorcontainer", "Confirm Truck Info Line Editor Container");
 			AttachmentEditorComponent attachmentComponent = new AttachmentEditorComponent(ds);

@@ -40,7 +40,6 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 	private Panel innerLayoutPanel;
 	private VerticalLayout layout;
 	private VerticalLayout innerLayout;
-	private CollapsibleConfirmActualsForm componentForm;
 	private FormMode mode;
 	private HashMap<ConfirmActualsFieldSet, VaadinCollapsibleConfirmActualsFormSectionHeader> headers;
 	private HashMap<Field, ConfirmActualsFieldSetField> fields;
@@ -48,7 +47,7 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 	private HashMap<ConfirmActualsFieldSetField, Integer> fieldIndexMap;
 
 	public VaadinCollapsibleConfirmActualsForm(CollapsibleConfirmActualsForm componentForm) {
-		this.componentForm = componentForm;
+		super.setComponentModel(componentForm);
 		this.innerLayoutPanel = new Panel();
 		this.layout = new VerticalLayout();
 		this.header = new VaadinFormHeader();
@@ -97,7 +96,7 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 				resetForm();
 			}
 		});
-		
+
 		this.alertPanel.setVisible(false);
 		this.alertPanel.addCloseListener(new ClickListener() {
 			private static final long serialVersionUID = 5815832688929242745L;
@@ -129,7 +128,6 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 
 		setImmediate(true);
 		setFormMode(FormMode.EDITING);
-		setFormFieldFactory(new VaadinJPAFieldFactory());
 		setLayout(layout);
 		// False so that commit() must be called explicitly
 		setWriteThrough(false);
@@ -139,7 +137,7 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 
 	@Override
 	protected void attachField(Object propertyId, Field field) {
-		ConfirmActualsFieldSet fieldSet = componentForm.getFieldSetForField((String) propertyId);
+		ConfirmActualsFieldSet fieldSet = ((CollapsibleConfirmActualsForm) getComponentModel()).getFieldSetForField((String) propertyId);
 		if (fieldSet != null) {
 			ConfirmActualsFieldSetField fieldComponent = fieldSet.getFieldSetField((String) propertyId);
 			if (fieldComponent != null) {
@@ -175,7 +173,7 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 					field.setEnabled(false);
 					field.setCaption(null);
 					addExpectedField(gridLayout, index, field);
-				} else {
+				} else if (fieldSet.isActual(propertyId)) {
 					field.setCaption(null);
 					addActualField(gridLayout, index, field);
 				}
@@ -374,9 +372,5 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 
 	public Object getItemEntity() {
 		return null;
-	}
-
-	public CollapsibleConfirmActualsForm getComponentModel() {
-		return this.componentForm;
 	}
 }

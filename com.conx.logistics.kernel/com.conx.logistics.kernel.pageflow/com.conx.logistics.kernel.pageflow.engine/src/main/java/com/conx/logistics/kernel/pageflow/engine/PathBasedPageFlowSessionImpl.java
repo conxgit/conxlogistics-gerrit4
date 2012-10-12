@@ -197,7 +197,12 @@ public class PathBasedPageFlowSessionImpl implements IPageFlowSession {
 	}
 
 	public void start() {
-		bpmService.startTask(currentTask.getId(), userId);
+		try {
+			bpmService.startTask(currentTask.getId(), userId);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

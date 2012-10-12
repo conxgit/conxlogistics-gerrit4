@@ -35,6 +35,7 @@ import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.util.DefaultQueryModifierDelegate;
 import com.vaadin.data.Item;
+import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.ui.Button.ClickEvent;
@@ -74,12 +75,20 @@ public class AttachmentEditorPresenter extends BasePresenter<IAttachmentEditorVi
 	}
 
 	public void onSetItemDataSource(Item item) {
-		BaseEntity entity = (BaseEntity) ((EntityItem<?>) item).getEntity();
-		this.docFolder = entity.getDocFolder();
-		if (!initialized) {
-			initialize();
+		BaseEntity entity = null;
+		if (item instanceof BeanItem) {
+			entity = (BaseEntity) ((BeanItem<?>) item).getBean();
+		} else if (item instanceof EntityItem) {
+			entity = (BaseEntity) ((EntityItem<?>) item).getEntity();
 		}
-		updateQueryFilter();
+
+		if (entity != null) {
+			this.docFolder = entity.getDocFolder();
+			if (!initialized) {
+				initialize();
+			}
+			updateQueryFilter();
+		}
 	}
 
 	private void updateQueryFilter() {
@@ -104,6 +113,12 @@ public class AttachmentEditorPresenter extends BasePresenter<IAttachmentEditorVi
 
 	public void setInitialized(boolean initialized) {
 		this.initialized = initialized;
+	}
+
+	@Override
+	public void bind() {
+		super.bind();
+		this.getView().setEventBus(this.getEventBus());
 	}
 
 	public void onConfigure(Map<String, Object> params) {
@@ -137,7 +152,8 @@ public class AttachmentEditorPresenter extends BasePresenter<IAttachmentEditorVi
 	}
 
 	public void onSaveForm(DocType attachmentType, String sourceFileName, String mimeType, String title, String description) throws Exception {
-//		this.docRepo.addorUpdateFileEntry(this.docFolder, attachmentType, sourceFileName, mimeType, title, description);
+		// this.docRepo.addorUpdateFileEntry(this.docFolder, attachmentType,
+		// sourceFileName, mimeType, title, description);
 		this.entityContainer.refresh();
 	}
 

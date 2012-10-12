@@ -7,12 +7,11 @@ import javax.persistence.MappedSuperclass;
 
 import com.conx.logistics.mdm.domain.organization.Organization;
 
-
 @MappedSuperclass
-public class MultitenantBaseEntity  extends  BaseEntity{
-    @ManyToOne(targetEntity = Organization.class, fetch = FetchType.LAZY)
-    @JoinColumn
-    private Organization tenant;
+public abstract class MultitenantBaseEntity extends BaseEntity {
+	@ManyToOne(targetEntity = Organization.class, fetch = FetchType.LAZY)
+	@JoinColumn
+	private Organization tenant;
 
 	public Organization getTenant() {
 		return tenant;
@@ -20,5 +19,5 @@ public class MultitenantBaseEntity  extends  BaseEntity{
 
 	public void setTenant(Organization tenant) {
 		this.tenant = tenant;
-	} 	
+	}
 }

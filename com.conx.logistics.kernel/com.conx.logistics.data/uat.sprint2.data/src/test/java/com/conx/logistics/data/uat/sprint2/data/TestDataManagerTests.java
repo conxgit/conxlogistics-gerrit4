@@ -6,11 +6,16 @@ import java.io.StringWriter;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
+import javax.transaction.UserTransaction;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.jta.JtaTransactionManager;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -69,7 +74,7 @@ public class TestDataManagerTests extends AbstractTestNGSpringContextTests {
 	@Autowired
 	private EntityManagerFactory conxLogisticsManagerFactory;
 
-//	private UserTransaction userTransactionManager;
+	private UserTransaction userTransactionManager;
 
 	@Autowired
 	private IOrganizationDAOService orgDaoService;
@@ -141,6 +146,9 @@ public class TestDataManagerTests extends AbstractTestNGSpringContextTests {
 
 	@Autowired
 	private INoteDAOService noteDAOService;
+	
+	@Autowired
+	private JtaTransactionManager jtaTransactionManager;
 
 	private ASN[] asn = null;
 
@@ -156,8 +164,30 @@ public class TestDataManagerTests extends AbstractTestNGSpringContextTests {
 	@AfterClass
 	public void tearDown() throws Exception {
 	}
-
+	
 	@Test(enabled = true)
+	public void testGenerateData() throws Exception {
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setName("uat.sprint2.data");
+		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+		TransactionStatus status = this.jtaTransactionManager.getTransaction(def);
+		try {
+//			this.globalBitronixTransactionManager.begin();
+			TestDataManager.generateData(em, orgDaoService,countryDaoService, countryStateDaoService, unlocoDaoService, addressDaoService, addressTypeDaoService, addressTypeAddressDaoService, packUnitDaoService, dimUnitDaoService, weightUnitDaoService, productTypeDaoService, productDaoService, currencyUnitDAOService, asnDaoService, asnPickupDAOService, asnDropOffDAOService, contactDAOService, contactTypeDAOService, contactTypeContactDAOService, docTypeDOAService, dockTypeDOAService, entityMetadataDAOService, referenceNumberTypeDaoService, referenceNumberDaoService, rcvDaoService, componentDAOService, entityTypeDAOService, dataSourceDAOService, whseDAOService,documentRepositoryService, folderDAOService, noteDAOService);
+//			this.globalBitronixTransactionManager.commit();
+			this.jtaTransactionManager.commit(status);
+			Assert.assertTrue(true);
+		} catch (Exception e) {
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			String stacktrace = sw.toString();
+			logger.error(stacktrace);
+			this.jtaTransactionManager.rollback(status);
+			throw e;
+		}
+	}
+
+	@Test(enabled = false)
 	public void testDataManagerSprint1Data() throws Exception {
 		try {
 			asn = TestDataManager.createSprint1Data(null, em, orgDaoService, countryDaoService, countryStateDaoService, unlocoDaoService, addressDaoService, addressTypeDaoService,
@@ -175,7 +205,7 @@ public class TestDataManagerTests extends AbstractTestNGSpringContextTests {
 		}
 	}
 
-	@Test(dependsOnMethods = { "testDataManagerSprint1Data" }, enabled = true)
+	@Test(dependsOnMethods = { "testDataManagerSprint1Data" }, enabled = false)
 	public void testDataManagerSprint2Data() throws Exception {
 		try {
 			Assert.assertNotNull(asn);

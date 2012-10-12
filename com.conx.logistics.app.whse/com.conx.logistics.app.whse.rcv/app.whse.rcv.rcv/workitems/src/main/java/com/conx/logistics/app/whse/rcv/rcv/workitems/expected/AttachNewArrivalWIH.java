@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveDAOService;
 import com.conx.logistics.app.whse.rcv.rcv.domain.Arrival;
+import com.conx.logistics.app.whse.rcv.rcv.domain.DropOff;
+import com.conx.logistics.app.whse.rcv.rcv.domain.Pickup;
 import com.conx.logistics.app.whse.rcv.rcv.domain.Receive;
 import com.conx.logistics.mdm.dao.services.IOrganizationDAOService;
 
@@ -39,6 +41,10 @@ public class AttachNewArrivalWIH implements WorkItemHandler {
 			
 			Arrival arrival = new Arrival();//receiveDAOService.attachArrival(rcv);
 			arrival.setReceive(rcv);
+			arrival.setName("AR-" + rcv.getName());
+			arrival.setCode(arrival.getName());
+			arrival.setActualPickUp(new Pickup());
+			arrival.setActualDropOff(new DropOff());
 			
 			Map<String, Object> results = new HashMap<String, Object>();
 			results.put("arrivalOut",arrival);

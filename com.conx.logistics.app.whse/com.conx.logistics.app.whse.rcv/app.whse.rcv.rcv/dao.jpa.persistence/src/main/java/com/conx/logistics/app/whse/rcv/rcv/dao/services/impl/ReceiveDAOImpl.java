@@ -71,7 +71,16 @@ public class ReceiveDAOImpl implements IReceiveDAOService {
 
 	@Override
 	public Receive get(long id) {
-		return em.getReference(Receive.class, id);
+		try {
+			logger.info("test...");
+			return em.find(Receive.class, id);
+		} catch (Exception e) {
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			String stacktrace = sw.toString();
+			logger.error(stacktrace);
+			return null;
+		}
 	}    
 
 	@Override
@@ -183,7 +192,15 @@ public class ReceiveDAOImpl implements IReceiveDAOService {
 		rcv = update(rcv);
 		
 		return fe;
-	}	
+	}
+	
+	@Override
+	public FileEntry addAttachment(Receive rcv, File sourceFile, String title, String description, String mimeType, DocType attachmentType) throws Exception {
+		FileEntry fe = documentRepositoryService.addorUpdateFileEntry(rcv,attachmentType,sourceFile, mimeType, title, description);
+		rcv = update(rcv);
+		
+		return fe;
+	}
 	
 	private void copySingularAttrs(Receive rcv, ASN asn) {
 		rcv.setDimUnit(asn.getDimUnit());

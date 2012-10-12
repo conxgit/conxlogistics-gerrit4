@@ -1,5 +1,6 @@
 package com.conx.logistics.kernel.datasource.dao.services;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -33,6 +34,10 @@ public interface IDataSourceDAOService {
 	
 	public DataSource provide(EntityType entityType) throws ClassNotFoundException;
 
+	public DataSource provideCustomDataSource(String name, EntityType entityType, Collection<String> inherittedFieldNames) throws Exception;
+
+	public DataSource findCustomDataSource(String name, EntityType entityType) throws Exception;
+	
 	public void delete(DataSource record);
 
 	public DataSource update(DataSource record);

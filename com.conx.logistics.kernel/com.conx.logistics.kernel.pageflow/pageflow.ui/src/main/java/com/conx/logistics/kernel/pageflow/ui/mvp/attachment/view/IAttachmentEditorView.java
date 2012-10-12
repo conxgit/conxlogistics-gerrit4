@@ -4,9 +4,11 @@ import java.util.Collection;
 
 import org.vaadin.mvp.uibinder.IUiBindable;
 
+import com.conx.logistics.kernel.pageflow.ui.mvp.attachment.AttachmentEditorEventBus;
 import com.conx.logistics.kernel.pageflow.ui.mvp.attachment.view.AttachmentEditorView.ICreateAttachmentListener;
 import com.conx.logistics.kernel.pageflow.ui.mvp.attachment.view.AttachmentEditorView.IInspectAttachmentListener;
 import com.conx.logistics.kernel.pageflow.ui.mvp.attachment.view.AttachmentEditorView.ISaveAttachmentListener;
+import com.conx.logistics.kernel.ui.components.domain.attachment.AttachmentEditorComponent;
 import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
 import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.data.Container;
@@ -24,6 +26,8 @@ public interface IAttachmentEditorView extends IUiBindable {
 	public void addCreateAttachmentListener(ICreateAttachmentListener listener);
 	public void addSaveAttachmentListener(ISaveAttachmentListener listener);
 	public void addInspectAttachmentListener(IInspectAttachmentListener listener);
+	public void setEventBus(AttachmentEditorEventBus eventBus);
+	public void setComponentModel(AttachmentEditorComponent componentModel);
 	
 	public void addItemClickListener(ItemClickListener clickListener);
 	public void entityItemSingleClicked(EntityItem<?> item);

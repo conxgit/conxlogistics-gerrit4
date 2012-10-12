@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -15,39 +16,39 @@ import javax.persistence.Table;
 import com.conx.logistics.mdm.domain.BaseEntity;
 
 @Entity
-@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
-@Table(name="refaddress")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Table(name = "refaddress")
 public class Address extends BaseEntity implements Serializable {
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private Set<AddressCapability> addressCapabilities = new java.util.HashSet<AddressCapability>();
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<AddressCapability> addressCapabilities = new java.util.HashSet<AddressCapability>();
 
-    private String street1;
+	private String street1;
 
-    private String street2;
+	private String street2;
 
-    private String state;
+	private String state;
 
-    private String phone;
+	private String phone;
 
-    private String fax;
+	private String fax;
 
-    private String email;
+	private String email;
 
-    private String zipCode;
+	private String zipCode;
 
-    @ManyToOne(targetEntity = Unloco.class)
-    @JoinColumn
-    private Unloco unloco;
+	@ManyToOne(targetEntity = Unloco.class)
+	@JoinColumn
+	private Unloco unloco;
 
-    @ManyToOne(targetEntity = Country.class)
-    @JoinColumn
-    private Country country;
+	@ManyToOne(targetEntity = Country.class)
+	@JoinColumn
+	private Country country;
 
-    @ManyToOne(targetEntity = CountryState.class)
-    @JoinColumn
-    private CountryState countryState;
-    
+	@ManyToOne(targetEntity = CountryState.class)
+	@JoinColumn
+	private CountryState countryState;
+
 	public Set<AddressCapability> getAddressCapabilities() {
 		return addressCapabilities;
 	}

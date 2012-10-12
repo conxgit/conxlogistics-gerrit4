@@ -8,13 +8,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.conx.logistics.mdm.domain.IRelationEntity;
 import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
 
 @SuppressWarnings("serial")
 @Entity
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 @Table(name="refaddresstypeaddress")
-public class AddressTypeAddress extends MultitenantBaseEntity {
+public class AddressTypeAddress extends MultitenantBaseEntity implements IRelationEntity {
 	@ManyToOne
 	private AddressType type;
 	
@@ -44,5 +45,15 @@ public class AddressTypeAddress extends MultitenantBaseEntity {
 
 	public void setAddress(Address address) {
 		this.address = address;
+	}
+
+	@Override
+	public Object getIdentifierPropertyId() {
+		return "type";
+	}
+
+	@Override
+	public Object getEntityPropertyId() {
+		return "address";
 	}
 }

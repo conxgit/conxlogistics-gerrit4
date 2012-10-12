@@ -2,8 +2,8 @@ package com.conx.logistics.kernel.datasource.dao.services.impl;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Collection;
 import java.util.ConcurrentModificationException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -49,8 +49,6 @@ import com.conx.logistics.mdm.domain.metamodel.EntityTypeAttribute;
 public class DataSourceDAOImpl implements IDataSourceDAOService {
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	private transient Map<String, DataSource> cache = new HashMap<String, DataSource>();
-
 	/**
 	 * Spring will inject a managed JPA {@link EntityManager} into this field.
 	 */
@@ -87,19 +85,46 @@ public class DataSourceDAOImpl implements IDataSourceDAOService {
 
 	@Override
 	public DataSourceField getFieldByName(DataSource parentDataSource, String attrName) {
-		DataSourceField dsf = null;
-		try
-		{
-			TypedQuery<DataSourceField> q = em.createQuery("select o from com.conx.logistics.kernel.datasource.domain.DataSourceField o WHERE o.parentDataSource = :parentDataSource AND o.name = :name",
-					DataSourceField.class);
-			q.setParameter("parentDataSource", parentDataSource);
-			q.setParameter("name", attrName);
-			
-			dsf = q.getSingleResult();
+		// DataSourceField dsf = null;
+		// try
+		// {
+		// TypedQuery<DataSourceField> q =
+		// em.createQuery("select o from com.conx.logistics.kernel.datasource.domain.DataSourceField o WHERE o.parentDataSource = :parentDataSource AND o.name = :name",
+		// DataSourceField.class);
+		// q.setParameter("parentDataSource", parentDataSource);
+		// q.setParameter("name", attrName);
+		//
+		// dsf = q.getSingleResult();
+		// }
+		// catch(NoResultException e){}
+		//
+		// return dsf;
+		DataSourceField ds = null;
+
+		try {
+			CriteriaBuilder builder = em.getCriteriaBuilder();
+			CriteriaQuery<DataSourceField> query = builder.createQuery(DataSourceField.class);
+			Root<DataSourceField> rootEntity = query.from(DataSourceField.class);
+			ParameterExpression<String> p = builder.parameter(String.class);
+			ParameterExpression<DataSource> p2 = builder.parameter(DataSource.class);
+			query.select(rootEntity).where(builder.and(builder.equal(rootEntity.get("name"), p), builder.equal(rootEntity.get("parentDataSource"), p2)));
+
+			TypedQuery<DataSourceField> typedQuery = em.createQuery(query);
+			typedQuery.setParameter(p, attrName);
+			typedQuery.setParameter(p2, parentDataSource);
+
+			ds = typedQuery.getSingleResult();
+		} catch (NoResultException e) {
+		} catch (Exception e) {
+			e.printStackTrace();
+		} catch (Error e) {
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			String stacktrace = sw.toString();
+			logger.error(stacktrace);
 		}
-		catch(NoResultException e){}
-		
-		return dsf;
+
+		return ds;
 	}
 
 	@Override
@@ -133,23 +158,74 @@ public class DataSourceDAOImpl implements IDataSourceDAOService {
 
 	@Override
 	public DataSource provide(EntityType entityType) throws ClassNotFoundException {
-		System.out.println("providing DataSource for (" + entityType.getJpaEntityName() + ")");
+		logger.debug("START providing datasource for " + entityType.getJavaType().getName());
 
 		DataSource targetDS = null;
-
-//		Set<EntityTypeAttribute> entityTypeAttrs = entityType.getAllDeclaredAttributes();
-
 		String simpleType = entityType.getJavaType().getSimpleName();
 		simpleType = simpleType.substring(0, 1).toLowerCase() + simpleType.substring(1);
 
 		targetDS = getByCode(simpleType);
 		if (targetDS == null) {
+			// This DataSource does not yet exist
 			targetDS = new DataSource(simpleType, entityType);
 			targetDS = em.merge(targetDS);
-			targetDS = updateDataSourceFields(targetDS);
+			// Providing the Super DataSource if it exists
+			if (entityType.getSuperType() instanceof EntityType) {
+				targetDS.setSuperDataSource(provide((EntityType) entityType.getSuperType()));
+			}
+			// Adding Data Source Fields
+			Set<EntityTypeAttribute> aattrs = new HashSet<EntityTypeAttribute>(targetDS.getEntityType().getDeclaredAttributes());
+			try {
+				DataSourceField entityDSField = null;
+				for (EntityTypeAttribute aattr : aattrs) {
+					entityDSField = provideDataSourceField(targetDS, aattr);
+					targetDS.getDSFields().add(entityDSField);
+				}
+			} catch (ConcurrentModificationException e) {
+				logger.error("Could not finish provide() for DataSource of type " + entityType.getJavaType().getName() + ".");
+			}
+
+			targetDS = em.merge(targetDS);
 		}
 
+		logger.debug("FINISH providing datasource for " + entityType.getJavaType().getName());
 		return targetDS;
+	}
+
+	@Override
+	@SuppressWarnings("unused")
+	public DataSource provideCustomDataSource(String name, EntityType entityType, Collection<String> inherittedFieldNames) throws Exception {
+		DataSource existingDataSource = findCustomDataSource(name, entityType);
+		if (existingDataSource != null) {
+			return existingDataSource;
+		}
+		// First clone the default DataSource
+		DataSource targetDS = provide(entityType), customDataSource = new DataSource(name + "-" + targetDS.getCode(), entityType);
+		if (targetDS != null) {
+			customDataSource.setSuperDataSource(targetDS);
+			customDataSource = em.merge(customDataSource);
+			// Add all the DataSourceFields according to inherittedFieldNames
+			DataSourceField inherittedField = null;
+			Map<String, DataSourceField> fieldMap = targetDS.provideSuperDataSourceFieldMap();
+			for (String inherittedFieldName : inherittedFieldNames) {
+				inherittedField = fieldMap.get(inherittedFieldName);
+				if (inherittedField != null) {
+					customDataSource.getDSFields().add(cloneDataSourceField(customDataSource, inherittedField));
+				}
+			}
+			// Save added DataSourceFields
+			customDataSource = em.merge(customDataSource);
+			// Created custom DataSource is returned
+			return customDataSource;
+		} else {
+			return null;
+		}
+	}
+
+	private DataSourceField cloneDataSourceField(DataSource targetDataSource, DataSourceField inherittedField) {
+		DataSourceField clonedField = new DataSourceField(inherittedField.getPrimaryKey(), inherittedField.getName(), targetDataSource, inherittedField.getDataType(), inherittedField.getTitle());
+		clonedField = em.merge(clonedField);
+		return clonedField;
 	}
 
 	@Override
@@ -180,70 +256,52 @@ public class DataSourceDAOImpl implements IDataSourceDAOService {
 		return ds;
 	}
 
-	private DataSource updateDataSourceFields(DataSource targetDataSource) throws ClassNotFoundException {
-		// Process attributes
-		Set<EntityTypeAttribute> aattrs = new HashSet<EntityTypeAttribute>(targetDataSource.getEntityType().getAllDeclaredAttributes());
-		DataSourceField entityDSField = null;
-		try {
-			for (EntityTypeAttribute aattr : aattrs) {
-				entityDSField = provideDataSourceField(targetDataSource, aattr);
-				targetDataSource.getDSFields().add(entityDSField);
-			}
-		} catch (ConcurrentModificationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		targetDataSource = em.merge(targetDataSource);
-
-		return targetDataSource;
-	}
-
 	@Override
 	public DataSourceField provideDataSourceField(DataSource targetDataSource, EntityTypeAttribute aattr) throws ClassNotFoundException {
 		DataSourceField entityDSField = null;
 		DataSource attrDataSource;
 		PersistenceType pt;
 		pt = aattr.getAttribute().getPersistenceType();
-		if (pt == PersistenceType.BASIC) {
-			// - provide BasicType
-			BasicType basicType = basicTypeDao.provide(aattr.getAttribute().getJavaType());
+		logger.debug("START providing datasourcefield for " + aattr.getAttribute().getName());
+		if (getFieldByName(targetDataSource, aattr.getAttribute().getName()) == null) {
+			if (pt == PersistenceType.BASIC) {
+				// - provide BasicType
+				BasicType basicType = basicTypeDao.provide(aattr.getAttribute().getJavaType());
 
-			// - create DataSourceField
-			entityDSField = new DataSourceField(((BasicAttribute) aattr.getAttribute()).isId(), aattr.getAttribute().getName(), targetDataSource, basicType, aattr.getAttribute().getName());
-			entityDSField = em.merge(entityDSField);
-			// targetDataSource.getDSFields().add(entityDSField);
-
-			System.out.println("Adding Basic-type DataSourceField (" + aattr.getAttribute().getName() + ") of type (" + basicType.getEntityJavaType() + ")");
-		} else if (pt == PersistenceType.ENTITY) {
-			if (aattr.getAttribute() instanceof com.conx.logistics.mdm.domain.metamodel.SingularAttribute) {
-				// - provide DataSource for entity type
-				EntityType entityType = aattr.getAttribute().getEntityType();
-				attrDataSource = provide(aattr.getAttribute().getEntityType());
-
-				// - create Entity attribute
-				entityDSField = new DataSourceField(aattr.getAttribute().getName(), targetDataSource, attrDataSource, entityType, aattr.getAttribute().getName(),
-						((com.conx.logistics.mdm.domain.metamodel.SingularAttribute) aattr.getAttribute()).getAttributeType());
+				// - create DataSourceField
+				entityDSField = new DataSourceField(((BasicAttribute) aattr.getAttribute()).isId(), aattr.getAttribute().getName(), targetDataSource, basicType, aattr.getAttribute().getName());
 				entityDSField = em.merge(entityDSField);
-				// targetDataSource.getDSFields().add(entityDSField);
 
-				System.out.println("Adding Entity-type DataSourceField (" + aattr.getAttribute().getName() + ") of type (" + entityType.getEntityJavaType() + ")");
+				logger.debug("Adding Basic-type DataSourceField (" + aattr.getAttribute().getName() + ") of type (" + basicType.getEntityJavaType() + ")");
+			} else if (pt == PersistenceType.ENTITY) {
+				if (aattr.getAttribute() instanceof com.conx.logistics.mdm.domain.metamodel.SingularAttribute) {
+					// - provide DataSource for entity type
+					EntityType entityType = aattr.getAttribute().getEntityType();
+					attrDataSource = provide(aattr.getAttribute().getEntityType());
 
-			} else if (aattr.getAttribute() instanceof com.conx.logistics.mdm.domain.metamodel.PluralAttribute) {
-				// - provide DataSource for entity type
-				EntityType entityType = aattr.getAttribute().getEntityType();
-				attrDataSource = provide(aattr.getAttribute().getEntityType());
+					// - create Entity attribute
+					entityDSField = new DataSourceField(aattr.getAttribute().getName(), targetDataSource, attrDataSource, entityType, aattr.getAttribute().getName(),
+							((com.conx.logistics.mdm.domain.metamodel.SingularAttribute) aattr.getAttribute()).getAttributeType());
+					entityDSField = em.merge(entityDSField);
 
-				// - create Entity attribute
-				entityDSField = new DataSourceField(aattr.getAttribute().getName(), targetDataSource, attrDataSource, entityType, aattr.getAttribute().getName(),
-						((com.conx.logistics.mdm.domain.metamodel.PluralAttribute) aattr.getAttribute()).getAttributeType());
-				entityDSField = em.merge(entityDSField);
-				// targetDataSource.getDSFields().add(entityDSField);
+					logger.debug("Adding Entity-type DataSourceField (" + aattr.getAttribute().getName() + ") of type (" + entityType.getEntityJavaType() + ")");
 
-				System.out.println("Adding Collection Entity-type DataSourceField (" + aattr.getAttribute().getName() + ") of type (" + entityType.getEntityJavaType() + ")");
+				} else if (aattr.getAttribute() instanceof com.conx.logistics.mdm.domain.metamodel.PluralAttribute) {
+					// - provide DataSource for entity type
+					EntityType entityType = aattr.getAttribute().getEntityType();
+					attrDataSource = provide(aattr.getAttribute().getEntityType());
+
+					// - create Entity attribute
+					entityDSField = new DataSourceField(aattr.getAttribute().getName(), targetDataSource, attrDataSource, entityType, aattr.getAttribute().getName(),
+							((com.conx.logistics.mdm.domain.metamodel.PluralAttribute) aattr.getAttribute()).getAttributeType());
+					entityDSField = em.merge(entityDSField);
+
+					logger.debug("Adding Collection Entity-type DataSourceField (" + aattr.getAttribute().getName() + ") of type (" + entityType.getEntityJavaType() + ")");
+				}
 			}
 		}
 
+		logger.debug("FINISH providing datasourcefield for " + aattr.getAttribute().getName());
 		return entityDSField;
 	}
 
@@ -283,7 +341,7 @@ public class DataSourceDAOImpl implements IDataSourceDAOService {
 	public DataSource deleteField(Long dataSourceId, DataSourceField field) {
 		DataSource ds = em.getReference(DataSource.class, dataSourceId);
 		ds.getDSFields().remove(field);
-
+		em.remove(field);
 		ds = em.merge(ds);
 
 		return ds;
@@ -307,8 +365,7 @@ public class DataSourceDAOImpl implements IDataSourceDAOService {
 
 	@Override
 	public void delete(DataSource record) {
-		// TODO Auto-generated method stub
-
+		em.remove(record);
 	}
 
 	@Override
@@ -326,5 +383,18 @@ public class DataSourceDAOImpl implements IDataSourceDAOService {
 		TypedQuery<DataSource> q = em.createQuery("select o from com.conx.logistics.kernel.datasource.domain.DataSource o WHERE o.entityType = :entityType", DataSource.class);
 		q.setParameter("entityType", entityType);
 		return q.getSingleResult();
+	}
+
+	@Override
+	public DataSource findCustomDataSource(String name, EntityType entityType) throws Exception {
+		TypedQuery<DataSource> q = em.createQuery("select o from com.conx.logistics.kernel.datasource.domain.DataSource o WHERE o.entityType = :entityType AND o.code = :code", DataSource.class);
+		q.setParameter("entityType", entityType);
+		q.setParameter("code", name + "-" + entityType.getJavaType().getSimpleName());
+		List<DataSource> result = q.getResultList();
+		if (result.size() == 0) {
+			return null;
+		} else {
+			return result.get(0);
+		}
 	}
 }

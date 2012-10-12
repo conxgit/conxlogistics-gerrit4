@@ -52,7 +52,7 @@ public class EntityTypeTests extends AbstractTestNGSpringContextTests {
 	public void tearDown() throws Exception {
 	}
 
-	@Test(enabled = true)
+	@Test(enabled = false)
 	public void testProvideEntityType() throws Exception {
 		ArrayList<String> fieldNames = new ArrayList<String>(), foundFieldNames = new ArrayList<String>();
 		fieldNames.add("id");

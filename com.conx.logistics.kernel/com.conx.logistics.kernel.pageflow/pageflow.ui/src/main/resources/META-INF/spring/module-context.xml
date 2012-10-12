@@ -13,5 +13,5 @@
 	
 	<bean id="startTaskActionContribution" class="com.conx.logistics.kernel.pageflow.ui.contribution.StartTaskWizardContributionImpl">
 		<property name="defaultPageFlowEngine" ref="defaultPageFlowEngine"/>
-	</bean>		
+	</bean>	
 </beans>

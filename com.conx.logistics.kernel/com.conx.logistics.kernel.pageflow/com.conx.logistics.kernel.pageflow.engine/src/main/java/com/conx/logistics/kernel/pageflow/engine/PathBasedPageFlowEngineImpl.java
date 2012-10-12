@@ -25,6 +25,7 @@ import org.vaadin.mvp.eventbus.EventBus;
 import org.vaadin.mvp.presenter.IPresenter;
 
 import com.conx.logistics.kernel.bpm.services.IBPMService;
+import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
 import com.conx.logistics.kernel.pageflow.engine.path.PageFlowPathAssessor;
 import com.conx.logistics.kernel.pageflow.event.PageFlowPageChangedEvent;
 import com.conx.logistics.kernel.pageflow.services.ICustomDrivenPageFlowPage;
@@ -35,6 +36,7 @@ import com.conx.logistics.kernel.pageflow.services.IPageFlowSession;
 import com.conx.logistics.kernel.pageflow.services.ITaskWizard;
 import com.conx.logistics.kernel.pageflow.ui.wizard.TaskWizard;
 import com.conx.logistics.kernel.ui.service.contribution.IMainApplication;
+import com.conx.logistics.mdm.dao.services.IEntityMetadataDAOService;
 import com.conx.logistics.mdm.domain.application.Feature;
 import com.conx.logistics.mdm.domain.task.TaskDefinition;
 
@@ -49,6 +51,7 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 	private JndiTemplate jndiTemplate;
 	private UserTransaction userTransaction;
 	
+	private IEntityTypeDAOService entityTypeDao;
 	/** EntityManagerFactories */
 	private final Map<String, Map<String,IPageFlowPage>> pageCache = Collections
 			.synchronizedMap(new HashMap<String, Map<String,IPageFlowPage>>());
@@ -126,6 +129,16 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 			Long pageFlowSessionId) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public void bindEntityTypeDAOService(IEntityTypeDAOService entityTypeDAOService, Map properties) {
+		logger.debug("bindEntityTypeDAOService()");
+		this.entityTypeDao = entityTypeDAOService;
+	}
+
+	public void unbindEntityTypeDAOService(IEntityTypeDAOService entityTypeDAOService, Map properties) {
+		logger.debug("bindEntityTypeDAOService()");
+		this.entityTypeDao = null;
 	}
 
 	public void registerModelDrivenPageFlowPage(
@@ -447,5 +460,19 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 	@Override
 	public IBPMService getBPMService() {
 		return bpmService;
+	}
+
+	public void setEntityTypeDAOService(IEntityTypeDAOService entityTypeDaoService) {
+		this.entityTypeDao = entityTypeDaoService;
+	}
+
+	@Override
+	public IEntityTypeDAOService getEntityTypeDAOService() {
+		return entityTypeDao;
+	}
+
+	@Override
+	public UserTransaction getUserTransaction() {
+		return this.userTransaction;
 	}
 }

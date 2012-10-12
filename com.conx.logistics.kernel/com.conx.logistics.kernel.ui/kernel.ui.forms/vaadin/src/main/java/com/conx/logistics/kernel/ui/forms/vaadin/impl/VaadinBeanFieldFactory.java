@@ -1,6 +1,5 @@
 package com.conx.logistics.kernel.ui.forms.vaadin.impl;
 
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,17 +9,22 @@ import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.metamodel.Attribute;
+import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.Type;
 
+import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
+import com.conx.logistics.kernel.persistence.services.IEntityContainerProvider;
+import com.conx.logistics.kernel.ui.forms.vaadin.impl.field.VaadinBeanOneToOneForm;
+import com.conx.logistics.kernel.ui.forms.vaadin.impl.field.VaadinPlaceHolderField;
+import com.conx.logistics.kernel.ui.forms.vaadin.impl.field.VaadinRelationField;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.field.VaadinSelectDetail;
+import com.conx.logistics.mdm.domain.geolocation.AddressTypeAddress;
+import com.conx.logistics.mdm.domain.metamodel.EntityTypeAttribute;
+import com.conx.logistics.mdm.domain.organization.ContactTypeContact;
 import com.vaadin.addon.jpacontainer.EntityContainer;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerFactory;
@@ -52,13 +56,32 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 	private HashMap<Class<?>, Class<? extends AbstractSelect>> singleselectTypes;
 	@SuppressWarnings("rawtypes")
 	private BeanItemContainer beanContainer;
-	private EntityManagerFactory factory;
+	private IEntityContainerProvider containerProvider;
+	private IEntityTypeDAOService entityTypeDao;
 
 	/**
 	 * Creates a new JPAContainerFieldFactory. For referece/collection types
 	 * ComboBox or multiselects are created by default.
 	 */
 	public VaadinBeanFieldFactory() {
+	}
+
+	/**
+	 * Creates a new JPAContainerFieldFactory. For referece/collection types
+	 * ComboBox or multiselects are created by default.
+	 * 
+	 * @param beanContainer
+	 *            container that bean items belong to
+	 * @param containerProvider
+	 *            provider for the jpa-backed fields
+	 * @param entityTypeDao
+	 *            entity type dao
+	 */
+	@SuppressWarnings("rawtypes")
+	public VaadinBeanFieldFactory(BeanItemContainer beanContainer, IEntityContainerProvider containerProvider, IEntityTypeDAOService entityTypeDao) {
+		this.beanContainer = beanContainer;
+		this.containerProvider = containerProvider;
+		this.entityTypeDao = entityTypeDao;
 	}
 
 	/**
@@ -77,13 +100,14 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Field createField(Item item, Object propertyId, Component uiContext) {
-		if (this.beanContainer != null && this.factory != null) {
+		if (this.beanContainer != null && this.containerProvider != null && this.entityTypeDao != null) {
 			if (item instanceof BeanItem) {
 				BeanItem jpaitem = (BeanItem) item;
 				Property property = jpaitem.getItemProperty("id");
-				if (property != null) {
+				PropertyKind propertyKind = getPropertyKind(beanContainer, propertyId);
+				if (property != null && propertyKind != null) {
 					// BeanItemContainer container = jpaitem.get
-					Field field = createJPAContainerBackedField(property.getValue(), propertyId, beanContainer, uiContext);
+					Field field = createJPAContainerBackedField(jpaitem.getBean(), propertyId, beanContainer, propertyKind, uiContext);
 					if (field != null) {
 						return field;
 					}
@@ -111,53 +135,88 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Field createField(Container container, Object itemId, Object propertyId, Component uiContext) {
-		if (this.factory != null) {
+		if (this.containerProvider != null && this.entityTypeDao != null) {
 			if (container instanceof BeanItemContainer) {
 				BeanItemContainer jpacontainer = (BeanItemContainer) container;
-				Field field = createJPAContainerBackedField(itemId, propertyId, jpacontainer, uiContext);
-				if (field != null) {
-					return field;
+				this.beanContainer = jpacontainer;
+				PropertyKind propertyKind = getPropertyKind(beanContainer, propertyId);
+				if (propertyKind != null) {
+					Field field = createJPAContainerBackedField(itemId, propertyId, jpacontainer, propertyKind, uiContext);
+					if (field != null) {
+						return field;
+					}
 				}
 			}
 		}
 		return configureBasicFields(super.createField(container, itemId, propertyId, uiContext));
 	}
 
+	// private String getPropertyName(String propertyId) {
+	// int index = propertyId.indexOf(".");
+	// if (index == -1) {
+	// return propertyId;
+	// } else if (index == propertyId.length() - 1) {
+	// return "";
+	// } else {
+	// return StringUtil.extractLast(propertyId, ".");
+	// }
+	// }
+
 	@SuppressWarnings("rawtypes")
 	private PropertyKind getPropertyKind(BeanItemContainer container, Object propertyId) {
 		try {
-			Class<?> beanType = container.getBeanType();
-			Annotation[] propertyAnnotaitions = beanType.getField(propertyId.toString()).getAnnotations();
-			for (Annotation annotation : propertyAnnotaitions) {
-				if (annotation.annotationType().isAssignableFrom(ManyToOne.class)) {
-					return PropertyKind.MANY_TO_ONE;
-				} else if (annotation.annotationType().isAssignableFrom(OneToOne.class)) {
-					return PropertyKind.ONE_TO_ONE;
-				} else if (annotation.annotationType().isAssignableFrom(OneToMany.class)) {
-					return PropertyKind.ONE_TO_MANY;
-				} else if (annotation.annotationType().isAssignableFrom(ManyToMany.class)) {
-					return PropertyKind.MANY_TO_MANY;
+			com.conx.logistics.mdm.domain.metamodel.EntityType entityType = entityTypeDao.getByClass(container.getBeanType());
+			EntityTypeAttribute attribute = entityType.getAttribute(propertyId.toString());
+			if (attribute != null) {
+				if (attribute.getAttribute() instanceof com.conx.logistics.mdm.domain.metamodel.PluralAttribute) {
+					PersistentAttributeType attributeType = ((com.conx.logistics.mdm.domain.metamodel.PluralAttribute) attribute.getAttribute()).getAttributeType();
+					switch (attributeType) {
+					case ONE_TO_ONE:
+						return PropertyKind.ONE_TO_ONE;
+					case ONE_TO_MANY:
+						return PropertyKind.ONE_TO_MANY;
+					case MANY_TO_ONE:
+						return PropertyKind.MANY_TO_ONE;
+					case MANY_TO_MANY:
+						return PropertyKind.MANY_TO_MANY;
+					default:
+						return PropertyKind.SIMPLE;
+					}
+				} else if (attribute.getAttribute() instanceof com.conx.logistics.mdm.domain.metamodel.SingularAttribute) {
+					PersistentAttributeType attributeType = ((com.conx.logistics.mdm.domain.metamodel.SingularAttribute) attribute.getAttribute()).getAttributeType();
+					switch (attributeType) {
+					case ONE_TO_ONE:
+						return PropertyKind.ONE_TO_ONE;
+					case ONE_TO_MANY:
+						return PropertyKind.ONE_TO_MANY;
+					case MANY_TO_ONE:
+						return PropertyKind.MANY_TO_ONE;
+					case MANY_TO_MANY:
+						return PropertyKind.MANY_TO_MANY;
+					default:
+						return PropertyKind.SIMPLE;
+					}
+				} else if (attribute.getAttribute() instanceof com.conx.logistics.mdm.domain.metamodel.BasicAttribute) {
+					return PropertyKind.SIMPLE;
 				}
 			}
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 		}
-
-		return PropertyKind.SIMPLE;
+		return null;
 	}
 
 	@SuppressWarnings("rawtypes")
-	private Field createJPAContainerBackedField(Object itemId, Object propertyId, BeanItemContainer jpacontainer, Component uiContext) {
+	private Field createJPAContainerBackedField(Object itemId, Object propertyId, BeanItemContainer jpacontainer, PropertyKind propertyKind, Component uiContext) {
 		Field field = null;
-		PropertyKind propertyKind = getPropertyKind(jpacontainer, propertyId);
 		switch (propertyKind) {
 		case MANY_TO_ONE:
 			field = createReferenceSelect(jpacontainer, itemId, propertyId, uiContext);
 			break;
 		case ONE_TO_ONE:
-			field = createOneToOneField(jpacontainer, itemId, propertyId, uiContext);
+			// FIXME FIX ONE TO ONE FIELD
+			// field = createOneToOneField(jpacontainer, itemId, propertyId,
+			// uiContext);
+			field = new VaadinPlaceHolderField();
 			break;
 		case ONE_TO_MANY:
 			field = createMasterDetailEditor(jpacontainer, itemId, propertyId, uiContext);
@@ -173,7 +232,7 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 
 	@SuppressWarnings("rawtypes")
 	protected OneToOneForm createOneToOneField(BeanItemContainer jpacontainer, Object itemId, Object propertyId, Component uiContext) {
-		OneToOneForm oneToOneForm = new OneToOneForm();
+		VaadinBeanOneToOneForm oneToOneForm = new VaadinBeanOneToOneForm(jpacontainer.getItem(itemId), containerProvider);
 		oneToOneForm.setBackReferenceId(jpacontainer.getBeanType().getSimpleName().toLowerCase());
 		oneToOneForm.setCaption(DefaultFieldFactory.createCaptionByPropertyId(propertyId));
 		oneToOneForm.setFormFieldFactory(this);
@@ -198,7 +257,7 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 		 * Detect what kind of reference type we have
 		 */
 		Class masterEntityClass = containerForProperty.getBeanType();
-		Class referencedType = detectReferencedType(this.factory, propertyId, masterEntityClass);
+		Class referencedType = detectReferencedType(this.containerProvider, propertyId, masterEntityClass);
 		final JPAContainer container = createJPAContainerFor(referencedType, false);
 		final AbstractSelect select = constructCollectionSelect(containerForProperty, itemId, propertyId, uiContext, referencedType);
 		select.setCaption(DefaultFieldFactory.createCaptionByPropertyId(propertyId));
@@ -243,9 +302,9 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 	 * @return the type of entities in collection type
 	 */
 	@SuppressWarnings("rawtypes")
-	public Class detectReferencedType(EntityManagerFactory emf, Object propertyId, Class masterEntityClass) {
+	public Class detectReferencedType(IEntityContainerProvider containerProvider, Object propertyId, Class masterEntityClass) {
 		Class referencedType = null;
-		Metamodel metamodel = emf.getMetamodel();
+		Metamodel metamodel = containerProvider.getEmf().getMetamodel();
 		Set<EntityType<?>> entities = metamodel.getEntities();
 		for (EntityType<?> entityType : entities) {
 			Class<?> javaType = entityType.getJavaType();
@@ -264,6 +323,19 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 		return containerForProperty.getEntityProvider().getEntityManager().getEntityManagerFactory();
 	}
 
+	private boolean isRelationEntity(Class<?> type) {
+		return type.isAssignableFrom(AddressTypeAddress.class) || type.isAssignableFrom(ContactTypeContact.class);
+	}
+
+	private String getRelationEntitySubEntityId(Class<?> type) {
+		if (type.isAssignableFrom(AddressTypeAddress.class)) {
+			return "address";
+		} else if (type.isAssignableFrom(ContactTypeContact.class)) {
+			return "contact";
+		}
+		return null;
+	}
+
 	/**
 	 * Creates a field for simple reference (ManyToOne)
 	 * 
@@ -274,13 +346,22 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 	@SuppressWarnings("rawtypes")
 	protected Field createReferenceSelect(BeanItemContainer containerForProperty, Object itemId, Object propertyId, Component uiContext) {
 		Class<?> type = containerForProperty.getType(propertyId);
-		JPAContainer container = createJPAContainerFor(type, false);
+		if (isRelationEntity(type)) {
+			String subEntityId = getRelationEntitySubEntityId(type);
+			if (subEntityId != null && this.getContainerProvider() != null && this.entityTypeDao != null) {
+				VaadinRelationField selectFormField = new VaadinRelationField(type, subEntityId, this.getContainerProvider(), this.entityTypeDao);
+				return selectFormField;
+			}
+		}
 
+		JPAContainer container = createJPAContainerFor(type, false);
 		AbstractSelect nativeSelect = constructReferenceSelect(itemId, propertyId, uiContext, type);
 		nativeSelect.setMultiSelect(false);
 		nativeSelect.setCaption(DefaultFieldFactory.createCaptionByPropertyId(propertyId));
-		nativeSelect.setItemCaptionMode(NativeSelect.ITEM_CAPTION_MODE_ITEM);
+		nativeSelect.setItemCaptionMode(NativeSelect.ITEM_CAPTION_MODE_PROPERTY);
+		nativeSelect.setItemCaptionPropertyId("name");
 		nativeSelect.setContainerDataSource(container);
+		nativeSelect.setWidth("100%");
 		nativeSelect.setPropertyDataSource(new SingleSelectTranslator(nativeSelect));
 		return nativeSelect;
 	}
@@ -318,7 +399,7 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 
 	public JPAContainer<?> createJPAContainerFor(Class<?> type, boolean buffered) {
 		JPAContainer<?> container = null;
-		EntityManager em = this.factory.createEntityManager();
+		EntityManager em = this.containerProvider.getEmf().createEntityManager();
 		if (buffered) {
 			container = JPAContainerFactory.makeBatchable(type, em);
 		} else {
@@ -407,11 +488,19 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 		this.beanContainer = container;
 	}
 
-	public EntityManagerFactory getFactory() {
-		return factory;
+	public IEntityContainerProvider getContainerProvider() {
+		return containerProvider;
 	}
 
-	public void setFactory(EntityManagerFactory factory) {
-		this.factory = factory;
+	public void setContainerProvider(IEntityContainerProvider containerProvider) {
+		this.containerProvider = containerProvider;
+	}
+
+	public IEntityTypeDAOService getEntityTypeDao() {
+		return entityTypeDao;
+	}
+
+	public void setEntityTypeDao(IEntityTypeDAOService entityTypeDao) {
+		this.entityTypeDao = entityTypeDao;
 	}
 }

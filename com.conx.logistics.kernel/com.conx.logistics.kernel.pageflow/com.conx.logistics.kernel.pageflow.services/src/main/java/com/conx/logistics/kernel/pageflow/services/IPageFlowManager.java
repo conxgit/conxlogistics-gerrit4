@@ -4,11 +4,12 @@ package com.conx.logistics.kernel.pageflow.services;
 import java.util.Map;
 
 import javax.persistence.EntityManagerFactory;
+import javax.transaction.UserTransaction;
 
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.conx.logistics.kernel.bpm.services.IBPMService;
-import com.conx.logistics.kernel.ui.service.contribution.IMainApplication;
+import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
 import com.conx.logistics.mdm.domain.task.TaskDefinition;
 
 public interface IPageFlowManager {
@@ -53,4 +54,6 @@ public interface IPageFlowManager {
 	public EntityManagerFactory getConXEntityManagerfactory();
 	public PlatformTransactionManager getJTAGlobalTransactionManager();
 	public IBPMService getBPMService();
+	public IEntityTypeDAOService getEntityTypeDAOService();
+	public UserTransaction getUserTransaction();
 }

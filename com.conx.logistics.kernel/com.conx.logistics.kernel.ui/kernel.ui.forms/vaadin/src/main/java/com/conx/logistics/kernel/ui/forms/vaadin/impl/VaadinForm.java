@@ -1,31 +1,32 @@
 package com.conx.logistics.kernel.ui.forms.vaadin.impl;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
-
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 import com.conx.logistics.kernel.datasource.domain.DataSourceField;
 import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
+import com.conx.logistics.kernel.persistence.services.IEntityContainerProvider;
 import com.conx.logistics.kernel.ui.components.domain.form.ConXForm;
-import com.conx.logistics.mdm.domain.metamodel.EntityType;
+import com.conx.logistics.kernel.ui.forms.vaadin.impl.field.VaadinPlaceHolderField;
 import com.vaadin.addon.jpacontainer.JPAContainer;
-import com.vaadin.addon.jpacontainer.util.DefaultQueryModifierDelegate;
 import com.vaadin.data.Container;
+import com.vaadin.data.Container.Filter;
+import com.vaadin.data.Container.ItemSetChangeEvent;
+import com.vaadin.data.Container.ItemSetChangeListener;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.data.util.MethodProperty.MethodException;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
-import com.vaadin.ui.AbstractSelect;
+import com.vaadin.terminal.CompositeErrorMessage;
+import com.vaadin.terminal.ErrorMessage;
+import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.FormFieldFactory;
@@ -42,10 +43,8 @@ public class VaadinForm extends Form {
 
 	private Item itemDatasource;
 	private Collection<?> visibleItemProperties;
-	private IEntityTypeDAOService entityTypeDao;
 
 	public VaadinForm() {
-		setFormFieldFactory(new VaadinBeanFieldFactory());
 	}
 
 	public VaadinForm(Layout formLayout, ConXForm componentModel) {
@@ -60,8 +59,7 @@ public class VaadinForm extends Form {
 
 	private String getPropertyId(DataSourceField dsField) {
 		if (dsField.getJPAPath() != null) {
-			String[] path = dsField.getJPAPath().split(".");
-			return path[(path.length - 1 < 0) ? 0 : path.length - 1];
+			return dsField.getJPAPath();
 		} else {
 			return dsField.getName();
 		}
@@ -117,7 +115,7 @@ public class VaadinForm extends Form {
 				return;
 			}
 
-			HashSet<Object> addedPropertyIds = new HashSet<Object>();
+			HashMap<Object, Field> addedPropertyIds = new HashMap<Object, Field>();
 			// Adds all the properties to this form
 			for (final Iterator<?> i = propertyIds.iterator(); i.hasNext();) {
 				final Object id = i.next();
@@ -128,78 +126,139 @@ public class VaadinForm extends Form {
 			}
 		}
 	}
-	
+
 	public void setItemDataSource(Item newDataSource, Collection<?> propertyIds, IEntityTypeDAOService entityTypeDao) {
-		this.entityTypeDao = entityTypeDao;
 		this.setItemDataSource(newDataSource, propertyIds);
 	}
-	
-	public void setItemDataSource(Item newDataSource, Collection<?> propertyIds, IEntityTypeDAOService entityTypeDao, BeanItemContainer<?> itemParentContainer) {
-		if (this.getFormFieldFactory() instanceof VaadinBeanFieldFactory) {
-			((VaadinBeanFieldFactory) this.getFormFieldFactory()).setContainer(itemParentContainer);
-		}
-		this.setItemDataSource(newDataSource, propertyIds);
-	}
-	
-	public void setItemDataSource(Item newDataSource, Collection<?> propertyIds, IEntityTypeDAOService entityTypeDao, BeanItemContainer<?> itemParentContainer, EntityManagerFactory entityManagerFactory) {
-		if (this.getFormFieldFactory() instanceof VaadinBeanFieldFactory) {
-			((VaadinBeanFieldFactory) this.getFormFieldFactory()).setFactory(entityManagerFactory);
-		}
+
+	public void setItemDataSource(Item newDataSource, Collection<?> propertyIds, IEntityTypeDAOService entityTypeDao, BeanItemContainer<?> itemParentContainer,
+			IEntityContainerProvider containerProvider) {
+		VaadinBeanFieldFactory formFieldFactory = new VaadinBeanFieldFactory();
+		formFieldFactory.setEntityTypeDao(entityTypeDao);
+		formFieldFactory.setContainer(itemParentContainer);
+		formFieldFactory.setContainerProvider(containerProvider);
+
+		this.setFormFieldFactory(formFieldFactory);
 		this.setItemDataSource(newDataSource, propertyIds, entityTypeDao);
 	}
 
 	private ValueChangeListener buildDependenceListener(Field childListenerField) {
-		if (childListenerField instanceof AbstractSelect) {
-			return new ValueDependenceListener(((AbstractSelect) childListenerField).getContainerDataSource());
+		if (childListenerField instanceof Container.Viewer) {
+			return new ValueDependenceListener(((Container.Viewer) childListenerField).getContainerDataSource());
 		}
-		
+
 		return null;
 	}
 
-	private void applyDependenceListener(final Field field, final ValueChangeListener dependenceListener) {
-		if (field instanceof TextField) {
-			((TextField) field).addListener(new TextChangeListener() {
+	private ItemSetChangeListener buildRefreshListener(Field listenerField) {
+		if (listenerField instanceof Container.Viewer) {
+			return new ContainerRefreshListener(listenerField);
+		}
 
-				@Override
-				public void textChange(TextChangeEvent event) {
-					dependenceListener.valueChange(new Property.ValueChangeEvent() {
+		return null;
+	}
 
-						@Override
-						public Property getProperty() {
-							return field.getPropertyDataSource();
-						}
-					});
-				}
-			});
-		} else {
-			field.addListener(dependenceListener);
+	private void applyRefreshListener(Field field, ItemSetChangeListener listener) {
+		if (field instanceof Container.ItemSetChangeNotifier) {
+			((Container.ItemSetChangeNotifier) field).addListener(listener);
 		}
 	}
 
-	private Field initField(Item itemDataSource, Object propertyId, Set<Object> addedPropertyIds) {
-		if (!addedPropertyIds.contains(addedPropertyIds) && itemDataSource.getItemPropertyIds().contains(propertyId)) {
-			Field childListenerField = null;
-			Collection<Object> childListenerFieldPropertyIds = getChildDataSourceFieldPropertyIds(propertyId);
-			for (final Object childListenerFieldPropertyId : childListenerFieldPropertyIds) {
-				childListenerField = initField(itemDataSource, childListenerFieldPropertyId, addedPropertyIds);
-				if (childListenerField != null) {
-					applyDependenceListener(childListenerField, buildDependenceListener(childListenerField));
-				}
+	private void applyDependenceListener(final Field field, final ValueChangeListener dependenceListener) {
+		if (field != null && dependenceListener != null) {
+			if (field instanceof TextField) {
+				((TextField) field).addListener(new TextChangeListener() {
+
+					@Override
+					public void textChange(TextChangeEvent event) {
+						dependenceListener.valueChange(new Property.ValueChangeEvent() {
+
+							@Override
+							public Property getProperty() {
+								return field.getPropertyDataSource();
+							}
+						});
+					}
+				});
+			} else {
+				field.addListener(dependenceListener);
 			}
-			
+		}
+	}
+
+	private Field initField(Item itemDataSource, Object propertyId, Map<Object, Field> addedPropertyIds) {
+		if (!addedPropertyIds.containsKey(propertyId) && itemDataSource.getItemPropertyIds().contains(propertyId)) {
 			final Property p = itemDatasource.getItemProperty(propertyId);
 			if (p != null) {
 				final Field f = getFormFieldFactory().createField(itemDatasource, propertyId, this);
 				if (f != null) {
-					bindPropertyToField(propertyId, p, f);
-					addField(propertyId, f);
-					addedPropertyIds.add(propertyId);
+					Collection<Object> childListenerFieldPropertyIds = getChildDataSourceFieldPropertyIds(propertyId);
+					for (final Object childListenerFieldPropertyId : childListenerFieldPropertyIds) {
+						Field childListenerField = addedPropertyIds.get(childListenerFieldPropertyId);
+						if (childListenerField == null) {
+							childListenerField = initField(itemDataSource, childListenerFieldPropertyId, addedPropertyIds);
+						}
+						childListenerField.setEnabled(false);
+						applyDependenceListener(f, buildDependenceListener(childListenerField));
+						applyRefreshListener(childListenerField, buildRefreshListener(childListenerField));
+					}
 
-					return f;
+					try {
+						addedPropertyIds.put(propertyId, f);
+						bindPropertyToField(propertyId, p, f);
+						if (isNestedParentPropertyNull(f)) {
+							throw new MethodException(p, "Nested Parent Properties for Property " + propertyId + " were null.");
+						}
+						clearErrorMessage(f);
+						addField(propertyId, f);
+						return f;
+					} catch (Exception e) {
+						e.printStackTrace();
+						Field placeHolderField = new VaadinPlaceHolderField();
+						attachField(propertyId, placeHolderField);
+						requestRepaint();
+						return placeHolderField;
+					}
 				}
 			}
 		}
 		return null;
+	}
+
+	private void clearErrorMessage(final Field f) {
+		if (f instanceof AbstractField) {
+			((AbstractField) f).setComponentError(null);
+		}
+	}
+
+	// private boolean isBasicField(final Field f) {
+	// return f instanceof TextField || f instanceof CheckBox;
+	// }
+
+	private boolean isNestedParentPropertyNull(final Field f) {
+		if (f instanceof AbstractComponent) {
+			ErrorMessage error = ((AbstractComponent) f).getErrorMessage();
+			if (error != null) {
+				if (error instanceof CompositeErrorMessage) {
+					Iterator<ErrorMessage> iterator = ((CompositeErrorMessage) error).iterator();
+					ErrorMessage errorMessage = null;
+					while (iterator.hasNext()) {
+						errorMessage = iterator.next();
+						if (errorMessage instanceof SourceException) {
+							Throwable[] causes = ((SourceException) errorMessage).getCauses();
+							for (Throwable cause : causes) {
+								if (cause instanceof MethodException) {
+									if (cause.getCause() instanceof NullPointerException) {
+										return true;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -217,15 +276,35 @@ public class VaadinForm extends Form {
 		setFormDataSource(value, getVisibleItemProperties());
 	}
 
-	private EntityType getEntityType(Class<?> type) throws Exception {
-		if (entityTypeDao != null) {
-			return entityTypeDao.provide(type);
+	protected class ContainerRefreshListener implements ItemSetChangeListener {
+		private Field childField;
+
+		public ContainerRefreshListener(Field childField) {
+			this.childField = childField;
 		}
-		return null;
+
+		@Override
+		public void containerItemSetChange(ItemSetChangeEvent event) {
+			if (childField instanceof Container.Viewer) {
+				Container container = ((Container.Viewer) this.childField).getContainerDataSource();
+				Collection<?> ids = container.getItemIds();
+				if (ids.size() == 0) {
+					childField.setValue(null);
+					childField.setEnabled(false);
+				} else {
+					childField.setEnabled(true);
+					if (childField instanceof Field) {
+						((Field) childField).setValue(ids.iterator().next());
+					}
+				}
+			}
+		}
 	}
 
 	protected class ValueDependenceListener implements ValueChangeListener {
 		private Container childFieldContainer;
+		private Filter parentFilter;
+		private Object entityId;
 
 		public ValueDependenceListener(Container childFieldContainer) {
 			this.childFieldContainer = childFieldContainer;
@@ -234,34 +313,24 @@ public class VaadinForm extends Form {
 		@Override
 		public void valueChange(final Property.ValueChangeEvent event) {
 			if (childFieldContainer instanceof JPAContainer) {
-				JPAContainer<?> jpaContainer = (JPAContainer<?>) childFieldContainer;
-				jpaContainer.removeAllContainerFilters();
-				jpaContainer.getEntityProvider().setQueryModifierDelegate(new DefaultQueryModifierDelegate() {
-					@Override
-					public void filtersWillBeAdded(CriteriaBuilder criteriaBuilder, CriteriaQuery<?> query, List<Predicate> predicates) {
-						try {
-							Root<?> root = query.getRoots().iterator().next();
-							Path<?> ownerEntityIdPath = root.get("ownerEntityId");
-							Path<?> ownerEntityTypeIdPath = root.get("ownerEntityType").get("id");
-
-							EntityType type = getEntityType(((JPAContainer<?>) childFieldContainer).getEntityClass());
-							if (type == null) {
-								return;
-							}
-							
-							Object ownerEntityId = event.getProperty().getValue();							
-							Object ownerEntityTypeId = type.getId();
-
-							if (ownerEntityId != null && ownerEntityTypeId != null) {
-								predicates.add(criteriaBuilder.and(criteriaBuilder.equal(ownerEntityIdPath, ownerEntityId), criteriaBuilder.equal(ownerEntityTypeIdPath, ownerEntityTypeId)));
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+				if (event != null && event.getProperty() != null && event.getProperty().getValue() != null) {
+					this.entityId = event.getProperty().getValue();
+					if (parentFilter != null) {
+						((JPAContainer<?>) this.childFieldContainer).removeContainerFilter(this.parentFilter);
 					}
-				});
-				jpaContainer.applyFilters();
+					this.parentFilter = new com.vaadin.data.util.filter.Compare.Equal("ownerEntityId", this.entityId);
+					((JPAContainer<?>) this.childFieldContainer).addContainerFilter(this.parentFilter);
+					((JPAContainer<?>) this.childFieldContainer).applyFilters();
+				}
 			}
 		}
+	}
+
+	public ConXForm getComponentModel() {
+		return componentModel;
+	}
+
+	public void setComponentModel(ConXForm componentModel) {
+		this.componentModel = componentModel;
 	}
 }

@@ -15,7 +15,7 @@ public interface IEntityTypeDAOService {
 
 	public List<EntityType> getAll();
 
-	public EntityType getByClass(Class entityClass) throws Exception;
+	public EntityType getByClass(Class<?> entityClass) throws Exception;
 
 	public AbstractAttribute getAttribute(Long entityTypeId, String name);
 
@@ -25,7 +25,7 @@ public interface IEntityTypeDAOService {
 
 	public EntityType update(EntityType record);
 
-	public EntityType provide(IdentifiableType record) throws ClassNotFoundException, Exception;
+	public EntityType provide(IdentifiableType<?> record) throws ClassNotFoundException, Exception;
 
 	public List<BasicAttribute> getAllBasicAttributesByEntityType(EntityType parentEntityType);
 
@@ -35,7 +35,7 @@ public interface IEntityTypeDAOService {
 
 	public List<PluralAttribute> getAllPluralAttributesByEntityType(EntityType parentEntityType);
 
-	public EntityType createMappedSupperClass(IdentifiableType supertype) throws Exception;
+	public EntityType createMappedSupperClass(IdentifiableType<?> supertype) throws Exception;
 
-	public EntityType provide(Class entityJavaClass) throws Exception;
+	public EntityType provide(Class<?> entityJavaClass) throws Exception;
 }

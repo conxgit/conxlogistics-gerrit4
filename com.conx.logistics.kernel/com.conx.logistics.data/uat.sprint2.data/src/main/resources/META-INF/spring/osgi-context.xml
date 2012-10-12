@@ -14,6 +14,9 @@
 	<osgi:reference id="conxlogisticsEMF" interface="javax.persistence.EntityManagerFactory" filter="(module=KERNEL)">
 	</osgi:reference>
 	
+	<osgi:service ref="testDataManager" interface="com.conx.logistics.data.uat.sprint2.data.ITestDataManager">
+	</osgi:service>
+	
 	<!-- BUSINESS SERVICES -->
 	<osgi:reference id="addressDao" interface="com.conx.logistics.mdm.dao.services.IAddressDAOService"/>
 	<osgi:reference id="addressTypeDao" interface="com.conx.logistics.mdm.dao.services.IAddressTypeDAOService"/>
@@ -47,6 +50,7 @@
 	<osgi:reference id="unlocoDao" interface="com.conx.logistics.mdm.dao.services.IUnlocoDAOService"/>
 	<osgi:reference id="whseDao" interface="com.conx.logistics.app.whse.dao.services.IWarehouseDAOService"/>
 	<osgi:reference id="weightUnitDao" interface="com.conx.logistics.mdm.dao.services.product.IWeightUnitDAOService"/>
+	<osgi:reference id="userTransaction" interface="javax.transaction.UserTransaction"/>
 </beans>
 
 

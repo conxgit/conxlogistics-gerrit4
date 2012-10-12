@@ -22,6 +22,8 @@ import com.conx.logistics.app.whse.domain.docktype.DockType;
 import com.conx.logistics.app.whse.rcv.asn.shared.type.DROPMODE;
 import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
 import com.conx.logistics.mdm.domain.geolocation.Address;
+import com.conx.logistics.mdm.domain.geolocation.AddressTypeAddress;
+import com.conx.logistics.mdm.domain.organization.ContactTypeContact;
 import com.conx.logistics.mdm.domain.organization.Organization;
 
 @Entity
@@ -32,25 +34,29 @@ public class Pickup extends MultitenantBaseEntity implements Serializable {
     @JoinColumn
     private Organization actualCfs;
 
-    @ManyToOne(targetEntity = Address.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = AddressTypeAddress.class, fetch = FetchType.EAGER)
     @JoinColumn
-    private Address actualCfsAddress;
+    private AddressTypeAddress actualCfsAddress;
+    
+    @ManyToOne(targetEntity = ContactTypeContact.class, fetch = FetchType.EAGER)
+    @JoinColumn
+    private ContactTypeContact actualCfsContact;
     
     @ManyToOne(targetEntity = Organization.class, fetch = FetchType.EAGER)
     @JoinColumn
     private Organization actualLocalTrans;
 
-    @ManyToOne(targetEntity = Address.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = AddressTypeAddress.class, fetch = FetchType.EAGER)
     @JoinColumn
-    private Address actualLocalTransAddress;
+    private AddressTypeAddress actualLocalTransAddress;
 
     @ManyToOne(targetEntity = Organization.class, fetch = FetchType.EAGER)
     @JoinColumn
     private Organization actualPickUpFrom;
 
-    @ManyToOne(targetEntity = Address.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = AddressTypeAddress.class, fetch = FetchType.EAGER)
     @JoinColumn
-    private Address actualPickUpFromAddress;
+    private AddressTypeAddress actualPickUpFromAddress;
 
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -84,11 +90,11 @@ public class Pickup extends MultitenantBaseEntity implements Serializable {
 		this.actualLocalTrans = localTrans;
 	}
 
-	public Address getLocalTransAddress() {
+	public AddressTypeAddress getLocalTransAddress() {
 		return actualLocalTransAddress;
 	}
 
-	public void setLocalTransAddress(Address localTransAddress) {
+	public void setLocalTransAddress(AddressTypeAddress localTransAddress) {
 		this.actualLocalTransAddress = localTransAddress;
 	}
 
@@ -100,11 +106,11 @@ public class Pickup extends MultitenantBaseEntity implements Serializable {
 		this.actualPickUpFrom = pickUpFrom;
 	}
 
-	public Address getPickUpFromAddress() {
+	public AddressTypeAddress getPickUpFromAddress() {
 		return actualPickUpFromAddress;
 	}
 
-	public void setPickUpFromAddress(Address pickUpFromAddress) {
+	public void setPickUpFromAddress(AddressTypeAddress pickUpFromAddress) {
 		this.actualPickUpFromAddress = pickUpFromAddress;
 	}
 
@@ -180,11 +186,11 @@ public class Pickup extends MultitenantBaseEntity implements Serializable {
 		this.actualCfs = actualCfs;
 	}
 
-	public Address getActualCfsAddress() {
+	public AddressTypeAddress getActualCfsAddress() {
 		return actualCfsAddress;
 	}
 
-	public void setActualCfsAddress(Address actualCfsAddress) {
+	public void setActualCfsAddress(AddressTypeAddress actualCfsAddress) {
 		this.actualCfsAddress = actualCfsAddress;
 	}
 
@@ -196,11 +202,11 @@ public class Pickup extends MultitenantBaseEntity implements Serializable {
 		this.actualLocalTrans = actualLocalTrans;
 	}
 
-	public Address getActualLocalTransAddress() {
+	public AddressTypeAddress getActualLocalTransAddress() {
 		return actualLocalTransAddress;
 	}
 
-	public void setActualLocalTransAddress(Address actualLocalTransAddress) {
+	public void setActualLocalTransAddress(AddressTypeAddress actualLocalTransAddress) {
 		this.actualLocalTransAddress = actualLocalTransAddress;
 	}
 
@@ -212,11 +218,11 @@ public class Pickup extends MultitenantBaseEntity implements Serializable {
 		this.actualPickUpFrom = actualPickUpFrom;
 	}
 
-	public Address getActualPickUpFromAddress() {
+	public AddressTypeAddress getActualPickUpFromAddress() {
 		return actualPickUpFromAddress;
 	}
 
-	public void setActualPickUpFromAddress(Address actualPickUpFromAddress) {
+	public void setActualPickUpFromAddress(AddressTypeAddress actualPickUpFromAddress) {
 		this.actualPickUpFromAddress = actualPickUpFromAddress;
 	}
 
@@ -274,5 +280,13 @@ public class Pickup extends MultitenantBaseEntity implements Serializable {
 
 	public void setActualDropMode(DROPMODE actualDropMode) {
 		this.actualDropMode = actualDropMode;
+	}
+
+	public ContactTypeContact getActualCfsContact() {
+		return actualCfsContact;
+	}
+
+	public void setActualCfsContact(ContactTypeContact actualCfsContact) {
+		this.actualCfsContact = actualCfsContact;
 	}
 }

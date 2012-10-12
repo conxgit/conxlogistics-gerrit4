@@ -8,12 +8,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.conx.logistics.mdm.domain.IRelationEntity;
 import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
 
 @Entity
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 @Table(name="refcontacttypecontact")
-public class ContactTypeContact extends MultitenantBaseEntity {
+public class ContactTypeContact extends MultitenantBaseEntity implements IRelationEntity {
 	private static final long serialVersionUID = 1L;
 	
 	@ManyToOne
@@ -45,6 +46,16 @@ public class ContactTypeContact extends MultitenantBaseEntity {
 
 	public void setContact(Contact contact) {
 		this.contact = contact;
+	}
+
+	@Override
+	public Object getIdentifierPropertyId() {
+		return "type";
+	}
+
+	@Override
+	public Object getEntityPropertyId() {
+		return "contact";
 	}
 
 }

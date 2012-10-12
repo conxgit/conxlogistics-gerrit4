@@ -45,13 +45,13 @@ public class VaadinSelectDetail extends JPAContainerCustomField implements Prope
 
 		buildLayout();
 
-		setCaption(DefaultFieldFactory.createCaptionByPropertyId(propertyId));
+//		setCaption(DefaultFieldFactory.createCaptionByPropertyId(propertyId));
 	}
 
 	private void buildContainer() {
 		// FIXME buffered mode
 		Class<?> masterEntityClass = containerForProperty.getBeanType();
-		referencedType = fieldFactory.detectReferencedType(fieldFactory.getFactory(), propertyId, masterEntityClass);
+		referencedType = fieldFactory.detectReferencedType(fieldFactory.getContainerProvider(), propertyId, masterEntityClass);
 		container = fieldFactory.createJPAContainerFor(referencedType, false);
 		backReferencePropertyId = HibernateUtil.getMappedByProperty(containerForProperty.getItem(itemId).getBean(), propertyId.toString());
 		masterEntity = containerForProperty.getItem(itemId).getBean();
@@ -90,5 +90,13 @@ public class VaadinSelectDetail extends JPAContainerCustomField implements Prope
 	@Override
 	public Class<?> getType() {
 		return referencedType;
+	}
+
+	public JPAContainer<?> getContainer() {
+		return container;
+	}
+
+	public void setContainer(JPAContainer<?> container) {
+		this.container = container;
 	}
 }

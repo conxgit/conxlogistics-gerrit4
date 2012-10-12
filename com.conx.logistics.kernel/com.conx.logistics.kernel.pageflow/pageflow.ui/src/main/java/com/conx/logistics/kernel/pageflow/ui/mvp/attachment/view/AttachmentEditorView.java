@@ -7,6 +7,8 @@ import java.util.Set;
 
 import org.vaadin.mvp.uibinder.annotation.UiField;
 
+import com.conx.logistics.kernel.pageflow.ui.mvp.attachment.AttachmentEditorEventBus;
+import com.conx.logistics.kernel.ui.components.domain.attachment.AttachmentEditorComponent;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.EntityEditorToolStrip;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.EntityEditorToolStrip.EntityEditorToolStripButton;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.attachment.AttachmentEditorToolStrip;
@@ -46,6 +48,8 @@ public class AttachmentEditorView extends VerticalLayout implements IAttachmentE
 	private Collection<?> visibleFormFields;
 	private VerticalLayout defaultPanel;
 	private boolean detailHidden;
+	private AttachmentEditorEventBus eventBus;
+	private AttachmentEditorComponent componentModel;
 
 	private Set<ICreateAttachmentListener> createAttachmentListenerSet;
 	private Set<ISaveAttachmentListener> saveAttachmentListenerSet;
@@ -243,9 +247,8 @@ public class AttachmentEditorView extends VerticalLayout implements IAttachmentE
 		this.grid.addListener(clickListener);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public void entityItemSingleClicked(EntityItem item) {
+	public void entityItemSingleClicked(EntityItem<?> item) {
 		if (visibleFormFields == null) {
 			ArrayList<String> tempVisibleFormFields = new ArrayList<String>();
 			tempVisibleFormFields.add("code");
@@ -286,5 +289,23 @@ public class AttachmentEditorView extends VerticalLayout implements IAttachmentE
 	@Override
 	public void onSecondComponentHeightChanged(int height) {
 		this.form.getLayout().setHeight((height - 41) + "px");
+	}
+
+	public AttachmentEditorEventBus getEventBus() {
+		return eventBus;
+	}
+
+	@Override
+	public void setEventBus(AttachmentEditorEventBus eventBus) {
+		this.eventBus = eventBus;
+	}
+
+	@Override
+	public void setComponentModel(AttachmentEditorComponent componentModel) {
+		this.componentModel = componentModel;
+	}
+	
+	public AttachmentEditorComponent getComponentModel() {
+		return this.componentModel;
 	}
 }

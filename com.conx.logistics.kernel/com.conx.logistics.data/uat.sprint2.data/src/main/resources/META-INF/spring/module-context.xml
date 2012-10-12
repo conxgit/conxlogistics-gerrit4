@@ -11,10 +11,10 @@
 			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
 			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
-	<bean id="TestDataManager" class="com.conx.logistics.data.uat.sprint2.data.TestDataManager" init-method="start" destroy-method="stop">
+	<bean id="testDataManager" class="com.conx.logistics.data.uat.sprint2.data.TestDataManager" init-method="start" destroy-method="stop">
 		<property name="conxlogisticsEMF" ref="conxlogisticsEMF"></property>
 		<property name="globalTransactionManager" ref="globalTransManager"></property>
-				
+		<property name="userTransaction" ref="userTransaction"/>
 		<property name="addressDaoService" ref="addressDao"></property>
 		<property name="addressTypeDaoService" ref="addressTypeDao"></property>
 		<property name="addressTypeAddressDaoService" ref="addressTypeAddressDao"></property>

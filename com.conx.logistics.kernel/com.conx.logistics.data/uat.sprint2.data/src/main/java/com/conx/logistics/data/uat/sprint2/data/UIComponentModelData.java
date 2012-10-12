@@ -245,65 +245,31 @@ public class UIComponentModelData {
 	}
 
 	private static DataSource getDefaultRCVDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
-		if (DataSourceData.RCV_DEFAULT_DS == null) {
-			DataSourceData.provideDefaultReceiveDS(entityTypeDAOService, dataSourceDAOService, em);
-		}
-
-		return DataSourceData.RCV_DEFAULT_DS;
+		return DataSourceData.provideDefaultReceiveDS(entityTypeDAOService, dataSourceDAOService, em);
 	}
 
 	private static DataSource getBasicFormRCVDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
-		if (DataSourceData.RCV_BASIC_DS == null) {
-			DataSourceData.provideBasicFormReceiveDS(entityTypeDAOService, dataSourceDAOService, em);
-		}
-
-		return DataSourceData.RCV_BASIC_DS;
+		return DataSourceData.provideBasicFormReceiveDS(entityTypeDAOService, dataSourceDAOService, em);
 	}
 	
 	private static DataSource getRcvLineDefaultDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
-		if (DataSourceData.RCV_LINE_DEFAULT_DS == null) {
-			DataSourceData.provideDefaultReceiveLineDS(entityTypeDAOService, dataSourceDAOService, em);
-		}
-
-		return DataSourceData.RCV_LINE_DEFAULT_DS;
+		return DataSourceData.provideDefaultReceiveLineDS(entityTypeDAOService, dataSourceDAOService, em);
 	}	
 	
 	private static DataSource getWeightDimsRCVDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
-		if (DataSourceData.RCV_WEIGHT_DIMS_DS == null) {
-			DataSourceData.provideWeightDimsFormReceiveDS(entityTypeDAOService, dataSourceDAOService, em);
-		}
-
-		return DataSourceData.RCV_WEIGHT_DIMS_DS;
+		return DataSourceData.provideWeightDimsFormReceiveDS(entityTypeDAOService, dataSourceDAOService, em);
 	}
 	
-	/**
-	 * 
-	 * 
-	 * Generic DS's
-	 * 
-	 */
 	private static DataSource getFileEntryDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
-		if (DataSourceData.FE_DS == null) {
-			DataSourceData.provideFileEntryDS(entityTypeDAOService, dataSourceDAOService, em);
-		}
-
-		return DataSourceData.FE_DS;
+		return DataSourceData.provideFileEntryDS(entityTypeDAOService, dataSourceDAOService, em);
 	}
 
 	private static DataSource getNoteItemDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
-		if (DataSourceData.NI_DS == null) {
-			DataSourceData.provideNoteItemDS(entityTypeDAOService, dataSourceDAOService, em);
-		}
-
-		return DataSourceData.NI_DS;
+		return DataSourceData.provideFileEntryDS(entityTypeDAOService, dataSourceDAOService, em);
 	}
 
 	private static DataSource getReferenceNumberDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
-		if (DataSourceData.RN_DS == null) {
-			DataSourceData.provideReferenceNumberDS(entityTypeDAOService, dataSourceDAOService, em);
-		}
-
-		return DataSourceData.RN_DS;
+		return DataSourceData.provideFileEntryDS(entityTypeDAOService, dataSourceDAOService, em);
 	}
 
 	private static FieldSet createFieldSet(String caption, DataSource dataSource, IComponentDAOService componentDAOService) {

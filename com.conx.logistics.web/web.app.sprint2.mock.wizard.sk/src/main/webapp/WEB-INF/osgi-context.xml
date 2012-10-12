@@ -46,6 +46,7 @@
 		<osgi:listener ref="mockApp" bind-method="bindPageFlowEngine" unbind-method="unbindPageFlowEngine"/>	
 	</osgi:reference>		
 	
+	<osgi:reference id="testDataManager" cardinality="1..1" interface="com.conx.logistics.data.uat.sprint2.data.ITestDataManager"/>
 	
 	<osgi:reference id="portalRoleService" cardinality="0..1" interface="com.conx.logistics.kernel.portal.remote.services.IPortalRoleService"/>
 	<osgi:reference id="portalUserService" cardinality="0..1" interface="com.conx.logistics.kernel.portal.remote.services.IPortalUserService"/>

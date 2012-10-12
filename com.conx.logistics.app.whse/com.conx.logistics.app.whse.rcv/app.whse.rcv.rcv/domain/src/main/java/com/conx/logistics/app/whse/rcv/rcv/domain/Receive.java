@@ -41,11 +41,11 @@ import com.conx.logistics.mdm.domain.product.WeightUnit;
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 @Table(name="whreceive")
 public class Receive extends MultitenantBaseEntity {
-    @OneToOne(targetEntity = Pickup.class, fetch = FetchType.EAGER)
+    @OneToOne(targetEntity = ASNPickup.class, fetch = FetchType.EAGER)
     @JoinColumn
     private ASNPickup expectedPickUp;
     
-    @OneToOne(targetEntity = DropOff.class, fetch = FetchType.EAGER)
+    @OneToOne(targetEntity = ASNDropOff.class, fetch = FetchType.EAGER)
     @JoinColumn
     private ASNDropOff expectedDropOff;
     

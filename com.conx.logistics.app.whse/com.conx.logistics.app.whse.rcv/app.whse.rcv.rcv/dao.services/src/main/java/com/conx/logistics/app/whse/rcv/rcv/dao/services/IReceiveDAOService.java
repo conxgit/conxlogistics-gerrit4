@@ -32,4 +32,6 @@ public interface IReceiveDAOService {
 	public Receive update(Receive record);
 
 	public Receive get(long id);
+
+	public FileEntry addAttachment(Receive rcv, File sourceFile, String title, String description, String mimeType, DocType attachmentType) throws Exception;
 }

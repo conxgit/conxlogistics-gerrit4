@@ -9,7 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.transaction.UserTransaction;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,12 +32,14 @@ import com.conx.logistics.kernel.pageflow.services.IPageFlowSession;
 import com.conx.logistics.kernel.pageflow.services.ITaskWizard;
 import com.conx.logistics.kernel.pageflow.ui.builder.VaadinPageFactoryImpl;
 import com.conx.logistics.kernel.persistence.services.IEntityContainerProvider;
+import com.conx.logistics.kernel.ui.common.entityprovider.jta.CustomCachingMutableLocalEntityProvider;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
 import com.conx.logistics.kernel.ui.service.contribution.IApplicationViewContribution;
 import com.conx.logistics.kernel.ui.service.contribution.IMainApplication;
 import com.conx.logistics.kernel.ui.service.contribution.IViewContribution;
 import com.conx.logistics.mdm.domain.BaseEntity;
 import com.conx.logistics.mdm.domain.application.Feature;
+import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerFactory;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.Component;
@@ -51,11 +55,8 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 
 	private HashMap<IPageFlowPage, IPageComponent> pageComponentMap;
 	private VaadinPageFactoryImpl pageFactory;
-
 	private Feature onCompletionCompletionFeature;
-
 	private IPresenter<?, ? extends EventBus> onCompletionCompletionViewPresenter;
-
 	private final Set<IPageFlowPageChangedListener> pageFlowPageChangedListenerCache = Collections.synchronizedSet(new HashSet<IPageFlowPageChangedListener>());
 
 	private boolean nextButtonBlocked = false;
@@ -65,10 +66,12 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 	private boolean processPageFlowPageChangedEvents;
 
 	private HashMap<String, Object> initParams;
+	private UserTransaction userTransaction;
 
 	public TaskWizard(IPageFlowSession session) {
 		this.session = session;
 		this.engine = session.getPageFlowEngine();
+		this.userTransaction = this.engine.getUserTransaction();
 		this.pageComponentMap = new HashMap<IPageFlowPage, IPageComponent>();
 
 		HashMap<String, Object> config = new HashMap<String, Object>();
@@ -82,9 +85,17 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 		addAllPages();
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Object createPersistenceContainer(Class<?> entityClass) {
-		return JPAContainerFactory.makeReadOnly(entityClass, session.getConXEntityManagerfactory().createEntityManager());
+		if (this.userTransaction != null) {
+			CustomCachingMutableLocalEntityProvider provider = new CustomCachingMutableLocalEntityProvider(entityClass, this.session.getConXEntityManagerfactory(), this.userTransaction);
+			JPAContainer<?> container = JPAContainerFactory.make(entityClass, (EntityManager) null);
+			container.setEntityProvider(provider);
+			return container;
+		} else {
+			return JPAContainerFactory.makeReadOnly(entityClass, this.session.getConXEntityManagerfactory().createEntityManager());
+		}
 	}
 
 	private void addAllPages() {
@@ -95,6 +106,7 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 			initParams.put(IPageComponent.TASK_WIZARD, this);
 			initParams.put(IPageComponent.PAGE_FLOW_PAGE_CHANGE_EVENT_HANDLER, this);
 			initParams.put(IPageComponent.ENTITY_CONTAINER_PROVIDER, this);
+			initParams.put(IPageComponent.ENTITY_TYPE_DAO_SERVICE, this.engine.getEntityTypeDAOService());
 		}
 		if (session.getPages() != null) {
 			for (IPageFlowPage page : session.getPages()) {
@@ -185,7 +197,7 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 		super.back();
 	}
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings({ "unused", "null" })
 	@Override
 	public void finish() {
 		// FIXME

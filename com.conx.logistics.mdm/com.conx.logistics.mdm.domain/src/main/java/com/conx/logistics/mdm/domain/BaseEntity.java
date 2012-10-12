@@ -22,7 +22,7 @@ import com.conx.logistics.mdm.domain.documentlibrary.Folder;
 import com.conx.logistics.mdm.domain.note.Note;
 
 @MappedSuperclass
-public class BaseEntity implements Serializable {
+public abstract class BaseEntity implements Serializable {
 	private static final long serialVersionUID = 2729618029911190092L;
 	
 	public static final String BASIC_ENTITY_ATTRIBUTE_ID = "id";
