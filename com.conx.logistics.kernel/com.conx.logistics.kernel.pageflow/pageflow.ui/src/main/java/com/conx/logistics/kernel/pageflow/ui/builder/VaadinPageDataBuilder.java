@@ -13,7 +13,6 @@ import com.conx.logistics.kernel.pageflow.ui.mvp.PagePresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.attachment.view.AttachmentEditorView;
 import com.conx.logistics.kernel.ui.components.domain.search.SearchGrid;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.search.EntitySearchGrid;
-import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinBeanFieldFactory;
 import com.conx.logistics.kernel.ui.vaadin.common.ConXVerticalSplitPanel;
 import com.conx.logistics.mdm.domain.BaseEntity;
 import com.vaadin.data.Container;
@@ -72,29 +71,23 @@ public class VaadinPageDataBuilder {
 			applyParamDataToTabSheet(source, params, (TabSheet) component);
 		} else if (component instanceof AbstractComponentContainer) {
 			applyParamDataToAbstractComponentContainer(source, params, (AbstractComponentContainer) component);
-		} else if (component instanceof AttachmentEditorView) {
-			applyParamDataToAbstractComponentContainer(source, params, (AttachmentEditorView) component);
 		}
 	}
 
-	private static void applyParamDataToAbstractComponentContainer(PagePresenter source, Map<String, Object> params, AttachmentEditorView view) {
+	private static void applyParamDataToAttachmentView(PagePresenter source, Map<String, Object> params, AttachmentEditorView view) {
 		try {
 			Class<?> type = view.getComponentModel().getDataSource().getEntityType().getJavaType();
 			Collection<String> paramKeys = params.keySet();
-			Object paramEntry = null, formItemEntity = null;
+			Object paramEntry = null;
 			for (String paramKey : paramKeys) {
 				paramEntry = params.get(paramKey);
 				if (paramEntry != null) {
 					if (type.isAssignableFrom(paramEntry.getClass())) {
-						formItemEntity = paramEntry;
-						break;
+						BeanItem<BaseEntity> newItem = new BeanItem<BaseEntity>((BaseEntity) paramEntry);
+						view.getEventBus().setItemDataSource(newItem);
+						return;
 					}
 				}
-			}
-
-			if (formItemEntity != null) {
-				BeanItem<BaseEntity> newItem = new BeanItem<BaseEntity>((BaseEntity) formItemEntity);
-				view.getEventBus().setItemDataSource(newItem);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -102,9 +95,13 @@ public class VaadinPageDataBuilder {
 	}
 
 	private static void applyParamDataToAbstractComponentContainer(PagePresenter source, Map<String, Object> params, AbstractComponentContainer layout) throws ClassNotFoundException {
-		Iterator<Component> componentIterator = layout.getComponentIterator();
-		while (componentIterator.hasNext()) {
-			applyParamData(source, componentIterator.next(), params);
+		if (layout instanceof AttachmentEditorView) {
+			applyParamDataToAttachmentView(source, params, (AttachmentEditorView) layout);
+		} else {
+			Iterator<Component> componentIterator = layout.getComponentIterator();
+			while (componentIterator.hasNext()) {
+				applyParamData(source, componentIterator.next(), params);
+			}
 		}
 	}
 

@@ -133,42 +133,6 @@ public class ConfirmTruckInfoPage extends BasePageFlowPage implements IModelDriv
 			truckInfoForm.getFieldSetSet().add(fieldSet);
 			fieldSet.setForm(truckInfoForm);
 			
-//			expectedDsField = new DataSourceField("receive", ds, ds, type, "expectedCfsAddress", null);
-//			expectedDsField.setValueXPath("expectedPickUp/cfsAddress");
-//			ds.getDSFields().add(expectedDsField);
-//			actualDsField = new DataSourceField("actualPickUp", ds, ds, type, "actualCfsAddress", null);
-//			actualDsField.setValueXPath("actualCfsAddress");
-//			ds.getDSFields().add(actualDsField);
-//			fieldSetField = new ConfirmActualsFieldSetField(0, expectedDsField, actualDsField);
-//			fieldSetField.setCaption("Cfs Address");
-//			fieldSet.getFields().add(fieldSetField);
-//			fieldSetField.setFieldSet(fieldSet);
-			
-			
-//			
-//			DataSourceField expectedDriverNameDSField = new DataSourceField("driverId", ds, ds, type, "expectedDriverNameDSField", null);
-//			DataSourceField actualDriverNameDSField = new DataSourceField("actualDriverNameDSField", ds, ds, type, "actualDriverNameDSField", null);
-//			ConfirmActualsFieldSetField driverNameFieldSetField = new ConfirmActualsFieldSetField(0, expectedDriverNameDSField, actualDriverNameDSField);
-//			
-//			DataSourceField expectedTruckLicenceNumDSField = new DataSourceField("sealNumber", ds, ds, type, "expectedTruckLicenceNumDSField", null);
-//			DataSourceField actualTruckLicenceNumDSField = new DataSourceField("actualTruckLicenceNumDSField", ds, ds, type, "actualTruckLicenceNumDSField", null);
-//			ConfirmActualsFieldSetField truckLicenceFieldSetField = new ConfirmActualsFieldSetField(0, expectedTruckLicenceNumDSField, actualTruckLicenceNumDSField);
-//			
-//			DataSourceField expectedSealNumberDSField = new DataSourceField("expectedSealNumberDSField", ds, ds, type, "expectedSealNumberDSField", null);
-//			DataSourceField actualSealNumberDSField = new DataSourceField("actualSealNumberDSField", ds, ds, type, "actualSealNumberDSField", null);
-//			ConfirmActualsFieldSetField sealNumberFieldSetField = new ConfirmActualsFieldSetField(0, expectedSealNumberDSField, actualSealNumberDSField);
-			
-//			truckInfoFieldSet.getFields().add(driverNameFieldSetField);
-//			driverNameFieldSetField.setFieldSet(truckInfoFieldSet);
-//			truckInfoFieldSet.getFields().add(truckLicenceFieldSetField);
-//			truckLicenceFieldSetField.setFieldSet(truckInfoFieldSet);
-//			truckInfoFieldSet.getFields().add(sealNumberFieldSetField);
-//			sealNumberFieldSetField.setFieldSet(truckInfoFieldSet);
-			
-//			ConfirmActualsForm truckInfoForm = new ConfirmActualsForm(ds, "Confirm Truck Info");
-//			truckInfoForm.setFieldSet(truckInfoFieldSet);
-//			truckInfoFieldSet.setForm(truckInfoForm);
-			
 			LineEditorContainerComponent lineEditorContainer = new LineEditorContainerComponent("confirmtruckinfolineeditorcontainer", "Confirm Truck Info Line Editor Container");
 			AttachmentEditorComponent attachmentComponent = new AttachmentEditorComponent(ds);
 			LineEditorComponent lineEditorComponent = new LineEditorComponent("confirmtruckinfolineeditorcomponent", "Attachments", lineEditorContainer);

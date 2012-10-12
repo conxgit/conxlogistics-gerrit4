@@ -149,6 +149,7 @@ public class AttachmentEditorPresenter extends BasePresenter<IAttachmentEditorVi
 				getView().newEntityItemActioned();
 			}
 		});
+		this.getView().setComponentModel(this.attachmentComponent);
 	}
 
 	public void onSaveForm(DocType attachmentType, String sourceFileName, String mimeType, String title, String description) throws Exception {
