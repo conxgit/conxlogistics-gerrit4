@@ -1058,6 +1058,7 @@
 						on each build and can be eyeballed if desired. Also for eclipse use, where 
 						manifest is always needed -->
 					<outputPath>${bundlor.manifest.output.path}</outputPath>
+					
 				</configuration>
 				<executions>
 					<execution>

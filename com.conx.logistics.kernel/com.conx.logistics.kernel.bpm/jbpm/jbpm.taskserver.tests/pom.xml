@@ -194,6 +194,30 @@
 				</configuration>
 			</plugin>
 			-->
+			<plugin>
+				<groupId>com.springsource.bundlor</groupId>
+				<artifactId>com.springsource.bundlor.maven</artifactId>
+				<inherited>true</inherited>
+				<configuration>
+					<failOnWarnings>true</failOnWarnings>
+					<!-- used to properly set-up versions for system packages -->
+					<osgiProfilePath>${basedir}/../../../../java6-server.profile</osgiProfilePath>
+					<bundleVersion>${project.version}</bundleVersion>
+					<!-- point to a different output path - so manifest will be regenerated 
+						on each build and can be eyeballed if desired. Also for eclipse use, where 
+						manifest is always needed -->
+					<outputPath>${bundlor.manifest.output.path}</outputPath>
+				</configuration>
+				<executions>
+					<execution>
+						<id>build-manifest</id>
+						<goals>
+							<goal>bundlor</goal>
+						</goals>
+						<phase>none</phase>
+					</execution>
+				</executions>
+			</plugin>			
 		</plugins>
 		<testResources>
 			<testResource>
