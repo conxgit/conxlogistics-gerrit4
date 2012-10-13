@@ -2908,8 +2908,8 @@
 				<configuration>
 					<filesets>
 						<!-- clean old generated MANIFEST.MF files on clean -->
-						<!-- <fileset> <directory>${basedir}/src/main/resources/META-INF</directory> 
-							<includes> <include>MANIFEST.MF</include> </includes> </fileset> -->
+						<fileset> <directory>${basedir}/src/main/resources/META-INF</directory> 
+							<includes> <include>MANIFEST.MF</include> </includes> </fileset>
 					</filesets>
 				</configuration>
 			</plugin>
