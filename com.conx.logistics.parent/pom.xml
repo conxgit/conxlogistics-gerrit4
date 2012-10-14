@@ -634,33 +634,15 @@
 				<artifactId>com.springsource.javax.transaction</artifactId>
 				<version>1.1.0</version>
 			</dependency>
-			<!-- 
-			<dependency>
-				<groupId>org.hibernate</groupId>
-				<artifactId>com.springsource.org.hibernate</artifactId>
-				<version>3.3.2.GA</version>
-			</dependency>
-			<dependency>
-				<groupId>org.hibernate</groupId>
-				<artifactId>com.springsource.org.hibernate.ejb</artifactId>
-				<version>3.4.0.GA</version>
-			</dependency>
-			<dependency>
-				<groupId>org.hibernate</groupId>
-				<artifactId>com.springsource.org.hibernate.annotations</artifactId>
-				<version>3.4.0.GA</version>
-			</dependency>
-			<dependency>
-				<groupId>org.hibernate</groupId>
-				<artifactId>com.springsource.org.hibernate.annotations.common</artifactId>
-				<version>3.3.0.ga</version>
-			</dependency>
-			<dependency>
-				<groupId>org.hibernate</groupId>
-				<artifactId>com.springsource.org.hibernate.cache</artifactId>
-				<version>3.3.2.GA</version>
-			</dependency>
-			-->
+			<!-- <dependency> <groupId>org.hibernate</groupId> <artifactId>com.springsource.org.hibernate</artifactId> 
+				<version>3.3.2.GA</version> </dependency> <dependency> <groupId>org.hibernate</groupId> 
+				<artifactId>com.springsource.org.hibernate.ejb</artifactId> <version>3.4.0.GA</version> 
+				</dependency> <dependency> <groupId>org.hibernate</groupId> <artifactId>com.springsource.org.hibernate.annotations</artifactId> 
+				<version>3.4.0.GA</version> </dependency> <dependency> <groupId>org.hibernate</groupId> 
+				<artifactId>com.springsource.org.hibernate.annotations.common</artifactId> 
+				<version>3.3.0.ga</version> </dependency> <dependency> <groupId>org.hibernate</groupId> 
+				<artifactId>com.springsource.org.hibernate.cache</artifactId> <version>3.3.2.GA</version> 
+				</dependency> -->
 			<dependency>
 				<groupId>org.jboss.util</groupId>
 				<artifactId>com.springsource.org.jboss.util</artifactId>
@@ -823,37 +805,16 @@
 			</dependency>
 			<!-- <dependency> <groupId>javax.persistence</groupId> <artifactId>com.springsource.javax.persistence</artifactId> 
 				<version>2.0.0</version> <scope>provided</scope> </dependency> -->
-			<!-- 
-			<dependency>
-				<groupId>org.eclipse.persistence</groupId>
-				<artifactId>javax.persistence</artifactId>
-				<version>2.0.3</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.persistence</groupId>
-				<artifactId>org.eclipse.persistence.core</artifactId>
-				<version>${org.eclipse.persistence.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.persistence</groupId>
-				<artifactId>org.eclipse.persistence.jpa</artifactId>
-				<version>${org.eclipse.persistence.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.persistence</groupId>
-				<artifactId>org.eclipse.persistence.asm</artifactId>
-				<version>${org.eclipse.persistence.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.persistence</groupId>
-				<artifactId>org.eclipse.persistence.antlr</artifactId>
-				<version>${org.eclipse.persistence.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			 -->
+			<!-- <dependency> <groupId>org.eclipse.persistence</groupId> <artifactId>javax.persistence</artifactId> 
+				<version>2.0.3</version> </dependency> <dependency> <groupId>org.eclipse.persistence</groupId> 
+				<artifactId>org.eclipse.persistence.core</artifactId> <version>${org.eclipse.persistence.version}</version> 
+				<scope>compile</scope> </dependency> <dependency> <groupId>org.eclipse.persistence</groupId> 
+				<artifactId>org.eclipse.persistence.jpa</artifactId> <version>${org.eclipse.persistence.version}</version> 
+				<scope>compile</scope> </dependency> <dependency> <groupId>org.eclipse.persistence</groupId> 
+				<artifactId>org.eclipse.persistence.asm</artifactId> <version>${org.eclipse.persistence.version}</version> 
+				<scope>compile</scope> </dependency> <dependency> <groupId>org.eclipse.persistence</groupId> 
+				<artifactId>org.eclipse.persistence.antlr</artifactId> <version>${org.eclipse.persistence.version}</version> 
+				<scope>compile</scope> </dependency> -->
 			<dependency>
 				<groupId>com.mysql.jdbc</groupId>
 				<artifactId>com.springsource.com.mysql.jdbc</artifactId>
@@ -1584,11 +1545,8 @@
 			</dependency>
 			<!-- <dependency> <groupId>com.h2database</groupId> <artifactId>h2</artifactId> 
 				<version>1.3.161</version> </dependency> -->
-<!-- 			<dependency>
-				<groupId>javax.persistence</groupId>
-				<artifactId>persistence-api</artifactId>
-				<version>1.0</version>
-			</dependency> -->
+			<!-- <dependency> <groupId>javax.persistence</groupId> <artifactId>persistence-api</artifactId> 
+				<version>1.0</version> </dependency> -->
 			<!-- JPA 2 implementation agnostic jar -->
 			<dependency>
 				<groupId>org.hibernate.javax.persistence</groupId>
@@ -1718,11 +1676,11 @@
 				<artifactId>knowledge-api</artifactId>
 				<version>${drools.version}</version>
 				<exclusions>
-				    <exclusion>
-				        <groupId>org.eclipse.jdt.core.compiler</groupId>
-				        <artifactId>ecj</artifactId>
-				    </exclusion>
-				</exclusions>				
+					<exclusion>
+						<groupId>org.eclipse.jdt.core.compiler</groupId>
+						<artifactId>ecj</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.drools</groupId>
@@ -1741,11 +1699,11 @@
 				<artifactId>knowledge-internal-api</artifactId>
 				<version>${drools.version}</version>
 				<exclusions>
-				    <exclusion>
-				        <groupId>org.eclipse.jdt.core.compiler</groupId>
-				        <artifactId>ecj</artifactId>
-				    </exclusion>
-				</exclusions>				
+					<exclusion>
+						<groupId>org.eclipse.jdt.core.compiler</groupId>
+						<artifactId>ecj</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.drools</groupId>
@@ -2683,7 +2641,7 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
 					<version>2.4.3</version>
-				</plugin>				
+				</plugin>
 				<!-- IDE -->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -2914,22 +2872,23 @@
 				</configuration>
 			</plugin>
 			<plugin>
-			  <artifactId>maven-antrun-plugin</artifactId>
-			  <executions>
-			    <execution>
-			      <id>generate-sources</id>
-			      <phase>generate-sources</phase>
-			      <configuration>
-			        <tasks>
-			          <mkdir dir="src/main/resources/META-INF"/>
-			        </tasks>
-			      </configuration>
-			      <goals>
-			        <goal>run</goal>
-			      </goals>
-			    </execution>
-			  </executions>
-			</plugin>			
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>generate-sources</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<tasks>
+								<mkdir dir="src/main/resources/META-INF" />
+								<touch file="src/main/resources/META-INF/MANIFEST.MF" />
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>

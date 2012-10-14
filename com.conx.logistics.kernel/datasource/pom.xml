@@ -13,6 +13,6 @@
   	<module>dao.jpa.persistence</module>
   	<module>dao.services</module>
   	<module>domain.persistence.config</module>
-  	<module>domain.tests</module>
+  	<!-- <module>domain.tests</module> -->
   </modules>
 </project>

@@ -15,7 +15,7 @@
   	<module>pageflow</module>
   	<module>workitems</module>
   	<module>domain.persistence.config</module>
-  	<module>domain.tests</module>
-  	<module>osgi.fragment.human-task-core</module>
+<!--   	<module>domain.tests</module>
+  	<module>osgi.fragment.human-task-core</module> -->
   </modules>
 </project>

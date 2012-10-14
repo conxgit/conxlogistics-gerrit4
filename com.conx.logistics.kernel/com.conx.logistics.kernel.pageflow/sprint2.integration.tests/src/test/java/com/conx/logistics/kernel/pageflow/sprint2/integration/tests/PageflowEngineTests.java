@@ -49,7 +49,7 @@ public class PageflowEngineTests extends AbstractTestNGSpringContextTests {
 	public void tearDown() throws Exception {
 	}
 
-	@Test(enabled = true)
+	@Test(enabled = false)
 	public void testProcessCarrierArrivalStatic() {
 		try {
 			Map<String, Object> params = new HashMap<String, Object>();

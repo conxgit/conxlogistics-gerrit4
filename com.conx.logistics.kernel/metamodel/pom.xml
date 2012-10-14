@@ -14,5 +14,6 @@
   	<module>domain.persistence.config</module> -->
   	<module>dao.services</module>
   	<module>dao.jpa.persistence</module>
+  	<!-- <module>dao.tests</module> -->
   </modules>
 </project>

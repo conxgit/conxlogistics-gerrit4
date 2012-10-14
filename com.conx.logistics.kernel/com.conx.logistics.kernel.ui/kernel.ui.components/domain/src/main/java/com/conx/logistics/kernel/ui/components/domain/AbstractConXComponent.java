@@ -9,8 +9,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.DiscriminatorOptions;
-
 import com.conx.logistics.kernel.datasource.domain.DataSource;
 import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
 

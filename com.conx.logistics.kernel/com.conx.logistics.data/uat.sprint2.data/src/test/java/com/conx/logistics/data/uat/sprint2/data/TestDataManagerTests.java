@@ -165,7 +165,7 @@ public class TestDataManagerTests extends AbstractTestNGSpringContextTests {
 	public void tearDown() throws Exception {
 	}
 	
-	@Test(enabled = true)
+	@Test(enabled = false)
 	public void testGenerateData() throws Exception {
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setName("uat.sprint2.data");

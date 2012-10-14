@@ -27,7 +27,11 @@
 
     
 
-    <inherits name="com.conx.logistics.kernel.ui.filteredtable.gwt.KernelUIFilteredTableWidgetset" />
+    
 
     <inherits name="com.conx.logistics.kernel.ui.common.gwt.KernelUICommonWidgetset" />
+
+    <inherits name="com.vaadin.addon.tableexport.widgetset.Tableexport_for_vaadinWidgetset" />
+
+    <inherits name="org.vaadin.sasha.portallayout.PortallayoutWidgetset" />
 </module>
