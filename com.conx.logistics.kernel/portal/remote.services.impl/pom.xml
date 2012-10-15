@@ -57,7 +57,7 @@
 
             
 		<!-- Liferay -->
-		<dependency>
+<!-- 		<dependency>
 			<groupId>com.liferay.portal</groupId>
 			<artifactId>portal-service</artifactId>
 			<version>${liferay.version}</version>
@@ -68,7 +68,7 @@
 			<artifactId>util-java</artifactId>
 			<version>${liferay.version}</version>
 			<scope>provided</scope>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>javax.portlet</groupId>
 			<artifactId>portlet-api</artifactId>

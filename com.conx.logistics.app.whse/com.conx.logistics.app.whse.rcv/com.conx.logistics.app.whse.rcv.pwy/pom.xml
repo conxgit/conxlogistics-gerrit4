@@ -47,9 +47,9 @@
   <modules>
   	<module>com.conx.logistics.app.whse.rcv.pwy.ui</module>
   	<module>com.conx.logistics.app.whse.rcv.pwy.dao.services</module>
-  	<module>
+<!--   	<module>
   		com.conx.logistics.app.whse.rcv.pwy.dao.jpa.eclipselink
-  	</module>
+  	</module> -->
   	<module>com.conx.logistics.app.whse.rcv.pwy.domain</module>
   </modules>
 </project>

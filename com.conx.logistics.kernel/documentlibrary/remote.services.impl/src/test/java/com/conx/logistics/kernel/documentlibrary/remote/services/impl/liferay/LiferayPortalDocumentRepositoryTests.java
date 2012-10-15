@@ -71,7 +71,7 @@ public class LiferayPortalDocumentRepositoryTests extends AbstractTestNGSpringCo
 	
 	
 	
-    @Test
+    @Test(enabled=false)
     public void testEnsureFolder() throws Exception {
     	Folder fldr = null;
     	boolean isAvailable = docRepoRemoteService.isAvailable();
@@ -92,7 +92,7 @@ public class LiferayPortalDocumentRepositoryTests extends AbstractTestNGSpringCo
     }
     
     
-    @Test(dependsOnMethods={"testEnsureFolder"})
+    @Test(dependsOnMethods={"testEnsureFolder"},enabled=false)
     public void testAddAndDeleteFile() throws Exception {
     	Folder fldr = null;
     	boolean isAvailable = docRepoRemoteService.isAvailable();

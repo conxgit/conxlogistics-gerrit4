@@ -11,7 +11,6 @@
 	<name>com.conx.logistics.kernel.ui.forms.vaadin</name>
 	<description>com.conx.logistics.kernel.ui.forms.vaadin</description>
 	<dependencies>
-		<!-- Under Test -->
 		<dependency>
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.kernel.datasource.domain</artifactId>
@@ -22,6 +21,11 @@
 			<artifactId>com.conx.logistics.kernel.ui.components.domain</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.persistence.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>		
 		<!-- Common libs -->
 		<!-- ConX -->
 		<!-- Bootstrap -->

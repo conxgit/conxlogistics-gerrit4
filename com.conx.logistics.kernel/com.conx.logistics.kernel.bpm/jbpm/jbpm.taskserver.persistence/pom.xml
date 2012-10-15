@@ -104,15 +104,13 @@
 		<dependency>
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.thirdparty.hibernate.core</artifactId>
-			<version>3.6.0.Final</version>
-			<scope>test</scope>
+			<scope>provided</scope>
 		</dependency>	
 		
 		<dependency>
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.thirdparty.hibernate.entitymanager</artifactId>
-			<version>3.6.0.Final</version>
-			<scope>test</scope>
+			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>javassist</groupId>

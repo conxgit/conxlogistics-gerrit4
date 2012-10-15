@@ -9,10 +9,10 @@
   <artifactId>com.conx.logistics.kernel.documentlibrary</artifactId>
   <packaging>pom</packaging>
   <modules>
-  	<module>domain</module>
+<!--   	<module>domain</module> -->
   	<module>dao.services</module>
   	<module>dao.jpa.persistence</module>
-  	<module>domain.persistence.config</module>
+  	<!-- <module>domain.persistence.config</module> -->
   	<module>remote.services</module>
   	<module>remote.services.impl</module>
   </modules>

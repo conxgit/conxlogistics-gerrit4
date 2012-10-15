@@ -7,15 +7,9 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
-import org.osgi.framework.BundleListener;
-import org.springframework.osgi.context.BundleContextAware;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import com.conx.logistics.common.utils.Validator;
 import com.conx.logistics.kernel.system.dao.services.application.IFeatureSetDAOService;
 import com.conx.logistics.mdm.domain.application.FeatureSet;
 

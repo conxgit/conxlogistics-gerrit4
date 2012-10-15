@@ -1,34 +1,31 @@
 package com.conx.logistics.app.whse.rcv.asn.pageflow.pages;
 
 import java.util.Map;
-import java.util.Set;
 
-import javax.persistence.EntityManagerFactory;
-
-import org.springframework.transaction.PlatformTransactionManager;
-
-import com.conx.logistics.app.whse.rcv.asn.domain.ASNDropOff;
-import com.conx.logistics.app.whse.rcv.asn.domain.ASNLine;
-import com.conx.logistics.app.whse.rcv.asn.domain.ASNPickup;
-import com.conx.logistics.kernel.pageflow.event.IPageFlowPageChangedEventHandler;
-import com.conx.logistics.kernel.pageflow.event.PageFlowPageChangedEvent;
-import com.conx.logistics.kernel.pageflow.services.ITaskWizard;
 import com.conx.logistics.kernel.pageflow.services.BasePageFlowPage;
-import com.conx.logistics.mdm.domain.geolocation.Address;
-import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber;
-import com.vaadin.data.util.BeanContainer;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TabSheet;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.VerticalLayout;
+import com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage;
 
 public class ConfirmAsnPage extends BasePageFlowPage {
+	@Override
+	public Map<Class<?>, String> getParamKeyMap() {
+		return null;
+	}
+
+	@Override
+	public Map<Class<?>, String> getResultKeyMap() {
+		return null;
+	}
+
+	@Override
+	public String getTaskName() {
+		return "ConfirmAsnPage";
+	}
+
+	@Override
+	public Class<?> getType() {
+		return IModelDrivenPageFlowPage.class;
+	}
+	/*
 	private static final String VIEW_HEIGHT = "100%";
 
 	private TabSheet entityTabSheet;
@@ -528,4 +525,5 @@ public class ConfirmAsnPage extends BasePageFlowPage {
 	@Override
 	public void onPageChanged(PageFlowPageChangedEvent event) {
 	}	
+	*/
 }

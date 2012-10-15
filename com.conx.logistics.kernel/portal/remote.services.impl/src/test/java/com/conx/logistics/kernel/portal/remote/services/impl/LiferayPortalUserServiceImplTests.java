@@ -61,7 +61,7 @@ public class LiferayPortalUserServiceImplTests extends AbstractTestNGSpringConte
 		em.close();
 	}
 
-    @Test
+    @Test(enabled=false)
     public void testUsers() throws Exception {
     	Folder fldr = null;
     	boolean isAvailable = lplUserRemoteService.isAvailable();

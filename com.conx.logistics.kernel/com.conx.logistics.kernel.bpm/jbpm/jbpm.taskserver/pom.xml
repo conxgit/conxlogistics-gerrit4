@@ -19,12 +19,17 @@
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.kernel.portal.remote.services</artifactId>
 			<version>1.0.0</version>
-		</dependency>		
+		</dependency>	
 		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.bpm.impl.jbpm.taskserver.osgi.fragment.human-task-core</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!-- <dependency>
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.kernel.bpm.impl.jbpm.taskserver.fragment</artifactId>
 			<version>1.0.0</version>
-		</dependency>		
+		</dependency>	 -->	
 				
 		<!-- Drools/JBPM -->
                 <!--

@@ -67,6 +67,17 @@
 				<artifactId>com.conx.logistics.thirdparty.hibernate.core</artifactId>
 				<version>3.6.0.Final</version>
 			</dependency>
+			<dependency>
+				<groupId>com.conx.logistics</groupId>
+				<artifactId>com.conx.logistics.thirdparty.hibernate.entitymanager</artifactId>
+				<version>3.6.0.Final</version>
+				<exclusions>
+					<exclusion>
+						<groupId>javassist</groupId>
+						<artifactId>javassist</artifactId>
+					</exclusion>
+				</exclusions>			
+			</dependency>			
 
 			<!-- Modified for Drools & JBPM -->
 			<dependency>
@@ -308,7 +319,11 @@
 				<artifactId>org.springframework.expression</artifactId>
 				<version>${spring.version}</version>
 			</dependency>
-
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>org.springframework.transaction</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
 
 			<dependency>
 				<groupId>net.sourceforge.jexcelapi</groupId>

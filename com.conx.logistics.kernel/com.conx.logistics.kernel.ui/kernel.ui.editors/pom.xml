@@ -10,8 +10,8 @@
   <artifactId>com.conx.logistics.kernel.ui.editors</artifactId>
   <packaging>pom</packaging>
   <modules>
-  	<module>domain</module>
-  	<module>dao.services</module>
+<!--   	<module>domain</module> -->
+<!--   	<module>dao.services</module> -->
     <module>editors.entity.vaadin</module>
    <!--  <module>builder</module> -->
     <!--

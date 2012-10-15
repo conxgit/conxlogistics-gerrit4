@@ -9,7 +9,7 @@
   <artifactId>com.conx.logistics.data</artifactId>
   <packaging>pom</packaging>
   <modules>
-  	<module>uat.sprint1.data</module>
+  	<!-- <module>uat.sprint1.data</module> -->
   	<module>uat.sprint2.data</module>
   </modules>
 </project>

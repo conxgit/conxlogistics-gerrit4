@@ -14,7 +14,7 @@
 	<modules>
 		<!-- <module>5.4.0-SNAPSHOT</module> -->
 		<!-- 
-		<module>com.conx.logistics.kernel.bpm.impl.jbpm.core</module>
+		<module>com.conx.logistics.kernel.bpm.impl.jbpm.bpmserver</module>
 		<module>jbpm.persistence.jpa.hibernate</module>
 		<module>com.conx.logistics.kernel.bpm.impl.jbpm.shared</module>
 		-->
@@ -28,10 +28,11 @@
 		<module>jbpm.bpmserver.persistence</module>
   		<!-- <module>jpbm.bpmserver.tests</module> -->
   		<!-- <module>jpbm-osgi-bundles</module> -->
-  		<module>jbpm.bpmserver.tests.standalone</module>
+  		<!-- <module>jbpm.bpmserver.tests.standalone</module> -->
   		<!-- <module>jbpm.core.mock</module> -->
 
   		<!-- <module>jbpm.taskserver.mina.fragment</module> -->
   		<!-- <module>jbpm.guvnor.archives</module> -->
+  		<module>jbpm.taskserver.osgi.fragment.human-task-core</module>
 	</modules>
 </project>

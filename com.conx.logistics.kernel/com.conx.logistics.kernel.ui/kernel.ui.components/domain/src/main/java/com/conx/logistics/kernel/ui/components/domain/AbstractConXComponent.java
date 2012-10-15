@@ -15,7 +15,7 @@ import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
 @Entity
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @Table(name="sysuicomponent")
-@DiscriminatorOptions(force=true)
+//@DiscriminatorOptions(force=true)
 public class AbstractConXComponent extends MultitenantBaseEntity implements Sizeable {
 
     private static final long serialVersionUID = 6207901499318773670L;

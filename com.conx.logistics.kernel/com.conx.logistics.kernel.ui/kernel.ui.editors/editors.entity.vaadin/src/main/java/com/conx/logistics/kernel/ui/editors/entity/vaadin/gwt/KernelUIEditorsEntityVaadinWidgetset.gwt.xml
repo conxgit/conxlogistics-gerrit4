@@ -50,5 +50,5 @@
 
     
 
-    <inherits name="com.conx.logistics.kernel.ui.common.gwt.KernelUICommonWidgetset" />
+    
 </module>

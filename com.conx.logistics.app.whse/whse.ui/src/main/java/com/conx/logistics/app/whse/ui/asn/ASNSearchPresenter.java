@@ -8,17 +8,14 @@ import javax.persistence.TypedQuery;
 import org.vaadin.mvp.eventbus.EventBus;
 import org.vaadin.mvp.presenter.BasePresenter;
 import org.vaadin.mvp.presenter.IPresenter;
-import org.vaadin.mvp.presenter.IPresenterFactory;
 import org.vaadin.mvp.presenter.ViewFactoryException;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
 import com.conx.logistics.app.whse.rcv.asn.domain.ASN;
 import com.conx.logistics.app.whse.rcv.asn.domain.ASNLine;
 import com.conx.logistics.app.whse.ui.WarehouseEventBus;
-import com.conx.logistics.app.whse.ui.WarehousePresenter;
 import com.conx.logistics.app.whse.ui.view.asn.ASNSearchView;
 import com.conx.logistics.app.whse.ui.view.asn.IASNSearchView;
-import com.conx.logistics.kernel.system.dao.services.application.IApplicationDAOService;
 import com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication;
 import com.conx.logistics.kernel.ui.common.mvp.view.feature.FeatureTabbedView;
 import com.conx.logistics.mdm.domain.application.Feature;
@@ -34,8 +31,6 @@ import com.vaadin.data.util.BeanContainer;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -433,14 +428,14 @@ public class ASNSearchPresenter extends
 							}
 
 							pickupLocationOrg.setValue(new Label(asn.getPickup().getPickUpFrom().getName()));
-							pickupLocationAddress.setValue((addressToXhtml(asn.getPickup().getPickUpFromAddress())));
-							pickupLocationContactName.setValue((asn.getPickup().getPickUpFrom().getMainContact().getFirstName() + " " + asn.getPickup().getPickUpFrom().getMainContact().getLastName()));
-							pickupLocationContactPhone.setValue((asn.getPickup().getPickUpFrom().getMainContact().getCellPhoneNumber()));
+							pickupLocationAddress.setValue((addressToXhtml(asn.getPickup().getPickUpFromAddress().getAddress())));
+							pickupLocationContactName.setValue((asn.getPickup().getCfsContact().getContact().getFirstName() + " " + asn.getPickup().getCfsContact().getContact().getLastName()));
+							pickupLocationContactPhone.setValue((asn.getPickup().getCfsContact().getContact().getCellPhoneNumber()));
 
 							inboundCarrierOrg.setValue((asn.getPickup().getLocalTrans().getName()));
-							inboundCarrierAddress.setValue((addressToXhtml(asn.getPickup().getLocalTransAddress())));
-							inboundCarrierContactName.setValue((asn.getPickup().getLocalTrans().getMainContact().getFirstName() + " " + asn.getPickup().getLocalTrans().getMainContact().getLastName()));
-							inboundCarrierContactPhone.setValue((asn.getPickup().getLocalTrans().getMainContact().getCellPhoneNumber()));
+							inboundCarrierAddress.setValue((addressToXhtml(asn.getPickup().getLocalTransAddress().getAddress())));
+							inboundCarrierContactName.setValue((asn.getPickup().getCfsContact().getContact().getFirstName() + " " + asn.getPickup().getCfsContact().getContact().getLastName()));
+							inboundCarrierContactPhone.setValue((asn.getPickup().getCfsContact().getContact().getCellPhoneNumber()));
 							inboundCarrierDriverId.setValue((asn.getPickup().getDriverId()));
 							inboundCarrierVehicleId.setValue((asn.getPickup().getVehicleId()));
 							inboundCarrierBolNum.setValue((asn.getPickup().getBolNumber()));
@@ -458,8 +453,8 @@ public class ASNSearchPresenter extends
 
 							dropOffLocationOrg.setValue((asn.getDropOff().getDropOffAt().getName()));
 							dropOffLocationAddress.setValue((addressToXhtml(asn.getDropOff().getDropOffAtAddress())));
-							dropOffLocationContactName.setValue((asn.getDropOff().getDropOffAt().getMainContact().getFirstName() + " " + asn.getDropOff().getDropOffAt().getMainContact().getLastName()));
-							dropOffLocationContactPhone.setValue((asn.getDropOff().getDropOffAt().getMainContact().getCellPhoneNumber()));
+							dropOffLocationContactName.setValue((asn.getPickup().getCfsContact().getContact().getFirstName() + " " + asn.getPickup().getCfsContact().getContact().getLastName()));
+							dropOffLocationContactPhone.setValue((asn.getPickup().getCfsContact().getContact().getCellPhoneNumber()));
 							return;
 						}
 					}

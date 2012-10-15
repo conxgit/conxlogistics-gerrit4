@@ -21,11 +21,11 @@
   	<module>
   		com.conx.logistics.kernel.persistence.datasource.tests
   	</module>
+  	<module>persistence.services</module>
   	<module>com.conx.logistics.kernel.pageflow</module>
   	<module>persistence.dynaconfiguration</module>
-  	<module>persistence.services</module>
   	<module>com.conx.logistics.data</module>
-  	<module>criteria</module>
+  	<!-- <module>criteria</module> -->
   	<module>metamodel</module>
   	<module>datasource</module>
   	<module>documentlibrary</module>

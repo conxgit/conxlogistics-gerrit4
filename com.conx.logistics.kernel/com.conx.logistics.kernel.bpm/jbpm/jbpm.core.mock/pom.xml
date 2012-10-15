@@ -6,7 +6,7 @@
     <version>1.0.0</version>
     <relativePath>..</relativePath>
   </parent>
-  <artifactId>com.conx.logistics.kernel.bpm.impl.jbpm.core.mock</artifactId>
+  <artifactId>com.conx.logistics.kernel.bpm.impl.jbpm.bpmserver.mock</artifactId>
   <dependencies>
   	<dependency>
   		<groupId>com.conx.logistics</groupId>
@@ -29,7 +29,7 @@
   	<dependency>
   		<groupId>com.conx.logistics</groupId>
   		<artifactId>
-  			com.conx.logistics.kernel.bpm.impl.jbpm.core
+  			com.conx.logistics.kernel.bpm.impl.jbpm.bpmserver
   		</artifactId>
   		<version>1.0.0</version>
   	</dependency>

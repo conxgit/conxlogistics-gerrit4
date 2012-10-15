@@ -251,7 +251,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.conx.logistics</groupId>
-				<artifactId>com.conx.logistics.kernel.bpm.impl.jbpm.core</artifactId>
+				<artifactId>com.conx.logistics.kernel.bpm.impl.jbpm.bpmserver</artifactId>
 				<version>1.0.0</version>
 				<exclusions>
 					<exclusion>

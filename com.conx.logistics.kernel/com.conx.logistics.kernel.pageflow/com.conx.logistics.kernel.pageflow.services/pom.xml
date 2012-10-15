@@ -9,6 +9,10 @@
 	</parent>
 	<artifactId>com.conx.logistics.kernel.pageflow.services</artifactId>
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.transaction</artifactId>
+		</dependency>
 		<!-- Vaadin -->
 		<dependency>
 			<groupId>com.vaadin</groupId>
@@ -48,17 +52,17 @@
 		<dependency>
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>
-				com.conx.logistics.kernel.bpm.impl.jbpm.core
+				com.conx.logistics.kernel.metamodel.dao.services
 			</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>
-				com.conx.logistics.kernel.metamodel.dao.services
+				com.conx.logistics.kernel.persistence.services
 			</artifactId>
 			<version>1.0.0</version>
-		</dependency>
+		</dependency>		
 	</dependencies>
 	<build>
 		<plugins>
