@@ -55,7 +55,7 @@ public class VaadinPageFactoryImpl {
 			@Override
 			public void setParameterData(PagePresenter source, Map<String, Object> params) {
 				try {
-					VaadinPageDataBuilder.applyParamData(source, source.getPageContent(), params);
+					VaadinPageDataBuilder.applyParamData(source, source.getPageContent(), params, VaadinPageFactoryImpl.this.presenterFactory);
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
 				}

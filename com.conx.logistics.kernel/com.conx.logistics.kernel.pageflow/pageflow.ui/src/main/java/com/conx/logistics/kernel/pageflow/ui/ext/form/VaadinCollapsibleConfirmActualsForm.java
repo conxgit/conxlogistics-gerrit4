@@ -15,7 +15,6 @@ import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinForm;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormAlertPanel;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormFieldAugmenter;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormHeader;
-import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinJPAFieldFactory;
 import com.conx.logistics.kernel.ui.forms.vaadin.listeners.IFormChangeListener;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.event.MouseEvents.ClickEvent;
@@ -83,17 +82,22 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 
 			@Override
 			public void buttonClick(Button.ClickEvent event) {
+				commit();
+				
+				VaadinCollapsibleConfirmActualsForm.this.saveButton.setEnabled(false);
+				VaadinCollapsibleConfirmActualsForm.this.verifyButton.setEnabled(false);
+				VaadinCollapsibleConfirmActualsForm.this.resetButton.setEnabled(false);
 			}
 		});
 
 		this.resetButton = this.toolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_RESET_PNG);
-		this.resetButton.setEnabled(true);
+		this.resetButton.setEnabled(false);
 		this.resetButton.addListener(new Button.ClickListener() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void buttonClick(Button.ClickEvent event) {
-				resetForm();
+//				resetForm();
 			}
 		});
 
@@ -185,6 +189,9 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 		for (IFormChangeListener listener : this.formChangeListeners) {
 			listener.onFormChanged();
 		}
+		
+		this.saveButton.setEnabled(false);
+		this.verifyButton.setEnabled(true);
 	}
 
 	public void addFormChangeListener(IFormChangeListener listener) {

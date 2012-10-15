@@ -367,8 +367,10 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
 
 		// contentPanel.removeAllComponents();
 		// contentPanel.setContent((ComponentContainer) step.getContent());
-		contentPanel.setContent((ComponentContainer) step.getContent());
-		currentStep = step;
+		Component content = (Component) step.getContent();
+		content.setSizeFull();
+		contentPanel.setContent((ComponentContainer) content);
+//		currentStep = step;
 		currentStep = step;
 
 		updateUriFragment();

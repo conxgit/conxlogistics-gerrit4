@@ -7,9 +7,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.vaadin.mvp.eventbus.EventBus;
+import org.vaadin.mvp.presenter.PresenterFactory;
+
 import com.conx.logistics.kernel.pageflow.ui.ext.form.VaadinCollapsibleConfirmActualsForm;
 import com.conx.logistics.kernel.pageflow.ui.ext.form.VaadinConfirmActualsForm;
 import com.conx.logistics.kernel.pageflow.ui.mvp.PagePresenter;
+import com.conx.logistics.kernel.pageflow.ui.mvp.attachment.AttachmentEditorEventBus;
 import com.conx.logistics.kernel.pageflow.ui.mvp.attachment.view.AttachmentEditorView;
 import com.conx.logistics.kernel.ui.components.domain.search.SearchGrid;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.search.EntitySearchGrid;
@@ -58,19 +62,19 @@ public class VaadinPageDataBuilder {
 		return resultMap;
 	}
 
-	public static void applyParamData(PagePresenter source, Component component, Map<String, Object> params) throws ClassNotFoundException {
+	public static void applyParamData(PagePresenter source, Component component, Map<String, Object> params, PresenterFactory presenterFactory) throws ClassNotFoundException {
 		if (component instanceof EntitySearchGrid) {
-			applyParamDataToEntitySearchGrid(source, params, (EntitySearchGrid) component);
+			applyParamDataToEntitySearchGrid(source, params, (EntitySearchGrid) component, presenterFactory);
 		} else if (component instanceof ConXVerticalSplitPanel) {
-			applyParamDataToConXVerticalSplitPanel(source, params, (ConXVerticalSplitPanel) component);
+			applyParamDataToConXVerticalSplitPanel(source, params, (ConXVerticalSplitPanel) component, presenterFactory);
 		} else if (component instanceof VaadinConfirmActualsForm) {
-			applyParamDataToVaadinConfirmActualsForm(source, params, (VaadinConfirmActualsForm) component);
+			applyParamDataToVaadinConfirmActualsForm(source, params, (VaadinConfirmActualsForm) component, presenterFactory);
 		} else if (component instanceof VaadinCollapsibleConfirmActualsForm) {
-			applyParamDataToVaadinCollapsibleConfirmActualsForm(source, params, (VaadinCollapsibleConfirmActualsForm) component);
+			applyParamDataToVaadinCollapsibleConfirmActualsForm(source, params, (VaadinCollapsibleConfirmActualsForm) component, presenterFactory);
 		} else if (component instanceof TabSheet) {
-			applyParamDataToTabSheet(source, params, (TabSheet) component);
+			applyParamDataToTabSheet(source, params, (TabSheet) component, presenterFactory);
 		} else if (component instanceof AbstractComponentContainer) {
-			applyParamDataToAbstractComponentContainer(source, params, (AbstractComponentContainer) component);
+			applyParamDataToAbstractComponentContainer(source, params, (AbstractComponentContainer) component, presenterFactory);
 		}
 	}
 
@@ -85,7 +89,6 @@ public class VaadinPageDataBuilder {
 					if (type.isAssignableFrom(paramEntry.getClass())) {
 						BeanItem<BaseEntity> newItem = new BeanItem<BaseEntity>((BaseEntity) paramEntry);
 						view.getEventBus().setItemDataSource(newItem);
-						return;
 					}
 				}
 			}
@@ -94,36 +97,36 @@ public class VaadinPageDataBuilder {
 		}
 	}
 
-	private static void applyParamDataToAbstractComponentContainer(PagePresenter source, Map<String, Object> params, AbstractComponentContainer layout) throws ClassNotFoundException {
+	private static void applyParamDataToAbstractComponentContainer(PagePresenter source, Map<String, Object> params, AbstractComponentContainer layout, PresenterFactory presenterFactory) throws ClassNotFoundException {
 		if (layout instanceof AttachmentEditorView) {
-			applyParamDataToAttachmentView(source, params, (AttachmentEditorView) layout);
+//			applyParamDataToAttachmentView(source, params, (AttachmentEditorView) layout);
 		} else {
 			Iterator<Component> componentIterator = layout.getComponentIterator();
 			while (componentIterator.hasNext()) {
-				applyParamData(source, componentIterator.next(), params);
+				applyParamData(source, componentIterator.next(), params, presenterFactory);
 			}
 		}
 	}
 
-	private static void applyParamDataToTabSheet(PagePresenter source, Map<String, Object> params, TabSheet tabSheet) throws ClassNotFoundException {
+	private static void applyParamDataToTabSheet(PagePresenter source, Map<String, Object> params, TabSheet tabSheet, PresenterFactory presenterFactory) throws ClassNotFoundException {
 		Iterator<Component> componentIterator = tabSheet.getComponentIterator();
 		while (componentIterator.hasNext()) {
-			applyParamData(source, componentIterator.next(), params);
+			applyParamData(source, componentIterator.next(), params, presenterFactory);
 		}
 	}
 
-	private static void applyParamDataToEntitySearchGrid(PagePresenter source, Map<String, Object> params, EntitySearchGrid searchGrid) throws ClassNotFoundException {
+	private static void applyParamDataToEntitySearchGrid(PagePresenter source, Map<String, Object> params, EntitySearchGrid searchGrid, PresenterFactory presenterFactory) throws ClassNotFoundException {
 		SearchGrid componentModel = searchGrid.getComponentModel();
 		Container container = (Container) source.getContainerProvider().createPersistenceContainer(componentModel.getDataSource().getEntityType().getJavaType());
 		searchGrid.setContainerDataSource(container);
 	}
 
-	private static void applyParamDataToConXVerticalSplitPanel(PagePresenter source, Map<String, Object> params, ConXVerticalSplitPanel splitPanel) throws ClassNotFoundException {
-		applyParamData(source, splitPanel.getFirstComponent(), params);
-		applyParamData(source, splitPanel.getSecondComponent(), params);
+	private static void applyParamDataToConXVerticalSplitPanel(PagePresenter source, Map<String, Object> params, ConXVerticalSplitPanel splitPanel, PresenterFactory presenterFactory) throws ClassNotFoundException {
+		applyParamData(source, splitPanel.getFirstComponent(), params, presenterFactory);
+		applyParamData(source, splitPanel.getSecondComponent(), params, presenterFactory);
 	}
 
-	private static void applyParamDataToVaadinConfirmActualsForm(PagePresenter source, Map<String, Object> params, VaadinConfirmActualsForm form) throws ClassNotFoundException {
+	private static void applyParamDataToVaadinConfirmActualsForm(PagePresenter source, Map<String, Object> params, VaadinConfirmActualsForm form, PresenterFactory presenterFactory) throws ClassNotFoundException {
 		Class<?> type = form.getComponentModel().getDataSource().getEntityType().getJavaType();
 		Collection<String> paramKeys = params.keySet();
 		Object paramEntry = null, formItemEntity = null;
@@ -140,8 +143,6 @@ public class VaadinPageDataBuilder {
 		if (formItemEntity != null) {
 			@SuppressWarnings("unchecked")
 			BeanItemContainer<BaseEntity> container = (BeanItemContainer<BaseEntity>) source.getContainerProvider().createBeanContainer(type);
-			// addNestedProperties(container,
-			// form.getComponentModel().getDataSource());
 			for (String nestedFieldName : form.getComponentModel().getDataSource().getNestedFieldNames()) {
 				container.addNestedContainerProperty(nestedFieldName);
 			}
@@ -151,7 +152,7 @@ public class VaadinPageDataBuilder {
 		}
 	}
 
-	private static void applyParamDataToVaadinCollapsibleConfirmActualsForm(PagePresenter source, Map<String, Object> params, VaadinCollapsibleConfirmActualsForm form) throws ClassNotFoundException {
+	private static void applyParamDataToVaadinCollapsibleConfirmActualsForm(PagePresenter source, Map<String, Object> params, VaadinCollapsibleConfirmActualsForm form, PresenterFactory presenterFactory) throws ClassNotFoundException {
 		Class<?> type = form.getComponentModel().getDataSource().getEntityType().getJavaType();
 		Collection<String> paramKeys = params.keySet();
 		Object paramEntry = null, formItemEntity = null;
@@ -168,14 +169,17 @@ public class VaadinPageDataBuilder {
 		if (formItemEntity != null) {
 			@SuppressWarnings("unchecked")
 			BeanItemContainer<BaseEntity> container = (BeanItemContainer<BaseEntity>) source.getContainerProvider().createBeanContainer(type);
-			// addNestedProperties(container,
-			// form.getComponentModel().getDataSource());
 			for (String nestedFieldName : form.getComponentModel().getDataSource().getNestedFieldNames()) {
 				container.addNestedContainerProperty(nestedFieldName);
 			}
 			BeanItem<BaseEntity> baseEntity = container.addBean((BaseEntity) formItemEntity);
 			form.setItemDataSource(baseEntity, baseEntity.getItemPropertyIds(), source.getEntityTypeDAOService(), container, source.getContainerProvider());
 			form.setTitle(baseEntity.getItemProperty("name").getValue().toString());
+			
+			AttachmentEditorEventBus eventBus = presenterFactory.getEventBusManager().getEventBus(AttachmentEditorEventBus.class);
+			if (eventBus != null) {
+				eventBus.setItemDataSource(baseEntity);
+			}
 		}
 	}
 }

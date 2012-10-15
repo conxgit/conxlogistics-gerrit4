@@ -5,12 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.mvp.presenter.BasePresenter;
@@ -33,7 +27,6 @@ import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.conx.logistics.mdm.domain.documentlibrary.Folder;
 import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.addon.jpacontainer.JPAContainer;
-import com.vaadin.addon.jpacontainer.util.DefaultQueryModifierDelegate;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.ItemClickEvent;
@@ -93,17 +86,18 @@ public class AttachmentEditorPresenter extends BasePresenter<IAttachmentEditorVi
 
 	private void updateQueryFilter() {
 		this.entityContainer.removeAllContainerFilters();
-		this.entityContainer.getEntityProvider().setQueryModifierDelegate(new DefaultQueryModifierDelegate() {
-			@Override
-			public void filtersWillBeAdded(CriteriaBuilder criteriaBuilder, CriteriaQuery<?> query, List<Predicate> predicates) {
-				Root<?> fromFileEntry = query.getRoots().iterator().next();
-
-				// Add a "WHERE age > 116" expression
-				Path<Folder> parentFolder = fromFileEntry.<Folder> get("folder");
-				Path<Long> pathId = parentFolder.get("id");
-				predicates.add(criteriaBuilder.equal(pathId, AttachmentEditorPresenter.this.docFolder.getId()));
-			}
-		});
+//		this.entityContainer.getEntityProvider().setQueryModifierDelegate(new DefaultQueryModifierDelegate() {
+//			@Override
+//			public void filtersWillBeAdded(CriteriaBuilder criteriaBuilder, CriteriaQuery<?> query, List<Predicate> predicates) {
+//				Root<?> fromFileEntry = query.getRoots().iterator().next();
+//
+//				// Add a "WHERE age > 116" expression
+//				Path<Folder> parentFolder = fromFileEntry.<Folder> get("folder");
+//				Path<Long> pathId = parentFolder.get("id");
+//				predicates.add(criteriaBuilder.equal(pathId, AttachmentEditorPresenter.this.docFolder.getId()));
+//			}
+//		});
+		this.entityContainer.addContainerFilter(new com.vaadin.data.util.filter.Compare.Equal("folder", this.docFolder));
 		this.entityContainer.applyFilters();
 	}
 
