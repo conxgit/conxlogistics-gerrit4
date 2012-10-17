@@ -1,9 +1,15 @@
 package com.conx.logistics.kernel.ui.forms.vaadin.impl.field;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
 import com.conx.logistics.kernel.persistence.services.IEntityContainerProvider;
@@ -15,6 +21,7 @@ import com.conx.logistics.mdm.domain.metamodel.EntityType;
 import com.conx.logistics.mdm.domain.metamodel.EntityTypeAttribute;
 import com.conx.logistics.mdm.domain.metamodel.SingularAttribute;
 import com.conx.logistics.mdm.domain.organization.Contact;
+import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.fieldfactory.SingleSelectTranslator;
 import com.vaadin.data.Container;
@@ -23,8 +30,12 @@ import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.Validator;
 import com.vaadin.data.Validator.InvalidValueException;
+import com.vaadin.event.MouseEvents.ClickEvent;
+import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.ui.AbstractSelect;
+import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Field;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.VerticalLayout;
 
@@ -32,27 +43,39 @@ public class VaadinRelationField extends VerticalLayout implements Field, Contai
 	private static final long serialVersionUID = 1L;
 
 	private AbstractSelect selector;
+	private HorizontalLayout selectorPanel;
 	private VaadinRelationFieldForm form;
 	private VerticalLayout formPanel;
-	private JPAContainer<?> container;
+	private JPAContainer<?> entityContainer;
 	private VaadinJPAFieldFactory fieldFactory;
 	private IEntityContainerProvider provider;
 	private Object subPropertyId;
 	private IEntityTypeDAOService entityTypeDao;
+	private Embedded newButton;
+	private VaadinRelationFieldSelectorForm selectorForm;
+	private VerticalLayout selectorFormPanel;
+	private Object selectorPropertyId;
+	private JPAContainer<?> subEntityContainer;
+	private Map<Object, Object> newItemIdMap;
 
-	public VaadinRelationField(Class<?> propertyType, Object subPropertyId, IEntityContainerProvider provider, IEntityTypeDAOService entityTypeDao) {
+	public VaadinRelationField(Class<?> propertyType, Object subPropertyId, Object selectorPropertyId, IEntityContainerProvider provider, IEntityTypeDAOService entityTypeDao) {
 		this.subPropertyId = subPropertyId;
+		this.selectorPropertyId = selectorPropertyId;
 		this.entityTypeDao = entityTypeDao;
 		this.provider = provider;
+		this.newItemIdMap = new HashMap<Object, Object>();
 
-		JPAContainer<?> jpaContainer = (JPAContainer<?>) this.provider.createPersistenceContainer(propertyType);
-		this.container = jpaContainer;
+		this.entityContainer = (JPAContainer<?>) this.provider.createPersistenceContainer(propertyType);
+		this.entityContainer.setWriteThrough(false);
+		this.subEntityContainer = (JPAContainer<?>) this.provider.createPersistenceContainer(this.entityContainer.getType(subPropertyId));
+		this.subEntityContainer.setWriteThrough(false);
 
 		this.selector = new NativeSelect();
 		this.selector.setMultiSelect(false);
 		this.selector.setItemCaptionMode(NativeSelect.ITEM_CAPTION_MODE_PROPERTY);
 		this.selector.setItemCaptionPropertyId("name");
-		this.selector.setContainerDataSource(this.container);
+		this.selector.setContainerDataSource(this.entityContainer);
+		this.selector.setWriteThrough(false);
 		this.selector.setImmediate(true);
 		this.selector.setWidth("100%");
 		this.selector.setPropertyDataSource(new SingleSelectTranslator(this.selector));
@@ -65,24 +88,136 @@ public class VaadinRelationField extends VerticalLayout implements Field, Contai
 			}
 		});
 
+		this.newButton = new Embedded();
+		this.newButton.setStyleName("conx-relation-field-new-button");
+		this.newButton.setWidth("22px");
+		this.newButton.setHeight("23px");
+		this.newButton.addListener(new ClickListener() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void click(ClickEvent event) {
+				showNewItemSelector();
+			}
+		});
+
+		this.selectorPanel = new HorizontalLayout();
+		this.selectorPanel.setWidth("100%");
+		this.selectorPanel.setSpacing(false);
+		this.selectorPanel.addComponent(this.selector);
+		this.selectorPanel.addComponent(this.newButton);
+		this.selectorPanel.setExpandRatio(this.selector, 1.0f);
+
 		this.fieldFactory = new VaadinJPAFieldFactory();
+		this.fieldFactory.setEntityTypeDao(entityTypeDao);
+		this.fieldFactory.setContainerProvider(provider);
 
 		this.form = new VaadinRelationFieldForm();
 		this.form.setFormFieldFactory(this.fieldFactory);
-		
+
 		this.formPanel = new VerticalLayout();
 		this.formPanel.setWidth("100%");
 		this.formPanel.addComponent(this.form);
 		this.formPanel.setVisible(false);
 
-		this.addComponent(this.selector);
+		this.selectorForm = new VaadinRelationFieldSelectorForm();
+		this.selectorForm.addListener(new ValueChangeListener() {
+			private static final long serialVersionUID = 1L;
+
+			@SuppressWarnings("rawtypes")
+			@Override
+			public void valueChange(Property.ValueChangeEvent event) {
+				try {
+					Item item = VaadinRelationField.this.selectorForm.getContainerDataSource().getItem(event.getProperty().getValue());
+					if (item instanceof EntityItem) {
+						showNewItemEditor(((EntityItem) item).getEntity());
+					}
+				} catch (InstantiationException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (SecurityException e) {
+					e.printStackTrace();
+				} catch (NoSuchFieldException e) {
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+
+		this.selectorFormPanel = new VerticalLayout();
+		this.selectorFormPanel.setWidth("100%");
+		this.selectorFormPanel.addComponent(this.selectorForm);
+		this.selectorFormPanel.setVisible(false);
+
+		this.addComponent(this.selectorPanel);
+		this.addComponent(this.selectorFormPanel);
 		this.addComponent(this.formPanel);
 	}
-	
+
 	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
 		this.formPanel.setVisible(enabled);
+	}
+
+	private void showNewItemSelector() {
+		Class<?> selectorPropertyType = this.entityContainer.getType(this.selectorPropertyId);
+		if (selectorPropertyType != null) {
+			JPAContainer<?> jpaContainer = (JPAContainer<?>) this.provider.createPersistenceContainer(selectorPropertyType);
+			this.selectorForm.setContainerDataSource(jpaContainer);
+			this.formPanel.setVisible(false);
+			this.selectorFormPanel.setVisible(true);
+			this.selectorPanel.setEnabled(false);
+		}
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void showNewItemEditor(Object selectorValue) throws InstantiationException, IllegalAccessException, SecurityException, NoSuchFieldException, IllegalArgumentException,
+			InvocationTargetException {
+		if (selectorValue instanceof BaseEntity) {
+			Object newItemBean = this.entityContainer.getEntityClass().newInstance();
+			Object newSubItemBean = this.subEntityContainer.getEntityClass().newInstance();
+			Method[] methods = newItemBean.getClass().getDeclaredMethods();
+			Type[] paramTypes = null;
+			for (Method method : methods) {
+				paramTypes = method.getGenericParameterTypes();
+				if (paramTypes.length == 1 && method.getName().toLowerCase().contains("set")) {
+					if (paramTypes[0] instanceof Class) {
+						if (((Class<?>) paramTypes[0]).isAssignableFrom(newSubItemBean.getClass())) {
+							method.invoke(newItemBean, newSubItemBean);
+						} else if (((Class<?>) paramTypes[0]).isAssignableFrom(selectorValue.getClass())) {
+							method.invoke(newItemBean, selectorValue);
+						}
+					}
+				}
+			}
+			if (newItemBean instanceof BaseEntity) {
+				((BaseEntity) newItemBean).setName(((BaseEntity) selectorValue).getName());
+				Item siblingItem = this.selector.getItem(VaadinRelationField.this.selector.getValue());
+				if (siblingItem != null) {
+					Property siblingOwnerIdProperty = siblingItem.getItemProperty("ownerEntityId");
+					if (siblingOwnerIdProperty != null) {
+						Object siblingOwnerId = siblingOwnerIdProperty.getValue();
+						if (siblingOwnerId instanceof Long) {
+							((BaseEntity) newItemBean).setOwnerEntityId((Long) siblingOwnerId);
+						}
+					}
+				}
+				if (newSubItemBean instanceof BaseEntity) {
+				}
+			}
+
+			Object newSubItemId = ((JPAContainer) this.subEntityContainer).addEntity(newSubItemBean);
+			Object newItemId = ((JPAContainer) this.entityContainer).addEntity(newItemBean);
+			this.newItemIdMap.put(newItemId, newSubItemId);
+			this.selector.setValue(newItemId);
+			updateForm(newItemId);
+			this.selectorPanel.setEnabled(true);
+		}
 	}
 
 	private List<String> getAddressPropertyIds() {
@@ -132,28 +267,35 @@ public class VaadinRelationField extends VerticalLayout implements Field, Contai
 	}
 
 	private void updateForm(Object itemId) {
-		Item newItem = container.getItem(itemId);
+		Item newItem = entityContainer.getItem(itemId);
 		if (newItem != null) {
 			Property subProperty = newItem.getItemProperty(this.subPropertyId);
-			if (subProperty != null && subProperty.getValue() != null) {
-				JPAContainer<?> formContainer = (JPAContainer<?>) this.provider.createPersistenceContainer(subProperty.getType());
-				if (formContainer != null) {
+			if (subProperty != null) {
+				if (this.subEntityContainer != null) {
 					if (subProperty.getValue() instanceof BaseEntity) {
-						Item formItem = formContainer.getItem(((BaseEntity) subProperty.getValue()).getId());
-						if (formItem != null) {
-							this.form.setItemDataSource(formItem, getSubPropertyIds(subProperty.getType()));
-							this.form.setReadOnly(true);
-							this.form.requestRepaint();
-							this.formPanel.setVisible(true);
-							return;
+						Object formItemId = null;
+						if (itemId instanceof UUID) {
+							formItemId = this.newItemIdMap.get(itemId);
+						} else if (itemId instanceof Long) {
+							formItemId = ((BaseEntity) subProperty.getValue()).getId();
+						}
+
+						if (formItemId != null) {
+							Item formItem = this.subEntityContainer.getItem(formItemId);
+							if (formItem != null) {
+								this.form.setItemDataSource(formItem, getSubPropertyIds(subProperty.getType()));
+								this.form.setReadOnly(true);
+								this.form.requestRepaint();
+								this.formPanel.setVisible(true);
+								this.selectorFormPanel.setVisible(false);
+								return;
+							}
 						}
 					}
 				}
 			}
 		}
 		this.formPanel.setVisible(false);
-		// The form could not be updated because something was null
-		// this.formWrapper.setVisible(false);
 	}
 
 	@Override

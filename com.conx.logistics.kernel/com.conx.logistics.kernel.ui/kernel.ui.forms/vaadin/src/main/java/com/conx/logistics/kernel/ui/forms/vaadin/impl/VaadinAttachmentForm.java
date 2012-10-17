@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.conx.logistics.common.utils.StringUtil;
 import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
@@ -27,7 +29,7 @@ import com.vaadin.ui.VerticalLayout;
 
 public class VaadinAttachmentForm extends Form implements Receiver {
 	private static final long serialVersionUID = 5566061819199928712L;
-	
+
 	private VaadinFormHeader header;
 	private VerticalLayout layout;
 	private Panel innerLayoutPanel;
@@ -39,6 +41,8 @@ public class VaadinAttachmentForm extends Form implements Receiver {
 	private TextArea fileDescription;
 	private Field attachedField;
 	private Upload upload;
+	private Property.ValueChangeListener listener;
+	private Set<Property.ValueChangeListener> subscribers;
 
 	protected String sourceFileName;
 	protected String mimeType;
@@ -60,8 +64,31 @@ public class VaadinAttachmentForm extends Form implements Receiver {
 		this.uploadStateField = new Label();
 		this.upload = new Upload();
 		this.fileDescription = new TextArea();
+		this.subscribers = new HashSet<Property.ValueChangeListener>();
+		this.listener = new ValueChangeListener() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void valueChange(Property.ValueChangeEvent event) {
+				onFormChanged(event);
+			}
+		};
 
 		initialize();
+	}
+
+	public void addListener(Property.ValueChangeListener listener) {
+		this.subscribers.add(listener);
+	}
+
+	public void removeListener(Property.ValueChangeListener listener) {
+		this.subscribers.remove(listener);
+	}
+
+	private void onFormChanged(Property.ValueChangeEvent event) {
+		for (Property.ValueChangeListener subscriber : subscribers) {
+			subscriber.valueChange(event);
+		}
 	}
 
 	@SuppressWarnings("deprecation")
@@ -96,6 +123,7 @@ public class VaadinAttachmentForm extends Form implements Receiver {
 				uploadStateField.setValue("Started");
 				fileNameField.setValue(event.getFilename());
 				VaadinAttachmentForm.this.title = event.getFilename();
+				onFormChanged(null);
 			}
 		});
 		this.upload.addListener(new Upload.ProgressListener() {
@@ -130,6 +158,7 @@ public class VaadinAttachmentForm extends Form implements Receiver {
 		this.fileDescription.setColumns(0);
 		this.fileDescription.setWidth("100%");
 		this.fileDescription.setHeight("100%");
+		this.fileDescription.addListener(this.listener);
 
 		this.header.setAction("Editing");
 		this.header.setTitle("Attachment");
@@ -141,7 +170,7 @@ public class VaadinAttachmentForm extends Form implements Receiver {
 		this.innerLayout.addComponent(fileTypeField, 0, 1, 0, 1);
 		this.innerLayout.addComponent(uploadStateField, 1, 0, 1, 0);
 		this.innerLayout.addComponent(fileDescription, 2, 0, 3, 1);
-		
+
 		this.innerLayoutPanel = new Panel();
 		this.innerLayoutPanel.setSizeFull();
 		this.innerLayoutPanel.getLayout().setMargin(false, true, false, true);
@@ -164,6 +193,7 @@ public class VaadinAttachmentForm extends Form implements Receiver {
 	protected void attachField(Object propertyId, com.vaadin.ui.Field field) {
 		if (attachedField == null) {
 			field.setWidth("100%");
+			field.addListener(this.listener);
 			innerLayout.addComponent(field, 1, 1, 1, 1);
 			attachedField = field;
 		}
@@ -184,9 +214,9 @@ public class VaadinAttachmentForm extends Form implements Receiver {
 	}
 
 	public void saveForm() {
-			this.description = (String) this.fileDescription.getValue();
-			attachedField.commit();
-			this.docTypeValue = (DocType) this.getItemDataSource().getItemProperty("docType").getValue();
+		this.description = (String) this.fileDescription.getValue();
+//		this.attachedField.commit();
+		this.docTypeValue = (DocType) this.getItemDataSource().getItemProperty("docType").getValue();
 	}
 
 	private void updateStaticFields(Item newDataSource) {
@@ -217,26 +247,23 @@ public class VaadinAttachmentForm extends Form implements Receiver {
 	public void setTempSourceFile(String absolutePath) {
 		this.tempSourceFileName = absolutePath;
 	}
-	
+
 	@Override
 	public OutputStream receiveUpload(String filename, String mimeType) {
 		FileOutputStream fos = null;
 		File tempFile = null;
-		
+
 		String prefix = null;
 		String suffix = null;
-		
-		String[] fileNameTokens = StringUtil.split(filename,".");
-		if (fileNameTokens.length == 1)
-		{
+
+		String[] fileNameTokens = StringUtil.split(filename, ".");
+		if (fileNameTokens.length == 1) {
 			prefix = filename;
-		}
-		else
-		{
+		} else {
 			prefix = fileNameTokens[0];
-			suffix = "."+fileNameTokens[fileNameTokens.length-1];
+			suffix = "." + fileNameTokens[fileNameTokens.length - 1];
 		}
-		
+
 		try {
 			tempFile = File.createTempFile(prefix, suffix);
 			tempFile.deleteOnExit();
@@ -244,9 +271,9 @@ public class VaadinAttachmentForm extends Form implements Receiver {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		setTempSourceFile(tempFile.getAbsolutePath());
-		
+
 		return fos;
 	}
 

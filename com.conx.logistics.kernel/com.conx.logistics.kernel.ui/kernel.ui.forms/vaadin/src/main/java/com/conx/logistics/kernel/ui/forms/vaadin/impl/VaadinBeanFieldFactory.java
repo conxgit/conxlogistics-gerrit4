@@ -21,7 +21,6 @@ import com.conx.logistics.kernel.persistence.services.IEntityContainerProvider;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.field.VaadinBeanOneToOneForm;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.field.VaadinPlaceHolderField;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.field.VaadinRelationField;
-import com.conx.logistics.kernel.ui.forms.vaadin.impl.field.VaadinSelectDetail;
 import com.conx.logistics.mdm.domain.geolocation.AddressTypeAddress;
 import com.conx.logistics.mdm.domain.metamodel.EntityTypeAttribute;
 import com.conx.logistics.mdm.domain.organization.ContactTypeContact;
@@ -291,7 +290,8 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 		// return new MasterDetailEditor(this, containerForProperty, itemId,
 		// propertyId, uiContext);
 		// TODO fix master detail editor
-		return new VaadinSelectDetail(this, containerForProperty, itemId, propertyId, uiContext);
+//		return new VaadinSelectDetail(this, containerForProperty, itemId, propertyId, uiContext);
+		return new VaadinPlaceHolderField();
 	}
 
 	/**
@@ -335,6 +335,15 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 		}
 		return null;
 	}
+	
+	private String getRelationEntitySelectorEntityId(Class<?> type) {
+		if (type.isAssignableFrom(AddressTypeAddress.class)) {
+			return "type";
+		} else if (type.isAssignableFrom(ContactTypeContact.class)) {
+			return "type";
+		}
+		return null;
+	}
 
 	/**
 	 * Creates a field for simple reference (ManyToOne)
@@ -347,9 +356,9 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 	protected Field createReferenceSelect(BeanItemContainer containerForProperty, Object itemId, Object propertyId, Component uiContext) {
 		Class<?> type = containerForProperty.getType(propertyId);
 		if (isRelationEntity(type)) {
-			String subEntityId = getRelationEntitySubEntityId(type);
-			if (subEntityId != null && this.getContainerProvider() != null && this.entityTypeDao != null) {
-				VaadinRelationField selectFormField = new VaadinRelationField(type, subEntityId, this.getContainerProvider(), this.entityTypeDao);
+			String subEntityId = getRelationEntitySubEntityId(type), selectorEntityId = getRelationEntitySelectorEntityId(type);
+			if (subEntityId != null && selectorEntityId != null && this.getContainerProvider() != null && this.entityTypeDao != null) {
+				VaadinRelationField selectFormField = new VaadinRelationField(type, subEntityId, selectorEntityId, this.getContainerProvider(), this.entityTypeDao);
 				return selectFormField;
 			}
 		}

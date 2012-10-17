@@ -1,5 +1,6 @@
 package com.conx.logistics.kernel.pageflow.ui.mvp;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.transaction.PlatformTransactionManager;
@@ -97,10 +98,13 @@ public class PagePresenter extends BasePresenter<IPageView, PageEventBus> implem
 		return this.parameterData;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getResultData() {
 		if (this.dataHandler != null) {
-			return this.dataHandler.getResultData(this);
+			Map<String, Object> pageResultData = new HashMap<String, Object>(this.parameterData);
+			pageResultData.putAll((Map<String, Object>) this.dataHandler.getResultData(this));
+			return pageResultData;
 		} else {
 			return null;
 		}

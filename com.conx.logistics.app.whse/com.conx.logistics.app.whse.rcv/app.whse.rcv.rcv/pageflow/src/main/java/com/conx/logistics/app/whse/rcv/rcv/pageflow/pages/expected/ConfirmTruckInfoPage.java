@@ -122,8 +122,8 @@ public class ConfirmTruckInfoPage extends BasePageFlowPage implements IModelDriv
 			ds.getDSFields().add(expectedDsField);
 			DataSourceField actualContactDsField = new DataSourceField("actualPickUp", ds, ds, type, "actualCfsContact", null);
 			actualContactDsField.setValueXPath("actualCfsContact");
-			actualContactDsField.setParentDataSourceField(actualAddressDsField);
-			actualAddressDsField.getChildDataSourceFields().add(actualContactDsField);
+			actualContactDsField.setParentDataSourceField(actualOrgDsField);
+			actualOrgDsField.getChildDataSourceFields().add(actualContactDsField);
 			ds.getDSFields().add(actualContactDsField);
 			fieldSetField = new ConfirmActualsFieldSetField(0, expectedDsField, actualContactDsField);
 			fieldSetField.setCaption("Contact");

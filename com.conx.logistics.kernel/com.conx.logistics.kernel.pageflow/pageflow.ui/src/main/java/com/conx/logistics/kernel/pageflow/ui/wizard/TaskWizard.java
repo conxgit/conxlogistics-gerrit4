@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.transaction.UserTransaction;
 
@@ -31,6 +30,7 @@ import com.conx.logistics.kernel.pageflow.services.IPageFlowPage;
 import com.conx.logistics.kernel.pageflow.services.IPageFlowSession;
 import com.conx.logistics.kernel.pageflow.services.ITaskWizard;
 import com.conx.logistics.kernel.pageflow.ui.builder.VaadinPageFactoryImpl;
+import com.conx.logistics.kernel.pageflow.ui.ext.form.container.VaadinJPAContainer;
 import com.conx.logistics.kernel.persistence.services.IEntityContainerProvider;
 import com.conx.logistics.kernel.ui.common.entityprovider.jta.CustomCachingMutableLocalEntityProvider;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
@@ -90,8 +90,7 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 	public Object createPersistenceContainer(Class<?> entityClass) {
 		if (this.userTransaction != null) {
 			CustomCachingMutableLocalEntityProvider provider = new CustomCachingMutableLocalEntityProvider(entityClass, this.session.getConXEntityManagerfactory(), this.userTransaction);
-			JPAContainer<?> container = JPAContainerFactory.make(entityClass, (EntityManager) null);
-			container.setEntityProvider(provider);
+			JPAContainer<?> container = new VaadinJPAContainer(entityClass, provider);
 			return container;
 		} else {
 			return JPAContainerFactory.makeReadOnly(entityClass, this.session.getConXEntityManagerfactory().createEntityManager());

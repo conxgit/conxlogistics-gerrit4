@@ -3,6 +3,7 @@ package com.conx.logistics.kernel.pageflow.ui.ext.form;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import com.conx.logistics.kernel.ui.components.domain.form.CollapsibleConfirmActualsForm;
@@ -13,9 +14,11 @@ import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.EntityEditorToolSt
 import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinForm;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormAlertPanel;
+import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormAlertPanel.AlertType;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormFieldAugmenter;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormHeader;
 import com.conx.logistics.kernel.ui.forms.vaadin.listeners.IFormChangeListener;
+import com.vaadin.data.Buffered;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.event.MouseEvents.ClickListener;
@@ -82,7 +85,7 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 
 			@Override
 			public void buttonClick(Button.ClickEvent event) {
-				commit();
+				saveForm();
 				
 				VaadinCollapsibleConfirmActualsForm.this.saveButton.setEnabled(false);
 				VaadinCollapsibleConfirmActualsForm.this.verifyButton.setEnabled(false);
@@ -137,6 +140,42 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 		setWriteThrough(false);
 		// Disallow invalid data from acceptance by the container
 		setInvalidCommitted(false);
+	}
+	
+	private void saveForm() {
+		LinkedList<SourceException> problems = null;
+
+        // Only commit on valid state if so requested
+        if (!isInvalidCommitted() && !isValid()) {
+            validate();
+        }
+        
+        Set<Field> fieldSet = fields.keySet();
+
+        // Try to commit all
+        for (Field field : fieldSet) {
+            try {
+                // Commit only non-readonly fields.
+                if (!field.isReadOnly()) {
+                    field.commit();
+                }
+            } catch (final Buffered.SourceException e) {
+                if (problems == null) {
+                    problems = new LinkedList<SourceException>();
+                }
+                problems.add(e);
+            }
+        }
+
+        // No problems occurred
+        if (problems == null) {
+            this.alertPanel.setAlertType(AlertType.SUCCESS);
+            this.alertPanel.setMessage(this.header.getTitle() + " was saved successfully.");
+            return;
+        } else {
+        	this.alertPanel.setAlertType(AlertType.ERROR);
+            this.alertPanel.setMessage(problems.iterator().next().getMessage());
+        }
 	}
 
 	@Override

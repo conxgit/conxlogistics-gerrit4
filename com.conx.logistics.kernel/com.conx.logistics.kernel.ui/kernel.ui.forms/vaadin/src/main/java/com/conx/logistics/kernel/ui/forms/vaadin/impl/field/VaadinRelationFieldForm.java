@@ -8,13 +8,13 @@ import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormAlertPanel;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinJPAFieldFactory;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.ext.VaadinFormToolStrip;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.ext.VaadinFormToolStrip.VaadinFormToolStripButton;
-import com.conx.logistics.kernel.ui.forms.vaadin.listeners.IFormChangeListener;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.event.MouseEvents;
+import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -36,17 +36,14 @@ public class VaadinRelationFieldForm extends Form {
 	private VerticalLayout layout;
 	private GridLayout innerLayout;
 	private Set<Field> fields;
-	private Set<IFormChangeListener> formChangeListeners;
 	private int nextRowIndex = 0;
 	private VaadinFormToolStripButton editButton;
 	private ValueChangeListener listener;
-	private Set<ValueChangeListener> subscribers;
 
 	public VaadinRelationFieldForm() {
 		this.layout = new VerticalLayout();
 		this.innerLayout = new GridLayout(2, 1);
 		this.alertPanel = new VaadinFormAlertPanel();
-		this.formChangeListeners = new HashSet<IFormChangeListener>();
 		this.fields = new HashSet<Field>();
 
 		initialize();
@@ -86,9 +83,7 @@ public class VaadinRelationFieldForm extends Form {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				VaadinRelationFieldForm.this.innerLayout.setSpacing(false);
-				VaadinRelationFieldForm.this.saveButton.setEnabled(false);
-				VaadinRelationFieldForm.this.editButton.setEnabled(true);
+				saveForm();
 			}
 		});
 
@@ -117,12 +112,11 @@ public class VaadinRelationFieldForm extends Form {
 		this.innerLayout.setMargin(true);
 
 		this.layout.setSizeFull();
-		this.layout.setStyleName("conx-inner-form");
+		this.layout.addStyleName("conx-inner-form");
 		this.layout.addComponent(toolStrip);
 		this.layout.addComponent(alertPanel);
 		this.layout.addComponent(innerLayout);
 		
-		this.subscribers = new HashSet<Property.ValueChangeListener>();
 		this.listener = new ValueChangeListener() {
 			private static final long serialVersionUID = 1L;
 
@@ -142,14 +136,27 @@ public class VaadinRelationFieldForm extends Form {
 		setInvalidCommitted(false);
 	}
 	
-	private void onFormChanged(Property.ValueChangeEvent event) {
-		for (ValueChangeListener subscriber : subscribers) {
-			subscriber.valueChange(event);
+	private void saveForm() {
+		try {
+			this.commit();
+			this.setReadOnly(true);
+			this.innerLayout.setSpacing(false);
+			this.resetButton.setEnabled(false);
+			this.saveButton.setEnabled(false);
+			this.editButton.setEnabled(true);
+		} catch (SourceException e) {
+			this.alertPanel.setMessage(e.getMessage());
+			this.alertPanel.setVisible(true);
+		} catch (InvalidValueException e) {
+			this.alertPanel.setMessage(e.getMessage());
+			this.alertPanel.setVisible(true);
 		}
 	}
-
-	public void addFormChangeListener(IFormChangeListener listener) {
-		this.formChangeListeners.add(listener);
+	
+	private void onFormChanged(Property.ValueChangeEvent event) {
+		this.saveButton.setEnabled(false);
+		this.verifyButton.setEnabled(true);
+		this.resetButton.setEnabled(true);
 	}
 	
 	@Override
@@ -175,6 +182,10 @@ public class VaadinRelationFieldForm extends Form {
         	field.addListener(listener);
         }
         
+        if (field instanceof AbstractComponent) {
+        	((AbstractComponent) field).setImmediate(true);
+        }
+        
         field.setWidth("100%");
         this.fields.add(field);
         Label caption = new Label(field.getCaption());
@@ -186,23 +197,14 @@ public class VaadinRelationFieldForm extends Form {
         this.nextRowIndex++;
     }
 
-	public void onFormChanged() {
-		for (IFormChangeListener listener : this.formChangeListeners) {
-			listener.onFormChanged();
-		}
-		this.saveButton.setEnabled(false);
-		this.verifyButton.setEnabled(true);
-		this.resetButton.setEnabled(true);
-	}
-
 	public void resetForm() {
 		this.alertPanel.setVisible(false);
-		setItemDataSource(getItemDataSource());
+		this.discard();
+		this.setReadOnly(true);
 		this.saveButton.setEnabled(false);
 		this.verifyButton.setEnabled(false);
+		this.editButton.setEnabled(true);
 		this.resetButton.setEnabled(false);
-		this.fields.clear();
-		this.nextRowIndex = 0;
 	}
 	
 	@Override

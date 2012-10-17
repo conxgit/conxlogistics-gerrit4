@@ -10,6 +10,9 @@
 		<class>com.conx.logistics.kernel.ui.components.domain.ComponentExpandRatio</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.MarginInfo</class>
 		
+		<class>com.conx.logistics.kernel.ui.components.domain.editor.EntityEditor</class>
+		<class>com.conx.logistics.kernel.ui.components.domain.editor.MultiLevelEntityEditor</class>
+		
 		<class>com.conx.logistics.kernel.ui.components.domain.attachment.AttachmentEditorComponent</class>
 		
 		<class>com.conx.logistics.kernel.ui.components.domain.form.AbstractConXTextField</class>

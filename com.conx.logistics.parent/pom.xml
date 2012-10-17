@@ -76,8 +76,8 @@
 						<groupId>javassist</groupId>
 						<artifactId>javassist</artifactId>
 					</exclusion>
-				</exclusions>			
-			</dependency>			
+				</exclusions>
+			</dependency>
 
 			<!-- Modified for Drools & JBPM -->
 			<dependency>
@@ -2881,8 +2881,12 @@
 				<configuration>
 					<filesets>
 						<!-- clean old generated MANIFEST.MF files on clean -->
-						<!-- <fileset> <directory>${basedir}/src/main/resources/META-INF</directory> 
-							<includes> <include>MANIFEST.MF</include> </includes> </fileset> -->
+						<fileset>
+							<directory>${basedir}/src/main/resources/META-INF</directory>
+							<includes>
+								<include>MANIFEST.MF</include>
+							</includes>
+						</fileset>
 					</filesets>
 				</configuration>
 			</plugin>

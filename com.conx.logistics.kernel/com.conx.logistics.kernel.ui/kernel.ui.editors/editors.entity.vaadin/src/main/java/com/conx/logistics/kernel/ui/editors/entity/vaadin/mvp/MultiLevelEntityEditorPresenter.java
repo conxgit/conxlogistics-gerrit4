@@ -47,7 +47,6 @@ public class MultiLevelEntityEditorPresenter extends ConfigurableBasePresenter<I
 	private EntityLineEditorEventBus lineEditorBus;
 	private ConfigurableBasePresenter<?, ? extends EventBus> footerPresenter;
 	private MasterDetailComponent metaData;
-	private EntityManager entityManager;
 	private StartableApplicationEventBus appEventBus;
 	private MultiLevelEntityEditorPresenter parentEditor;
 	private Map<MasterDetailComponent, MultiLevelEntityEditorPresenter> childEditorPresenterMap;
@@ -58,7 +57,6 @@ public class MultiLevelEntityEditorPresenter extends ConfigurableBasePresenter<I
 	public void onInit(EventBusManager ebm, PresenterFactory presenterFactory, MasterDetailComponent md, EntityManager em, HashMap<String, Object> extraParams) {
 		this.setInitialized(true);
 		this.metaData = md;
-		this.entityManager = em;
 		this.setEbm(ebm);
 	}
 
@@ -119,12 +117,12 @@ public class MultiLevelEntityEditorPresenter extends ConfigurableBasePresenter<I
 		Map<String, Object> config = super.getConfig();
 		this.parentEditor = (MultiLevelEntityEditorPresenter) config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_PARENT_EDITOR);
 		this.metaData = (MasterDetailComponent) config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL);
-		this.entityManager = (EntityManager) config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_ENTITY_MANAGER);
-		this.ebm = (EventBusManager) config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_EVENTBUS_MANAGER);
+		this.presenterFactory = (ConfigurablePresenterFactory) config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_PRESENTER_FACTORY);
+		this.ebm = this.presenterFactory.getEventBusManager();
 		IPresenter<?, ? extends StartableApplicationEventBus> appPresenter = (IPresenter<?, ? extends StartableApplicationEventBus>) config
 				.get(IEntityEditorFactory.FACTORY_PARAM_MVP_CURRENT_APP_PRESENTER);
 		this.appEventBus = appPresenter.getEventBus();
-		this.presenterFactory = (ConfigurablePresenterFactory) config.get(IEntityEditorFactory.FACTORY_PARAM_MVP_PRESENTER_FACTORY);
+		
 		this.presenterFactory.getCustomizer().getConfig().put(IEntityEditorFactory.FACTORY_PARAM_MVP_CURRENT_MLENTITY_EDITOR_PRESENTER, this);
 		this.entityFactory = new VaadinEntityEditorFactoryImpl(presenterFactory);
 		
@@ -198,10 +196,6 @@ public class MultiLevelEntityEditorPresenter extends ConfigurableBasePresenter<I
 
 	public void setMetaData(MasterDetailComponent metaData) {
 		this.metaData = metaData;
-	}
-
-	public EntityManager getEntityManager() {
-		return entityManager;
 	}
 
 	public MultiLevelEntityEditorPresenter getParentEditor() {

@@ -27,6 +27,7 @@ import com.vaadin.terminal.CompositeErrorMessage;
 import com.vaadin.terminal.ErrorMessage;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.AbstractField;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.FormFieldFactory;
@@ -144,7 +145,7 @@ public class VaadinForm extends Form {
 
 	private ValueChangeListener buildDependenceListener(Field childListenerField) {
 		if (childListenerField instanceof Container.Viewer) {
-			return new ValueDependenceListener(((Container.Viewer) childListenerField).getContainerDataSource());
+			return new ValueDependenceListener(((Container.Viewer) childListenerField).getContainerDataSource(), childListenerField);
 		}
 
 		return null;
@@ -303,24 +304,37 @@ public class VaadinForm extends Form {
 
 	protected class ValueDependenceListener implements ValueChangeListener {
 		private Container childFieldContainer;
+		private Field childField;
 		private Filter parentFilter;
 		private Object entityId;
 
-		public ValueDependenceListener(Container childFieldContainer) {
+		public ValueDependenceListener(Container childFieldContainer, Field childField) {
 			this.childFieldContainer = childFieldContainer;
+			this.childField = childField;
 		}
 
 		@Override
 		public void valueChange(final Property.ValueChangeEvent event) {
 			if (childFieldContainer instanceof JPAContainer) {
 				if (event != null && event.getProperty() != null && event.getProperty().getValue() != null) {
-					this.entityId = event.getProperty().getValue();
 					if (parentFilter != null) {
 						((JPAContainer<?>) this.childFieldContainer).removeContainerFilter(this.parentFilter);
 					}
-					this.parentFilter = new com.vaadin.data.util.filter.Compare.Equal("ownerEntityId", this.entityId);
-					((JPAContainer<?>) this.childFieldContainer).addContainerFilter(this.parentFilter);
-					((JPAContainer<?>) this.childFieldContainer).applyFilters();
+					
+					this.entityId = event.getProperty().getValue();
+					if (this.entityId instanceof Long) {
+						this.parentFilter = new com.vaadin.data.util.filter.Compare.Equal("ownerEntityId", this.entityId);
+						((JPAContainer<?>) this.childFieldContainer).addContainerFilter(this.parentFilter);
+						((JPAContainer<?>) this.childFieldContainer).applyFilters();
+					} else {
+						if (this.childField instanceof Component) {
+							this.childField.setEnabled(false);
+						}
+					}
+				} else {
+					if (this.childField instanceof Component) {
+						this.childField.setEnabled(false);
+					}
 				}
 			}
 		}

@@ -13,8 +13,8 @@
 	<packaging>pom</packaging>
 	<modules>
 		<!-- <module>5.4.0-SNAPSHOT</module> -->
+		<module>jbpm.bpmserver</module>
 		<!-- 
-		<module>com.conx.logistics.kernel.bpm.impl.jbpm.bpmserver</module>
 		<module>jbpm.persistence.jpa.hibernate</module>
 		<module>com.conx.logistics.kernel.bpm.impl.jbpm.shared</module>
 		-->

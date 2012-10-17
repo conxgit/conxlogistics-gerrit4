@@ -147,8 +147,8 @@ public class AttachmentEditorPresenter extends BasePresenter<IAttachmentEditorVi
 	}
 
 	public void onSaveForm(DocType attachmentType, String sourceFileName, String mimeType, String title, String description) throws Exception {
-		// this.docRepo.addorUpdateFileEntry(this.docFolder, attachmentType,
-		// sourceFileName, mimeType, title, description);
+		 this.docRepo.addorUpdateFileEntry(this.docFolder, attachmentType,
+		 sourceFileName, mimeType, title, description);
 		this.entityContainer.refresh();
 	}
 

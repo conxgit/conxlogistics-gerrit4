@@ -1,12 +1,13 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>com.conx.logistics.testingframework</artifactId>
 		<groupId>com.conx.logistics</groupId>
 		<version>1.0.0</version>
 		<relativePath>../../../../com.conx.logistics.testingframework/pom.xml</relativePath>
 	</parent>
-  <artifactId>com.conx.logistics.kernel.bpm.impl.jbpm.bpmserver.tests</artifactId>
+	<artifactId>com.conx.logistics.kernel.bpm.impl.jbpm.bpmserver.tests</artifactId>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -26,7 +27,7 @@
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.kernel.bpm.services</artifactId>
 			<version>1.0.0</version>
-		</dependency>		
+		</dependency>
 
 		<!-- Drools & JBPM -->
 		<dependency>
@@ -148,13 +149,23 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<filesets>
+						<!-- DO NOT CLEAN MANIFEST.MF IN THIRDPARTY -->
+					</filesets>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<forkMode>once</forkMode>
-	            	<argLine>
-	                 -javaagent:C:/Users/dev/.m2/repository/org/springframework/org.springframework.instrument/3.0.5.RELEASE/org.springframework.instrument-3.0.5.RELEASE.jar
-	        		</argLine>
-            		<useSystemClassloader>true</useSystemClassloader>
+					<argLine>
+						-javaagent:C:/Users/dev/.m2/repository/org/springframework/org.springframework.instrument/3.0.5.RELEASE/org.springframework.instrument-3.0.5.RELEASE.jar
+					</argLine>
+					<useSystemClassloader>true</useSystemClassloader>
 					<includes>
 						<include>**/*Test.java</include>
 					</includes>
@@ -214,7 +225,7 @@
 						<phase>none</phase>
 					</execution>
 				</executions>
-			</plugin>			
+			</plugin>
 		</plugins>
 		<testResources>
 			<testResource>
@@ -225,5 +236,5 @@
 				<filtering>true</filtering>
 			</testResource>
 		</testResources>
-	</build>  
+	</build>
 </project>

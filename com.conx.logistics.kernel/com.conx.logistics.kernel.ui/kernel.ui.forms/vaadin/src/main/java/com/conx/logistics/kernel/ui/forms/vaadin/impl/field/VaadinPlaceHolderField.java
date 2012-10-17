@@ -17,6 +17,7 @@ public class VaadinPlaceHolderField extends VerticalLayout implements Field {
 	public VaadinPlaceHolderField() {
 		setWidth("100%");
 		setHeight("25px");
+		setReadOnly(true);
 	}
 
 	@Override

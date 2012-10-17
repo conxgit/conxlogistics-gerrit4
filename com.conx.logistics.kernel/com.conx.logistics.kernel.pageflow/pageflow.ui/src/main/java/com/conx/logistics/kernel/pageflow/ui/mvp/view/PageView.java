@@ -30,4 +30,12 @@ public class PageView extends VerticalLayout implements IPageView {
 	public Component getContent() {
 		return content;
 	}
+
+	public VerticalLayout getMainLayout() {
+		return mainLayout;
+	}
+
+	public void setMainLayout(VerticalLayout mainLayout) {
+		this.mainLayout = mainLayout;
+	}
 }

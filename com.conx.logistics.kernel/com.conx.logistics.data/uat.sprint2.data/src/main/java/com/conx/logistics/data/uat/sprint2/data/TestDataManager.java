@@ -396,6 +396,8 @@ public class TestDataManager implements ITestDataManager {
 				tescus1_contact = contactDAOService.provide(orgEMD, tescus1.getId(), tescus1_contact);
 				ContactType tescus1_contact_type = contactTypeDAOService.provide(ContactTypeCustomCONSTANTS.TYPE_MAIN, ContactTypeCustomCONSTANTS.TYPE_MAIN_DESCRIPTION);
 				ContactTypeContact tescus1_ctc = contactTypeContactDAOService.provide(tescus1_contact_type, tescus1_contact);
+				tescus1_ctc.setOwnerEntityId(tescus1_ata.getId());
+				tescus1_ctc = contactTypeContactDAOService.update(tescus1_ctc);
 				tescus1.getContactTypeContacts().add(tescus1_ctc);
 
 				tescus1 = orgDaoService.update(tescus1);
@@ -422,6 +424,8 @@ public class TestDataManager implements ITestDataManager {
 				tescar1_contact = contactDAOService.provide(orgEMD, tescar1.getId(), tescar1_contact);
 				ContactType tescar1_contact_type = contactTypeDAOService.provide(ContactTypeCustomCONSTANTS.TYPE_MAIN, ContactTypeCustomCONSTANTS.TYPE_MAIN_DESCRIPTION);
 				ContactTypeContact tescar1_ctc = contactTypeContactDAOService.provide(tescar1_contact_type, tescar1_contact);
+				tescar1_ctc.setOwnerEntityId(tescar1_ata.getId());
+				tescar1_ctc = contactTypeContactDAOService.update(tescar1_ctc);
 				tescar1.getContactTypeContacts().add(tescar1_ctc);
 
 				tescar1 = orgDaoService.update(tescar1);
@@ -448,6 +452,8 @@ public class TestDataManager implements ITestDataManager {
 				tesloc1_contact = contactDAOService.provide(orgEMD, tesloc1.getId(), tesloc1_contact);
 				ContactType tesloc1_contact_type = contactTypeDAOService.provide(ContactTypeCustomCONSTANTS.TYPE_MAIN, ContactTypeCustomCONSTANTS.TYPE_MAIN_DESCRIPTION);
 				ContactTypeContact tesloc1_ctc = contactTypeContactDAOService.provide(tesloc1_contact_type, tesloc1_contact);
+				tesloc1_ctc.setOwnerEntityId(tesloc1_ata.getId());
+				tesloc1_ctc = contactTypeContactDAOService.update(tesloc1_ctc);
 				tesloc1.getContactTypeContacts().add(tesloc1_ctc);
 
 				tesloc1 = orgDaoService.update(tesloc1);

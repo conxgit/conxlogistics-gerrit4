@@ -78,25 +78,6 @@ public class VaadinPageDataBuilder {
 		}
 	}
 
-	private static void applyParamDataToAttachmentView(PagePresenter source, Map<String, Object> params, AttachmentEditorView view) {
-		try {
-			Class<?> type = view.getComponentModel().getDataSource().getEntityType().getJavaType();
-			Collection<String> paramKeys = params.keySet();
-			Object paramEntry = null;
-			for (String paramKey : paramKeys) {
-				paramEntry = params.get(paramKey);
-				if (paramEntry != null) {
-					if (type.isAssignableFrom(paramEntry.getClass())) {
-						BeanItem<BaseEntity> newItem = new BeanItem<BaseEntity>((BaseEntity) paramEntry);
-						view.getEventBus().setItemDataSource(newItem);
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	private static void applyParamDataToAbstractComponentContainer(PagePresenter source, Map<String, Object> params, AbstractComponentContainer layout, PresenterFactory presenterFactory) throws ClassNotFoundException {
 		if (layout instanceof AttachmentEditorView) {
 //			applyParamDataToAttachmentView(source, params, (AttachmentEditorView) layout);

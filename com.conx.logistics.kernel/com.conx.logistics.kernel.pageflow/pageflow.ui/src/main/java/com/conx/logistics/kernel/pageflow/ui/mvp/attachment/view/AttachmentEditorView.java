@@ -24,6 +24,8 @@ import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -73,6 +75,16 @@ public class AttachmentEditorView extends VerticalLayout implements IAttachmentE
 		this.saveAttachmentListenerSet = new HashSet<ISaveAttachmentListener>();
 		this.inspectAttachmentListenerSet = new HashSet<IInspectAttachmentListener>();
 		
+		this.form.addListener(new ValueChangeListener() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void valueChange(Property.ValueChangeEvent event) {
+				AttachmentEditorView.this.saveButton.setEnabled(false);
+				AttachmentEditorView.this.validateButton.setEnabled(true);
+			}
+		});
+		
 		this.formToolStrip = new EntityEditorToolStrip();
 		this.validateButton = this.formToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_VERIFY_PNG);
 		this.validateButton.setEnabled(false);
@@ -81,15 +93,26 @@ public class AttachmentEditorView extends VerticalLayout implements IAttachmentE
 
 			@Override
 			public void buttonClick(ClickEvent event) {
+				AttachmentEditorView.this.validateButton.setEnabled(false);
+				AttachmentEditorView.this.saveButton.setEnabled(true);
 			}
 		});
 		this.saveButton = this.formToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_SAVE_PNG);
+		this.saveButton.setEnabled(false);
 		this.saveButton.addListener(new ClickListener() {
 			private static final long serialVersionUID = 2217714313753854212L;
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				AttachmentEditorView.this.form.commit();
+				AttachmentEditorView.this.form.saveForm();
+				onSaveAttachment(AttachmentEditorView.this.form.getItemDataSource(), 
+						AttachmentEditorView.this.form.getDocTypeValue(), 
+						AttachmentEditorView.this.form.getTempSourceFileName(), 
+						AttachmentEditorView.this.form.getMimeType(), 
+						AttachmentEditorView.this.form.getSourceFileName(), 
+						AttachmentEditorView.this.form.getDescription());
+				AttachmentEditorView.this.hideDetail();
+//				AttachmentEditorView.this.form.commit();
 			}
 		});
 		this.resetButton = this.formToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_RESET_PNG);
@@ -125,6 +148,14 @@ public class AttachmentEditorView extends VerticalLayout implements IAttachmentE
 		this.toolStrip = new AttachmentEditorToolStrip();
 		this.toolStrip.setEditButtonEnabled(false);
 		this.toolStrip.setDeleteButtonEnabled(false);
+		this.toolStrip.addNewButtonClickListener(new ClickListener() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				newEntityItemActioned();
+			}
+		});
 
 		this.masterLayout.setSizeFull();
 		this.masterLayout.removeAllComponents();
@@ -135,7 +166,9 @@ public class AttachmentEditorView extends VerticalLayout implements IAttachmentE
 		this.form.setFormFieldFactory(new ConXFieldFactory());
 
 		this.detailLayout.setSizeFull();
-		this.detailLayout.addComponent(form);
+		this.detailLayout.addComponent(this.formToolStrip);
+		this.detailLayout.addComponent(this.form);
+		this.detailLayout.setExpandRatio(this.form, 1.0f);
 
 		this.splitPanel.removeAllComponents();
 		this.splitPanel.setStyleName("conx-entity-editor");

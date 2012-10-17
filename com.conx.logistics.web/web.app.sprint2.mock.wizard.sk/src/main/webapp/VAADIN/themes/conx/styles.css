@@ -6845,3 +6845,18 @@ textarea.v-textarea-readonly,
 	color: #222;
 	font-weight: bold;
 }
+.conx-relation-field-new-button {
+	background-position: 0px 0px;
+	background-image: url(select/img/custom/native-add-unselected.png);
+}
+.conx-relation-field-new-button:hover {
+	background-position: 0px 23px;
+	cursor: pointer;
+}
+.conx-relation-field-new-button .v-disabled {
+	cursor: default;
+}
+.conx-relation-field-new-button .v-disabled:hover {
+	background-position: 0px 0px;
+	cursor: default;
+}
