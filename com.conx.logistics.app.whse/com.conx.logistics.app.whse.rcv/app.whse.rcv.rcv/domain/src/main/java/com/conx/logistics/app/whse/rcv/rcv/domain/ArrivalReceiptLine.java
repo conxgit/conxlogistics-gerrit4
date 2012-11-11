@@ -42,4 +42,44 @@ public class ArrivalReceiptLine extends MultitenantBaseEntity {
 
     @Enumerated(EnumType.STRING)
     private ARRIVALRECEIPTLINESTATUS status;
+
+	public CommercialRecord getCommercialRecord() {
+		return commercialRecord;
+	}
+
+	public void setCommercialRecord(CommercialRecord commercialRecord) {
+		this.commercialRecord = commercialRecord;
+	}
+
+	public Set<ReferenceNumber> getRefNumbers() {
+		return refNumbers;
+	}
+
+	public void setRefNumbers(Set<ReferenceNumber> refNumbers) {
+		this.refNumbers = refNumbers;
+	}
+
+	public ReceiveLine getReceiveLine() {
+		return receiveLine;
+	}
+
+	public void setReceiveLine(ReceiveLine receiveLine) {
+		this.receiveLine = receiveLine;
+	}
+
+	public ArrivalReceipt getParentArrivalReceipt() {
+		return parentArrivalReceipt;
+	}
+
+	public void setParentArrivalReceipt(ArrivalReceipt parentArrivalReceipt) {
+		this.parentArrivalReceipt = parentArrivalReceipt;
+	}
+
+	public ARRIVALRECEIPTLINESTATUS getStatus() {
+		return status;
+	}
+
+	public void setStatus(ARRIVALRECEIPTLINESTATUS status) {
+		this.status = status;
+	}
 }

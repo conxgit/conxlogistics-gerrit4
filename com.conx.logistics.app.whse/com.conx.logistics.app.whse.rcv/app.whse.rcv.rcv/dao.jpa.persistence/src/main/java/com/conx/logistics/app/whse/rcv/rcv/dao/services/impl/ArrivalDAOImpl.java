@@ -67,6 +67,7 @@ public class ArrivalDAOImpl implements IArrivalDAOService {
 
 	@Override
 	public Arrival add(Arrival arvl, Receive parentReceive) throws Exception {
+//		em.joinTransaction();
 		arvl.setReceive(parentReceive);
 		arvl = em.merge(arvl);
 		
@@ -89,7 +90,7 @@ public class ArrivalDAOImpl implements IArrivalDAOService {
 		arvl.setNote(note);
 		
 		arvl = em.merge(arvl);
-
+		em.flush();
 		return arvl;
 	}
 
@@ -103,13 +104,13 @@ public class ArrivalDAOImpl implements IArrivalDAOService {
 		return em.merge(record);
 	}
 
-	public Arrival addArrivalReceipt(Long arrivalId, ArrivalReceipt receipt) throws Exception {
+	public ArrivalReceipt addArrivalReceipt(Long arrivalId, ArrivalReceipt receipt) throws Exception {
 		Arrival arrv = null;
 		try {		
 			arrv = em.getReference(Arrival.class, arrivalId);
-			
 			receipt.setParentArrival(arrv);
-	
+			receipt = em.merge(receipt);
+			arrv.getReceipts().add(receipt);
 			arrv = update(arrv);
 		} catch (Exception e) {
 			StringWriter sw = new StringWriter();
@@ -120,7 +121,7 @@ public class ArrivalDAOImpl implements IArrivalDAOService {
 			throw e;
 		}	
 		
-		return arrv;
+		return receipt;
 	}
 	
 	@Override

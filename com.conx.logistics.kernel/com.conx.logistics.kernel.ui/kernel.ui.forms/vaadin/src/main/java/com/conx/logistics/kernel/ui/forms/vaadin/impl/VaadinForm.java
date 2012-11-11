@@ -12,6 +12,7 @@ import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
 import com.conx.logistics.kernel.persistence.services.IEntityContainerProvider;
 import com.conx.logistics.kernel.ui.components.domain.form.ConXForm;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.field.VaadinPlaceHolderField;
+import com.conx.logistics.kernel.ui.forms.vaadin.listeners.IFormChangeListener;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.data.Container;
 import com.vaadin.data.Container.Filter;
@@ -44,18 +45,61 @@ public class VaadinForm extends Form {
 
 	private Item itemDatasource;
 	private Collection<?> visibleItemProperties;
+	private Set<IFormChangeListener> formChangeListeners;
+	private ValueChangeListener fieldValueChangeListener;
+	
+	protected void fireFormChangedEvent() {
+		for (IFormChangeListener listener : this.formChangeListeners) {
+			listener.onFormChanged();
+		}
+	}
 
+	public void addListener(IFormChangeListener listener) {
+		this.formChangeListeners.add(listener);
+	}
+	
+	public void removeListener(IFormChangeListener listener) {
+		this.formChangeListeners.remove(listener);
+	}
+	
 	public VaadinForm() {
+		this.formChangeListeners = new HashSet<IFormChangeListener>();
+		this.fieldValueChangeListener = new ValueChangeListener() {
+
+			@Override
+			public void valueChange(com.vaadin.data.Property.ValueChangeEvent event) {
+				fireFormChangedEvent();
+			}
+		};
 	}
 
 	public VaadinForm(Layout formLayout, ConXForm componentModel) {
 		super(formLayout);
 		this.componentModel = componentModel;
+		this.formChangeListeners = new HashSet<IFormChangeListener>();
+		this.fieldValueChangeListener = new ValueChangeListener() {
+
+			@Override
+			public void valueChange(com.vaadin.data.Property.ValueChangeEvent event) {
+				fireFormChangedEvent();
+			}
+		};
 	}
 
 	public VaadinForm(Layout formLayout, ConXForm componentModel, FormFieldFactory fieldFactory) {
 		super(formLayout, fieldFactory);
 		this.componentModel = componentModel;
+		this.formChangeListeners = new HashSet<IFormChangeListener>();
+		this.fieldValueChangeListener = new ValueChangeListener() {
+
+			@Override
+			public void valueChange(com.vaadin.data.Property.ValueChangeEvent event) {
+				fireFormChangedEvent();
+			}
+		};
+	}
+	
+	public void setTitle(String title) {
 	}
 
 	private String getPropertyId(DataSourceField dsField) {
@@ -142,6 +186,18 @@ public class VaadinForm extends Form {
 		this.setFormFieldFactory(formFieldFactory);
 		this.setItemDataSource(newDataSource, propertyIds, entityTypeDao);
 	}
+	
+	public boolean validateForm() throws Exception {
+		throw new UnsupportedOperationException("This form has no support for validating this way. Use validate().");
+	}
+	
+	public boolean saveForm() throws Exception {
+		throw new UnsupportedOperationException("This form has no support for commiting this way. Use commit().");
+	}
+	
+	public void resetForm() throws Exception {
+		throw new UnsupportedOperationException("This form has no support for validating this way. Use discard().");
+	}
 
 	private ValueChangeListener buildDependenceListener(Field childListenerField) {
 		if (childListenerField instanceof Container.Viewer) {
@@ -205,6 +261,7 @@ public class VaadinForm extends Form {
 					}
 
 					try {
+						VaadinFormFieldAugmenter.augment(f, this.fieldValueChangeListener);
 						addedPropertyIds.put(propertyId, f);
 						bindPropertyToField(propertyId, p, f);
 						if (isNestedParentPropertyNull(f)) {
@@ -231,10 +288,6 @@ public class VaadinForm extends Form {
 			((AbstractField) f).setComponentError(null);
 		}
 	}
-
-	// private boolean isBasicField(final Field f) {
-	// return f instanceof TextField || f instanceof CheckBox;
-	// }
 
 	private boolean isNestedParentPropertyNull(final Field f) {
 		if (f instanceof AbstractComponent) {

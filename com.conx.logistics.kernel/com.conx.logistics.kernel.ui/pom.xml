@@ -19,5 +19,6 @@
   	<module>kernel.ui.vaadin.addons</module>
   	<module>kernel.ui.components</module>
   	<module>kernel.ui.factory.services</module>
+  	<module>kernel.ui.factory.services.impl</module>
   </modules>
 </project>

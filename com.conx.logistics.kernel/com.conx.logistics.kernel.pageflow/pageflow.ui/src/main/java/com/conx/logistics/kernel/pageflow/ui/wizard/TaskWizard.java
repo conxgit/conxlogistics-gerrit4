@@ -30,9 +30,11 @@ import com.conx.logistics.kernel.pageflow.services.IPageFlowPage;
 import com.conx.logistics.kernel.pageflow.services.IPageFlowSession;
 import com.conx.logistics.kernel.pageflow.services.ITaskWizard;
 import com.conx.logistics.kernel.pageflow.ui.builder.VaadinPageFactoryImpl;
+import com.conx.logistics.kernel.pageflow.ui.ext.form.container.VaadinBeanItemContainer;
 import com.conx.logistics.kernel.pageflow.ui.ext.form.container.VaadinJPAContainer;
 import com.conx.logistics.kernel.persistence.services.IEntityContainerProvider;
 import com.conx.logistics.kernel.ui.common.entityprovider.jta.CustomCachingMutableLocalEntityProvider;
+import com.conx.logistics.kernel.ui.common.entityprovider.jta.CustomNonCachingMutableLocalEntityProvider;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
 import com.conx.logistics.kernel.ui.service.contribution.IApplicationViewContribution;
 import com.conx.logistics.kernel.ui.service.contribution.IMainApplication;
@@ -364,7 +366,7 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 	public Object createBeanContainer(Class<?> entityClass) {
 		if (BaseEntity.class.isAssignableFrom(entityClass)) {
 			@SuppressWarnings({ "rawtypes", "unchecked" })
-			BeanItemContainer container = new BeanItemContainer(entityClass);
+			BeanItemContainer container = new VaadinBeanItemContainer(entityClass);
 			return container;
 		}
 		return null;
@@ -373,5 +375,17 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 	@Override
 	public EntityManagerFactory getEmf() {
 		return this.session.getConXEntityManagerfactory();
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public Object createNonCachingPersistenceContainer(Class<?> entityClass) {
+		if (this.userTransaction != null) {
+			CustomNonCachingMutableLocalEntityProvider provider = new CustomNonCachingMutableLocalEntityProvider(entityClass, this.getEmf(), this.userTransaction);
+			JPAContainer<?> container = new VaadinJPAContainer(entityClass, provider);
+			return container;
+		} else {
+			return JPAContainerFactory.makeReadOnly(entityClass, this.getEmf().createEntityManager());
+		}
 	}
 }

@@ -9,6 +9,9 @@
 		<class>com.conx.logistics.kernel.ui.components.domain.ComponentAlignment</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.ComponentExpandRatio</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.MarginInfo</class>
+		<class>com.conx.logistics.kernel.ui.components.domain.editor.EntityEditor</class>
+		<class>com.conx.logistics.kernel.ui.components.domain.table.EntityMatchGrid</class>
+		<class>com.conx.logistics.kernel.ui.components.domain.editor.MultiLevelEntityEditor</class>
 		
 		<class>com.conx.logistics.kernel.ui.components.domain.editor.EntityEditor</class>
 		<class>com.conx.logistics.kernel.ui.components.domain.editor.MultiLevelEntityEditor</class>

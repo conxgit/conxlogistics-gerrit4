@@ -1,6 +1,5 @@
 package org.vaadin.mvp.eventbus;
 
-import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -26,35 +25,27 @@ public class CustomizedEventReceiverRegistry extends EventReceiverRegistry {
 	 * since a WeakHashMap does only collect non-referenced keys - which are
 	 * class objects that will not be collected in our case.
 	 */
-	private Map<Class<?>, Set<WeakReference<?>>> receivers = new HashMap<Class<?>, Set<WeakReference<?>>>();
+	private Map<Class<?>, Set<Object>> receivers = new HashMap<Class<?>, Set<Object>>();
 
 	@Override
 	public void addReceiver(Object receiver) {
-		// clear collected receivers from our map first
-		// create a "copy" of the maps keyset to allow modification while
-		// looping
-		Set<Class<?>> keySet = new HashSet<Class<?>>(receivers.keySet());
-		for (Class<?> receiverType : keySet) {
-			Set<WeakReference<?>> referenceSet = receivers.get(receiverType);
-			for (WeakReference<?> reference : referenceSet) {
-				if (reference.get() == null) {
-					logger.debug("Removing mapping: {}", receiverType);
-					receivers.remove(receiverType);
-				}
-			}
-		}
-		Set<WeakReference<?>> referenceSet = receivers.get(receiver.getClass());
+		Set<Object> referenceSet = receivers.get(receiver.getClass());
 		if (referenceSet == null) {
-			referenceSet = new HashSet<WeakReference<?>>();
-			referenceSet.add(new WeakReference<Object>(receiver));
-			receivers.put(receiver.getClass(), referenceSet);
+			if (receiver != null) {
+				referenceSet = new HashSet<Object>();
+				referenceSet.add(receiver);
+				receivers.put(receiver.getClass(), referenceSet);
+			}
 		} else {
-			referenceSet.add(new WeakReference<Object>(receiver));
+			if (!referenceSet.contains(receiver)) {
+				referenceSet.add(receiver);
+			}
 		}
 	}
 
 	/**
 	 * Lookup all receivers of a given type.
+	 * 
 	 * @param <T>
 	 * 
 	 * @param <T>
@@ -64,18 +55,17 @@ public class CustomizedEventReceiverRegistry extends EventReceiverRegistry {
 	 * @return the receiver instances if present in the registry or
 	 *         <code>null</code>
 	 */
+	@SuppressWarnings("unchecked")
 	public <T> Set<T> lookupReceivers(Class<T> receiverType) {
 		if (receivers.containsKey(receiverType)) {
-			Set<WeakReference<?>> referenceSet = receivers.get(receiverType);
+			Set<Object> referenceSet = receivers.get(receiverType);
 			if (referenceSet == null) {
 				return null;
 			} else {
 				Set<T> resultSet = new HashSet<T>();
-				T receiver = null;
-				for (WeakReference<?> reference : referenceSet) {
-					receiver = (T) reference.get();
-					if (receiver != null) {
-						resultSet.add(receiver);
+				for (Object reference : referenceSet) {
+					if (reference != null && reference.getClass().isAssignableFrom(receiverType)) {
+						resultSet.add((T) reference);
 					}
 				}
 				return resultSet;

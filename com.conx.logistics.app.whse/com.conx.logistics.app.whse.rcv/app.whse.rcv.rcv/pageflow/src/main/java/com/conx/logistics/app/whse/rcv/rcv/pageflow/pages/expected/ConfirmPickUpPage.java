@@ -3,6 +3,7 @@ package com.conx.logistics.app.whse.rcv.rcv.pageflow.pages.expected;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.conx.logistics.app.whse.rcv.rcv.domain.Arrival;
 import com.conx.logistics.kernel.pageflow.services.BasePageFlowPage;
 import com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage;
 import com.conx.logistics.kernel.ui.components.domain.page.TaskPage;
@@ -30,6 +31,7 @@ public class ConfirmPickUpPage extends BasePageFlowPage implements IModelDrivenP
 	public Map<Class<?>, String> getResultKeyMap() {
 		if (this.resultKeyMap == null) {
 			this.resultKeyMap = new HashMap<Class<?>, String>();
+			this.resultKeyMap.put(Arrival.class, "arrivalOut");
 		}
 		return this.resultKeyMap;
 	}
@@ -38,6 +40,7 @@ public class ConfirmPickUpPage extends BasePageFlowPage implements IModelDrivenP
 	public Map<Class<?>, String> getParamKeyMap() {
 		if (this.paramKeyMap == null) {
 			this.paramKeyMap = new HashMap<Class<?>, String>();
+			this.paramKeyMap.put(Arrival.class, "arrivalIn");
 		}
 		return this.paramKeyMap;
 	}

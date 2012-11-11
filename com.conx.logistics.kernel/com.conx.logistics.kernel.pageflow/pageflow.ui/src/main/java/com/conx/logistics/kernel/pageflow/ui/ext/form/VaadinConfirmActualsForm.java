@@ -16,7 +16,6 @@ import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormAlertPanel;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormFieldAugmenter;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormHeader;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinJPAFieldFactory;
-import com.conx.logistics.kernel.ui.forms.vaadin.listeners.IFormChangeListener;
 import com.vaadin.data.Item;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.event.MouseEvents;
@@ -46,7 +45,6 @@ public class VaadinConfirmActualsForm extends VaadinForm {
 	private GridLayout actualLayout;
 	private ConfirmActualsForm componentForm;
 	private Set<Field> fields;
-	private Set<IFormChangeListener> formChangeListeners;
 	private HashMap<ConfirmActualsFieldSetField, Integer> fieldIndexMap;
 	private int nextIndex;
 	private Embedded placeholder;
@@ -62,7 +60,6 @@ public class VaadinConfirmActualsForm extends VaadinForm {
 		this.actualLayout = new GridLayout(1, 1);
 		this.alertPanel = new VaadinFormAlertPanel();
 		this.componentForm = componentForm;
-		this.formChangeListeners = new HashSet<IFormChangeListener>();
 		this.fields = new HashSet<Field>();
 		this.fieldIndexMap = new HashMap<ConfirmActualsFieldSetField, Integer>();
 		this.nextIndex = 1;
@@ -202,14 +199,7 @@ public class VaadinConfirmActualsForm extends VaadinForm {
 
 				fields.add(field);
 				field.setWidth("100%");
-				VaadinFormFieldAugmenter.augment(field, fieldComponent, new ValueChangeListener() {
-					private static final long serialVersionUID = -6182433271255560793L;
-
-					@Override
-					public void valueChange(com.vaadin.data.Property.ValueChangeEvent event) {
-						onFormChanged();
-					}
-				});
+				VaadinFormFieldAugmenter.augment(field, fieldComponent);
 
 				if (fieldSet.isExpected(propertyId)) {
 					if (index >= this.expectedLayout.getRows()) {
@@ -238,10 +228,6 @@ public class VaadinConfirmActualsForm extends VaadinForm {
 				}
 			}
 		}
-	}
-
-	public void addFormChangeListener(IFormChangeListener listener) {
-		this.formChangeListeners.add(listener);
 	}
 
 	@Override
@@ -275,14 +261,14 @@ public class VaadinConfirmActualsForm extends VaadinForm {
 	public FormMode getFormMode() {
 		return mode;
 	}
-
-	public void onFormChanged() {
-		for (IFormChangeListener listener : this.formChangeListeners) {
-			listener.onFormChanged();
-		}
+	
+	@Override
+	protected void fireFormChangedEvent() {
 		this.saveButton.setEnabled(false);
 		this.verifyButton.setEnabled(true);
 		this.resetButton.setEnabled(true);
+		
+		super.fireFormChangedEvent();
 	}
 
 	public void resetForm() {

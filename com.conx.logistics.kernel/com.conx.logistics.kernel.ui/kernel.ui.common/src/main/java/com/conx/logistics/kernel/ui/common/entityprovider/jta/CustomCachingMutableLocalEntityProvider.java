@@ -83,6 +83,16 @@ public class CustomCachingMutableLocalEntityProvider<T> extends CachingBatchable
 			throw new RuntimeException(e);
 		}
 	}
+	
+	@Override
+	public int getEntityCount(Filter filter) {
+		return super.getEntityCount(filter);
+	}
+	
+	@Override
+	protected TypedQuery<Object> createUnsortedFilteredQuery(List<String> fieldsToSelect, Filter filter) {
+		return super.createUnsortedFilteredQuery(fieldsToSelect, filter);
+	}
 
 	@Override
 	public EntityManager getEntityManager() {

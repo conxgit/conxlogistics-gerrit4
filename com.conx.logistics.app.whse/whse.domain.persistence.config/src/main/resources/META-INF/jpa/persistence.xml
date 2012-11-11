@@ -5,5 +5,6 @@
 	<persistence-unit name="pu-whse">
 		<class>com.conx.logistics.app.whse.domain.docktype.DockType</class>
 		<class>com.conx.logistics.app.whse.domain.warehouse.Warehouse</class>
+		<class>com.conx.logistics.app.whse.domain.location.Location</class>
 	</persistence-unit>
 </persistence>

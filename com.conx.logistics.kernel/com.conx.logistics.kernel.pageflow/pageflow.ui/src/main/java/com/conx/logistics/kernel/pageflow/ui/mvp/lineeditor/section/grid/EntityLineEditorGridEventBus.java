@@ -12,5 +12,17 @@ public interface EntityLineEditorGridEventBus extends EventBus {
 	public void configure(Map<String, Object> params);
 	
 	@Event(handlers = { EntityLineEditorGridPresenter.class })
-	public void delete(Item item);
+	public void create();
+	
+	@Event(handlers = { EntityLineEditorGridPresenter.class })
+	public void edit();
+	
+	@Event(handlers = { EntityLineEditorGridPresenter.class })
+	public void delete();
+	
+	@Event(handlers = { EntityLineEditorGridPresenter.class })
+	public void print();
+	
+	@Event(handlers = { EntityLineEditorGridPresenter.class })
+	public void setItemDataSource(Item item);
 }

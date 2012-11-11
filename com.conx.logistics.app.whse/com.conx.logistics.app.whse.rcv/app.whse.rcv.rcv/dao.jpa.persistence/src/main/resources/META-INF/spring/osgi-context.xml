@@ -21,11 +21,13 @@
 	<osgi:reference id="entityTypeDao" interface="com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService"/>
 	<osgi:reference id="referenceNumberDao" interface="com.conx.logistics.mdm.dao.services.referencenumber.IReferenceNumberDAOService"/>
 	<osgi:reference id="remoteDocumentRepository" interface="com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository"/>
-			
+	<osgi:reference id="dimUnitDao" interface="com.conx.logistics.mdm.dao.services.product.IDimUnitDAOService"/>
+	<osgi:reference id="weightUnitDao" interface="com.conx.logistics.mdm.dao.services.product.IWeightUnitDAOService"/>
+	<osgi:reference id="unitConversionService" interface="com.conx.logistics.mdm.dao.services.product.IUnitConversionService"/>
 			
 	<!-- export internal interfaces -->
 	<osgi:service ref="rcvDao" interface="com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveDAOService"/>
+	<osgi:service ref="rcvLineDao" interface="com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveLineDAOService"/>
 	<osgi:service ref="arvlDao" interface="com.conx.logistics.app.whse.rcv.rcv.dao.services.IArrivalDAOService"/>
-	
-	
+	<osgi:service ref="arvlRcptDao" interface="com.conx.logistics.app.whse.rcv.rcv.dao.services.IArrivalReceiptDAOService"/>
 </beans>

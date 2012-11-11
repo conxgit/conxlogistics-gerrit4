@@ -5,7 +5,6 @@ import java.util.Collection;
 import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormHeader;
 import com.vaadin.ui.Form;
-import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 
@@ -14,7 +13,7 @@ public class ReferenceNumberEditorForm extends Form {
 
 	private VaadinFormHeader header;
 	private VerticalLayout layout;
-	private GridLayout innerLayout;
+	private VerticalLayout innerLayout;
 	private Panel innerLayoutPanel;
 	
 	private FormMode mode;
@@ -22,7 +21,7 @@ public class ReferenceNumberEditorForm extends Form {
 	public ReferenceNumberEditorForm() {
 		this.header = new VaadinFormHeader();
 		this.layout = new VerticalLayout();
-		this.innerLayout = new GridLayout(4, 1);
+		this.innerLayout = new VerticalLayout();
 		this.innerLayoutPanel = new Panel();
 		
 		initialize();
@@ -63,7 +62,16 @@ public class ReferenceNumberEditorForm extends Form {
 		if (propertyId == null || field == null) {
             return;
         }
-        innerLayout.addComponent(field);
+		if ("value".equals(propertyId)) {
+			field.setWidth("100%");
+			field.setHeight("75px");
+			innerLayout.addComponent(field);
+		} else if ("type".equals(propertyId)) {
+			field.setWidth("30%");
+			innerLayout.addComponentAsFirst(field);
+		} else {
+			innerLayout.addComponent(field);
+		}
 	}
 	
 	public FormMode getMode() {

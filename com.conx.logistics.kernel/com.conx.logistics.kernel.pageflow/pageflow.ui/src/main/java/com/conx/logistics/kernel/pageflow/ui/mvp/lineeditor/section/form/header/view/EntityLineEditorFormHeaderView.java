@@ -34,7 +34,7 @@ public class EntityLineEditorFormHeaderView extends VerticalLayout implements IE
 		this.saveButton.setEnabled(false);
 
 		this.resetButton = this.toolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_RESET_PNG);
-		this.resetButton.setEnabled(true);
+		this.resetButton.setEnabled(false);
 
 		this.mainLayout.addComponent(this.toolStrip);
 	}

@@ -182,6 +182,7 @@ public class ConfirmTruckInfoPage extends BasePageFlowPage implements IModelDriv
 	public Map<Class<?>, String> getResultKeyMap() {
 		if (this.resultKeyMap == null) {
 			this.resultKeyMap = new HashMap<Class<?>, String>();
+			this.resultKeyMap.put(Arrival.class, "arrivalOut");
 		}
 		return this.resultKeyMap;
 	}

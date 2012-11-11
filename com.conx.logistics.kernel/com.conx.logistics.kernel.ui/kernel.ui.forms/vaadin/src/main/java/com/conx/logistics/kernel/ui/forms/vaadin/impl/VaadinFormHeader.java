@@ -56,8 +56,8 @@ public class VaadinFormHeader extends HorizontalLayout {
 		this.action.setCaption(action);
 	}
 
-	public Label getTitle() {
-		return title;
+	public String getTitle() {
+		return title.getCaption();
 	}
 
 	public void setTitle(String title) {

@@ -21,6 +21,7 @@ import javax.persistence.TemporalType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.conx.logistics.app.tms.domain.types.TRANSMODE;
+import com.conx.logistics.app.whse.domain.warehouse.Warehouse;
 import com.conx.logistics.app.whse.rcv.rcv.domain.types.ARRIVALSTATUS;
 import com.conx.logistics.app.whse.rcv.rcv.domain.types.ARRIVALTYPE;
 import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
@@ -31,6 +32,10 @@ import com.conx.logistics.mdm.domain.organization.Organization;
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 @Table(name="wharrival")
 public class Arrival extends MultitenantBaseEntity {
+	@ManyToOne(targetEntity = Organization.class, fetch = FetchType.LAZY)
+    @JoinColumn
+    private Warehouse warehouse;
+	
     @OneToOne(targetEntity = Pickup.class, fetch = FetchType.LAZY)
     @JoinColumn
     private Pickup actualPickUp;
@@ -221,5 +226,13 @@ public class Arrival extends MultitenantBaseEntity {
 
 	public void setArrvlStatus(ARRIVALSTATUS arrvlStatus) {
 		this.arrvlStatus = arrvlStatus;
+	}
+
+	public Warehouse getWarehouse() {
+		return warehouse;
+	}
+
+	public void setWarehouse(Warehouse warehouse) {
+		this.warehouse = warehouse;
 	}
 }

@@ -63,6 +63,10 @@ public class MultiLevelEntityEditorView extends VerticalLayout implements IMulti
 	public void setMaster(Component component) {
 		splitPanel.setFirstComponent(component);
 	}
+	
+	public Component getMaster() {
+		return splitPanel.getFirstComponent();
+	}
 
 	@Override
 	public void setDetail(Component component, boolean showDefaultPanel) {

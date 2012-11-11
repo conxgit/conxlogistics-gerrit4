@@ -1,0 +1,7 @@
+Bundle-ManifestVersion: 2
+Bundle-Version: 1.0.0
+Bundle-Name: ConX WMS IM Sub-Module DAO Services Model
+Bundle-SymbolicName: com.conx.logistics.app.whse.im.dao.services
+Bundle-Version: 1.0.0
+Import-Package: com.conx.logistics.app.whse.im.domain.stockitem;version="[1.0.0,2.0.0)"
+

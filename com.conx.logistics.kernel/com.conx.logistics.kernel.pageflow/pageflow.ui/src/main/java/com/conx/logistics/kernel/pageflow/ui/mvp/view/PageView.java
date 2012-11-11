@@ -23,6 +23,7 @@ public class PageView extends VerticalLayout implements IPageView {
 			this.mainLayout.removeComponent(this.content);
 		}
 		this.content = content;
+		this.content.setSizeFull();
 		this.mainLayout.addComponent(this.content);
 	}
 

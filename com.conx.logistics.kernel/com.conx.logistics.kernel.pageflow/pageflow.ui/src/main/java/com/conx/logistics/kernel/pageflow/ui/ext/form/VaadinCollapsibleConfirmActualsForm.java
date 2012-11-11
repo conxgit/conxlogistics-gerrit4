@@ -2,7 +2,6 @@ package com.conx.logistics.kernel.pageflow.ui.ext.form;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -17,7 +16,6 @@ import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormAlertPanel;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormAlertPanel.AlertType;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormFieldAugmenter;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormHeader;
-import com.conx.logistics.kernel.ui.forms.vaadin.listeners.IFormChangeListener;
 import com.vaadin.data.Buffered;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.event.MouseEvents.ClickEvent;
@@ -45,7 +43,6 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 	private FormMode mode;
 	private HashMap<ConfirmActualsFieldSet, VaadinCollapsibleConfirmActualsFormSectionHeader> headers;
 	private HashMap<Field, ConfirmActualsFieldSetField> fields;
-	private Set<IFormChangeListener> formChangeListeners;
 	private HashMap<ConfirmActualsFieldSetField, Integer> fieldIndexMap;
 
 	public VaadinCollapsibleConfirmActualsForm(CollapsibleConfirmActualsForm componentForm) {
@@ -57,7 +54,6 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 		this.headers = new HashMap<ConfirmActualsFieldSet, VaadinCollapsibleConfirmActualsFormSectionHeader>();
 		this.fields = new HashMap<Field, ConfirmActualsFieldSetField>();
 		this.innerLayout = new VerticalLayout();
-		this.formChangeListeners = new HashSet<IFormChangeListener>();
 		this.fieldIndexMap = new HashMap<ConfirmActualsFieldSetField, Integer>();
 
 		initialize();
@@ -86,7 +82,7 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 			@Override
 			public void buttonClick(Button.ClickEvent event) {
 				saveForm();
-				
+
 				VaadinCollapsibleConfirmActualsForm.this.saveButton.setEnabled(false);
 				VaadinCollapsibleConfirmActualsForm.this.verifyButton.setEnabled(false);
 				VaadinCollapsibleConfirmActualsForm.this.resetButton.setEnabled(false);
@@ -100,7 +96,7 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 
 			@Override
 			public void buttonClick(Button.ClickEvent event) {
-//				resetForm();
+				// resetForm();
 			}
 		});
 
@@ -141,41 +137,45 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 		// Disallow invalid data from acceptance by the container
 		setInvalidCommitted(false);
 	}
-	
-	private void saveForm() {
+
+	@Override
+	public boolean saveForm() {
 		LinkedList<SourceException> problems = null;
 
-        // Only commit on valid state if so requested
-        if (!isInvalidCommitted() && !isValid()) {
-            validate();
-        }
-        
-        Set<Field> fieldSet = fields.keySet();
+		// Only commit on valid state if so requested
+		if (!isInvalidCommitted() && !isValid()) {
+			validate();
+		}
 
-        // Try to commit all
-        for (Field field : fieldSet) {
-            try {
-                // Commit only non-readonly fields.
-                if (!field.isReadOnly()) {
-                    field.commit();
-                }
-            } catch (final Buffered.SourceException e) {
-                if (problems == null) {
-                    problems = new LinkedList<SourceException>();
-                }
-                problems.add(e);
-            }
-        }
+		Set<Field> fieldSet = fields.keySet();
 
-        // No problems occurred
-        if (problems == null) {
-            this.alertPanel.setAlertType(AlertType.SUCCESS);
-            this.alertPanel.setMessage(this.header.getTitle() + " was saved successfully.");
-            return;
-        } else {
-        	this.alertPanel.setAlertType(AlertType.ERROR);
-            this.alertPanel.setMessage(problems.iterator().next().getMessage());
-        }
+		// Try to commit all
+		for (Field field : fieldSet) {
+			try {
+				// Commit only non-readonly fields.
+				if (!field.isReadOnly()) {
+					field.commit();
+				}
+			} catch (final Buffered.SourceException e) {
+				if (problems == null) {
+					problems = new LinkedList<SourceException>();
+				}
+				problems.add(e);
+			}
+		}
+
+		// No problems occurred
+		if (problems == null) {
+			this.alertPanel.setAlertType(AlertType.SUCCESS);
+			this.alertPanel.setMessage(this.header.getTitle() + " was saved successfully.");
+			this.alertPanel.setVisible(true);
+			return true;
+		} else {
+			this.alertPanel.setAlertType(AlertType.ERROR);
+			this.alertPanel.setMessage(problems.iterator().next().getMessage());
+			this.alertPanel.setVisible(true);
+			return false;
+		}
 	}
 
 	@Override
@@ -186,14 +186,10 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 			if (fieldComponent != null) {
 				fields.put(field, fieldComponent);
 				field.setWidth("100%");
-				VaadinFormFieldAugmenter.augment(field, fieldComponent, new ValueChangeListener() {
-					private static final long serialVersionUID = -6182433271255560793L;
-
-					@Override
-					public void valueChange(com.vaadin.data.Property.ValueChangeEvent event) {
-						onFormChanged();
-					}
-				});
+				VaadinFormFieldAugmenter.augment(field, fieldComponent);
+				if (this.getComponentModel().isReadOnly()) {
+					field.setReadOnly(true);
+				}
 				VaadinCollapsibleConfirmActualsFormSectionHeader header = headers.get(fieldSet);
 				if (header == null) {
 					header = addFormSection(fieldSet);
@@ -223,18 +219,13 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 			}
 		}
 	}
-
-	public void onFormChanged() {
-		for (IFormChangeListener listener : this.formChangeListeners) {
-			listener.onFormChanged();
-		}
-		
+	
+	@Override
+	protected void fireFormChangedEvent() {
 		this.saveButton.setEnabled(false);
 		this.verifyButton.setEnabled(true);
-	}
-
-	public void addFormChangeListener(IFormChangeListener listener) {
-		this.formChangeListeners.add(listener);
+		
+		super.fireFormChangedEvent();
 	}
 
 	private int getNextIndex(GridLayout innerLayout) {
@@ -393,6 +384,9 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 			this.alertPanel.setVisible(false);
 			this.verifyButton.setEnabled(false);
 			this.saveButton.setEnabled(true);
+			this.alertPanel.setAlertType(AlertType.SUCCESS);
+			this.alertPanel.setMessage(this.header.getTitle() + " is valid.");
+			this.alertPanel.setVisible(true);
 			return true;
 		}
 	}

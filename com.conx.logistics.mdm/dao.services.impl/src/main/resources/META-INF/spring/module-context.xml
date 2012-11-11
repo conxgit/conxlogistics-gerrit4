@@ -64,6 +64,7 @@
 	<bean id="addressDao" class="com.conx.logistics.mdm.dao.services.impl.AddressDAOImpl"/>
 	<bean id="addressTypeDao" class="com.conx.logistics.mdm.dao.services.impl.AddressTypeDAOImpl"/>
 	<bean id="addressTypeAddressDao" class="com.conx.logistics.mdm.dao.services.impl.AddressTypeAddressDAOImpl"/>
+	<bean id="baseEntityDao" class="com.conx.logistics.mdm.dao.services.impl.BaseEntityDAOImpl"/>
 	<bean id="commercialRecordDao" class="com.conx.logistics.mdm.dao.services.impl.CommercialRecordDAOImpl"/>
 	<bean id="commercialValueDao" class="com.conx.logistics.mdm.dao.services.impl.CommercialValueDAOImpl"/>
 	<bean id="contactDao" class="com.conx.logistics.mdm.dao.services.impl.ContactDAOImpl"/>
@@ -84,5 +85,6 @@
 	<bean id="referenceNumberDao" class="com.conx.logistics.mdm.dao.services.impl.referencenumber.ReferenceNumberDAOImpl"/>
 	<bean id="referenceNumberTypeDao" class="com.conx.logistics.mdm.dao.services.impl.referencenumber.ReferenceNumberTypeDAOImpl"/>
 	<bean id="unlocoDao" class="com.conx.logistics.mdm.dao.services.impl.UnlocoDAOImpl"/>
+	<bean id="unitConversionService" class="com.conx.logistics.mdm.dao.services.impl.product.UnitConversionImpl" init-method="init"/>
 	<bean id="weightUnitDao" class="com.conx.logistics.mdm.dao.services.impl.product.WeightUnitDAOImpl"/>
 </beans>

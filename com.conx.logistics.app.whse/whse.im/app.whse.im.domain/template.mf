@@ -1,0 +1,18 @@
+Bundle-ManifestVersion: 2
+Bundle-Version: 1.0.0
+Bundle-Name: ConX WMS IM  Sub-Module Domain Model
+Bundle-SymbolicName: com.conx.logistics.app.whse.im.domain
+Fragment-Host: com.conx.logistics.kernel.persistence.dynaconfiguration
+Excluded-Imports:   javax.persistence,
+  com.conx.logistics.mdm.domain,
+  com.conx.logistics.mdm.domain.commercialrecord,
+  com.conx.logistics.mdm.domain.geolocation,
+  com.conx.logistics.mdm.domain.organization,
+  com.conx.logistics.mdm.domain.product,
+  com.conx.logistics.mdm.domain.referencenumber,
+  com.conx.logistics.app.whse.domain.docktype,
+  com.conx.logistics.app.whse.domain.warehouse,
+  com.conx.logistics.app.whse.domain.location,
+  com.conx.logistics.app.whse.rcv.rcv.domain,
+  org.springframework.format.annotation
+

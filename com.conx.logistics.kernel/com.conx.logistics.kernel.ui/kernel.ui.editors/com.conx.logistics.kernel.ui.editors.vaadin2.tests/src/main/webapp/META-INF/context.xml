@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context antiJARLocking="true" path="/com.conx.logistics.kernel.ui.editors.vaadin.tests">
+<Context antiJARLocking="true" path="/tests">
 <Manager pathname=""/>
 </Context>

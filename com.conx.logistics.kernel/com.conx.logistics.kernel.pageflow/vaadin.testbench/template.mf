@@ -1,0 +1,10 @@
+Bundle-ManifestVersion: 2
+Bundle-Version: 1.0.0
+Bundle-Name: com.conx.logistics.kernel.pageflow.vaadin.testbench
+Bundle-SymbolicName: com.conx.logistics.kernel.pageflow.vaadin.testbench
+Import-Package: org.springframework.transaction;version="[3.0,3.1)",
+  com.conx.logistics.kernel.pageflow.services;version="[1.0.0, 2.0.0)",
+  com.conx.logistics.kernel.pageflow.ui.builder;version="[1.0.0, 2.0.0)",
+  com.vaadin;version="[6.7.0, 7.0.0)",
+  com.vaadin.ui;version="[6.7.0, 7.0.0)"
+

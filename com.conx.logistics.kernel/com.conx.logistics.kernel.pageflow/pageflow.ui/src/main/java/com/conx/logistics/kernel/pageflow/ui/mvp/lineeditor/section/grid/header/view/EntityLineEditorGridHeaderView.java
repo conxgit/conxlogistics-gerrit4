@@ -26,7 +26,7 @@ public class EntityLineEditorGridHeaderView extends VerticalLayout implements IE
 		this.toolStrip = new EntityEditorToolStrip();
 		
 		this.createButton = this.toolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_CREATE_PNG);
-		this.createButton.setEnabled(true);
+		this.createButton.setEnabled(false);
 		
 		this.editButton = this.toolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_EDIT_PNG);
 		this.editButton.setEnabled(false);

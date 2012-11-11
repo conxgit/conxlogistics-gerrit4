@@ -17,5 +17,6 @@
   	<module>whse.domain</module>
   	<module>whse.domain.persistence.config</module>
   	<module>whse.dao.jpa.persistence</module>
+  	<module>whse.im</module>
   </modules>
 </project>

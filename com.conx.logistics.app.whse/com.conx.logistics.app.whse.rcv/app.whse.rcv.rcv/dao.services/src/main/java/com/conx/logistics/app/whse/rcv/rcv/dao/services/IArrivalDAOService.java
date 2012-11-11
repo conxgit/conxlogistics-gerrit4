@@ -2,7 +2,6 @@ package com.conx.logistics.app.whse.rcv.rcv.dao.services;
 
 import java.io.File;
 import java.util.List;
-import java.util.Set;
 
 import com.conx.logistics.app.whse.rcv.rcv.domain.Arrival;
 import com.conx.logistics.app.whse.rcv.rcv.domain.ArrivalReceipt;
@@ -18,7 +17,7 @@ public interface IArrivalDAOService {
 
 	public Arrival add(Arrival arvl, Receive parentReceive) throws Exception;
 	
-	public Arrival addArrivalReceipt(Long arrivalId, ArrivalReceipt receipt) throws Exception;
+	public ArrivalReceipt addArrivalReceipt(Long arrivalId, ArrivalReceipt receipt) throws Exception;
 	
 	public FileEntry addAttachment(Long arvlId, File sourceFile, String title, String description, String mimeType, DocType attachmentType) throws Exception;
 	

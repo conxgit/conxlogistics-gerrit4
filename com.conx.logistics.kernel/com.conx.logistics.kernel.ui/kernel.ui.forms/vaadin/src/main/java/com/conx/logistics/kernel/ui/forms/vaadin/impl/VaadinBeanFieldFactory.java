@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -37,6 +38,7 @@ import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.AbstractTextField;
 import com.vaadin.ui.Component;
@@ -45,6 +47,7 @@ import com.vaadin.ui.Field;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.TextField;
 
 @SuppressWarnings("serial")
 public class VaadinBeanFieldFactory extends DefaultFieldFactory {
@@ -57,12 +60,15 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 	private BeanItemContainer beanContainer;
 	private IEntityContainerProvider containerProvider;
 	private IEntityTypeDAOService entityTypeDao;
+	private Map<Class<?>, com.conx.logistics.mdm.domain.metamodel.EntityType> entityTypeCache;
+	
 
 	/**
 	 * Creates a new JPAContainerFieldFactory. For referece/collection types
 	 * ComboBox or multiselects are created by default.
 	 */
 	public VaadinBeanFieldFactory() {
+		this.entityTypeCache = new HashMap<Class<?>, com.conx.logistics.mdm.domain.metamodel.EntityType>();
 	}
 
 	/**
@@ -81,6 +87,7 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 		this.beanContainer = beanContainer;
 		this.containerProvider = containerProvider;
 		this.entityTypeDao = entityTypeDao;
+		this.entityTypeCache = new HashMap<Class<?>, com.conx.logistics.mdm.domain.metamodel.EntityType>();
 	}
 
 	/**
@@ -94,6 +101,18 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 	 */
 	public VaadinBeanFieldFactory(EntityManagerPerRequestHelper emprHelper) {
 		setEntityManagerPerRequestHelper(emprHelper);
+	}
+
+	private Field createBasicField(Item item, Object propertyId, Component uiContext) {
+		Class<?> type = item.getItemProperty(propertyId).getType();
+		if (Enum.class.isAssignableFrom(type)) {
+			return createEnumSelect(item, type, propertyId, uiContext);
+		}
+		Field field = super.createField(item, propertyId, uiContext);
+		if (field instanceof TextField) {
+			((TextField) field).setNullRepresentation("");
+		}
+		return field;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -113,7 +132,7 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 				}
 			}
 		}
-		return configureBasicFields(super.createField(item, propertyId, uiContext));
+		return configureBasicFields(createBasicField(item, propertyId, uiContext));
 	}
 
 	/**
@@ -150,21 +169,39 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 		return configureBasicFields(super.createField(container, itemId, propertyId, uiContext));
 	}
 
-	// private String getPropertyName(String propertyId) {
-	// int index = propertyId.indexOf(".");
-	// if (index == -1) {
-	// return propertyId;
-	// } else if (index == propertyId.length() - 1) {
-	// return "";
-	// } else {
-	// return StringUtil.extractLast(propertyId, ".");
-	// }
-	// }
+	private Field createEnumSelect(Item item, Class<?> type, Object propertyId, Component uiContext) {
+		Object[] elements = type.getEnumConstants();
+		if (elements == null) {
+			return null;
+		}
+		
+		IndexedContainer container = new IndexedContainer();
+		container.addContainerProperty("name", String.class, "");
+		Item enumItem = null;
+		for (Object element : elements) {
+			enumItem = container.addItem(element);
+			enumItem.getItemProperty("name").setValue(element.toString());
+		}
+
+		AbstractSelect nativeSelect = new NativeSelect();
+		nativeSelect.setMultiSelect(false);
+		nativeSelect.setCaption(DefaultFieldFactory.createCaptionByPropertyId(propertyId));
+		nativeSelect.setItemCaptionMode(NativeSelect.ITEM_CAPTION_MODE_PROPERTY);
+		nativeSelect.setItemCaptionPropertyId("name");
+		nativeSelect.setContainerDataSource(container);
+		nativeSelect.setWidth("100%");
+		nativeSelect.setPropertyDataSource(new SingleSelectTranslator(nativeSelect));
+		return nativeSelect;
+	}
 
 	@SuppressWarnings("rawtypes")
 	private PropertyKind getPropertyKind(BeanItemContainer container, Object propertyId) {
 		try {
-			com.conx.logistics.mdm.domain.metamodel.EntityType entityType = entityTypeDao.getByClass(container.getBeanType());
+			com.conx.logistics.mdm.domain.metamodel.EntityType entityType = this.entityTypeCache.get(container.getBeanType());
+			if (entityType == null) {
+				entityType = entityTypeDao.getByClass(container.getBeanType());
+				this.entityTypeCache.put(container.getBeanType(), entityType);
+			}
 			EntityTypeAttribute attribute = entityType.getAttribute(propertyId.toString());
 			if (attribute != null) {
 				if (attribute.getAttribute() instanceof com.conx.logistics.mdm.domain.metamodel.PluralAttribute) {
@@ -290,7 +327,8 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 		// return new MasterDetailEditor(this, containerForProperty, itemId,
 		// propertyId, uiContext);
 		// TODO fix master detail editor
-//		return new VaadinSelectDetail(this, containerForProperty, itemId, propertyId, uiContext);
+		// return new VaadinSelectDetail(this, containerForProperty, itemId,
+		// propertyId, uiContext);
 		return new VaadinPlaceHolderField();
 	}
 
@@ -335,7 +373,7 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 		}
 		return null;
 	}
-	
+
 	private String getRelationEntitySelectorEntityId(Class<?> type) {
 		if (type.isAssignableFrom(AddressTypeAddress.class)) {
 			return "type";

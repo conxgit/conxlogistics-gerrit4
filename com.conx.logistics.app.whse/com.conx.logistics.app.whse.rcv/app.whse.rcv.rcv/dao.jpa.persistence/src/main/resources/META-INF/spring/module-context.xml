@@ -34,5 +34,7 @@
 		PersistenceExceptions will be auto-translated due to @Repository.
 	-->
 	<bean id="rcvDao" class="com.conx.logistics.app.whse.rcv.rcv.dao.services.impl.ReceiveDAOImpl"/>
+	<bean id="rcvLineDao" class="com.conx.logistics.app.whse.rcv.rcv.dao.services.impl.ReceiveLineDAOImpl"/>
 	<bean id="arvlDao" class="com.conx.logistics.app.whse.rcv.rcv.dao.services.impl.ArrivalDAOImpl"/>
+	<bean id="arvlRcptDao" class="com.conx.logistics.app.whse.rcv.rcv.dao.services.impl.ArrivalReceiptDAOImpl"/>
 </beans>

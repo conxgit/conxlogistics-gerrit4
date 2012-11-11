@@ -19,55 +19,56 @@ import com.conx.logistics.app.whse.rcv.rcv.domain.types.RECEIVELINESTATUS;
 import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
 import com.conx.logistics.mdm.domain.product.Product;
 
-
 @Entity
-@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
-@Table(name="whreceiveline")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Table(name = "whreceiveline")
 public class ReceiveLine extends MultitenantBaseEntity {
 
-    @OneToOne(targetEntity = Receive.class, fetch = FetchType.EAGER)
-    @JoinColumn
-    private Receive parentReceive;
+	@OneToOne(targetEntity = Receive.class, fetch = FetchType.EAGER)
+	@JoinColumn
+	private Receive parentReceive;
 
-    @ManyToOne(targetEntity = Product.class, fetch = FetchType.EAGER)
-    @JoinColumn
-    private Product product;
+	@ManyToOne(targetEntity = Product.class, fetch = FetchType.EAGER)
+	@JoinColumn
+	private Product product;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<ReceiveLineStockItemSet> rlStockItems = new java.util.HashSet<ReceiveLineStockItemSet>();
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<ReceiveLineStockItemSet> rlStockItems = new java.util.HashSet<ReceiveLineStockItemSet>();
 
-    private Integer lineNumber;
+	private Integer lineNumber;
 
-    private Integer arrivedInnerPackCount;
+	private Integer arrivedInnerPackCount = 0;
 
-    private Integer arrivedOuterPackCount;
+	private Integer arrivedOuterPackCount = 0;
 
-    private Double arrivedWeight;
+	private Double arrivedWeight;
 
-    private Double arrivedTotalLen;
+	private Double arrivedTotalLen;
 
-    private Double arrivedTotalWidth;
+	private Double arrivedTotalWidth;
 
-    private Double arrivedTotalHeight;
+	private Double arrivedTotalHeight;
 
-    private Double arrivedTotalVolume;
+	private Double arrivedTotalVolume;
 
-    private Integer expectedInnerPackCount;
+	private Integer expectedInnerPackCount = 0;
 
-    private Integer expectedOuterPackCount;
+	private Integer expectedOuterPackCount = 0;
 
-    private Double expectedTotalWeight;
+	private Double expectedTotalWeight;
 
-    private Double expectedTotalLen;
+	private Double expectedTotalLen;
 
-    private Double expectedTotalWidth;
+	private Double expectedTotalWidth;
 
-    private Double expectedTotalHeight;
+	private Double expectedTotalHeight;
 
-    private Double expectedTotalVolume;
+	private Double expectedTotalVolume;
+	
+	private Integer remainingInnerPackCount;
 
-    @Enumerated(EnumType.STRING)
-    private RECEIVELINESTATUS status;
+	@Enumerated(EnumType.STRING)
+	private RECEIVELINESTATUS status;
 
 	public Receive getParentReceive() {
 		return parentReceive;
@@ -220,5 +221,34 @@ public class ReceiveLine extends MultitenantBaseEntity {
 	public void setStatus(RECEIVELINESTATUS status) {
 		this.status = status;
 	}
-    
+
+	public Double getExpectedProductTotalWeight() {
+		if (getProduct().getWeight() != null) {
+			Double ttl = getProduct().getWeight();
+			if (getExpectedInnerPackCount() != null)
+				ttl = ttl * getExpectedInnerPackCount();
+			return ttl;
+		} else {
+			return 0.0;
+		}
+	}
+
+	public Double getExpectedProductTotalVolume() {
+		if (getProduct().getVolume() != null) {
+			Double ttl = getProduct().getVolume();
+			if (getExpectedInnerPackCount() != null)
+				ttl = ttl * getExpectedInnerPackCount();
+			return ttl;
+		} else {
+			return 0.0;
+		}
+	}
+
+	public Integer getRemainingInnerPackCount() {
+		return remainingInnerPackCount;
+	}
+
+	public void setRemainingInnerPackCount(Integer remainingInnerPackCount) {
+		this.remainingInnerPackCount = remainingInnerPackCount;
+	}
 }

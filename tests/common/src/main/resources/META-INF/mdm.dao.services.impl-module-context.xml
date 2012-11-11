@@ -85,5 +85,6 @@
 	<bean id="referenceNumberDao" class="com.conx.logistics.mdm.dao.services.impl.referencenumber.ReferenceNumberDAOImpl"/>
 	<bean id="referenceNumberTypeDao" class="com.conx.logistics.mdm.dao.services.impl.referencenumber.ReferenceNumberTypeDAOImpl"/>
 	<bean id="unlocoDao" class="com.conx.logistics.mdm.dao.services.impl.UnlocoDAOImpl"/>
+	<bean id="unitConversionService" class="com.conx.logistics.mdm.dao.services.impl.product.UnitConversionImpl" init-method="init"/>
 	<bean id="weightUnitDao" class="com.conx.logistics.mdm.dao.services.impl.product.WeightUnitDAOImpl"/>
 </beans>

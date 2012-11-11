@@ -34,6 +34,7 @@ public class PagePresenter extends BasePresenter<IPageView, PageEventBus> implem
 	private IEntityTypeDAOService entityTypeDAOService;
 	private IFolderDAOService docFolderDAOService;
 	private IRemoteDocumentRepository docRepo;
+	private Map<String, Object> config;
 	
 	public void setPageContent(Component content) {
 		this.getView().setContent(content);
@@ -75,15 +76,15 @@ public class PagePresenter extends BasePresenter<IPageView, PageEventBus> implem
 	}
 
 	@Override
-	public void init(Map<String, Object> initParams) {
-		this.ptm = (PlatformTransactionManager) initParams.get(IPageComponent.JTA_GLOBAL_TRANSACTION_MANAGER);
-		this.pfpEventHandler = (IPageFlowPageChangedEventHandler) initParams.get(IPageComponent.PAGE_FLOW_PAGE_CHANGE_EVENT_HANDLER);
-		this.wizard = (ITaskWizard) initParams.get(IPageComponent.TASK_WIZARD);
-		this.containerProvider = (IEntityContainerProvider) initParams.get(IPageComponent.ENTITY_CONTAINER_PROVIDER);
-		
-		this.entityTypeDAOService = (IEntityTypeDAOService) initParams.get(IPageComponent.ENTITY_TYPE_DAO_SERVICE);
-		this.docFolderDAOService = (IFolderDAOService) initParams.get(IPageComponent.FOLDER_DAO_SERVICE);
-		this.docRepo = (IRemoteDocumentRepository) initParams.get(IPageComponent.REMOTE_DOCUMENT_REPOSITORY);
+	public void init(Map<String, Object> config) {
+		this.setConfig(config);
+		this.ptm = (PlatformTransactionManager) config.get(IPageComponent.JTA_GLOBAL_TRANSACTION_MANAGER);
+		this.pfpEventHandler = (IPageFlowPageChangedEventHandler) config.get(IPageComponent.PAGE_FLOW_PAGE_CHANGE_EVENT_HANDLER);
+		this.wizard = (ITaskWizard) config.get(IPageComponent.TASK_WIZARD);
+		this.containerProvider = (IEntityContainerProvider) config.get(IPageComponent.ENTITY_CONTAINER_PROVIDER);
+		this.entityTypeDAOService = (IEntityTypeDAOService) config.get(IPageComponent.ENTITY_TYPE_DAO_SERVICE);
+		this.docFolderDAOService = (IFolderDAOService) config.get(IPageComponent.FOLDER_DAO_SERVICE);
+		this.docRepo = (IRemoteDocumentRepository) config.get(IPageComponent.REMOTE_DOCUMENT_REPOSITORY);
 	}
 
 	@Override
@@ -154,5 +155,13 @@ public class PagePresenter extends BasePresenter<IPageView, PageEventBus> implem
 
 	public IRemoteDocumentRepository getDocRepo() {
 		return docRepo;
+	}
+
+	public Map<String, Object> getConfig() {
+		return config;
+	}
+
+	public void setConfig(Map<String, Object> config) {
+		this.config = config;
 	}
 }

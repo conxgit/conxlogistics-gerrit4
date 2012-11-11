@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context antiJARLocking="true"
+	path="/com.conx.logistics.app.whse.rcv.rcv.pageflow.tests.vaadin.testbench.web">
+	<Manager pathname="" />
+</Context>

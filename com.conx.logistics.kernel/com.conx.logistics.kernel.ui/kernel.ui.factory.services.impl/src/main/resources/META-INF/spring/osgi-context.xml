@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd"
+	xmlns:osgi="http://www.springframework.org/schema/osgi">
+	<osgi:service ref="daoProvider" interface="com.conx.logistics.kernel.ui.factory.services.data.IDAOProvider">	
+	</osgi:service>	
+	
+	<osgi:reference id="folderDao" cardinality="1..1" interface="com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService">
+	</osgi:reference>
+	<osgi:reference id="baseEntityDao" cardinality="1..1" interface="com.conx.logistics.mdm.dao.services.IBaseEntityDAOService">
+	</osgi:reference>
+	<osgi:reference id="entityMetadataDao" cardinality="1..1" interface="com.conx.logistics.mdm.dao.services.IEntityMetadataDAOService">
+	</osgi:reference>
+	<osgi:reference id="entityTypeDao" cardinality="1..1" interface="com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService">
+	</osgi:reference>
+	<osgi:reference id="referenceNumberTypeDao" cardinality="1..1" interface="com.conx.logistics.mdm.dao.services.referencenumber.IReferenceNumberTypeDAOService">
+	</osgi:reference>
+	<osgi:reference id="referenceNumberDao" cardinality="1..1" interface="com.conx.logistics.mdm.dao.services.referencenumber.IReferenceNumberDAOService">
+	</osgi:reference>
+	<osgi:reference id="docTypeDao" cardinality="1..1" interface="com.conx.logistics.mdm.dao.services.documentlibrary.IDocTypeDAOService">
+	</osgi:reference>
+	<osgi:reference id="noteDao" cardinality="1..1" interface="com.conx.logistics.mdm.dao.services.note.INoteDAOService">
+	</osgi:reference>
+	<osgi:reference id="stockItemDao" cardinality="1..1" interface="com.conx.logistics.app.whse.im.dao.services.IStockItemDAOService">
+	</osgi:reference>
+	<osgi:reference id="arrivalDao" cardinality="1..1" interface="com.conx.logistics.app.whse.rcv.rcv.dao.services.IArrivalDAOService">
+	</osgi:reference>
+	<osgi:reference id="arrivalReceiptDao" cardinality="1..1" interface="com.conx.logistics.app.whse.rcv.rcv.dao.services.IArrivalReceiptDAOService">
+	</osgi:reference>
+	<osgi:reference id="receiveDao" cardinality="1..1" interface="com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveDAOService">
+	</osgi:reference>
+	<osgi:reference id="receiveLineDao" cardinality="1..1" interface="com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveLineDAOService">
+	</osgi:reference>
+	<osgi:reference id="locationDao" cardinality="1..1" interface="com.conx.logistics.app.whse.dao.services.ILocationDAOService">
+	</osgi:reference>
+	<!-- <osgi:reference id="fileEntryDao" cardinality="1..1" interface="com.conx.logistics.mdm.dao.services.documentlibrary.IFileEntryDAOService">
+	</osgi:reference> -->
+	<osgi:reference id="globalTransManager" interface="org.springframework.transaction.PlatformTransactionManager" filter="(module=KERNEL.TM.JTA)">
+	</osgi:reference>
+</beans>

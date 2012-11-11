@@ -1,21 +1,22 @@
 package com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.grid.header;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vaadin.mvp.eventbus.EventBusManager;
 import org.vaadin.mvp.presenter.BasePresenter;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
+import com.conx.logistics.kernel.pageflow.ui.ext.mvp.ILocalizedEventSubscriber;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.grid.header.view.EntityLineEditorGridHeaderView;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.grid.header.view.IEntityLineEditorGridHeaderView;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 
 @Presenter(view = EntityLineEditorGridHeaderView.class)
-public class EntityLineEditorGridHeaderPresenter extends BasePresenter<IEntityLineEditorGridHeaderView, EntityLineEditorGridHeaderEventBus> {
+public class EntityLineEditorGridHeaderPresenter extends BasePresenter<IEntityLineEditorGridHeaderView, EntityLineEditorGridHeaderEventBus> implements ILocalizedEventSubscriber {
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 	private boolean initialized = false;
+	private EventBusManager sectionEventBusManager;
 
 	@Override
 	public void bind() {
@@ -26,6 +27,7 @@ public class EntityLineEditorGridHeaderPresenter extends BasePresenter<IEntityLi
 
 			@Override
 			public void buttonClick(ClickEvent event) {
+				EntityLineEditorGridHeaderPresenter.this.sectionEventBusManager.fireAnonymousEvent("create");
 			}
 		});
 		this.getView().addEditListener(new ClickListener() {
@@ -33,6 +35,7 @@ public class EntityLineEditorGridHeaderPresenter extends BasePresenter<IEntityLi
 
 			@Override
 			public void buttonClick(ClickEvent event) {
+				EntityLineEditorGridHeaderPresenter.this.sectionEventBusManager.fireAnonymousEvent("edit");
 			}
 		});
 		this.getView().addDeleteListener(new ClickListener() {
@@ -40,6 +43,7 @@ public class EntityLineEditorGridHeaderPresenter extends BasePresenter<IEntityLi
 
 			@Override
 			public void buttonClick(ClickEvent event) {
+				EntityLineEditorGridHeaderPresenter.this.sectionEventBusManager.fireAnonymousEvent("delete");
 			}
 		});
 		this.getView().addPrintListener(new ClickListener() {
@@ -47,6 +51,7 @@ public class EntityLineEditorGridHeaderPresenter extends BasePresenter<IEntityLi
 
 			@Override
 			public void buttonClick(ClickEvent event) {
+				EntityLineEditorGridHeaderPresenter.this.sectionEventBusManager.fireAnonymousEvent("print");
 			}
 		});
 	}
@@ -59,6 +64,41 @@ public class EntityLineEditorGridHeaderPresenter extends BasePresenter<IEntityLi
 		this.initialized = initialized;
 	}
 
-	public void onConfigure(Map<String, Object> params) {
+	public void onEnableCreate() {
+		this.getView().setCreateEnabled(true);
+	}
+
+	public void onDisableCreate() {
+		this.getView().setCreateEnabled(false);
+	}
+
+	public void onEnableEdit() {
+		this.getView().setEditEnabled(true);
+	}
+
+	public void onDisableEdit() {
+		this.getView().setEditEnabled(false);
+	}
+
+	public void onEnableDelete() {
+		this.getView().setDeleteEnabled(true);
+	}
+
+	public void onDisableDelete() {
+		this.getView().setDeleteEnabled(false);
+	}
+
+	public void onEnablePrint() {
+		this.getView().setPrintEnabled(true);
+	}
+
+	public void onDisablePrint() {
+		this.getView().setPrintEnabled(false);
+	}
+
+	@Override
+	public void subscribe(EventBusManager eventBusManager) {
+		this.sectionEventBusManager = eventBusManager;
+		this.sectionEventBusManager.register(EntityLineEditorGridHeaderEventBus.class, getEventBus());
 	}
 }

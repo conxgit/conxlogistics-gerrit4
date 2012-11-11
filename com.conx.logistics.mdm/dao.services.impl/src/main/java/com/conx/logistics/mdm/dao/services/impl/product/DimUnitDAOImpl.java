@@ -126,5 +126,7 @@ public class DimUnitDAOImpl implements IDimUnitDAOService {
 		provide(DimUnitCustomCONSTANTS.TYPE_FT, DimUnitCustomCONSTANTS.TYPE_FT_DESCRIPTION);
 		provide(DimUnitCustomCONSTANTS.TYPE_M, DimUnitCustomCONSTANTS.TYPE_M_DESCRIPTION);
 		provide(DimUnitCustomCONSTANTS.TYPE_YD, DimUnitCustomCONSTANTS.TYPE_YD_DESCRIPTION);
+		provide(DimUnitCustomCONSTANTS.TYPE_CF, DimUnitCustomCONSTANTS.TYPE_CF_DESCRIPTION);
+		provide(DimUnitCustomCONSTANTS.TYPE_CM, DimUnitCustomCONSTANTS.TYPE_CM_DESCRIPTION);
 	}
 }

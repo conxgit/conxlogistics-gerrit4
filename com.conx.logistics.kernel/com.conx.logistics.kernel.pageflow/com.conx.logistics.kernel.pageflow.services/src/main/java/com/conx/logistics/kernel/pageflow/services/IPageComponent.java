@@ -14,6 +14,9 @@ public interface IPageComponent extends WizardStep {
 	public static final String ENTITY_TYPE_DAO_SERVICE = "ENTITY_TYPE_DAO_SERVICE";
 	public static final String FOLDER_DAO_SERVICE = "FOLDER_DAO_SERVICE";
 	public static final String REMOTE_DOCUMENT_REPOSITORY = "REMOTE_DOCUMENT_REPOSITORY";
+	public static final String OWNER_PAGE_PRESENTER = "OWNER_PAGE_PRESENTER";
+	public static final String EVENT_BUS_MANAGER = "OWNER_PAGE_PRESENTER";
+	public static final String DAO_PROVIDER = "DAO_PROVIDER";
 	
 	public void init(Map<String, Object> initParams);
 	public void setParameterData(Map<String, Object> params);

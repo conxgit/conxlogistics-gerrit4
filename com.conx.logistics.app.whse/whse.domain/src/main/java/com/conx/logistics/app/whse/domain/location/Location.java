@@ -25,9 +25,41 @@ public class Location extends MultitenantBaseEntity {
     @JoinColumn
     private Warehouse warehouse;
 
-    private Integer locRow;
+    private Integer row;
 
-    private Integer locCol;
+    private Integer column;
 
-    private String locLevel;
+    private String level;
+
+	public Warehouse getWarehouse() {
+		return warehouse;
+	}
+
+	public void setWarehouse(Warehouse warehouse) {
+		this.warehouse = warehouse;
+	}
+
+	public Integer getRow() {
+		return row;
+	}
+
+	public void setRow(Integer row) {
+		this.row = row;
+	}
+
+	public Integer getColumn() {
+		return column;
+	}
+
+	public void setColumn(Integer column) {
+		this.column = column;
+	}
+
+	public String getLevel() {
+		return level;
+	}
+
+	public void setLevel(String level) {
+		this.level = level;
+	}
 }

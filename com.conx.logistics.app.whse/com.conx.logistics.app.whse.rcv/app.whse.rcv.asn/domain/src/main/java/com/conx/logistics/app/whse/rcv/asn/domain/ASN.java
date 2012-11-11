@@ -23,7 +23,6 @@ import com.conx.logistics.app.whse.domain.warehouse.Warehouse;
 import com.conx.logistics.app.whse.rcv.asn.shared.type.ASNSTATUS;
 import com.conx.logistics.app.whse.rcv.asn.shared.type.TRANSMODE;
 import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
-import com.conx.logistics.mdm.domain.commercialrecord.CommercialRecord;
 import com.conx.logistics.mdm.domain.geolocation.Address;
 import com.conx.logistics.mdm.domain.organization.Organization;
 import com.conx.logistics.mdm.domain.product.DimUnit;
@@ -35,16 +34,16 @@ import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber;
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 @Table(name="whasn")
 public class ASN extends MultitenantBaseEntity {
-    @OneToOne(targetEntity = PackUnit.class)
+    @ManyToOne(targetEntity = PackUnit.class)
     private PackUnit outerPackUnit;
 
-    @OneToOne(targetEntity = WeightUnit.class)
+    @ManyToOne(targetEntity = WeightUnit.class)
     private WeightUnit weightUnit;
 
-    @OneToOne(targetEntity = DimUnit.class)
+    @ManyToOne(targetEntity = DimUnit.class)
     private DimUnit dimUnit;
 
-    @OneToOne(targetEntity = DimUnit.class)
+    @ManyToOne(targetEntity = DimUnit.class)
     private DimUnit volUnit;
 
     @OneToOne(targetEntity = Organization.class)

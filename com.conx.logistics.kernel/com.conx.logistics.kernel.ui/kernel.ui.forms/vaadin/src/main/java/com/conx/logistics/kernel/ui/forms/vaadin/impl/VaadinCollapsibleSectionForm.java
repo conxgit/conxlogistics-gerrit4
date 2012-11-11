@@ -2,7 +2,6 @@ package com.conx.logistics.kernel.ui.forms.vaadin.impl;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 
 import com.conx.logistics.kernel.ui.components.domain.form.ConXCollapseableSectionForm;
@@ -10,16 +9,14 @@ import com.conx.logistics.kernel.ui.components.domain.form.FieldSet;
 import com.conx.logistics.kernel.ui.components.domain.form.FieldSetField;
 import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
 import com.conx.logistics.kernel.ui.forms.vaadin.IVaadinForm;
-import com.conx.logistics.kernel.ui.forms.vaadin.listeners.IFormChangeListener;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.ui.Field;
-import com.vaadin.ui.Form;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 
-public class VaadinCollapsibleSectionForm extends Form implements IVaadinForm {
+public class VaadinCollapsibleSectionForm extends VaadinForm implements IVaadinForm {
 	private static final long serialVersionUID = -639931L;
 
 	private VaadinFormHeader header;
@@ -31,9 +28,9 @@ public class VaadinCollapsibleSectionForm extends Form implements IVaadinForm {
 	private FormMode mode;
 	private HashMap<FieldSet, VaadinCollapsibleSectionFormSectionHeader> headers;
 	private HashMap<Field, FieldSetField> fields;
-	private Set<IFormChangeListener> formChangeListeners;
 
 	public VaadinCollapsibleSectionForm(ConXCollapseableSectionForm componentForm) {
+		this.setComponentModel(componentForm);
 		this.componentForm = componentForm;
 		this.innerLayoutPanel = new Panel();
 		this.layout = new VerticalLayout();
@@ -42,7 +39,6 @@ public class VaadinCollapsibleSectionForm extends Form implements IVaadinForm {
 		this.headers = new HashMap<FieldSet, VaadinCollapsibleSectionFormSectionHeader>();
 		this.fields = new HashMap<Field, FieldSetField>();
 		this.innerLayout = new VerticalLayout();
-		this.formChangeListeners = new HashSet<IFormChangeListener>();
 
 		initialize();
 	}
@@ -79,7 +75,6 @@ public class VaadinCollapsibleSectionForm extends Form implements IVaadinForm {
 
 		setImmediate(true);
 		setFormMode(FormMode.EDITING);
-		setFormFieldFactory(new VaadinJPAFieldFactory());
 		setLayout(layout);
 		// False so that commit() must be called explicitly
 		setWriteThrough(false);
@@ -94,14 +89,10 @@ public class VaadinCollapsibleSectionForm extends Form implements IVaadinForm {
 			FieldSetField fieldComponent = fieldSet.getFieldSetField((String) propertyId);
 			if (fieldComponent != null) {
 				fields.put(field, fieldComponent);
-				VaadinFormFieldAugmenter.augment(field, fieldComponent, new ValueChangeListener() {
-					private static final long serialVersionUID = -6182433271255560793L;
-
-					@Override
-					public void valueChange(com.vaadin.data.Property.ValueChangeEvent event) {
-						onFormChanged();
-					}
-				});
+				VaadinFormFieldAugmenter.augment(field, fieldComponent);
+				if (this.getComponentModel().isReadOnly()) {
+					field.setReadOnly(true);
+				}
 				VaadinCollapsibleSectionFormSectionHeader header = headers.get(fieldSet);
 				if (header == null) {
 					header = addFormSection(fieldSet);
@@ -110,16 +101,6 @@ public class VaadinCollapsibleSectionForm extends Form implements IVaadinForm {
 				header.getLayout().addComponent(field);
 			}
 		}
-	}
-
-	public void onFormChanged() {
-		for (IFormChangeListener listener : this.formChangeListeners) {
-			listener.onFormChanged();
-		}
-	}
-
-	public void addFormChangeListener(IFormChangeListener listener) {
-		this.formChangeListeners.add(listener);
 	}
 
 	private VaadinCollapsibleSectionFormSectionHeader addFormSection(FieldSet fieldSet) {
@@ -170,11 +151,6 @@ public class VaadinCollapsibleSectionForm extends Form implements IVaadinForm {
 	}
 
 	public boolean validateForm() {
-		// super.validate();
-		// for (final Iterator<Object> i = propertyIds.iterator();
-		// i.hasNext();) {
-		// (fields.get(i.next())).validate();
-		// }
 		boolean firstErrorFound = false;
 		Set<FieldSet> formFieldHeaders = headers.keySet();
 		for (FieldSet fieldSet : formFieldHeaders) {
@@ -220,5 +196,9 @@ public class VaadinCollapsibleSectionForm extends Form implements IVaadinForm {
 	public void resetForm() {
 		this.alertPanel.setVisible(false);
 		setItemDataSource(getItemDataSource());
+	}
+	
+	public ConXCollapseableSectionForm getComponentModel() {
+		return this.componentForm;
 	}
 }

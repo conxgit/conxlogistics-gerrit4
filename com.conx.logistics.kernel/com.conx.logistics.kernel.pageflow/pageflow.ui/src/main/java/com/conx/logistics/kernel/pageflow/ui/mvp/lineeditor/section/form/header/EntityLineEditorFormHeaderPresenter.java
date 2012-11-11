@@ -4,25 +4,22 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vaadin.mvp.eventbus.EventBusManager;
 import org.vaadin.mvp.presenter.BasePresenter;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
-import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.EntityLineEditorSectionEventBus;
-import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.EntityLineEditorSectionPresenter;
+import com.conx.logistics.kernel.pageflow.ui.ext.mvp.ILocalizedEventSubscriber;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.form.header.view.EntityLineEditorFormHeaderView;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.form.header.view.IEntityLineEditorFormHeaderView;
-import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
 import com.vaadin.data.Item;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 
 @Presenter(view = EntityLineEditorFormHeaderView.class)
-public class EntityLineEditorFormHeaderPresenter extends BasePresenter<IEntityLineEditorFormHeaderView, EntityLineEditorFormHeaderEventBus> {
+public class EntityLineEditorFormHeaderPresenter extends BasePresenter<IEntityLineEditorFormHeaderView, EntityLineEditorFormHeaderEventBus> implements ILocalizedEventSubscriber {
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 	private boolean initialized = false;
-	
-	private EntityLineEditorSectionPresenter lineEditorSectionPresenter;
-	private EntityLineEditorSectionEventBus lineEditorSectionEventBus;
+	private EventBusManager sectionEventBusManager;
 
 	@Override
 	public void bind() {
@@ -55,18 +52,15 @@ public class EntityLineEditorFormHeaderPresenter extends BasePresenter<IEntityLi
 	}
 
 	public void validate() {
-		this.getView().setVerifyEnabled(false);
-		lineEditorSectionEventBus.validateForm();
+		this.sectionEventBusManager.fireAnonymousEvent("validate");
 	}
 
 	public void save() {
-		lineEditorSectionEventBus.saveForm();
+		this.sectionEventBusManager.fireAnonymousEvent("save");
 	}
 
 	public void reset() {
-		this.getView().setVerifyEnabled(false);
-		this.getView().setResetEnabled(false);
-		lineEditorSectionEventBus.resetForm();
+		this.sectionEventBusManager.fireAnonymousEvent("reset");
 	}
 
 	public boolean isInitialized() {
@@ -78,8 +72,6 @@ public class EntityLineEditorFormHeaderPresenter extends BasePresenter<IEntityLi
 	}
 
 	public void onConfigure(Map<String, Object> params) {
-		this.lineEditorSectionPresenter = (EntityLineEditorSectionPresenter) params.get(IEntityEditorFactory.FACTORY_PARAM_MVP_LINE_EDITOR_SECTION_PRESENTER);
-		this.lineEditorSectionEventBus = lineEditorSectionPresenter.getEventBus();
 	}
 
 	public void onSetItemDataSource(Item item) {
@@ -97,4 +89,35 @@ public class EntityLineEditorFormHeaderPresenter extends BasePresenter<IEntityLi
 		this.getView().setSaveEnabled(true);
 		this.getView().setVerifyEnabled(false);
 	}
+	
+	@Override
+	public void subscribe(EventBusManager eventBusManager) {
+		this.sectionEventBusManager = eventBusManager;
+		this.sectionEventBusManager.register(EntityLineEditorFormHeaderEventBus.class, getEventBus());
+	}
+	
+	public void onEnableValidate() {
+		this.getView().setVerifyEnabled(true);
+	}
+	
+	public void onDisableValidate() {
+		this.getView().setVerifyEnabled(false);
+	}
+	
+	public void onEnableSave() {
+		this.getView().setSaveEnabled(true);
+	}
+	
+	public void onDisableSave() {
+		this.getView().setSaveEnabled(false);
+	}
+	
+	public void onEnableReset() {
+		this.getView().setResetEnabled(true);
+	}
+	
+	public void onDisableReset() {
+		this.getView().setResetEnabled(false);
+	}
+	
 }

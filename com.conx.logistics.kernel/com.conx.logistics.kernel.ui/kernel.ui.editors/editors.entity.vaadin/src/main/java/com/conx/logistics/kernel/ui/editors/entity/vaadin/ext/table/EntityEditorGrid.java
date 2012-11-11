@@ -196,4 +196,8 @@ public class EntityEditorGrid extends VerticalLayout implements FilterDecorator,
 			}
 		}
 	}
+	
+	public Container getContainerDataSource() {
+		return this.grid.getContainerDataSource();
+	}
 }

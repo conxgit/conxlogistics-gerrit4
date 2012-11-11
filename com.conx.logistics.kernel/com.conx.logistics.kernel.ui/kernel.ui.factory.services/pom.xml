@@ -19,7 +19,11 @@
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.kernel.documentlibrary.remote.services</artifactId>
 			<version>1.0.0</version>
-		</dependency>	
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.transaction</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

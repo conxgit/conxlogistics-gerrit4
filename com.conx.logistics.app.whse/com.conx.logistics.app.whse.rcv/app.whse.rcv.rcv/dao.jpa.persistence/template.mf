@@ -17,6 +17,7 @@ Import-Package:
   com.conx.logistics.mdm.domain.organization;version="[1.0.0,2.0.0)",
   com.conx.logistics.mdm.domain.product;version="[1.0.0,2.0.0)",
   com.conx.logistics.mdm.domain.metamodel;version="[1.0.0,2.0.0)",
+  com.conx.logistics.mdm.dao.services.product;version="[1.0.0,2.0.0)",
   com.conx.logistics.kernel.documentlibrary.remote.services;version="[1.0.0,2.0.0)",
   com.conx.logistics.kernel.metamodel.dao.services;version="[1.0.0,2.0.0)",
   com.conx.logistics.mdm.domain.documentlibrary;version="[1.0.0,2.0.0)",

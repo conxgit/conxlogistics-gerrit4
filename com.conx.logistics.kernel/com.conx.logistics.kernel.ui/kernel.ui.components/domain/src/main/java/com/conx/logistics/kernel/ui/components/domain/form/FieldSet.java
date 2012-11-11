@@ -22,10 +22,10 @@ public class FieldSet extends AbstractConXComponent {
 
 	@Transient
 	private Map<String, DataSourceField> fieldMap = null;
-	
+
 	@Transient
 	private Map<String, FieldSetField> fieldSetFieldMap = null;
-	
+
 	@OneToOne
 	private ConXForm form;
 
@@ -36,7 +36,7 @@ public class FieldSet extends AbstractConXComponent {
 	private AbstractConXLayout layout;
 
 	private int ordinal;
-	
+
 	public FieldSet() {
 		super("fieldSet");
 		this.ordinal = -1;
@@ -75,12 +75,16 @@ public class FieldSet extends AbstractConXComponent {
 		}
 		return fieldMap;
 	}
-	
+
 	public Map<String, FieldSetField> getFieldSetFieldMap() {
 		if (fieldSetFieldMap == null) {
 			fieldSetFieldMap = new HashMap<String, FieldSetField>();
 			for (FieldSetField field : getFields()) {
-				fieldSetFieldMap.put(field.getDataSourceField().getName(), field);
+				if (field.getDataSourceField().isNestedAttribute()) {
+					fieldSetFieldMap.put(field.getDataSourceField().getJPAPath(), field);
+				} else {
+					fieldSetFieldMap.put(field.getDataSourceField().getName(), field);
+				}
 			}
 		}
 		return fieldSetFieldMap;
@@ -93,7 +97,7 @@ public class FieldSet extends AbstractConXComponent {
 	public DataSourceField getField(String fieldName) {
 		return getFieldMap().get(fieldName);
 	}
-	
+
 	public FieldSetField getFieldSetField(String fieldName) {
 		return getFieldSetFieldMap().get(fieldName);
 	}
