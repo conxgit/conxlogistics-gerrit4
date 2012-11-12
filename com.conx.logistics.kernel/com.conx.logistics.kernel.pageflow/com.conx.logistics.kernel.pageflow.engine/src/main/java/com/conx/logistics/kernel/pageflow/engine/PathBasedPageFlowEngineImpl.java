@@ -35,6 +35,7 @@ import com.conx.logistics.kernel.pageflow.services.IPageFlowPage;
 import com.conx.logistics.kernel.pageflow.services.IPageFlowSession;
 import com.conx.logistics.kernel.pageflow.services.ITaskWizard;
 import com.conx.logistics.kernel.pageflow.ui.wizard.TaskWizard;
+import com.conx.logistics.kernel.ui.factory.services.data.IDAOProvider;
 import com.conx.logistics.kernel.ui.service.contribution.IMainApplication;
 import com.conx.logistics.mdm.dao.services.IEntityMetadataDAOService;
 import com.conx.logistics.mdm.domain.application.Feature;
@@ -332,6 +333,7 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 
 		String processId = (String)properties.get("processId");
 		String userId = (String)properties.get("userId");
+		
 		Feature   onCompletionFeature = (Feature)properties.get("onCompletionFeature");
 		IPresenter<?, ? extends EventBus>   onCompletionCompletionViewPresenter = (IPresenter<?, ? extends EventBus>)properties.get("onCompletionViewPresenter");
 		
@@ -413,9 +415,9 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 		
 		
 		// 3. Create wizard
-		TaskWizard wizard = new TaskWizard(session);
+		TaskWizard wizard = new TaskWizard(session, properties);
 		wizard.setSizeFull();
-
+		
 
 		return wizard;
 	}

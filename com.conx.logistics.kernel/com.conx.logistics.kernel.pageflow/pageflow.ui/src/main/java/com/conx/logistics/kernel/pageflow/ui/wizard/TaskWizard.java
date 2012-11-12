@@ -36,6 +36,7 @@ import com.conx.logistics.kernel.persistence.services.IEntityContainerProvider;
 import com.conx.logistics.kernel.ui.common.entityprovider.jta.CustomCachingMutableLocalEntityProvider;
 import com.conx.logistics.kernel.ui.common.entityprovider.jta.CustomNonCachingMutableLocalEntityProvider;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
+import com.conx.logistics.kernel.ui.factory.services.data.IDAOProvider;
 import com.conx.logistics.kernel.ui.service.contribution.IApplicationViewContribution;
 import com.conx.logistics.kernel.ui.service.contribution.IMainApplication;
 import com.conx.logistics.kernel.ui.service.contribution.IViewContribution;
@@ -70,9 +71,29 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 	private HashMap<String, Object> initParams;
 	private UserTransaction userTransaction;
 
+	private IDAOProvider daoProvider;
+
 	public TaskWizard(IPageFlowSession session) {
 		this.session = session;
 		this.engine = session.getPageFlowEngine();
+		this.userTransaction = this.engine.getUserTransaction();
+		this.pageComponentMap = new HashMap<IPageFlowPage, IPageComponent>();
+
+		HashMap<String, Object> config = new HashMap<String, Object>();
+		config.put(IEntityEditorFactory.CONTAINER_PROVIDER, this);
+		this.pageFactory = new VaadinPageFactoryImpl(config);
+
+		getNextButton().setImmediate(true);
+		getBackButton().setImmediate(true);
+
+		// Init steps
+		addAllPages();
+	}
+
+	public TaskWizard(IPageFlowSession session, Map<String, Object> properties) {
+		this.session = session;
+		this.engine = session.getPageFlowEngine();
+		this.daoProvider = (IDAOProvider) properties.get("daoProvider");
 		this.userTransaction = this.engine.getUserTransaction();
 		this.pageComponentMap = new HashMap<IPageFlowPage, IPageComponent>();
 
@@ -105,6 +126,7 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 			initParams.put(IPageComponent.CONX_ENTITY_MANAGER_FACTORY, session.getConXEntityManagerfactory());
 			initParams.put(IPageComponent.JTA_GLOBAL_TRANSACTION_MANAGER, session.getJTAGlobalTransactionManager());
 			initParams.put(IPageComponent.TASK_WIZARD, this);
+			initParams.put(IPageComponent.DAO_PROVIDER, this.daoProvider);
 			initParams.put(IPageComponent.PAGE_FLOW_PAGE_CHANGE_EVENT_HANDLER, this);
 			initParams.put(IPageComponent.ENTITY_CONTAINER_PROVIDER, this);
 			initParams.put(IPageComponent.ENTITY_TYPE_DAO_SERVICE, this.engine.getEntityTypeDAOService());

@@ -36,6 +36,7 @@ import com.conx.logistics.kernel.ui.common.data.container.EntityTypeContainerFac
 import com.conx.logistics.kernel.ui.common.entityprovider.jta.CustomCachingMutableLocalEntityProvider;
 import com.conx.logistics.kernel.ui.common.ui.menu.app.AppMenuEntry;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
+import com.conx.logistics.kernel.ui.factory.services.data.IDAOProvider;
 import com.conx.logistics.kernel.ui.service.IUIContributionManager;
 import com.conx.logistics.kernel.ui.service.contribution.IActionContribution;
 import com.conx.logistics.kernel.ui.service.contribution.IApplicationViewContribution;
@@ -102,6 +103,7 @@ public class MockApp extends Application {
 	private IPortalOrganizationService portalOrganizationService;
 
 	private User currentUser = null;
+	private IDAOProvider daoProvider;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -118,6 +120,7 @@ public class MockApp extends Application {
 				params.put("onCompletionFeature", onCompletionFeature);
 				params.put("processId", "whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0");
 				params.put("userId", "conxuser");
+				params.put("daoProvider", this.daoProvider);
 
 				// -- 1. Start process
 				ITaskWizard wiz = pageFlowEngine.createTaskWizard(params);
@@ -511,5 +514,15 @@ public class MockApp extends Application {
 
 	public void setCurrentUser(User currentUser) {
 		this.currentUser = currentUser;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public void bindDAOProvider(IDAOProvider daoProvider, Map properties) {
+		this.daoProvider = daoProvider;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public void unbindDAOProvider(IDAOProvider daoProvider, Map properties) {
+		this.daoProvider = null;
 	}
 }
