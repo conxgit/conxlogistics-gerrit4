@@ -35,9 +35,7 @@ import com.conx.logistics.kernel.pageflow.services.IPageFlowPage;
 import com.conx.logistics.kernel.pageflow.services.IPageFlowSession;
 import com.conx.logistics.kernel.pageflow.services.ITaskWizard;
 import com.conx.logistics.kernel.pageflow.ui.wizard.TaskWizard;
-import com.conx.logistics.kernel.ui.factory.services.data.IDAOProvider;
 import com.conx.logistics.kernel.ui.service.contribution.IMainApplication;
-import com.conx.logistics.mdm.dao.services.IEntityMetadataDAOService;
 import com.conx.logistics.mdm.domain.application.Feature;
 import com.conx.logistics.mdm.domain.task.TaskDefinition;
 

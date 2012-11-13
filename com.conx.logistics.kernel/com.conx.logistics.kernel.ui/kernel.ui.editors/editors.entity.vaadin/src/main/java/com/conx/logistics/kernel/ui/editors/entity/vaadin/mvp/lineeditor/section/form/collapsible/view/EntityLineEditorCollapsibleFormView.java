@@ -77,7 +77,7 @@ public class EntityLineEditorCollapsibleFormView extends VerticalLayout implemen
 
 	@Override
 	public void addFormChangeListener(IFormChangeListener listener) {
-		this.form.addFormChangeListener(listener);
+		this.form.addListener(listener);
 	}
 
 	@Override
