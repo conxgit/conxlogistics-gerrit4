@@ -12,6 +12,7 @@ import org.jbpm.workflow.core.node.HumanTaskNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.conx.logistics.kernel.bpm.services.IBPMService;
 import com.conx.logistics.kernel.pageflow.services.IPageFlowPage;
 
 public class PageFlowPathAssessor {
@@ -29,16 +30,22 @@ public class PageFlowPathAssessor {
 	private boolean pagesChanged;
 
 	private String currentTaskName;
+
+	private IBPMService bpmService;
+
+	private String processInstanceId;
 	
 	public PageFlowPathAssessor(){
 	}
 	
 	public PageFlowPathAssessor(
-			    String name, 
+			    String processInstanceId, IBPMService bpmService, String name, 
 				List<Node> nodePath,
 			    Map<String, List<Node>> possibleNextPaths,
 			    Map<String,IPageFlowPage> pageCache) {
 		super();
+		this.processInstanceId = processInstanceId;
+		this.bpmService = bpmService;
 		this.name = name;
 		this.nodePath = nodePath;
 		this.possibleNextPaths = possibleNextPaths;
@@ -129,8 +136,9 @@ public class PageFlowPathAssessor {
 				if (currentTaskName == null && firstTaskName == null)
 				{
 					firstTaskName = node.getName();
-					this.currentTaskId = ((HumanTaskNode)node).getId();
-					this.currentTaskName = ((HumanTaskNode)node).getName();
+					TaskSummary ts = this.bpmService.getTaskSummaryByNameAndInstanceId(firstTaskName, Long.valueOf(processInstanceId));
+					this.currentTaskId = ts.getId();//((HumanTaskNode)node).getId();
+					this.currentTaskName = firstTaskName;
 					currentPage = pageCache.get(node.getName());
 				}
 				else if (currentTaskName.equalsIgnoreCase(node.getName()))

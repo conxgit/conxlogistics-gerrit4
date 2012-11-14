@@ -62,7 +62,7 @@ public class PathBasedPageFlowSessionImpl implements IPageFlowSession {
 			IPageFlowManager engine,
 			PageFlowPathAssessor pathAssessor,
 			Feature onCompletionFeature, 
-			IPresenter<?, ? extends EventBus> onCompletionViewPresenter) {
+			IPresenter<?, ? extends EventBus> onCompletionViewPresenter) throws Exception {
 		this.onCompletionFeature = onCompletionFeature;
 		this.onCompletionViewPresenter = onCompletionViewPresenter;
 		this.engine  = engine;
@@ -92,7 +92,7 @@ public class PathBasedPageFlowSessionImpl implements IPageFlowSession {
 			processVars = new HashMap<String,Object>();
 			processVars.put("Content", res);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw e;
 		}			
 	}
 

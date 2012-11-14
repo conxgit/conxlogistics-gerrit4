@@ -268,7 +268,10 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 			//Create start path
 			if (paths.size() == 1)//No splits
 			{
-				pathAssessor = new PageFlowPathAssessor(paths.keySet().iterator().next(),
+				pathAssessor = new PageFlowPathAssessor(
+										 pi.getId(),
+										 bpmService,
+										 paths.keySet().iterator().next(),
 									     paths.values().iterator().next(),
 									     paths,
 									     pageCache.get(processId));
@@ -277,7 +280,10 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 			{
 				SortedSet<String> orderedPathSet = new TreeSet<String>(paths.keySet());
 				String startPathKey = orderedPathSet.iterator().next();//Get smallest
-				pathAssessor = new PageFlowPathAssessor(startPathKey,
+				pathAssessor = new PageFlowPathAssessor(
+						 pi.getId(),
+						 bpmService,
+						 startPathKey,
 					     paths.get(startPathKey),
 					     paths,
 					     pageCache.get(processId));				
@@ -375,7 +381,10 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 			//Create start path
 			if (paths.size() == 1)//No splits
 			{
-				pathAssessor = new PageFlowPathAssessor(paths.keySet().iterator().next(),
+				pathAssessor = new PageFlowPathAssessor(
+										 pi.getId(),
+										 bpmService,						
+										 paths.keySet().iterator().next(),
 									     paths.values().iterator().next(),
 									     paths,
 									     pageCache.get(processId));
@@ -384,7 +393,10 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 			{
 				SortedSet<String> orderedPathSet = new TreeSet<String>(paths.keySet());
 				String startPathKey = orderedPathSet.iterator().next();//Get smallest
-				pathAssessor = new PageFlowPathAssessor(startPathKey,
+				pathAssessor = new PageFlowPathAssessor(
+						 pi.getId(),
+						 bpmService,						
+						 startPathKey,
 					     paths.get(startPathKey),
 					     paths,
 					     pageCache.get(processId));				

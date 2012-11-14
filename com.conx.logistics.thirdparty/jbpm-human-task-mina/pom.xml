@@ -11,6 +11,21 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<configuration>
+					<filesets>
+						<!-- clean old generated MANIFEST.MF files on clean -->
+						<fileset>
+							<directory>target</directory>
+							<includes>
+								<include>*.*</include>
+							</includes>
+						</fileset>
+					</filesets>
+				</configuration>		
+			</plugin>		
+			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
 					<archive>
@@ -86,7 +101,7 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>			
+			</plugin>	
 		</plugins>
 
 		<resources>

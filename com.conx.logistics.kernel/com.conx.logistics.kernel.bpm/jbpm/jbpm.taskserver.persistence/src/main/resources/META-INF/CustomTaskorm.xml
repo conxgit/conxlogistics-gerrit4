@@ -1054,6 +1054,21 @@ where
      t.id = :taskId           
           </query>
       </named-query>
+     <named-query name="TaskSummaryByNameAndInstanceId">
+          <query>
+select 
+     new org.jbpm.task.query.TaskSummary( t.id, t.taskData.processInstanceId, name.text, name.text, description.text, t.taskData.status, t.priority, t.taskData.skipable, taskOwner, taskCreator, t.taskData.createdOn, t.taskData.activationTime, t.taskData.expirationTime, t.taskData.processId, t.taskData.processSessionId) 
+from org.jbpm.task.Task t  
+     left join t.taskData.createdBy as  taskCreator
+     left join t.taskData.actualOwner as  taskOwner
+     left join t.descriptions as description 
+     left join t.names as name
+where 
+     t.archived = 0 and
+     name.text = :taskName and
+     t.taskData.processInstanceId = :processInstanceId          
+          </query>
+      </named-query>      
       <named-query name="TasksOwnedWithNulls">
           <query>
 select

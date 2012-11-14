@@ -991,6 +991,18 @@ public class BPMServerImpl implements IBPMService {
 		TaskSummary result = (TaskSummary)emQuery.getSingleResult();
 		return result;
 	}		
+	
+
+	@Override
+	public TaskSummary getTaskSummaryByNameAndInstanceId(String taskName,
+			Long processInstanceId) {
+		Query emQuery = getHumanTaskManager().getLocalService().createSession().getTaskPersistenceManager().createQuery("TaskSummaryByNameAndInstanceId");
+		//Query emQuery = getHumanTaskManager().getLocalService().createSession().getTaskPersistenceManager().createNewQuery(query);
+		emQuery.setParameter("taskName", taskName);
+		emQuery.setParameter("processInstanceId", processInstanceId);
+		TaskSummary result = (TaskSummary)emQuery.getSingleResult();
+		return result;
+	}	
 
 	@Override
 	public List<Task> getCreatedTasksByProcessId(Long processInstanceId) {

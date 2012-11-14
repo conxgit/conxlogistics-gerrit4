@@ -93,6 +93,7 @@ public interface IBPMService {
 	public List<Task> getReservedTasksByProcessId(Long processInstanceId);
 	public List<Task> getReadyAndReservedTasksByProcessId(Long processInstanceId);
 	public TaskSummary getTaskSummaryByTaskId(Long taskId);
+	public TaskSummary getTaskSummaryByNameAndInstanceId(String taskName, Long processInstanceId);
 	public Content getTaskContent(long taskId);
 	public Object getTaskContentObject(Task task) throws IOException,
 			ClassNotFoundException;
