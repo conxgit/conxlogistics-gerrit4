@@ -215,12 +215,5 @@
 				</executions>
 			</plugin>			
 		</plugins>
-
-		<resources>
-			<resource>
-				<targetPath>META-INF</targetPath>
-				<directory>META-INF</directory>
-			</resource>
-		</resources>
 	</build>
 </project>
