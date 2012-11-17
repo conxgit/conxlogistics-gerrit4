@@ -107,7 +107,8 @@ public class VaadinPageDataBuilder {
 		return resultMap;
 	}
 
-	public static void applyParamData(Map<String, Object> config, Component component, Map<String, Object> params, PresenterFactory presenterFactory) throws Exception {
+	public static void applyParamData(Map<String, Object> config, Component component, Map<String, Object> params, PresenterFactory presenterFactory)
+			throws Exception {
 		if (component instanceof EntitySearchGrid) {
 			applyParamDataToEntitySearchGrid(config, params, (EntitySearchGrid) component, presenterFactory);
 		} else if (component instanceof VaadinConfirmActualsForm) {
@@ -130,10 +131,18 @@ public class VaadinPageDataBuilder {
 		}
 	}
 
-	public static void applyItemDataSource(Component component, Container itemContainer, Item item, final PresenterFactory presenterFactory, Map<String, Object> config) throws Exception {
+	public static void applyItemDataSource(Component component, Container itemContainer, Item item,
+			final PresenterFactory presenterFactory, Map<String, Object> config) throws Exception {
+		applyItemDataSource(true, component, itemContainer, item, presenterFactory, config);
+	}
+	
+	public static void applyItemDataSource(boolean isEventDeclaritive, Component component, Container itemContainer, Item item,
+			final PresenterFactory presenterFactory, Map<String, Object> config) throws Exception {
 		if (component instanceof ConXVerticalSplitPanel) {
-			applyItemDataSource(((ConXVerticalSplitPanel) component).getFirstComponent(), itemContainer, item, presenterFactory, config);
-			applyItemDataSource(((ConXVerticalSplitPanel) component).getSecondComponent(), itemContainer, item, presenterFactory, config);
+			applyItemDataSource(isEventDeclaritive, ((ConXVerticalSplitPanel) component).getFirstComponent(), itemContainer, item, presenterFactory,
+					config);
+			applyItemDataSource(isEventDeclaritive, ((ConXVerticalSplitPanel) component).getSecondComponent(), itemContainer, item, presenterFactory,
+					config);
 		} else if (component instanceof VaadinForm) {
 			if (item instanceof BeanItem && itemContainer instanceof BeanItemContainer) {
 				IDAOProvider daoProvider = (IDAOProvider) config.get(IPageComponent.DAO_PROVIDER);
@@ -158,9 +167,11 @@ public class VaadinPageDataBuilder {
 					ebm = presenterFactory.getEventBusManager();
 				}
 
-				applyItemDataSourceToVaadinForm((VaadinForm) component, (BeanItem<?>) item, (BeanItemContainer<?>) itemContainer, config, ebm);
+				applyItemDataSourceToVaadinForm(isEventDeclaritive, (VaadinForm) component, (BeanItem<?>) item, (BeanItemContainer<?>) itemContainer,
+						config, ebm);
 			} else {
-				throw new Exception("Could not apply item data source to VaadinForm since item and itemContainer were not of type BeanItem and BeanItemContainer.");
+				throw new Exception(
+						"Could not apply item data source to VaadinForm since item and itemContainer were not of type BeanItem and BeanItemContainer.");
 			}
 		} else if (component instanceof EntityLineEditorView) {
 			// Halt the tree at this point
@@ -179,22 +190,23 @@ public class VaadinPageDataBuilder {
 			if (component instanceof TabSheet) {
 				Iterator<Component> componentIterator = ((TabSheet) component).getComponentIterator();
 				while (componentIterator.hasNext()) {
-					applyItemDataSource(componentIterator.next(), itemContainer, item, presenterFactory, config);
+					applyItemDataSource(isEventDeclaritive, componentIterator.next(), itemContainer, item, presenterFactory, config);
 				}
 			} else if (component instanceof AbstractComponentContainer) {
 				Iterator<Component> componentIterator = ((AbstractComponentContainer) component).getComponentIterator();
 				while (componentIterator.hasNext()) {
-					applyItemDataSource(componentIterator.next(), itemContainer, item, presenterFactory, config);
+					applyItemDataSource(isEventDeclaritive, componentIterator.next(), itemContainer, item, presenterFactory, config);
 				}
 			}
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void applyItemDataSourceToVaadinMatchGrid(Item item, Component component, final PresenterFactory presenterFactory, IEntityContainerProvider containerProvider,
-			final IDAOProvider daoProvider) throws ClassNotFoundException {
+	private static void applyItemDataSourceToVaadinMatchGrid(Item item, Component component, final PresenterFactory presenterFactory,
+			IEntityContainerProvider containerProvider, final IDAOProvider daoProvider) throws ClassNotFoundException {
 		@SuppressWarnings({ "rawtypes" })
-		final Object itemBean = (item instanceof JPAContainerItem<?>) ? ((JPAContainerItem) item).getEntity() : (item instanceof BeanItem<?>) ? ((BeanItem) item).getBean() : null;
+		final Object itemBean = (item instanceof JPAContainerItem<?>) ? ((JPAContainerItem) item).getEntity()
+				: (item instanceof BeanItem<?>) ? ((BeanItem) item).getBean() : null;
 		((VaadinMatchGrid) component).setBeanConverter(new IBeanConversionListener() {
 			/*
 			 * private boolean returnFlag = false; private Object returnValue =
@@ -213,13 +225,15 @@ public class VaadinPageDataBuilder {
 			}
 		});
 
-		final BeanItemContainer<BaseEntity> matchedContainer = (BeanItemContainer<BaseEntity>) containerProvider.createBeanContainer(((VaadinMatchGrid) component).getMatchedContainerType());
+		final BeanItemContainer<BaseEntity> matchedContainer = (BeanItemContainer<BaseEntity>) containerProvider
+				.createBeanContainer(((VaadinMatchGrid) component).getMatchedContainerType());
 		for (String nestedFieldName : ((VaadinMatchGrid) component).getComponentModel().getMatchedDataSource().getNestedFieldNames()) {
 			matchedContainer.addNestedContainerProperty(nestedFieldName);
 		}
 
 		@SuppressWarnings("rawtypes")
-		JPAContainer unmatchedContainer = (JPAContainer) containerProvider.createPersistenceContainer(((VaadinMatchGrid) component).getUnmatchedContainerType());
+		JPAContainer unmatchedContainer = (JPAContainer) containerProvider.createPersistenceContainer(((VaadinMatchGrid) component)
+				.getUnmatchedContainerType());
 		for (String nestedFieldName : ((VaadinMatchGrid) component).getComponentModel().getUnmatchedDataSource().getNestedFieldNames()) {
 			unmatchedContainer.addNestedContainerProperty(nestedFieldName);
 		}
@@ -254,7 +268,7 @@ public class VaadinPageDataBuilder {
 				}
 			}
 		});
-		
+
 		try {
 			((VaadinMatchGrid) component).addParentConsumptionFilter(Filters.not(Filters.eq("status", RECEIVELINESTATUS.ARRIVED)));
 		} catch (Exception e) {
@@ -262,7 +276,8 @@ public class VaadinPageDataBuilder {
 		}
 	}
 
-	private static void applyParamDataToMultiLevelEditorView(Map<String, Object> config, Map<String, Object> params, MultiLevelEditorView view) throws Exception {
+	private static void applyParamDataToMultiLevelEditorView(Map<String, Object> config, Map<String, Object> params, MultiLevelEditorView view)
+			throws Exception {
 		IEntityContainerProvider provider = (IEntityContainerProvider) config.get(IPageComponent.ENTITY_CONTAINER_PROVIDER);
 
 		if (provider == null) {
@@ -283,8 +298,8 @@ public class VaadinPageDataBuilder {
 		}
 	}
 
-	private static void applyParamDataToVaadinCollapsibleSectionForm(Map<String, Object> config, Map<String, Object> params, VaadinCollapsibleSectionForm form, PresenterFactory presenterFactory)
-			throws Exception {
+	private static void applyParamDataToVaadinCollapsibleSectionForm(Map<String, Object> config, Map<String, Object> params,
+			VaadinCollapsibleSectionForm form, PresenterFactory presenterFactory) throws Exception {
 		IEntityContainerProvider provider = (IEntityContainerProvider) config.get(IPageComponent.ENTITY_CONTAINER_PROVIDER);
 
 		if (provider == null) {
@@ -300,12 +315,12 @@ public class VaadinPageDataBuilder {
 				container.addNestedContainerProperty(nestedFieldName);
 			}
 			BeanItem<BaseEntity> baseEntity = container.addBean((BaseEntity) formItemEntity);
-			applyItemDataSourceToVaadinForm(form, baseEntity, container, config, presenterFactory.getEventBusManager());
+			applyItemDataSourceToVaadinForm(true, form, baseEntity, container, config, presenterFactory.getEventBusManager());
 		}
 	}
 
-	private static void applyParamDataToAbstractComponentContainer(Map<String, Object> config, Map<String, Object> params, AbstractComponentContainer layout, PresenterFactory presenterFactory)
-			throws Exception {
+	private static void applyParamDataToAbstractComponentContainer(Map<String, Object> config, Map<String, Object> params,
+			AbstractComponentContainer layout, PresenterFactory presenterFactory) throws Exception {
 		Iterator<Component> componentIterator = layout.getComponentIterator();
 		while (componentIterator.hasNext()) {
 			try {
@@ -316,7 +331,8 @@ public class VaadinPageDataBuilder {
 		}
 	}
 
-	private static void applyParamDataToTabSheet(Map<String, Object> config, Map<String, Object> params, TabSheet tabSheet, PresenterFactory presenterFactory) throws Exception {
+	private static void applyParamDataToTabSheet(Map<String, Object> config, Map<String, Object> params, TabSheet tabSheet,
+			PresenterFactory presenterFactory) throws Exception {
 		Iterator<Component> componentIterator = tabSheet.getComponentIterator();
 		while (componentIterator.hasNext()) {
 			try {
@@ -327,7 +343,8 @@ public class VaadinPageDataBuilder {
 		}
 	}
 
-	private static void applyParamDataToEntitySearchGrid(Map<String, Object> config, Map<String, Object> params, EntitySearchGrid searchGrid, PresenterFactory presenterFactory) throws Exception {
+	private static void applyParamDataToEntitySearchGrid(Map<String, Object> config, Map<String, Object> params, EntitySearchGrid searchGrid,
+			PresenterFactory presenterFactory) throws Exception {
 		IEntityContainerProvider provider = (IEntityContainerProvider) config.get(IPageComponent.ENTITY_CONTAINER_PROVIDER);
 
 		if (provider == null) {
@@ -339,8 +356,8 @@ public class VaadinPageDataBuilder {
 		searchGrid.setContainerDataSource(container);
 	}
 
-	private static void applyParamDataToConXVerticalSplitPanel(Map<String, Object> config, Map<String, Object> params, ConXVerticalSplitPanel splitPanel, PresenterFactory presenterFactory)
-			throws Exception {
+	private static void applyParamDataToConXVerticalSplitPanel(Map<String, Object> config, Map<String, Object> params,
+			ConXVerticalSplitPanel splitPanel, PresenterFactory presenterFactory) throws Exception {
 		try {
 			applyParamData(config, splitPanel.getFirstComponent(), params, presenterFactory);
 		} catch (Exception e) {
@@ -353,8 +370,8 @@ public class VaadinPageDataBuilder {
 		}
 	}
 
-	private static void applyParamDataToVaadinConfirmActualsForm(Map<String, Object> config, Map<String, Object> params, VaadinConfirmActualsForm form, PresenterFactory presenterFactory)
-			throws Exception {
+	private static void applyParamDataToVaadinConfirmActualsForm(Map<String, Object> config, Map<String, Object> params,
+			VaadinConfirmActualsForm form, PresenterFactory presenterFactory) throws Exception {
 		IEntityContainerProvider provider = (IEntityContainerProvider) config.get(IPageComponent.ENTITY_CONTAINER_PROVIDER);
 
 		if (provider == null) {
@@ -370,12 +387,12 @@ public class VaadinPageDataBuilder {
 				container.addNestedContainerProperty(nestedFieldName);
 			}
 			BeanItem<BaseEntity> baseEntity = container.addBean((BaseEntity) formItemEntity);
-			applyItemDataSourceToVaadinForm(form, baseEntity, container, config, presenterFactory.getEventBusManager());
+			applyItemDataSourceToVaadinForm(true, form, baseEntity, container, config, presenterFactory.getEventBusManager());
 		}
 	}
 
-	private static void applyParamDataToVaadinCollapsibleConfirmActualsForm(Map<String, Object> config, Map<String, Object> params, VaadinCollapsibleConfirmActualsForm form,
-			PresenterFactory presenterFactory) throws Exception {
+	private static void applyParamDataToVaadinCollapsibleConfirmActualsForm(Map<String, Object> config, Map<String, Object> params,
+			VaadinCollapsibleConfirmActualsForm form, PresenterFactory presenterFactory) throws Exception {
 		IEntityContainerProvider provider = (IEntityContainerProvider) config.get(IPageComponent.ENTITY_CONTAINER_PROVIDER);
 
 		if (provider == null) {
@@ -391,14 +408,15 @@ public class VaadinPageDataBuilder {
 				container.addNestedContainerProperty(nestedFieldName);
 			}
 			BeanItem<BaseEntity> baseEntity = container.addBean((BaseEntity) formItemEntity);
-			applyItemDataSourceToVaadinForm(form, baseEntity, container, config, presenterFactory.getEventBusManager());
+			applyItemDataSourceToVaadinForm(true, form, baseEntity, container, config, presenterFactory.getEventBusManager());
 		}
 	}
 
 	/**************************************************************************/
 	/**************************** UTILITY METHODS *****************************/
 	/**************************************************************************/
-	private static void applyItemDataSourceToVaadinForm(VaadinForm form, BeanItem<?> item, BeanItemContainer<?> container, Map<String, Object> config, EventBusManager ebm) throws Exception {
+	private static void applyItemDataSourceToVaadinForm(boolean isEventDeclaritive, VaadinForm form, BeanItem<?> item,
+			BeanItemContainer<?> container, Map<String, Object> config, EventBusManager ebm) throws Exception {
 		IDAOProvider daoProvider = (IDAOProvider) config.get(IPageComponent.DAO_PROVIDER);
 		IEntityContainerProvider containerProvider = (IEntityContainerProvider) config.get(IPageComponent.ENTITY_CONTAINER_PROVIDER);
 
@@ -422,9 +440,11 @@ public class VaadinPageDataBuilder {
 		}
 		form.setTitle(title);
 
-		EntityLineEditorEventBus entityLineEditorEventBus = ebm.getEventBus(EntityLineEditorEventBus.class);
-		if (entityLineEditorEventBus != null) {
-			entityLineEditorEventBus.setItemDataSource(item);
+		if (isEventDeclaritive) {
+			EntityLineEditorEventBus entityLineEditorEventBus = ebm.getEventBus(EntityLineEditorEventBus.class);
+			if (entityLineEditorEventBus != null) {
+				entityLineEditorEventBus.setItemDataSource(item, container);
+			}
 		}
 	}
 
@@ -461,103 +481,128 @@ public class VaadinPageDataBuilder {
 
 	@SuppressWarnings("unchecked")
 	public static <T> T saveInstance(T instance, IDAOProvider daoProvider, Object... parentInstances) throws Exception {
-		if (instance instanceof StockItem) {
-			if (parentInstances.length == 2) {
-				Map<Class<?>, Collection<Object>> paramInstanceMap = buildParamInstanceMap(parentInstances);
-				if (paramInstanceMap.get(ReceiveLine.class) != null && paramInstanceMap.get(ArrivalReceiptLine.class) != null) {
-					DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-					def.setName("pageflow.ui.data");
-					def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-					TransactionStatus status = daoProvider.provideByDAOClass(PlatformTransactionManager.class).getTransaction(def);
-					T result = null;
-					try {
-						result = (T) daoProvider.provideByDAOClass(IStockItemDAOService.class).addOneOfGroup((StockItem) instance,
-								((ReceiveLine) paramInstanceMap.get(ReceiveLine.class).iterator().next()).getId(),
-								((ArrivalReceiptLine) paramInstanceMap.get(ArrivalReceiptLine.class).iterator().next()).getParentArrivalReceipt().getId(),
-								((ArrivalReceiptLine) paramInstanceMap.get(ArrivalReceiptLine.class).iterator().next()).getId());
-						if (!status.isCompleted()) {
-							daoProvider.provideByDAOClass(PlatformTransactionManager.class).commit(status);
+		if (daoProvider != null) {
+			if (instance instanceof StockItem) {
+				if (((BaseEntity) instance).getId() == null) {
+					if (parentInstances.length == 2) {
+						Map<Class<?>, Collection<Object>> paramInstanceMap = buildParamInstanceMap(parentInstances);
+						if (paramInstanceMap.get(ReceiveLine.class) != null && paramInstanceMap.get(ArrivalReceiptLine.class) != null) {
+							DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+							def.setName("pageflow.ui.data");
+							def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+							TransactionStatus status = daoProvider.provideByDAOClass(PlatformTransactionManager.class).getTransaction(def);
+							T result = null;
+							try {
+								result = (T) daoProvider.provideByDAOClass(IStockItemDAOService.class).addOneOfGroup(
+										(StockItem) instance,
+										((ReceiveLine) paramInstanceMap.get(ReceiveLine.class).iterator().next()).getId(),
+										((ArrivalReceiptLine) paramInstanceMap.get(ArrivalReceiptLine.class).iterator().next())
+												.getParentArrivalReceipt().getId(),
+										((ArrivalReceiptLine) paramInstanceMap.get(ArrivalReceiptLine.class).iterator().next()).getId());
+								if (!status.isCompleted()) {
+									daoProvider.provideByDAOClass(PlatformTransactionManager.class).commit(status);
+								}
+							} catch (Exception e) {
+								daoProvider.provideByDAOClass(PlatformTransactionManager.class).rollback(status);
+								e.printStackTrace();
+							}
+							return result;
+						} else {
+							throw new Exception("saveInstance(StockItem) needs a ReceiveLine and an ArrivalReceipt.");
 						}
-					} catch (Exception e) {
-						daoProvider.provideByDAOClass(PlatformTransactionManager.class).rollback(status);
-						e.printStackTrace();
+					} else {
+						throw new Exception("saveInstance(StockItem) needs a ReceiveLine and an ArrivalReceipt.");
 					}
-					return result;
 				} else {
-					throw new Exception("saveInstance(StockItem) needs a ReceiveLine and an ArrivalReceipt.");
+					daoProvider.provideByDAOClass(IStockItemDAOService.class).update((StockItem) instance);
 				}
-			} else {
-				throw new Exception("saveInstance(StockItem) needs a ReceiveLine and an ArrivalReceipt.");
-			}
-		} else if (instance instanceof Arrival) {
-			if (parentInstances.length == 1) {
-				if (parentInstances[0] instanceof Receive) {
-					DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-					def.setName("pageflow.ui.data");
-					def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-					TransactionStatus status = daoProvider.provideByDAOClass(PlatformTransactionManager.class).getTransaction(def);
-					T result = null;
-					try {
-						result = (T) daoProvider.provideByDAOClass(IArrivalDAOService.class).add((Arrival) instance, (Receive) parentInstances[0]);
-						daoProvider.provideByDAOClass(PlatformTransactionManager.class).commit(status);
-					} catch (Exception e) {
-						daoProvider.provideByDAOClass(PlatformTransactionManager.class).rollback(status);
-						e.printStackTrace();
+			} else if (instance instanceof Arrival) {
+				if (((BaseEntity) instance).getId() == null) {
+					if (parentInstances.length == 1) {
+						if (parentInstances[0] instanceof Receive) {
+							DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+							def.setName("pageflow.ui.data");
+							def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+							TransactionStatus status = daoProvider.provideByDAOClass(PlatformTransactionManager.class).getTransaction(def);
+							T result = null;
+							try {
+								result = (T) daoProvider.provideByDAOClass(IArrivalDAOService.class).add((Arrival) instance,
+										(Receive) parentInstances[0]);
+								daoProvider.provideByDAOClass(PlatformTransactionManager.class).commit(status);
+							} catch (Exception e) {
+								daoProvider.provideByDAOClass(PlatformTransactionManager.class).rollback(status);
+								e.printStackTrace();
+							}
+							return result;
+						} else {
+							throw new Exception("saveInstance(Arrival) needs a Receive.");
+						}
+					} else {
+						throw new Exception("saveInstance(Arrival) needs a Receive.");
 					}
-					return result;
 				} else {
-					throw new Exception("saveInstance(Arrival) needs a Receive.");
+					daoProvider.provideByDAOClass(IArrivalDAOService.class).update((Arrival) instance);
 				}
-			} else {
-				throw new Exception("saveInstance(Arrival) needs a Receive.");
-			}
-		} else if (instance instanceof ArrivalReceipt) {
-			if (parentInstances.length == 1) {
-				if (parentInstances[0] instanceof Arrival) {
-					DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-					def.setName("pageflow.ui.data");
-					def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-					TransactionStatus status = daoProvider.provideByDAOClass(PlatformTransactionManager.class).getTransaction(def);
-					T result = null;
-					try {
-						result = (T) daoProvider.provideByDAOClass(IArrivalReceiptDAOService.class).add(((Arrival) parentInstances[0]).getId(), (ArrivalReceipt) instance);
-						daoProvider.provideByDAOClass(PlatformTransactionManager.class).commit(status);
-					} catch (Exception e) {
-						daoProvider.provideByDAOClass(PlatformTransactionManager.class).rollback(status);
-						e.printStackTrace();
+			} else if (instance instanceof ArrivalReceipt) {
+				if (((BaseEntity) instance).getId() == null) {
+					if (parentInstances.length == 1) {
+						if (parentInstances[0] instanceof Arrival) {
+							DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+							def.setName("pageflow.ui.data");
+							def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+							TransactionStatus status = daoProvider.provideByDAOClass(PlatformTransactionManager.class).getTransaction(def);
+							T result = null;
+							try {
+								result = (T) daoProvider.provideByDAOClass(IArrivalReceiptDAOService.class).add(
+										((Arrival) parentInstances[0]).getId(), (ArrivalReceipt) instance);
+								daoProvider.provideByDAOClass(PlatformTransactionManager.class).commit(status);
+							} catch (Exception e) {
+								daoProvider.provideByDAOClass(PlatformTransactionManager.class).rollback(status);
+								e.printStackTrace();
+							}
+							return result;
+						} else {
+							throw new Exception("saveInstance(ArrivalReceipt) needs an Arrival.");
+						}
+					} else {
+						throw new Exception("saveInstance(ArrivalReceipt) needs an Arrival.");
 					}
-					return result;
 				} else {
-					throw new Exception("saveInstance(ArrivalReceipt) needs an Arrival.");
+					daoProvider.provideByDAOClass(IArrivalReceiptDAOService.class).update((ArrivalReceipt) instance);
 				}
-			} else {
-				throw new Exception("saveInstance(ArrivalReceipt) needs an Arrival.");
-			}
-		} else if (instance instanceof ArrivalReceiptLine) {
-			if (parentInstances.length == 1) {
-				if (parentInstances[0] instanceof ArrivalReceipt) {
-					DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-					def.setName("pageflow.ui.data");
-					def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-					TransactionStatus status = daoProvider.provideByDAOClass(PlatformTransactionManager.class).getTransaction(def);
-					T result = null;
-					try {
-						result = (T) daoProvider.provideByDAOClass(IArrivalReceiptDAOService.class).addArrivalReceiptLine(((ArrivalReceipt) parentInstances[0]).getId(), (ArrivalReceiptLine) instance);
-						daoProvider.provideByDAOClass(PlatformTransactionManager.class).commit(status);
-					} catch (Exception e) {
-						daoProvider.provideByDAOClass(PlatformTransactionManager.class).rollback(status);
-						e.printStackTrace();
+			} else if (instance instanceof ArrivalReceiptLine) {
+				if (((BaseEntity) instance).getId() == null) {
+					if (parentInstances.length == 1) {
+						if (parentInstances[0] instanceof ArrivalReceipt) {
+							DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+							def.setName("pageflow.ui.data");
+							def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+							TransactionStatus status = daoProvider.provideByDAOClass(PlatformTransactionManager.class).getTransaction(def);
+							T result = null;
+							try {
+								result = (T) daoProvider.provideByDAOClass(IArrivalReceiptDAOService.class).addArrivalReceiptLine(
+										((ArrivalReceipt) parentInstances[0]).getId(), (ArrivalReceiptLine) instance);
+								daoProvider.provideByDAOClass(PlatformTransactionManager.class).commit(status);
+							} catch (Exception e) {
+								daoProvider.provideByDAOClass(PlatformTransactionManager.class).rollback(status);
+								e.printStackTrace();
+							}
+							return result;
+						} else {
+							throw new Exception("saveInstance(ArrivalReceiptLine) needs an ArrivalReceipt.");
+						}
+					} else {
+						throw new Exception("saveInstance(ArrivalReceiptLine) needs an ArrivalReceipt.");
 					}
-					return result;
 				} else {
-					throw new Exception("saveInstance(ArrivalReceiptLine) needs an ArrivalReceipt.");
+					daoProvider.provideByDAOClass(IArrivalReceiptDAOService.class).updateArrivalReceiptLine((ArrivalReceiptLine) instance);
 				}
-			} else {
-				throw new Exception("saveInstance(ArrivalReceiptLine) needs an ArrivalReceipt.");
 			}
-		}
 
-		return instance;
+			return instance;
+		} else {
+			throw new Exception("The IDAOProvider was null.");
+		}
 	}
 
 	private static String typeToTitle(Class<?> type) {

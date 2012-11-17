@@ -47,6 +47,7 @@ import com.conx.logistics.kernel.ui.components.domain.table.EntityMatchGrid;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.search.EntitySearchGrid;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinCollapsibleSectionForm;
+import com.conx.logistics.kernel.ui.vaadin.common.ConXAbstractSplitPanel.ISplitPositionChangeListener;
 import com.conx.logistics.kernel.ui.vaadin.common.ConXVerticalSplitPanel;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
@@ -94,14 +95,32 @@ public class VaadinPageFactoryImpl {
 		if (componentModel instanceof MasterDetailComponent) {
 			ConXVerticalSplitPanel splitPanel = new ConXVerticalSplitPanel();
 			splitPanel.setSizeFull();
+//			splitPanel.setStyleName("conx-entity-editor");
 			splitPanel.setSplitPosition(50);
 
-			if (((MasterDetailComponent) componentModel).getMasterComponent() != null) {
-				splitPanel.setFirstComponent(create(((MasterDetailComponent) componentModel).getMasterComponent()));
-			}
-			if (((MasterDetailComponent) componentModel).getLineEditorPanel() != null) {
-				splitPanel.setSecondComponent(create(((MasterDetailComponent) componentModel).getLineEditorPanel()));
-			}
+			final Component firstComponent = create(((MasterDetailComponent) componentModel).getMasterComponent());
+			final Component secondComponent = create(((MasterDetailComponent) componentModel).getLineEditorPanel());
+			
+			splitPanel.setFirstComponent(firstComponent);
+			splitPanel.setSecondComponent(secondComponent);
+			
+			splitPanel.addSplitPositionChangeListener(new ISplitPositionChangeListener() {
+				
+				@Override
+				public void onSplitPositionChanged(Integer newPos, int posUnit, boolean posReversed) {
+				}
+				
+				@Override
+				public void onSecondComponentHeightChanged(int height) {
+				}
+				
+				@Override
+				public void onFirstComponentHeightChanged(int height) {
+					if (height > 0) {
+						firstComponent.setHeight(height,com.vaadin.terminal.Sizeable.UNITS_PIXELS);
+					}
+				}
+			});
 			return splitPanel;
 		} else if (componentModel instanceof SearchGrid) {
 			EntitySearchGrid component = new EntitySearchGrid((SearchGrid) componentModel);

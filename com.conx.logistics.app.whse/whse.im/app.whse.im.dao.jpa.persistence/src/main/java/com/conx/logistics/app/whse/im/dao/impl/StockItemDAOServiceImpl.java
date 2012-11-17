@@ -8,7 +8,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,13 +88,12 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 	@Autowired
 	private IReceiveDAOService receiveDAOService;
 
-	private ReceiveLineStockItemSet getStockItemSetByReceiveLine(ReceiveLine receiveLine) throws Exception {
-		TypedQuery<ReceiveLineStockItemSet> q = em.createQuery("select o from com.conx.logistics.app.whse.rcv.rcv.domain.ReceiveLineStockItemSet o WHERE o.receiveLine = :receiveLine",
-				ReceiveLineStockItemSet.class);
-		q.setParameter("receiveLine", receiveLine);
+	private ReceiveLineStockItemSet getStockItemSetByReceiveLine(Long receiveLinePK) throws Exception {
+		Query q = em.createQuery("select o from com.conx.logistics.app.whse.rcv.rcv.domain.ReceiveLineStockItemSet o WHERE o.receiveLine.id = :receiveLineId");
+		q.setParameter("receiveLineId", receiveLinePK);
 		ReceiveLineStockItemSet itemSet = null;
 		try {
-			itemSet = q.getSingleResult();
+			itemSet = (ReceiveLineStockItemSet) q.getSingleResult();
 			return itemSet;
 		} catch (NoResultException e) {
 			return null;
@@ -105,7 +103,14 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 	}
 
 	private ReceiveLineStockItemSet provideStockItemSet(ReceiveLine receiveLine, ArrivalReceipt parentArrivalReceipt, ArrivalReceiptLine parentArrivalReceiptLine) throws Exception {
-		ReceiveLineStockItemSet itemSet = getStockItemSetByReceiveLine(receiveLine);
+		assert (receiveLine != null);
+		assert (receiveLine.getId() != null);
+		assert (parentArrivalReceipt != null);
+		assert (parentArrivalReceipt.getId() != null);
+		assert (parentArrivalReceiptLine != null);
+		assert (parentArrivalReceiptLine.getId() != null);
+		
+		ReceiveLineStockItemSet itemSet = getStockItemSetByReceiveLine(receiveLine.getId());
 		if (itemSet == null) {
 			itemSet = new ReceiveLineStockItemSet();
 			itemSet.setReceiveLine(receiveLine);
@@ -486,8 +491,8 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 		}
 	}
 
-	private void updateOwnerReceive(ReceiveLine rcvLine_) {
-		int ttlLinesArrived = receiveLineDAOService.findReceiveLinesByStatusAndReceive(RECEIVELINESTATUS.ARRIVED, rcvLine_.getParentReceive()).getResultList().size();
+	private void updateOwnerReceive(ReceiveLine rcvLine_) throws Exception {
+		int ttlLinesArrived = receiveLineDAOService.findReceiveLinesByStatusAndReceive(RECEIVELINESTATUS.ARRIVED, rcvLine_.getParentReceive().getId()).size();
 		int ttlLines = rcvLine_.getParentReceive().getRcvLines().size();
 		log.debug("Receive[" + rcvLine_.getName() + "] ttlLinesArrived:" + ttlLinesArrived);
 		log.debug("Receive[" + rcvLine_.getName() + "] ttlLines:" + ttlLines);
@@ -516,8 +521,7 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 		 */
 		// Product.updateProductAvailability(record.getProduct());
 
-		record.setDateLastUpdated(new Date());
-		return (StockItem) em.merge(record);
+		return em.merge(record);
 	}
 
 	@Override

@@ -8,11 +8,24 @@ import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
 
 @Entity
 public class LineEditorComponent extends AbstractConXComponent {
+	private static final long serialVersionUID = 1L;
+
 	@ManyToOne
 	private LineEditorContainerComponent mainComponent;
 	
 	@OneToOne 
 	private AbstractConXComponent content;
+	
+	private int ordinal;
+	
+	public LineEditorComponent(String code, String caption,LineEditorContainerComponent mainComponent, int ordinal) {
+		super("lineeditorcomponent");
+		this.ordinal = ordinal;
+		setCode(code);
+		setName(caption);
+		setCaption(caption);
+		this.mainComponent = mainComponent;
+	}
 	
 	public LineEditorComponent(String code, String caption,LineEditorContainerComponent mainComponent) {
 		this();
@@ -24,6 +37,7 @@ public class LineEditorComponent extends AbstractConXComponent {
 
 	public LineEditorComponent() {
 		super("lineeditorcomponent");
+		this.ordinal = -1;
 	}
 
 	public LineEditorComponent(LineEditorContainerComponent mainComponent) {
@@ -45,5 +59,13 @@ public class LineEditorComponent extends AbstractConXComponent {
 
 	public void setContent(AbstractConXComponent content) {
 		this.content = content;
+	}
+	
+	public int getOrdinal() {
+		return ordinal;
+	}
+
+	public void setOrdinal(int ordinal) {
+		this.ordinal = ordinal;
 	}
 }

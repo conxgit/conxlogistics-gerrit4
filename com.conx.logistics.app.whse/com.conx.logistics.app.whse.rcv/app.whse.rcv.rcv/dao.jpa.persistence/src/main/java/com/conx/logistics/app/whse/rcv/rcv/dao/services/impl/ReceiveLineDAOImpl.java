@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import javax.persistence.Query;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -110,29 +110,33 @@ public class ReceiveLineDAOImpl implements IReceiveLineDAOService {
 		em.remove(record);
 	}
 
-	public TypedQuery<ReceiveLine> findReceiveLinesByINList(Collection<ReceiveLine> rcvLineList) {
+	@SuppressWarnings("unchecked")
+	public List<ReceiveLine> findReceiveLinesByINList(Collection<ReceiveLine> rcvLineList) {
 		if (rcvLineList == null || rcvLineList.size() == 0)
 			throw new IllegalArgumentException("The rcvLineList argument is required");
-		TypedQuery<ReceiveLine> q = em.createQuery("SELECT ReceiveLine FROM ReceiveLine AS ReceiveLine ERE ReceiveLine IN (:rcvLineList)", ReceiveLine.class);
+		Query q = em.createQuery("SELECT ReceiveLine FROM ReceiveLine AS ReceiveLine ERE ReceiveLine IN (:rcvLineList)");
 		q.setParameter("rcvLineList", rcvLineList);
-		return q;
+		return q.getResultList();
 	}
 
-	public TypedQuery<ReceiveLine> findReceiveLinesByCode(String code) {
+	@SuppressWarnings("unchecked")
+	public List<ReceiveLine> findReceiveLinesByCode(String code) {
 		if (code == null)
 			throw new IllegalArgumentException("The code argument is required");
-		TypedQuery<ReceiveLine> q = em.createQuery("SELECT ReceiveLine FROM ReceiveLine AS ReceiveLine WHERE ReceiveLine.code = :code", ReceiveLine.class);
+		Query q = em.createQuery("SELECT ReceiveLine FROM ReceiveLine AS ReceiveLine WHERE ReceiveLine.code = :code");
 		q.setParameter("code", code);
-		return q;
+		return q.getResultList();
 	}
 
-	public TypedQuery<ReceiveLine> findReceiveLinesByStatusAndReceive(RECEIVELINESTATUS status, Receive receive) {
-		if (status == null)
-			throw new IllegalArgumentException("The status argument is required");
-		TypedQuery<ReceiveLine> q = em.createQuery("SELECT ReceiveLine FROM ReceiveLine AS ReceiveLine WHERE ReceiveLine.status = :status AND ReceiveLine.parentReceive = :receive", ReceiveLine.class);
+	@SuppressWarnings("unchecked")
+	public List<ReceiveLine> findReceiveLinesByStatusAndReceive(RECEIVELINESTATUS status, Long receivePK) {
+		assert (receivePK != null);
+		assert (status != null);
+		
+		Query q = em.createQuery("SELECT ReceiveLine FROM ReceiveLine AS ReceiveLine WHERE ReceiveLine.status = :status AND ReceiveLine.parentReceive.id = :receiveId");
 		q.setParameter("status", status);
-		q.setParameter("receive", receive);
-		return q;
+		q.setParameter("receiveId", receivePK);
+		return q.getResultList();
 	}
 
 	@Override

@@ -321,6 +321,7 @@ public class VaadinCollapsiblePhysicalAttributeConfirmActualsForm extends Vaadin
 	public void setItemDataSource(com.vaadin.data.Item newDataSource, Collection<?> propertyIds) {
 		this.innerLayout.removeAllComponents();
 		this.headers.clear();
+		this.alertPanel.setVisible(false);
 		super.setItemDataSource(newDataSource, propertyIds);
 	}
 
@@ -328,6 +329,7 @@ public class VaadinCollapsiblePhysicalAttributeConfirmActualsForm extends Vaadin
 	public void setItemDataSource(com.vaadin.data.Item newDataSource) {
 		this.innerLayout.removeAllComponents();
 		this.headers.clear();
+		this.alertPanel.setVisible(false);
 		super.setItemDataSource(newDataSource);
 	}
 

@@ -6162,12 +6162,93 @@ textarea.v-textarea-readonly,
 	border-top: 1px solid #6293ca;
 	padding-left: 8px;
 }
+.conx-inner-form-toolstrip {
+	background: #ffffff url('toolstrip/img/inner-form-toolstrip-background.png') repeat-x;
+	padding-left: 8px;
+}
+.conx-inner-form-field-caption {
+	font-weight: bold;
+	font-size: 12px;
+	color: #222;
+}
 .conx-entity-toolstrip-button {
 	background: none;
 	padding: 0 0 0 0px;
 	border: 1px solid #5884b5;
 	cursor: pointer;
 	overflow: hidden;
+}
+.conx-inner-form {
+	border-top: none;
+	border-left: 1px solid #E0E0E0;
+	border-right: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
+}
+.conx-inner-form-toolstrip-button {
+	background: none;
+	background-color: #efefef;
+	padding: 0 0 0 0px;
+	border: 1px solid #bcbcbc;
+	cursor: pointer;
+	overflow: hidden;
+}
+.conx-inner-form-toolstrip-button .v-button-wrap {
+	background: none;
+	padding: 6px 6px 6px 6px;
+}
+.conx-inner-form-toolstrip-button .v-button-wrap .v-icon {
+	margin-right: 0px;
+}
+.conx-inner-form-toolstrip .v-button:focus {
+  	background-image: none;
+	outline: none;
+}
+.conx-inner-form-toolstrip .v-button:focus .v-button-wrap {
+ 	background-image: none;
+	outline: none;
+}
+.conx-inner-form-toolstrip .v-button:active,
+.conx-inner-form-toolstrip .v-button.v-pressed {
+	background-color: #e0e0e0;
+	background-image: none;
+	outline: none;
+}
+.conx-inner-form-toolstrip .v-button:active .v-button-wrap,
+.conx-inner-form-toolstrip .v-button.v-pressed .v-button-wrap {
+	background-color: #e0e0e0;
+	background-image: none;
+	outline: none;
+}
+.conx-inner-form-toolstrip .v-disabled.v-button {
+	border: 1px solid transparent;
+	padding-left: 3px;
+}
+.conx-inner-form-toolstrip .v-disabled.v-button:active {
+	background-color: transparent;
+}
+.conx-inner-form-toolstrip .v-disabled.v-button:hover {
+	background-color: transparent;
+}
+.conx-inner-form-toolstrip .v-button,
+.conx-inner-form-toolstrip .v-disabled.v-button {
+	background-image: none;
+	outline: none;
+}
+.conx-inner-form-toolstrip .v-disabled .v-button:active,
+.conx-inner-form-toolstrip .v-disabled .v-button {
+	background-color: transparent;
+}
+.conx-inner-form-toolstrip .v-disabled.v-button .v-button-wrap {
+	padding: 6px 6px 6px 6px;
+}
+.conx-inner-form-toolstrip .v-button-wrap,
+.conx-inner-form-toolstrip .v-disabled.v-button .v-button-wrap {
+	background-image: none;
+	outline: none;
+}
+.conx-inner-form-toolstrip .v-button:hover {
+	background-color: #e0e0e0;
+	outline: none;
 }
 .conx-entity-toolstrip-button .v-button-wrap {
 	background: none;
@@ -6495,21 +6576,41 @@ textarea.v-textarea-readonly,
 	background-color: #ccc;
 	outline: none;
 }
-.conx-entity-editor-form .v-gridlayout .v-captiontext {
+.conx-entity-editor-form .v-captiontext {
 	font-weight: bold;
 	font-size: 11px;
 	padding-bottom: 4px;
 }
-.conx-entity-editor-form .v-gridlayout .v-textfield {
+.conx-entity-editor-form .v-textfield {
 	-moz-border-radius: 0px;
 	-webkit-border-radius: 0px;
 	border-radius: 0px;
 	background-image: none;
 }
-.conx-entity-editor-form .v-gridlayout .v-readonly {
+.conx-entity-editor-form .v-filterselect {
+	border: 1px solid #bcbdbe;
+	border-top-color: #a2a3a4;
+	border-bottom-color: #d2d3d4;
+	background: #fff;
+	margin: 0;
+	-moz-border-radius: 0px;
+	-webkit-border-radius: 0px;
+	border-radius: 0px;
+	background-image: none;
+}
+.conx-entity-editor-form .v-filterselect input {
+	background-image: none;
+}
+.conx-entity-editor-form .v-filterselect-button {
+	background-image: url(common/img/custom-vertical-sprites.png);
+}
+.conx-entity-editor-form .v-filterselect-focus .v-filterselect-button {
+	background-image: url(common/img/custom-vertical-sprites.png);
+}
+.conx-entity-editor-form .v-readonly {
 	padding-left: 0px;
 }
-.conx-entity-editor-form .v-gridlayout textarea {
+.conx-entity-editor-form textarea {
 	-moz-border-radius: 0px;
 	-webkit-border-radius: 0px;
 	border-radius: 0px;
@@ -6527,6 +6628,9 @@ textarea.v-textarea-readonly,
 }
 .filters-panel .v-textfield-focus {
 	border-right-color: #BCBDBE;
+}
+.conx-search-form-field-pair {
+	border-bottom: 1px solid #C5C7C3;
 }
 /******************************************************************************
 *******************************************************************************
@@ -6615,6 +6719,9 @@ textarea.v-textarea-readonly,
 	border-top: none;
 	cursor: pointer;
 }
+.conx-filter-generator {
+	background-color: #fff;
+}
 .v-label-conx-entity-editor-form-separator-caption {
 	cursor: pointer;
 }
@@ -6642,16 +6749,60 @@ textarea.v-textarea-readonly,
 /******************************************************************************
 *******************************************************************************
 ******************************************************************************/
-.conx-entity-alert-panel {
+.conx-entity-alert-panel-error {
 	background: url(formlayout/img/custom/conx-form-alert-panel-red-background.png) repeat-x;
 	color: #fff;
 	font-size: 12px;
 }
-.conx-entity-alert-panel .v-label {
+.conx-entity-alert-panel-error .v-label {
 	padding-left: 4px;
 }
-.conx-entity-alert-panel-icon {
+.conx-entity-alert-panel-warning {
+	background: url(formlayout/img/custom/conx-form-alert-panel-red-background.png) repeat-x;
+	color: #fff;
+	font-size: 12px;
+}
+.conx-entity-alert-panel-warning .v-label {
+	padding-left: 4px;
+}
+.conx-entity-alert-panel-status {
+	background: url(formlayout/img/custom/conx-form-alert-panel-red-background.png) repeat-x;
+	color: #fff;
+	font-size: 12px;
+}
+.conx-entity-alert-panel-status .v-label {
+	padding-left: 4px;
+}
+.conx-entity-alert-panel-success {
+	background: url(formlayout/img/custom/conx-form-alert-panel-green-background.png) repeat-x;
+	color: #fff;
+	font-size: 12px;
+}
+.conx-entity-alert-panel-success .v-label {
+	padding-left: 4px;
+}
+.conx-entity-alert-panel-info {
+	background: url(formlayout/img/custom/conx-form-alert-panel-blue-background.png) repeat-x;
+	color: #fff;
+	font-size: 12px;
+}
+.conx-entity-alert-panel-info .v-label {
+	padding-left: 4px;
+}
+.conx-entity-alert-panel-error-icon {
 	background: url(formlayout/img/custom/conx-form-alert-panel-warning-icon.png) left center no-repeat;
+}
+.conx-entity-alert-panel-warning-icon {
+	background: url(formlayout/img/custom/conx-form-alert-panel-warning-icon.png) left center no-repeat;
+}
+.conx-entity-alert-panel-status-icon {
+	background: url(formlayout/img/custom/conx-form-alert-panel-warning-icon.png) left center no-repeat;
+}
+.conx-entity-alert-panel-info-icon {
+	background: url(formlayout/img/custom/conx-form-alert-panel-info-icon.png) left center no-repeat;
+}
+.conx-entity-alert-panel-success-icon {
+	background: url(formlayout/img/custom/conx-form-alert-panel-success-icon.png) left center no-repeat;
 }
 .conx-entity-alert-panel-message {
 	padding-top: 8px;
@@ -6678,4 +6829,48 @@ textarea.v-textarea-readonly,
 	border-bottom: none;
 	border-left: 1px solid #ddd;
 	border-right: none;
+}
+.v-caption-conx-entity-editor-form-header-title .v-captiontext {
+	font-weight: normal;
+	font-size: 12px;
+}
+.v-caption-conx-entity-editor-form-header-action .v-captiontext {
+	font-size: 12px;
+}
+.v-splitpanel-vsplitter-discrete {
+	display: none;
+}
+.conx-confirm-actuals-field-caption {
+	font-size: 12px;
+	color: #222;
+	font-weight: bold;
+}
+.conx-relation-field-new-button {
+	background-position: 0px 0px;
+	background-image: url(select/img/custom/native-add-unselected.png);
+}
+.conx-relation-field-new-button:hover {
+	background-position: 0px 23px;
+	cursor: pointer;
+}
+.conx-relation-field-new-button .v-disabled {
+	cursor: default;
+}
+.conx-relation-field-new-button .v-disabled:hover {
+	background-position: 0px 0px;
+	cursor: default;
+}
+.conx-entity-toolstrip-title {
+	text-align: center;
+	font-size: 13px;
+	color: whiteSmoke;
+	text-shadow: #000022 0 1px 0;
+}
+.conx-line-editor-default-layout {
+	background-color: whiteSmoke;
+}
+.conx-line-editor-default-layout-label {
+	color: #666;
+	text-shadow: #fff 0 1px 0;
+	text-align: center;
 }

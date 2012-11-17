@@ -5,6 +5,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 
 public class EntityEditorToolStrip extends HorizontalLayout {
 	private static final long serialVersionUID = 2452919399202554279L;
@@ -25,6 +26,7 @@ public class EntityEditorToolStrip extends HorizontalLayout {
 	public static final String TOOLSTRIP_IMG_UNMATCH_PNG = "toolstrip/img/clear.png";
 
 	private HorizontalLayout leftLayout;
+	private Label titleLabel;
 	private HorizontalLayout rightLayout;
 
 	public EntityEditorToolStrip() {
@@ -37,15 +39,25 @@ public class EntityEditorToolStrip extends HorizontalLayout {
 		leftLayout.setStyleName("conx-entity-toolstrip-left");
 		leftLayout.setSpacing(true);
 		
+		titleLabel = new Label();
+		titleLabel.setStyleName("conx-entity-toolstrip-title");
+		titleLabel.setWidth("150px");
+		
 		rightLayout = new HorizontalLayout();
 		rightLayout.setHeight("28px");
 		rightLayout.setStyleName("conx-entity-toolstrip-right");
 		
 		addComponent(leftLayout);
+		addComponent(titleLabel);
 		addComponent(rightLayout);
 		
 		setComponentAlignment(leftLayout, Alignment.MIDDLE_LEFT);
+		setComponentAlignment(titleLabel, Alignment.MIDDLE_CENTER);
 		setComponentAlignment(rightLayout, Alignment.MIDDLE_RIGHT);
+	}
+	
+	public void setTitle(String title) {
+		this.titleLabel.setValue(title);
 	}
 	
 	public EntityEditorToolStripButton addToolStripButton(String iconUrl) {
@@ -60,6 +72,7 @@ public class EntityEditorToolStrip extends HorizontalLayout {
 	
 	public void addContextComponent(Component component) {
 		rightLayout.addComponent(component);
+		rightLayout.setComponentAlignment(component, Alignment.MIDDLE_RIGHT);
 	}
 	
 	public void removeContextComponent(Component component) {

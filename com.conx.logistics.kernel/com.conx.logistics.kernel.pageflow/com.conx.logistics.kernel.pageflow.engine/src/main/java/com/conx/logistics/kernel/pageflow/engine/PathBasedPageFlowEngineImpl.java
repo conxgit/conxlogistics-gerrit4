@@ -323,7 +323,7 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 		
 		
 		// 4. Create wizard
-		TaskWizard wizard = new TaskWizard(session);
+		TaskWizard wizard = new TaskWizard(session, properties);
 		wizard.setSizeFull();
 
 

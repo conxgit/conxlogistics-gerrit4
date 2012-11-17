@@ -32,7 +32,6 @@ public class ConfirmDropOffPage extends BasePageFlowPage implements IModelDriven
 	public TaskPage getComponentModel() {
 		if (componentModel == null) {
 			DataSourceField expectedDsField = null;
-			DataSourceField actualDsField = null;
 			ConfirmActualsFieldSetField fieldSetField = null;
 			ConfirmActualsFieldSet fieldSet = null;
 			
@@ -69,15 +68,15 @@ public class ConfirmDropOffPage extends BasePageFlowPage implements IModelDriven
 			fieldSetField.setFieldSet(fieldSet);
 			
 			expectedDsField = new DataSourceField("receive", ds, ds, type, "expectedCfsContact", null);
-			expectedDsField.setValueXPath("expectedDropOff/cfsContact");
+			expectedDsField.setValueXPath("expectedDropOff/dropMode");
 			ds.getDSFields().add(expectedDsField);
 			DataSourceField actualContactDsField = new DataSourceField("actualDropOff", ds, ds, type, "actualCfsContact", null);
-			actualContactDsField.setValueXPath("actualCfsContact");
-			actualContactDsField.setParentDataSourceField(actualOrgDsField);
-			actualOrgDsField.getChildDataSourceFields().add(actualContactDsField);
+			actualContactDsField.setValueXPath("actualDropMode");
+//			actualContactDsField.setParentDataSourceField(actualOrgDsField);
+//			actualOrgDsField.getChildDataSourceFields().add(actualContactDsField);
 			ds.getDSFields().add(actualContactDsField);
 			fieldSetField = new ConfirmActualsFieldSetField(0, expectedDsField, actualContactDsField);
-			fieldSetField.setCaption("Contact");
+			fieldSetField.setCaption("Drop Mode");
 			fieldSet.getFields().add(fieldSetField);
 			fieldSetField.setFieldSet(fieldSet);
 			

@@ -190,7 +190,7 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 		nativeSelect.setItemCaptionPropertyId("name");
 		nativeSelect.setContainerDataSource(container);
 		nativeSelect.setWidth("100%");
-		nativeSelect.setPropertyDataSource(new SingleSelectTranslator(nativeSelect));
+		nativeSelect.setPropertyDataSource(item.getItemProperty(propertyId));
 		return nativeSelect;
 	}
 

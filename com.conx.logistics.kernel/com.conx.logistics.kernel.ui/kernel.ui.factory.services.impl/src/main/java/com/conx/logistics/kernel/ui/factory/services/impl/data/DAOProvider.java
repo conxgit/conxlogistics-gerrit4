@@ -12,6 +12,7 @@ import com.conx.logistics.app.whse.rcv.rcv.dao.services.IArrivalDAOService;
 import com.conx.logistics.app.whse.rcv.rcv.dao.services.IArrivalReceiptDAOService;
 import com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveDAOService;
 import com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveLineDAOService;
+import com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository;
 import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
 import com.conx.logistics.kernel.ui.factory.services.data.IDAOProvider;
 import com.conx.logistics.mdm.dao.services.IBaseEntityDAOService;
@@ -27,6 +28,8 @@ public class DAOProvider implements IDAOProvider {
 	private PlatformTransactionManager globalTransactionManager;
 //	@Autowired
 	private IFolderDAOService folderDAOService;
+//	@Autowired
+	private IRemoteDocumentRepository remoteDocumentRepositoryService;
 //	@Autowired
 	private IEntityMetadataDAOService entityMetadataDAOService;
 //	@Autowired
@@ -259,5 +262,15 @@ public class DAOProvider implements IDAOProvider {
 			this.daoCache = new HashMap<Class<?>, Object>();
 		}
 		return this.daoCache;
+	}
+
+	public IRemoteDocumentRepository getRemoteDocumentRepositoryService() {
+		return remoteDocumentRepositoryService;
+	}
+
+	@Autowired
+	public void setRemoteDocumentRepositoryService(IRemoteDocumentRepository remoteDocumentRepositoryService) {
+		this.provideDaoCache().put(IRemoteDocumentRepository.class, remoteDocumentRepositoryService);
+		this.remoteDocumentRepositoryService = remoteDocumentRepositoryService;
 	}
 }

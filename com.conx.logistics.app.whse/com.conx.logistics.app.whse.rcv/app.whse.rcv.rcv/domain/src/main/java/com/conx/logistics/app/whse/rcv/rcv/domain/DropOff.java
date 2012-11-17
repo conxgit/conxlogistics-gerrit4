@@ -21,7 +21,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.conx.logistics.app.whse.domain.docktype.DockType;
 import com.conx.logistics.app.whse.rcv.asn.shared.type.DROPMODE;
 import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
-import com.conx.logistics.mdm.domain.geolocation.Address;
+import com.conx.logistics.mdm.domain.geolocation.AddressTypeAddress;
 import com.conx.logistics.mdm.domain.organization.Organization;
 
 @Entity
@@ -33,17 +33,17 @@ public class DropOff extends MultitenantBaseEntity implements Serializable {
     @JoinColumn
     private Organization actualCfs;
 
-    @ManyToOne(targetEntity = Address.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = AddressTypeAddress.class, fetch = FetchType.EAGER)
     @JoinColumn
-    private Address actualCfsAddress;
+    private AddressTypeAddress actualCfsAddress;
 
     @ManyToOne(targetEntity = Organization.class, fetch = FetchType.EAGER)
     @JoinColumn
     private Organization actualDropOffAt;
 
-    @ManyToOne(targetEntity = Address.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = AddressTypeAddress.class, fetch = FetchType.EAGER)
     @JoinColumn
-    private Address actualDropOffAtAddress;
+    private AddressTypeAddress actualDropOffAtAddress;
     
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "S-")
@@ -66,11 +66,11 @@ public class DropOff extends MultitenantBaseEntity implements Serializable {
 		this.actualCfs = cfs;
 	}
 
-	public Address getCfsAddress() {
+	public AddressTypeAddress getCfsAddress() {
 		return actualCfsAddress;
 	}
 
-	public void setCfsAddress(Address cfsAddress) {
+	public void setCfsAddress(AddressTypeAddress cfsAddress) {
 		this.actualCfsAddress = cfsAddress;
 	}
 
@@ -82,11 +82,11 @@ public class DropOff extends MultitenantBaseEntity implements Serializable {
 		this.actualDropOffAt = dropOffAt;
 	}
 
-	public Address getDropOffAtAddress() {
+	public AddressTypeAddress getDropOffAtAddress() {
 		return actualDropOffAtAddress;
 	}
 
-	public void setDropOffAtAddress(Address dropOffAtAddress) {
+	public void setDropOffAtAddress(AddressTypeAddress dropOffAtAddress) {
 		this.actualDropOffAtAddress = dropOffAtAddress;
 	}
 
@@ -131,11 +131,11 @@ public class DropOff extends MultitenantBaseEntity implements Serializable {
 		this.actualCfs = actualCfs;
 	}
 
-	public Address getActualCfsAddress() {
+	public AddressTypeAddress getActualCfsAddress() {
 		return actualCfsAddress;
 	}
 
-	public void setActualCfsAddress(Address actualCfsAddress) {
+	public void setActualCfsAddress(AddressTypeAddress actualCfsAddress) {
 		this.actualCfsAddress = actualCfsAddress;
 	}
 
@@ -147,11 +147,11 @@ public class DropOff extends MultitenantBaseEntity implements Serializable {
 		this.actualDropOffAt = actualDropOffAt;
 	}
 
-	public Address getActualDropOffAtAddress() {
+	public AddressTypeAddress getActualDropOffAtAddress() {
 		return actualDropOffAtAddress;
 	}
 
-	public void setActualDropOffAtAddress(Address actualDropOffAtAddress) {
+	public void setActualDropOffAtAddress(AddressTypeAddress actualDropOffAtAddress) {
 		this.actualDropOffAtAddress = actualDropOffAtAddress;
 	}
 

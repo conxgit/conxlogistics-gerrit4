@@ -1,19 +1,35 @@
 package com.conx.logistics.app.whse.rcv.asn.pageflow.pages;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import com.conx.logistics.app.whse.rcv.asn.domain.ASN;
+import com.conx.logistics.kernel.datasource.domain.DataSource;
 import com.conx.logistics.kernel.pageflow.services.BasePageFlowPage;
 import com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage;
+import com.conx.logistics.kernel.ui.components.domain.page.TaskPage;
+import com.conx.logistics.kernel.ui.components.domain.search.SearchGrid;
+import com.conx.logistics.mdm.domain.metamodel.EntityType;
+import com.conx.logistics.mdm.domain.organization.Organization;
 
-public class ConfirmAsnOrgPage extends BasePageFlowPage {
+public class ConfirmAsnOrgPage extends BasePageFlowPage implements IModelDrivenPageFlowPage {
+	private TaskPage componentModel;
+	
 	@Override
 	public Map<Class<?>, String> getParamKeyMap() {
-		return null;
+		if (this.paramKeyMap == null) {
+			this.paramKeyMap = new HashMap<Class<?>, String>();
+		}
+		return this.paramKeyMap;
 	}
 
 	@Override
 	public Map<Class<?>, String> getResultKeyMap() {
-		return null;
+		if (this.resultKeyMap == null) {
+			this.resultKeyMap = new HashMap<Class<?>, String>();
+			this.resultKeyMap.put(ASN.class, "asnOut");
+		}
+		return this.resultKeyMap;
 	}
 
 	@Override
@@ -25,173 +41,21 @@ public class ConfirmAsnOrgPage extends BasePageFlowPage {
 	public Class<?> getType() {
 		return IModelDrivenPageFlowPage.class;
 	}
-	/*
-	private static final String VIEW_HEIGHT = "100%";
-	
-	@SuppressWarnings("unused")
-	private String userId;
-	@SuppressWarnings("unused")
-	private String orgId;
-	
-	private TabSheet entityTabSheet;
-	private ComboBox organization;
-	private Label organizationLabel;
-	private GridLayout organizationLayout;
-	private HorizontalLayout confirmOrganizationLayout;
-	private Button saveButton;
-	private Button resetButton;
-	private HorizontalLayout toolstripLeftButtonPanel;
-	private HorizontalLayout toolStrip;
-	private JPAContainer<Organization> organizationContainer;
-	private EntityManagerFactory emf;
-	private Button cancelButton;
-
-	private Map<String, Object> state;
-
-	private ASN asn;
-	
-	private void initContainers() {
-		organizationContainer = JPAContainerFactory.make(Organization.class, this.emf.createEntityManager());
-	}
-	
-	public void initConfirmOrg() {
-		organization = new ComboBox();
-		organization.setInputPrompt("Default Organization");
-		organization.setContainerDataSource(organizationContainer);
-		organization.setItemCaptionPropertyId("name");
-		organization.setNullSelectionAllowed(false);
-		organization.isReadOnly();
-		organization.setWidth("100%");
-		organization.setValue(organizationContainer.firstItemId());
-//		organization.setEnabled(false);
-		
-		organizationLabel = new Label();
-		organizationLabel.setValue("Organization");
-		
-		Label organizationLayoutLabel = new Label();
-		organizationLayoutLabel.setContentMode(Label.CONTENT_XHTML);
-		organizationLayoutLabel.setValue("<h3>Confirm Organization</h3>");
-		
-		organizationLayout = new GridLayout(2, 2);
-		organizationLayout.setWidth("100%");
-		organizationLayout.setSpacing(true);
-		organizationLayout.setMargin(false, true, true, true);
-		organizationLayout.setColumnExpandRatio(0, 0.3f);
-		organizationLayout.setColumnExpandRatio(1, 0.7f);
-		organizationLayout.addComponent(organizationLayoutLabel, 0, 0, 1, 0);
-		organizationLayout.addComponent(organizationLabel);
-		organizationLayout.addComponent(organization);
-		organizationLayout.setComponentAlignment(organizationLabel, Alignment.MIDDLE_LEFT);
-		
-		confirmOrganizationLayout = new HorizontalLayout();
-		confirmOrganizationLayout.setMargin(true);
-		confirmOrganizationLayout.setWidth("40%");
-		confirmOrganizationLayout.setHeight("100%");
-		confirmOrganizationLayout.setSpacing(true);
-		confirmOrganizationLayout.addComponent(organizationLayout);
-	}
-	
-	public void initEntityTabSheet() {
-		initConfirmOrg();
-		
-		entityTabSheet = new TabSheet();
-		entityTabSheet.setWidth("100%");
-		entityTabSheet.setHeight(VIEW_HEIGHT);
-		entityTabSheet.addTab(confirmOrganizationLayout, "Confirm Organization");
-	}
-	
-	public void initTableToolStrip() {
-		saveButton = new Button("Save");
-		saveButton.setEnabled(false);
-		saveButton.setWidth("100%");
-		saveButton.addListener(new ClickListener() {
-			private static final long serialVersionUID = 500312301678L;
-
-			public void buttonClick(ClickEvent event) {
-			}
-		});
-		
-		resetButton = new Button("Reset");
-		resetButton.setEnabled(false);
-		resetButton.setWidth("100%");
-		resetButton.addListener(new ClickListener() {
-			private static final long serialVersionUID = 5003289976900978L;
-
-			public void buttonClick(ClickEvent event) {
-			}
-		});
-		
-		cancelButton = new Button("Cancel");
-		cancelButton.setEnabled(false);
-		cancelButton.setWidth("100%");
-		cancelButton.addListener(new ClickListener() {
-			private static final long serialVersionUID = 500785840900978L;
-
-			public void buttonClick(ClickEvent event) {
-			}
-		});
-		
-		toolstripLeftButtonPanel = new HorizontalLayout();
-		toolstripLeftButtonPanel.setWidth("300px");
-		toolstripLeftButtonPanel.setSpacing(true);
-		toolstripLeftButtonPanel.addComponent(saveButton);
-		toolstripLeftButtonPanel.addComponent(resetButton);
-		toolstripLeftButtonPanel.addComponent(cancelButton);
-		toolstripLeftButtonPanel.setExpandRatio(saveButton, 0.33f);
-		toolstripLeftButtonPanel.setExpandRatio(resetButton, 0.33f);
-		toolstripLeftButtonPanel.setExpandRatio(cancelButton, 0.33f);
-		
-		toolStrip = new HorizontalLayout();
-		toolStrip.setWidth("100%");
-		toolStrip.setMargin(true, false, true, false);
-		toolStrip.addComponent(toolstripLeftButtonPanel);
-		toolStrip.setComponentAlignment(toolstripLeftButtonPanel, Alignment.MIDDLE_LEFT);
-	}
 
 	@Override
-	public String getTaskName() {
-		return "ConfirmAsnOrg";
-	}
-
-	@Override
-	public String getCaption() {
-		return "Confirm Asn Organization";
-	}
-
-	@Override
-	public void initialize(EntityManagerFactory emf, PlatformTransactionManager ptm,
-			IPageFlowPageChangedEventHandler pfpEventHandler, ITaskWizard wizard) {
-		setExecuted(false);
-		this.emf = emf;
-		
-		initContainers();
-		initEntityTabSheet();
-		initTableToolStrip();
-		
-		VerticalLayout canvas = new VerticalLayout();
-		canvas.setSizeFull();
-		canvas.addComponent(entityTabSheet);
-		canvas.addComponent(toolStrip);
-		canvas.setExpandRatio(entityTabSheet, 1.0f);
-		
-		this.setCanvas(canvas);
-	}
-
-	@Override
-	public Map<String, Object> getOnCompleteState() {
-		//Map<String,Object> outParams = new HashMap<String, Object>();
-		//outParams.put("Result", this.state);
-		setExecuted(true);
-		return new HashMap<String, Object>();
-	}
-
-	@Override
-	public void setOnStartState(Map<String, Object> state) {
-		this.asn = (ASN)state.get("Content");
-		if (state != null) {
-			this.orgId = (String) state.get("orgId");
-			this.userId = (String) state.get("userId");
+	public TaskPage getComponentModel() {
+		if (componentModel == null) {
+			EntityType type = new EntityType("Organization", Organization.class, null, null, null, "reforganization");
+			DataSource ds = new DataSource("orgsearchgriddatasource", type);
+			
+			String[] visibleColumnIds = { "id", "code", "name", "dateCreated" };
+			
+			SearchGrid searchGrid = new SearchGrid();
+			searchGrid.setDataSource(ds);
+			searchGrid.setFormTitle("Organization");
+			searchGrid.setVisibleColumnIds(visibleColumnIds);
+			componentModel = new TaskPage(searchGrid);
 		}
+		return componentModel;
 	}
-*/
 }

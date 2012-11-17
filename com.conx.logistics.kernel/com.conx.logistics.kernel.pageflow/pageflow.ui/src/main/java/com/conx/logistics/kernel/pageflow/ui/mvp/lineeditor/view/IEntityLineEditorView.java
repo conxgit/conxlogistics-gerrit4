@@ -2,8 +2,10 @@ package com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.view;
 
 import org.vaadin.mvp.uibinder.IUiBindable;
 
-import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.Component;
 
 public interface IEntityLineEditorView extends IUiBindable {
-	public TabSheet getMainLayout();
+	public void removeTab(Component content);
+	public void addTab(Component content, String title);
+	public void init();
 }

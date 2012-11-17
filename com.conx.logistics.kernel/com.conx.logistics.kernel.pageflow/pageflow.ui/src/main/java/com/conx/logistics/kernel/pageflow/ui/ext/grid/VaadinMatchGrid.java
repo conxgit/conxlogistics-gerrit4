@@ -20,8 +20,6 @@ import com.vaadin.data.Container.Filter;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.util.filter.Compare;
-import com.vaadin.data.util.filter.Not;
 import com.vaadin.terminal.UserError;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -82,8 +80,15 @@ public class VaadinMatchGrid extends VerticalLayout {
 				if (matchedContainer instanceof BeanItemContainer) {
 					matchedItem = ((BeanItemContainer) matchedContainer).addBean(matchedBean);
 					onMatch(matchedItem, item);
-//					((JPAContainer<?>)this.unmatchedGrid.getContainerDataSource()).refreshItem(item);
-					((JPAContainer<?>)this.unmatchedGrid.getContainerDataSource()).refresh();
+					
+					if (item instanceof JPAContainerItem<?>) {
+//						((JPAContainer<?>)this.unmatchedGrid.getContainerDataSource()).refreshItem(((JPAContainerItem) item).getItemId());
+						((JPAContainer<?>)this.unmatchedGrid.getContainerDataSource()).refresh();
+//						((JPAContainer<?>)this.unmatchedGrid.getContainerDataSource()).applyFilters();
+					} else {
+						throw new Exception("The unmatched container must inherit JPAContainer<?> and all items must inherit JPAContainerItem<?>.");
+					}
+					
 					String message = "";
 					if (matchedItem.getItemProperty("name") != null && matchedItem.getItemProperty("name").getValue() != null) {
 						message = matchedItem.getItemProperty("name").getValue() + " was matched successfully.";
@@ -137,7 +142,7 @@ public class VaadinMatchGrid extends VerticalLayout {
 		this.updateMatchedItemCount();
 	}
 
-	private void hideMatchableItem(Item matchedItem, Item matchedItemParent) throws Exception {
+	/*private void hideMatchableItem(Item matchedItem, Item matchedItemParent) throws Exception {
 		Filter newMatchFilter = null;
 		Container unmatchedContainer = this.unmatchedGrid.getContainerDataSource();
 		if (unmatchedContainer instanceof JPAContainer) {
@@ -159,7 +164,7 @@ public class VaadinMatchGrid extends VerticalLayout {
 		}
 		this.unmatchedItemIdFilterMap.put(matchedItem, newMatchFilter);
 	}
-
+*/
 	private void unhideMatchableItem(Item matchedItem) throws Exception {
 		Container unmatchedContainer = this.unmatchedGrid.getContainerDataSource();
 		Filter unmatchedItemFilter = this.unmatchedItemIdFilterMap.get(matchedItem);
@@ -217,8 +222,10 @@ public class VaadinMatchGrid extends VerticalLayout {
 	}
 
 	private void initialize() {
+		this.matchedToolStrip.setTitle(this.componentModel.getMatchedDataSource().getEntityType().getName() + "s");
 		this.unmatchButton = this.matchedToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_UNMATCH_PNG);
 		this.unmatchButton.setEnabled(false);
+		this.unmatchedToolStrip.setTitle(this.componentModel.getUnmatchedDataSource().getEntityType().getName() + "s");
 		this.matchButton = this.unmatchedToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_MATCH_PNG);
 		this.matchButton.setEnabled(false);
 

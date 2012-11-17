@@ -13,11 +13,16 @@ import javax.persistence.criteria.Root;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.vaadin.mvp.eventbus.EventBusManager;
 import org.vaadin.mvp.presenter.BasePresenter;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
 import com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository;
+import com.conx.logistics.kernel.pageflow.services.IPageComponent;
 import com.conx.logistics.kernel.pageflow.ui.ext.mvp.IConfigurablePresenter;
 import com.conx.logistics.kernel.pageflow.ui.ext.mvp.lineeditor.section.ILineEditorSectionContentPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.attachment.view.AttachmentEditorView;
@@ -28,8 +33,8 @@ import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.attachment.v
 import com.conx.logistics.kernel.persistence.services.IEntityContainerProvider;
 import com.conx.logistics.kernel.ui.components.domain.attachment.AttachmentEditorComponent;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
+import com.conx.logistics.kernel.ui.factory.services.data.IDAOProvider;
 import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
-import com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService;
 import com.conx.logistics.mdm.domain.BaseEntity;
 import com.conx.logistics.mdm.domain.documentlibrary.DocType;
 import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
@@ -46,20 +51,18 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 
 @Presenter(view = AttachmentEditorView.class)
-public class AttachmentEditorPresenter extends BasePresenter<IAttachmentEditorView, AttachmentEditorEventBus> implements ICreateAttachmentListener, ISaveAttachmentListener,
-		IInspectAttachmentListener, ILineEditorSectionContentPresenter, IConfigurablePresenter {
+public class AttachmentEditorPresenter extends BasePresenter<IAttachmentEditorView, AttachmentEditorEventBus> implements ICreateAttachmentListener,
+		ISaveAttachmentListener, IInspectAttachmentListener, ILineEditorSectionContentPresenter, IConfigurablePresenter {
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 	private boolean initialized = false;
 	private JPAContainer<FileEntry> entityContainer;
 	private Set<String> visibleFieldNames;
-	private IRemoteDocumentRepository docRepo;
 	private Folder docFolder;
 	private List<String> formVisibleFieldNames;
 	private EntityItem<FileEntry> newEntityItem;
-	@SuppressWarnings("unused")
-	private IFolderDAOService docFolderDAOService;
 	private AttachmentEditorComponent attachmentComponent;
 	private IEntityContainerProvider entityContainerProvider;
+	private IDAOProvider daoProvider;
 
 	@SuppressWarnings("unchecked")
 	private void initialize() {
@@ -93,7 +96,7 @@ public class AttachmentEditorPresenter extends BasePresenter<IAttachmentEditorVi
 			if (this.docFolder == null) {
 				// TODO add code that creates a docFolder if one does not exist
 			}
-			
+
 			if (!initialized) {
 				initialize();
 			}
@@ -106,7 +109,8 @@ public class AttachmentEditorPresenter extends BasePresenter<IAttachmentEditorVi
 		this.entityContainer.getEntityProvider().setQueryModifierDelegate(new DefaultQueryModifierDelegate() {
 			@Override
 			public void filtersWillBeAdded(CriteriaBuilder criteriaBuilder, CriteriaQuery<?> query, List<Predicate> predicates) {
-				// FIXME get rid of AttachmentEditorPresenter.this.docFolder != null placeholder code
+				// FIXME get rid of AttachmentEditorPresenter.this.docFolder !=
+				// null placeholder code
 				if (criteriaBuilder != null && query != null && predicates != null && AttachmentEditorPresenter.this.docFolder != null) {
 					Root<?> fromFileEntry = query.getRoots().iterator().next();
 					Path<Folder> parentFolder = fromFileEntry.<Folder> get("folder");
@@ -130,8 +134,7 @@ public class AttachmentEditorPresenter extends BasePresenter<IAttachmentEditorVi
 
 	@Override
 	public void onConfigure(Map<String, Object> params) {
-		this.docRepo = (IRemoteDocumentRepository) params.get(IEntityEditorFactory.FACTORY_PARAM_IDOCLIB_REPO_SERVICE);
-		this.docFolderDAOService = (IFolderDAOService) params.get(IEntityEditorFactory.FACTORY_PARAM_IFOLDER_SERVICE);
+		this.daoProvider = (IDAOProvider) params.get(IPageComponent.DAO_PROVIDER);
 		this.attachmentComponent = (AttachmentEditorComponent) params.get(IEntityEditorFactory.COMPONENT_MODEL);
 		this.entityContainerProvider = (IEntityContainerProvider) params.get(IEntityEditorFactory.CONTAINER_PROVIDER);
 
@@ -161,7 +164,8 @@ public class AttachmentEditorPresenter extends BasePresenter<IAttachmentEditorVi
 	}
 
 	public void onSaveForm(DocType attachmentType, String sourceFileName, String mimeType, String title, String description) throws Exception {
-		this.docRepo.addorUpdateFileEntry(this.docFolder, attachmentType, sourceFileName, mimeType, title, description);
+		this.daoProvider.provideByDAOClass(IRemoteDocumentRepository.class).addorUpdateFileEntry(this.docFolder, attachmentType, sourceFileName,
+				mimeType, title, description);
 		this.entityContainer.refresh();
 	}
 
@@ -174,13 +178,27 @@ public class AttachmentEditorPresenter extends BasePresenter<IAttachmentEditorVi
 
 	@Override
 	public boolean onSaveAttachment(Item item, DocType attachmentType, String sourceFileName, String mimeType, String title, String description) {
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setName("pageflow.ui.data");
+		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+		TransactionStatus status = this.daoProvider.provideByDAOClass(PlatformTransactionManager.class).getTransaction(def);
 		try {
-			this.docRepo.addorUpdateFileEntry(this.docFolder, attachmentType, sourceFileName, mimeType, title, description);
+			if (description == null) {
+				description = "";
+			}
+			if (mimeType == null) {
+				mimeType = "";
+			}
+
+			this.daoProvider.provideByDAOClass(IRemoteDocumentRepository.class).addorUpdateFileEntry(this.docFolder, attachmentType, sourceFileName,
+					mimeType, title, description);
 			this.entityContainer.refresh();
 			// this.onEntityItemAdded((EntityItem<?>) item);
 			this.getView().hideDetail();
+			this.daoProvider.provideByDAOClass(PlatformTransactionManager.class).commit(status);
 			return true;
 		} catch (Exception e) {
+			this.daoProvider.provideByDAOClass(PlatformTransactionManager.class).rollback(status);
 			e.printStackTrace();
 		}
 		return false;

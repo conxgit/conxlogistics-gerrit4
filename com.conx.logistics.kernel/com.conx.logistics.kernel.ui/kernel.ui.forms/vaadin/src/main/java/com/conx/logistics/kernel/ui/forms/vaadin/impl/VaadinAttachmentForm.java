@@ -11,8 +11,11 @@ import java.util.Set;
 import com.conx.logistics.common.utils.StringUtil;
 import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
 import com.conx.logistics.mdm.domain.documentlibrary.DocType;
+import com.vaadin.addon.jpacontainer.JPAContainer;
+import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
+import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.Form;
@@ -215,8 +218,26 @@ public class VaadinAttachmentForm extends Form implements Receiver {
 
 	public void saveForm() {
 		this.description = (String) this.fileDescription.getValue();
-//		this.attachedField.commit();
-		this.docTypeValue = (DocType) this.getItemDataSource().getItemProperty("docType").getValue();
+		// this.attachedField.commit();
+		if (this.attachedField instanceof AbstractSelect) {
+			if (((AbstractSelect) this.attachedField).getContainerDataSource() instanceof JPAContainer<?>) {
+				if (DocType.class.isAssignableFrom(((JPAContainer<?>) ((AbstractSelect) this.attachedField).getContainerDataSource())
+						.getEntityClass())) {
+					if (this.attachedField.getValue() != null) {
+						Item item = ((AbstractSelect) this.attachedField).getContainerDataSource().getItem(this.attachedField.getValue());
+						if (item instanceof JPAContainerItem<?>) {
+							@SuppressWarnings("rawtypes")
+							Object entity = ((JPAContainerItem) item).getEntity();
+							if (entity instanceof DocType) {
+								this.docTypeValue = (DocType) entity;
+								return;
+							}
+						}
+					}
+				}
+			}
+		}
+		this.docTypeValue = null;
 	}
 
 	private void updateStaticFields(Item newDataSource) {
@@ -228,6 +249,8 @@ public class VaadinAttachmentForm extends Form implements Receiver {
 		Property title = newDataSource.getItemProperty("title");
 		if (description != null && description.getValue() != null) {
 			fileDescription.setValue(description.getValue());
+		} else {
+			this.fileDescription.setValue("");
 		}
 		if (mimeType != null && mimeType.getValue() != null) {
 			fileTypeField.setValue(mimeType.getValue());
@@ -277,8 +300,8 @@ public class VaadinAttachmentForm extends Form implements Receiver {
 		return fos;
 	}
 
-	public TextArea getFileDescription() {
-		return fileDescription;
+	public String getFileDescription() {
+		return this.description;
 	}
 
 	public String getSourceFileName() {

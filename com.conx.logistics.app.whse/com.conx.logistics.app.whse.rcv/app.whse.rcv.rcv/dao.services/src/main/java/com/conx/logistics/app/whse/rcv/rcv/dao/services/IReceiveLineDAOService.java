@@ -3,10 +3,7 @@ package com.conx.logistics.app.whse.rcv.rcv.dao.services;
 import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.TypedQuery;
-
 import com.conx.logistics.app.whse.rcv.rcv.domain.Arrival;
-import com.conx.logistics.app.whse.rcv.rcv.domain.Receive;
 import com.conx.logistics.app.whse.rcv.rcv.domain.ReceiveLine;
 import com.conx.logistics.app.whse.rcv.rcv.domain.ReceiveLineStockItemSet;
 import com.conx.logistics.app.whse.rcv.rcv.domain.types.RECEIVELINESTATUS;
@@ -34,11 +31,11 @@ public interface IReceiveLineDAOService {
 
 	public Double calculateExpectedProductTotalVolumeInCf(ReceiveLine receiveLine);
 
-	public TypedQuery<ReceiveLine> findReceiveLinesByINList(Collection<ReceiveLine> rcvLineList);
+	public List<ReceiveLine> findReceiveLinesByINList(Collection<ReceiveLine> rcvLineList) throws Exception;
 
-	public TypedQuery<ReceiveLine> findReceiveLinesByCode(String code);
+	public List<ReceiveLine> findReceiveLinesByCode(String code) throws Exception;
 
-	public TypedQuery<ReceiveLine> findReceiveLinesByStatusAndReceive(RECEIVELINESTATUS status, Receive receive);
+	public List<ReceiveLine> findReceiveLinesByStatusAndReceive(RECEIVELINESTATUS status, Long receivePK) throws Exception;
 
 	public ReceiveLine add(ReceiveLine record, Long receivePK);
 	

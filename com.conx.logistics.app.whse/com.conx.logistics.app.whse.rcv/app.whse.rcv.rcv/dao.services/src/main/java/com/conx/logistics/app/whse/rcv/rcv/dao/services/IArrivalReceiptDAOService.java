@@ -16,6 +16,8 @@ public interface IArrivalReceiptDAOService {
 
 	public ArrivalReceiptLine addArrivalReceiptLine(Long arrivalReceiptId, ArrivalReceiptLine arrivalReceptLine) throws Exception;
 	
+	public ArrivalReceiptLine updateArrivalReceiptLine(ArrivalReceiptLine arrivalReceptLine);
+	
 	public FileEntry addAttachment(Long arvlId, File sourceFile, String title, String description, String mimeType, DocType attachmentType) throws Exception;
 	
 	public FileEntry addAttachment(Long arvlId, String sourceFileName, String title, String description, String mimeType, DocType attachmentType) throws Exception;

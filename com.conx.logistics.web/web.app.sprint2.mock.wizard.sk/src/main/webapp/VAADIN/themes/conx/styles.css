@@ -6782,7 +6782,7 @@ textarea.v-textarea-readonly,
 	padding-left: 4px;
 }
 .conx-entity-alert-panel-info {
-	background: url(formlayout/img/custom/conx-form-alert-panel-red-background.png) repeat-x;
+	background: url(formlayout/img/custom/conx-form-alert-panel-blue-background.png) repeat-x;
 	color: #fff;
 	font-size: 12px;
 }
@@ -6859,4 +6859,18 @@ textarea.v-textarea-readonly,
 .conx-relation-field-new-button .v-disabled:hover {
 	background-position: 0px 0px;
 	cursor: default;
+}
+.conx-entity-toolstrip-title {
+	text-align: center;
+	font-size: 13px;
+	color: whiteSmoke;
+	text-shadow: #000022 0 1px 0;
+}
+.conx-line-editor-default-layout {
+	background-color: whiteSmoke;
+}
+.conx-line-editor-default-layout-label {
+	color: #666;
+	text-shadow: #fff 0 1px 0;
+	text-align: center;
 }

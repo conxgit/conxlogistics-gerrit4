@@ -32,7 +32,6 @@ public class ConfirmPickUpPage extends BasePageFlowPage implements IModelDrivenP
 	public TaskPage getComponentModel() {
 		if (componentModel == null) {
 			DataSourceField expectedDsField = null;
-			DataSourceField actualDsField = null;
 			ConfirmActualsFieldSetField fieldSetField = null;
 			ConfirmActualsFieldSet fieldSet = null;
 			

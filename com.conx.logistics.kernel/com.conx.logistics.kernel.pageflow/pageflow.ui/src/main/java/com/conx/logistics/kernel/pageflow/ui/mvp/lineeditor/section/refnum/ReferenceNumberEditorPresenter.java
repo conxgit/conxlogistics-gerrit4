@@ -1,7 +1,5 @@
 package com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.refnum;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +17,7 @@ import org.vaadin.mvp.eventbus.EventBusManager;
 import org.vaadin.mvp.presenter.BasePresenter;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
+import com.conx.logistics.kernel.pageflow.services.IPageComponent;
 import com.conx.logistics.kernel.pageflow.ui.ext.mvp.IConfigurablePresenter;
 import com.conx.logistics.kernel.pageflow.ui.ext.mvp.lineeditor.section.ILineEditorSectionContentPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.refnum.view.IReferenceNumberEditorView;
@@ -28,6 +27,7 @@ import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.refnum.view.
 import com.conx.logistics.kernel.persistence.services.IEntityContainerProvider;
 import com.conx.logistics.kernel.ui.components.domain.referencenumber.ReferenceNumberEditorComponent;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
+import com.conx.logistics.kernel.ui.factory.services.data.IDAOProvider;
 import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
 import com.conx.logistics.mdm.dao.services.IEntityMetadataDAOService;
 import com.conx.logistics.mdm.domain.BaseEntity;
@@ -41,8 +41,8 @@ import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItem;
 
 @Presenter(view = ReferenceNumberEditorView.class)
-public class ReferenceNumberEditorPresenter extends BasePresenter<IReferenceNumberEditorView, ReferenceNumberEditorEventBus> implements ICreateReferenceNumberListener, ISaveReferenceNumberListener,
-		ILineEditorSectionContentPresenter, IConfigurablePresenter {
+public class ReferenceNumberEditorPresenter extends BasePresenter<IReferenceNumberEditorView, ReferenceNumberEditorEventBus> implements
+		ICreateReferenceNumberListener, ISaveReferenceNumberListener, ILineEditorSectionContentPresenter, IConfigurablePresenter {
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 	private boolean initialized = false;
 	private Set<String> visibleFieldNames;
@@ -52,12 +52,12 @@ public class ReferenceNumberEditorPresenter extends BasePresenter<IReferenceNumb
 	private BaseEntity entity;
 	private ReferenceNumberEditorComponent refNumComponent;
 	private JPAContainer<ReferenceNumber> entityContainer;
-	private IEntityMetadataDAOService entityMetadataDAO;
 	private IEntityContainerProvider entityContainerProvider;
+	private IDAOProvider daoProvider;
 
 	@SuppressWarnings("unchecked")
 	private void initialize() {
-		this.entityContainer = (JPAContainer<ReferenceNumber>) this.entityContainerProvider.createPersistenceContainer(ReferenceNumber.class);
+		this.entityContainer = (JPAContainer<ReferenceNumber>) this.entityContainerProvider.createNonCachingPersistenceContainer(ReferenceNumber.class);
 		this.visibleFieldNames = this.refNumComponent.getDataSource().getVisibleFieldNames();
 		this.formVisibleFieldNames = Arrays.asList("value", "type");
 		Set<String> nestedFieldNames = refNumComponent.getDataSource().getNestedFieldNames();
@@ -89,23 +89,12 @@ public class ReferenceNumberEditorPresenter extends BasePresenter<IReferenceNumb
 		Object bean = getBean(item);
 		if (bean instanceof BaseEntity) {
 			this.entity = (BaseEntity) bean;
-			try {
-				this.defaultMetadata = entityMetadataDAO.provide(entity.getClass());
-			} catch (Exception e) {
-				e.printStackTrace();
-				return;
-			}
+			this.defaultMetadata = this.daoProvider.provideByDAOClass(IEntityMetadataDAOService.class).provide(this.entity.getClass());
 
 			if (!isInitialized()) {
-				try {
-					initialize();
-				} catch (Exception e) {
-					StringWriter sw = new StringWriter();
-					e.printStackTrace(new PrintWriter(sw));
-					String stacktrace = sw.toString();
-					logger.error(stacktrace);
-				}
+				initialize();
 			}
+			
 			updateQueryFilter();
 		}
 	}
@@ -119,7 +108,8 @@ public class ReferenceNumberEditorPresenter extends BasePresenter<IReferenceNumb
 				Path<DefaultEntityMetadata> metaData = referenceNumberRoot.<DefaultEntityMetadata> get("entityMetadata");
 				Path<Long> metaDataId = metaData.get("id");
 				Path<Long> pk = referenceNumberRoot.<Long> get("entityPK");
-				Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(metaDataId, ReferenceNumberEditorPresenter.this.defaultMetadata.getId()),
+				Predicate predicate = criteriaBuilder.and(
+						criteriaBuilder.equal(metaDataId, ReferenceNumberEditorPresenter.this.defaultMetadata.getId()),
 						criteriaBuilder.equal(pk, ReferenceNumberEditorPresenter.this.entity.getId()));
 				predicates.add(predicate);
 			}
@@ -137,9 +127,9 @@ public class ReferenceNumberEditorPresenter extends BasePresenter<IReferenceNumb
 
 	@Override
 	public void onConfigure(Map<String, Object> params) {
-		this.entityMetadataDAO = (IEntityMetadataDAOService) params.get(IEntityEditorFactory.FACTORY_PARAM_IENTITY_METADATA_SERVICE);
 		this.refNumComponent = (ReferenceNumberEditorComponent) params.get(IEntityEditorFactory.COMPONENT_MODEL);
 		this.entityContainerProvider = (IEntityContainerProvider) params.get(IEntityEditorFactory.CONTAINER_PROVIDER);
+		this.daoProvider = (IDAOProvider) params.get(IPageComponent.DAO_PROVIDER);
 	}
 
 	@Override
@@ -151,7 +141,7 @@ public class ReferenceNumberEditorPresenter extends BasePresenter<IReferenceNumb
 	@Override
 	public void onCreateReferenceNumber() {
 		Object newId = this.entityContainer.addEntity(new ReferenceNumber());
-		this.newEntityItem = this.entityContainer.getItem(newId); 
+		this.newEntityItem = this.entityContainer.getItem(newId);
 		this.getView().setItemDataSource(newEntityItem, FormMode.CREATING);
 		this.getView().showDetail();
 	}

@@ -38,6 +38,7 @@ import com.conx.logistics.kernel.ui.common.data.container.EntityTypeContainerFac
 import com.conx.logistics.kernel.ui.common.entityprovider.jta.CustomCachingMutableLocalEntityProvider;
 import com.conx.logistics.kernel.ui.common.ui.menu.app.AppMenuEntry;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
+import com.conx.logistics.kernel.ui.factory.services.data.IDAOProvider;
 import com.conx.logistics.kernel.ui.service.IUIContributionManager;
 import com.conx.logistics.kernel.ui.service.contribution.IActionContribution;
 import com.conx.logistics.kernel.ui.service.contribution.IApplicationViewContribution;
@@ -85,6 +86,8 @@ public class MainMVPApplication extends Application implements IMainApplication,
 	private EntityManagerFactory conxJBpmEntityManagerFactory;		
 	
 	private IPageFlowManager pageFlowEngine;
+	
+	private IDAOProvider daoProvider;
 	
 	private IEntityEditorFactory entityEditorFactory;
 	
@@ -467,13 +470,13 @@ public class MainMVPApplication extends Application implements IMainApplication,
 	public void unbindPageFlowEngine(
 			IPageFlowManager pageflowEngine, Map properties) {
 		logger.debug("unbindPageFlowEngine()");
-		this.pageFlowEngine  = null;
+		this.setPageFlowEngine(null);
 	}
 	
 	public void bindPageFlowEngine(
 			IPageFlowManager pageflowEngine, Map properties) {
 		logger.debug("bindPageFlowEngine()");
-		this.pageFlowEngine  = pageflowEngine;
+		this.setPageFlowEngine(pageflowEngine);
 //		this.pageFlowEngine.setMainApplication(this);
 	}
 
@@ -686,5 +689,21 @@ public class MainMVPApplication extends Application implements IMainApplication,
 
 	public IFeatureDAOService getFeatureDAOService() {
 		return featureDAOService;
+	}
+
+	public IDAOProvider getDaoProvider() {
+		return daoProvider;
+	}
+
+	public void setDaoProvider(IDAOProvider daoProvider) {
+		this.daoProvider = daoProvider;
+	}
+
+	public IPageFlowManager getPageFlowEngine() {
+		return pageFlowEngine;
+	}
+
+	public void setPageFlowEngine(IPageFlowManager pageFlowEngine) {
+		this.pageFlowEngine = pageFlowEngine;
 	}
 }

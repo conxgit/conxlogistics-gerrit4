@@ -144,6 +144,7 @@ public class TestDataManager implements ITestDataManager {
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setName("uat.sprint2.data");
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+		def.setTimeout(1000);
 		TransactionStatus status = this.globalTransactionManager.getTransaction(def);
 		try {
 			// this.userTransaction.begin();

@@ -82,11 +82,13 @@ public class ProcessArrivalReceiptsPage extends BasePageFlowPage implements IMod
 
 		LineEditorComponent lec = new LineEditorComponent(lecc);
 		lec.setCaption("Attachments");
+		lec.setOrdinal(100);
 		lec.setContent(new AttachmentEditorComponent(fileEntryDataSource));
 		lecc.getLineEditors().add(lec);
 		
 		lec = new LineEditorComponent(lecc);
 		lec.setCaption("Reference Numbers");
+		lec.setOrdinal(101);
 		lec.setContent(new ReferenceNumberEditorComponent(referenceNumberDs));
 		lecc.getLineEditors().add(lec);
 		
@@ -213,11 +215,13 @@ public class ProcessArrivalReceiptsPage extends BasePageFlowPage implements IMod
 		weightDimsForm.getFieldSetSet().add(physicalAttributefieldSet);
 
 		lec = new LineEditorComponent(lecc);
+		lec.setOrdinal(2);
 		lec.setCaption("Weight & Dimensions");
 		lec.setContent(weightDimsForm);
 		lecc.getLineEditors().add(lec);
 		
 		lec = new LineEditorComponent(lecc);
+		lec.setOrdinal(1);
 		lec.setCaption("Basic");
 		lec.setContent(basicForm);
 		lecc.getLineEditors().add(lec);
@@ -254,6 +258,7 @@ public class ProcessArrivalReceiptsPage extends BasePageFlowPage implements IMod
 
 		LineEditorComponent lec = new LineEditorComponent(lecc);
 		lec.setCaption("Attachments");
+		lec.setOrdinal(100);
 		lec.setContent(new AttachmentEditorComponent(fileEntryDataSource));
 		lecc.getLineEditors().add(lec);
 
@@ -262,6 +267,7 @@ public class ProcessArrivalReceiptsPage extends BasePageFlowPage implements IMod
 
 		lec = new LineEditorComponent(lecc);
 		lec.setCaption("Arrival Receipt Lines");
+		lec.setOrdinal(1);
 		lec.setContent(table);
 		lecc.getLineEditors().add(lec);
 
@@ -347,6 +353,7 @@ public class ProcessArrivalReceiptsPage extends BasePageFlowPage implements IMod
 
 		LineEditorComponent lec = new LineEditorComponent(lecc);
 		lec.setCaption("Attachments");
+		lec.setOrdinal(100);
 		lec.setContent(new AttachmentEditorComponent(fileEntryDataSource));
 		lecc.getLineEditors().add(lec);
 
@@ -355,11 +362,13 @@ public class ProcessArrivalReceiptsPage extends BasePageFlowPage implements IMod
 
 		lec = new LineEditorComponent(lecc);
 		lec.setCaption("Arrival Receipts");
+		lec.setOrdinal(1);
 		lec.setContent(arrRptGrid);
 		lecc.getLineEditors().add(lec);
 
 		lec = new LineEditorComponent(lecc);
 		lec.setCaption("Reference Numbers");
+		lec.setOrdinal(101);
 		lec.setContent(new ReferenceNumberEditorComponent(referenceNumberDs));
 		lecc.getLineEditors().add(lec);
 

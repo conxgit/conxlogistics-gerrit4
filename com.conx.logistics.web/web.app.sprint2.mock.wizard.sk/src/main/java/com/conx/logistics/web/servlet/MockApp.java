@@ -103,6 +103,7 @@ public class MockApp extends Application {
 	private IPortalOrganizationService portalOrganizationService;
 
 	private User currentUser = null;
+	
 	private IDAOProvider daoProvider;
 
 	@SuppressWarnings("deprecation")

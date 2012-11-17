@@ -6,7 +6,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import javax.persistence.Query;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,6 @@ import com.conx.logistics.app.whse.rcv.rcv.dao.services.IArrivalReceiptDAOServic
 import com.conx.logistics.app.whse.rcv.rcv.domain.Arrival;
 import com.conx.logistics.app.whse.rcv.rcv.domain.ArrivalReceipt;
 import com.conx.logistics.app.whse.rcv.rcv.domain.ArrivalReceiptLine;
-import com.conx.logistics.app.whse.rcv.rcv.domain.Receive;
 import com.conx.logistics.app.whse.rcv.rcv.domain.types.ARRIVALRECEIPTLINESTATUS;
 import com.conx.logistics.app.whse.rcv.rcv.domain.types.ARRIVALRECEIPTSTATUS;
 import com.conx.logistics.mdm.domain.documentlibrary.DocType;
@@ -53,7 +52,7 @@ public class ArrivalReceiptDAOImpl implements IArrivalReceiptDAOService {
 
 		// -- Create underlying receive
 		Arrival parentArrvl = arrivalDAOService.get(parentArrivalId);
-		Receive parentRcv = parentArrvl.getReceive();
+//		Receive parentRcv = parentArrvl.getReceive();
 
 		int lineCount = parentArrvl.getReceipts().size() + 1;
 		String name = parentArrvl.getName() + "-R" + String.format("%02d", lineCount);
@@ -151,9 +150,9 @@ public class ArrivalReceiptDAOImpl implements IArrivalReceiptDAOService {
 	
 	public ArrivalReceipt getArrivalReceiptByCode(String code) {
 		try {
-			TypedQuery<ArrivalReceipt> q = em.createQuery("select o from com.conx.logistics.app.whse.rcv.rcv.domain.ArrivalReceipt o WHERE o.code = :code",ArrivalReceipt.class);
+			Query q = em.createQuery("select o from com.conx.logistics.app.whse.rcv.rcv.domain.ArrivalReceipt o WHERE o.code = :code");
 			q.setParameter("code", code);
-			return q.getSingleResult();
+			return (ArrivalReceipt) q.getSingleResult();
 		} catch (NoResultException e) {
 			e.printStackTrace();
 			return null;
@@ -162,12 +161,17 @@ public class ArrivalReceiptDAOImpl implements IArrivalReceiptDAOService {
 
 	public ArrivalReceiptLine getArrivalReceiptLineByCode(String string) {
 		try {
-			TypedQuery<ArrivalReceiptLine> q = em.createQuery("select o from com.conx.logistics.app.whse.rcv.rcv.domain.ArrivalReceiptLine o WHERE o.code = :code",ArrivalReceiptLine.class);
+			Query q = em.createQuery("select o from com.conx.logistics.app.whse.rcv.rcv.domain.ArrivalReceiptLine o WHERE o.code = :code");
 			q.setParameter("code", string);
-			return q.getSingleResult();
+			return (ArrivalReceiptLine) q.getSingleResult();
 		} catch (NoResultException e) {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	@Override
+	public ArrivalReceiptLine updateArrivalReceiptLine(ArrivalReceiptLine arrivalReceptLine) {
+		return em.merge(arrivalReceptLine);
 	}
 }
