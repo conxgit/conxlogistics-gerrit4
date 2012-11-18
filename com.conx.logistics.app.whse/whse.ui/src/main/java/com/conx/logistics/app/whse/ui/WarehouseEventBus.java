@@ -24,5 +24,8 @@ public interface WarehouseEventBus extends StartableApplicationEventBus {
   public void openFeatureView(Feature feature);  
   
   @Event(handlers = { WarehousePresenter.class })
+  public void closeFeatureView(Feature feature);
+  
+  @Event(handlers = { WarehousePresenter.class })
   public void openDocument(FileEntry fileEntry);   
 }

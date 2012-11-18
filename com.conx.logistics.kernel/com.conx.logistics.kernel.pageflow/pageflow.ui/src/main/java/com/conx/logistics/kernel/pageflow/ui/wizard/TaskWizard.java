@@ -1,6 +1,5 @@
 package com.conx.logistics.kernel.pageflow.ui.wizard;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,12 +13,11 @@ import javax.transaction.UserTransaction;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vaadin.mvp.eventbus.EventBus;
 import org.vaadin.mvp.presenter.IPresenter;
 import org.vaadin.teemu.wizards.Wizard;
 import org.vaadin.teemu.wizards.WizardStep;
+import org.vaadin.teemu.wizards.event.WizardCompletedEvent;
 
-import com.conx.logistics.common.utils.Validator;
 import com.conx.logistics.kernel.pageflow.event.IPageFlowPageChangedEventHandler;
 import com.conx.logistics.kernel.pageflow.event.IPageFlowPageChangedListener;
 import com.conx.logistics.kernel.pageflow.event.PageFlowPageChangedEvent;
@@ -35,11 +33,9 @@ import com.conx.logistics.kernel.pageflow.ui.ext.form.container.VaadinJPAContain
 import com.conx.logistics.kernel.persistence.services.IEntityContainerProvider;
 import com.conx.logistics.kernel.ui.common.entityprovider.jta.CustomCachingMutableLocalEntityProvider;
 import com.conx.logistics.kernel.ui.common.entityprovider.jta.CustomNonCachingMutableLocalEntityProvider;
+import com.conx.logistics.kernel.ui.common.mvp.StartableApplicationEventBus;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
 import com.conx.logistics.kernel.ui.factory.services.data.IDAOProvider;
-import com.conx.logistics.kernel.ui.service.contribution.IApplicationViewContribution;
-import com.conx.logistics.kernel.ui.service.contribution.IMainApplication;
-import com.conx.logistics.kernel.ui.service.contribution.IViewContribution;
 import com.conx.logistics.mdm.domain.BaseEntity;
 import com.conx.logistics.mdm.domain.application.Feature;
 import com.vaadin.addon.jpacontainer.JPAContainer;
@@ -58,9 +54,9 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 
 	private HashMap<IPageFlowPage, IPageComponent> pageComponentMap;
 	private VaadinPageFactoryImpl pageFactory;
-	private Feature onCompletionCompletionFeature;
-	private IPresenter<?, ? extends EventBus> onCompletionCompletionViewPresenter;
-	private final Set<IPageFlowPageChangedListener> pageFlowPageChangedListenerCache = Collections.synchronizedSet(new HashSet<IPageFlowPageChangedListener>());
+	private Feature onCompletionCompletionFeature, feature;
+	private final Set<IPageFlowPageChangedListener> pageFlowPageChangedListenerCache = Collections
+			.synchronizedSet(new HashSet<IPageFlowPageChangedListener>());
 
 	private boolean nextButtonBlocked = false;
 	private boolean backButtonBlocked = false;
@@ -72,6 +68,7 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 	private UserTransaction userTransaction;
 
 	private IDAOProvider daoProvider;
+	private IPresenter<?, ?> appPresenter;
 
 	public TaskWizard(IPageFlowSession session) {
 		this.session = session;
@@ -95,7 +92,12 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 		this.engine = session.getPageFlowEngine();
 		this.daoProvider = (IDAOProvider) properties.get("daoProvider");
 		this.userTransaction = this.engine.getUserTransaction();
+		this.appPresenter = (IPresenter<?, ?>) properties.get("appPresenter");
 		this.pageComponentMap = new HashMap<IPageFlowPage, IPageComponent>();
+		this.feature = (Feature) properties.get("feature");
+		if (feature != null) {
+			this.onCompletionCompletionFeature = this.feature.getOnCompletionFeature();
+		}
 
 		HashMap<String, Object> config = new HashMap<String, Object>();
 		config.put(IEntityEditorFactory.CONTAINER_PROVIDER, this);
@@ -112,7 +114,8 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 	@Override
 	public Object createPersistenceContainer(Class<?> entityClass) {
 		if (this.userTransaction != null) {
-			CustomCachingMutableLocalEntityProvider provider = new CustomCachingMutableLocalEntityProvider(entityClass, this.session.getConXEntityManagerfactory(), this.userTransaction);
+			CustomCachingMutableLocalEntityProvider provider = new CustomCachingMutableLocalEntityProvider(entityClass,
+					this.session.getConXEntityManagerfactory(), this.userTransaction);
 			JPAContainer<?> container = new VaadinJPAContainer(entityClass, provider);
 			return container;
 		} else {
@@ -129,13 +132,18 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 			initParams.put(IPageComponent.DAO_PROVIDER, this.daoProvider);
 			initParams.put(IPageComponent.PAGE_FLOW_PAGE_CHANGE_EVENT_HANDLER, this);
 			initParams.put(IPageComponent.ENTITY_CONTAINER_PROVIDER, this);
+			initParams.put(IEntityEditorFactory.FACTORY_PARAM_MVP_CURRENT_APP_PRESENTER, this.appPresenter);
 			initParams.put(IPageComponent.ENTITY_TYPE_DAO_SERVICE, this.engine.getEntityTypeDAOService());
 		}
 		if (session.getPages() != null) {
 			for (IPageFlowPage page : session.getPages()) {
-				IPageComponent pageComponent = this.pageFactory.createPage((IPageFlowPage) page, initParams);
-				this.pageComponentMap.put(page, pageComponent);
-				addStep(pageComponent);
+				if (page != null) {
+					IPageComponent pageComponent = this.pageFactory.createPage((IPageFlowPage) page, initParams);
+					if (pageComponent != null) {
+						this.pageComponentMap.put(page, pageComponent);
+						addStep(pageComponent);
+					}
+				}
 			}
 		}
 	}
@@ -198,21 +206,30 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 
 	@Override
 	public void next() {
-		getNextButton().setEnabled(false);
-		getBackButton().setEnabled(false);
-		getCancelButton().setEnabled(false);
+		boolean isLastStep = isLastStep(currentStep);
 		try {
 			completeCurrentTaskAndAdvanceToNext();
 		} catch (Exception e) {
 			e.printStackTrace();
-			getWindow().showNotification("There was an unexpected error on the next page", "</br>Try to continue again. If the problem persists, contact your Administrator",
-					Notification.TYPE_ERROR_MESSAGE);
+			getWindow().showNotification("There was an unexpected error on the next page",
+					"</br>Try to continue again. If the problem persists, contact your Administrator", Notification.TYPE_ERROR_MESSAGE);
 			return;
 		}
-		super.next();
-		getNextButton().setEnabled(!nextButtonBlocked);
-		getBackButton().setEnabled(!backButtonBlocked);
-		getCancelButton().setEnabled(false);
+
+		if (isLastStep) {
+			fireEvent(new WizardCompletedEvent(this));
+			if (this.appPresenter instanceof IPresenter<?, ?>) {
+				if (this.appPresenter.getEventBus() instanceof StartableApplicationEventBus) {
+					if (this.onCompletionCompletionFeature != null) {
+						((StartableApplicationEventBus) this.appPresenter.getEventBus()).openFeatureView(this.onCompletionCompletionFeature);
+						((StartableApplicationEventBus) this.appPresenter.getEventBus()).closeFeatureView(this.feature);
+					}
+				}
+			}
+		} else {
+			int currentIndex = steps.indexOf(currentStep);
+			activateStep(steps.get(currentIndex + 1));
+		}
 	}
 
 	@Override
@@ -220,62 +237,9 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 		super.back();
 	}
 
-	@SuppressWarnings({ "unused", "null" })
 	@Override
 	public void finish() {
-		// FIXME
-		try {
-			completeCurrentTaskAndAdvanceToNext();
-		} catch (Exception e) {
-			e.printStackTrace();
-			getWindow().showNotification("There was an unexpected error on the next page", "</br>Try to continue again. If the problem persists, contact your Administrator",
-					Notification.TYPE_ERROR_MESSAGE);
-			return;
-		}
-
-		IMainApplication mainApp = null;
-		if (Validator.isNotNull(mainApp)) {
-			com.conx.logistics.mdm.domain.application.Application parentApp = onCompletionCompletionFeature.getParentApplication();
-
-			IApplicationViewContribution avc = mainApp.getApplicationContributionByCode(parentApp.getCode());
-
-			String viewCode = onCompletionCompletionFeature.getCode();
-			IViewContribution vc = mainApp.getViewContributionByCode(viewCode);
-			if (avc != null) {
-				Method featureViewerMethod = null;
-				Class<?> featureViewerMethodHandler = null;
-				try {
-					/*
-					 * IPresenterFactory pf =
-					 * this.engine.getMainApp().getPresenterFactory();
-					 * IPresenter<?, ? extends EventBus> viewPresenter =
-					 * pf.createPresenter
-					 * (avc.getPresenterClass((Application)mainApp)); EventBus
-					 * buss = (EventBus)viewPresenter.getEventBus();
-					 */
-
-					Method openFeatureViewMethod = onCompletionCompletionViewPresenter.getClass().getMethod("onOpenFeatureView", Feature.class);
-					Object[] args = new Object[1];
-					args[0] = onCompletionCompletionFeature;
-					openFeatureViewMethod.invoke(onCompletionCompletionViewPresenter, args);
-					/*
-					 * for (Method event : events) {
-					 * //logger.info("Event method: {} - handlers: ",
-					 * event.getName());
-					 * org.vaadin.mvp.eventbus.annotation.Event ea =
-					 * event.getAnnotation
-					 * (org.vaadin.mvp.eventbus.annotation.Event.class); if (ea
-					 * != null) { for (Class<?> handler : ea.handlers()) {
-					 * featureViewerMethodHandler = handler; } } }
-					 */
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-
-		super.finish();
+		next();
 	}
 
 	private void completeCurrentTaskAndAdvanceToNext() throws Exception {
@@ -283,13 +247,9 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 		Map<String, Object> params = null;
 		currentPage = (IPageComponent) currentStep;
 		if (currentPage.isExecuted()) {
-			// engine.updateProcessInstanceVariables(this,
-			// currentPage.getResultData());
 		} else {
 			// Complete current task and get input variables for the next task
 			try {
-				// params = currentPage.getResultData(); // Completes current
-				// task with
 				params = engine.executeTaskWizard(this, currentPage.getResultData()).getProperties();
 			} catch (Exception e) {
 				getWindow().showNotification("Could not complete this task", "", Notification.TYPE_ERROR_MESSAGE);
@@ -373,12 +333,14 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 		if (session.getPages() != null) {
 			IPageComponent pageComponent = null;
 			for (IPageFlowPage page : session.getPages()) {
-				pageComponent = pageComponentMap.get(page);
-				boolean stepAlreadyExists = pageComponent != null;
-				if (!stepAlreadyExists) {
-					pageComponent = this.pageFactory.createPage((IPageFlowPage) page, initParams);
-					this.pageComponentMap.put(page, pageComponent);
-					addStep(pageComponent);
+				if (page != null) {
+					pageComponent = pageComponentMap.get(page);
+					boolean stepAlreadyExists = pageComponent != null;
+					if (!stepAlreadyExists) {
+						pageComponent = this.pageFactory.createPage((IPageFlowPage) page, initParams);
+						this.pageComponentMap.put(page, pageComponent);
+						addStep(pageComponent);
+					}
 				}
 			}
 		}
@@ -403,7 +365,8 @@ public class TaskWizard extends Wizard implements ITaskWizard, IPageFlowPageChan
 	@Override
 	public Object createNonCachingPersistenceContainer(Class<?> entityClass) {
 		if (this.userTransaction != null) {
-			CustomNonCachingMutableLocalEntityProvider provider = new CustomNonCachingMutableLocalEntityProvider(entityClass, this.getEmf(), this.userTransaction);
+			CustomNonCachingMutableLocalEntityProvider provider = new CustomNonCachingMutableLocalEntityProvider(entityClass, this.getEmf(),
+					this.userTransaction);
 			JPAContainer<?> container = new VaadinJPAContainer(entityClass, provider);
 			return container;
 		} else {

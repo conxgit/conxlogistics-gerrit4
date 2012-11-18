@@ -13,12 +13,12 @@
 		  </osgi:service-properties>		
 	</osgi:service>	
 	
-	<osgi:service ref="finalizeArrivalPage"  interface="com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage">
+	<!-- <osgi:service ref="finalizeArrivalPage"  interface="com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage">
 		<osgi:service-properties>
 			<entry key="PROCESS_ID" value="whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0"/>
 			<entry key="TASK_NAME" value="FinalizeArrival"/>
 		  </osgi:service-properties>		
-	</osgi:service>	
+	</osgi:service>	 -->
 		
 	<!-- Expected -->
 	<osgi:service ref="confirmDropOffPage"  interface="com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage">

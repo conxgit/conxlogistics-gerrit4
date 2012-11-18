@@ -34,21 +34,28 @@ public class FeatureTabbedView extends TabSheet implements IFeatureView {
 	private IEntityEditorFactory entityEditorFactory;
 
 	private HashMap<String, Object> entityFactoryPresenterParams;
-	
+
 	private User currentUser = null;
-	
+
 	public FeatureTabbedView(MainMVPApplication app, IPresenter<?, ? extends EventBus> viewPresenter) {
 		this.app = app;
 		this.currentUser = this.app.getCurrentUser();
 		this.viewPresenter = viewPresenter;
 		this.entityEditorFactory = app.getEntityEditorFactory();
 		this.viewCache = new HashMap<Feature, Component>();
-		
+
 		this.entityFactoryPresenterParams = new HashMap<String, Object>();
 		this.entityFactoryPresenterParams.putAll(app.getEntityFactoryPresenterParams());
-		
+
 		setSizeFull();
 		setStyleName("conx-entity-editor-detail-tabsheet");
+	}
+
+	public void clearFeature(Feature feature) {
+		Component component = viewCache.get(feature);
+		if (component != null) {
+			this.removeComponent(component);
+		}
 	}
 
 	public void setFeature(Feature feature) {
@@ -65,38 +72,33 @@ public class FeatureTabbedView extends TabSheet implements IFeatureView {
 						addTab(componentFeature, feature.getName());
 					}
 				}
-			}
-			else if (feature instanceof DocViewFeature)
-			{
+			} else if (feature instanceof DocViewFeature) {
 				currentFeature = feature;
 				Component view = viewCache.get(feature);
-				FileEntry fe = ((DocViewFeature)feature).getFileEntry();
+				FileEntry fe = ((DocViewFeature) feature).getFileEntry();
 				ThemeResource rc = null;
-				if (view == null)
-				{
+				if (view == null) {
 					IPresenterFactory pf = this.app.getPresenterFactory();
-					DocViewerPresenter viewPresenter = (DocViewerPresenter)pf.createPresenter(DocViewerPresenter.class);
-					view = (Component)viewPresenter.getView();
-					
+					DocViewerPresenter viewPresenter = (DocViewerPresenter) pf.createPresenter(DocViewerPresenter.class);
+					view = (Component) viewPresenter.getView();
+
 					viewPresenter.getEventBus().viewDocument(fe);
-					
+
 					rc = new ThemeResource("icons/mimetype/attachment-generic.png");
-					Tab tab = addTab(view, feature.getName(),rc);
+					Tab tab = addTab(view, feature.getName(), rc);
 					tab.setClosable(true);
 					this.setSelectedTab(view);
-					viewCache.put(feature, view);					
-				}
-				else
-				{			
+					viewCache.put(feature, view);
+				} else {
 					if (getTab(view) != null) {
 						this.setSelectedTab(view);
 					} else {
 						rc = new ThemeResource("icons/mimetype/attachment-generic.png");
-						Tab tab = addTab(view, feature.getName(),rc);
+						Tab tab = addTab(view, feature.getName(), rc);
 						this.setSelectedTab(view);
 						tab.setClosable(true);
 						viewCache.put(feature, view);
-					}		
+					}
 				}
 			}
 		}
@@ -116,11 +118,17 @@ public class FeatureTabbedView extends TabSheet implements IFeatureView {
 				Map<String, Object> props = new HashMap<String, Object>();
 				props.put("userId", this.currentUser.getScreenName());
 				props.put("processId", processId);
+				if (this.app != null) {
+					props.put("daoProvider", this.app.getDaoProvider());
+				}
+				props.put("feature", feature);
 				props.put("onCompletionFeature", feature.getOnCompletionFeature());
 				props.put("onCompletionViewPresenter", this.viewPresenter);
+				props.put("appPresenter", this.viewPresenter);
 
 				try {
 					view = ac.execute(this.app, props);
+					viewCache.put(feature, view);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -141,14 +149,14 @@ public class FeatureTabbedView extends TabSheet implements IFeatureView {
 
 							this.entityFactoryPresenterParams.put(IEntityEditorFactory.FACTORY_PARAM_MVP_CURRENT_APP_PRESENTER, this.viewPresenter);
 							this.entityFactoryPresenterParams.put(IEntityEditorFactory.FACTORY_PARAM_MVP_EDITOR_CONTAINER, viewContainer);
-							Map<IPresenter<?, ? extends EventBus>, EventBus> mvp = (Map<IPresenter<?, ? extends EventBus>, EventBus>) entityEditorFactory.create(componentModel,
-									this.entityFactoryPresenterParams);
+							Map<IPresenter<?, ? extends EventBus>, EventBus> mvp = (Map<IPresenter<?, ? extends EventBus>, EventBus>) entityEditorFactory
+									.create(componentModel, this.entityFactoryPresenterParams);
 							IPresenter<?, ? extends EventBus> viewPresenter = mvp.keySet().iterator().next();
-							
+
 							Component newView = (Component) viewPresenter.getView();
 							viewContainer.addComponent(newView);
 							viewContainer.setExpandRatio(newView, 1.0f);
-							
+
 							view = viewContainer;
 						} else {
 							IPresenterFactory pf = this.app.getPresenterFactory();

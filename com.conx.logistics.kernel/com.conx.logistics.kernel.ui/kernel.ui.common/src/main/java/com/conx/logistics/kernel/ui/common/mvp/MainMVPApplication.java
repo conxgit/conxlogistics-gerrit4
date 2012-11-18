@@ -706,4 +706,14 @@ public class MainMVPApplication extends Application implements IMainApplication,
 	public void setPageFlowEngine(IPageFlowManager pageFlowEngine) {
 		this.pageFlowEngine = pageFlowEngine;
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public void bindDAOProvider(IDAOProvider daoProvider, Map properties) {
+		this.daoProvider = daoProvider;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public void unbindDAOProvider(IDAOProvider daoProvider, Map properties) {
+		this.daoProvider = null;
+	}
 }

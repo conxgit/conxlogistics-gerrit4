@@ -221,9 +221,10 @@ public class PathBasedPageFlowEngineImpl implements IPageFlowManager {
 		String processId = (String)properties.get("processId");
 		String userId = (String)properties.get("userId");
 		Feature   onCompletionFeature = (Feature)properties.get("onCompletionFeature");
-		IPresenter<?, ? extends EventBus>   onCompletionCompletionViewPresenter = (IPresenter<?, ? extends EventBus>)properties.get("onCompletionViewPresenter");
+		@SuppressWarnings("unchecked")
+		IPresenter<?, ? extends EventBus> onCompletionCompletionViewPresenter = (IPresenter<?, ? extends EventBus>)properties.get("onCompletionViewPresenter");
 		
-
+		
 		Context ctx = jndiTemplate.getContext();
 		UserTransaction ut = this.userTransaction;//(UserTransaction)ctx.lookup( "java:comp/UserTransaction" );
 

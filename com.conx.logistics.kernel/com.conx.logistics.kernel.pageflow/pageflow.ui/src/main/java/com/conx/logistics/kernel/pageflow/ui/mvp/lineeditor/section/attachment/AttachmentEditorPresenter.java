@@ -63,6 +63,7 @@ public class AttachmentEditorPresenter extends BasePresenter<IAttachmentEditorVi
 	private AttachmentEditorComponent attachmentComponent;
 	private IEntityContainerProvider entityContainerProvider;
 	private IDAOProvider daoProvider;
+	private EventBusManager sectionEventBusManager;
 
 	@SuppressWarnings("unchecked")
 	private void initialize() {
@@ -206,10 +207,12 @@ public class AttachmentEditorPresenter extends BasePresenter<IAttachmentEditorVi
 
 	@Override
 	public void onInspectAttachment(FileEntry fileEntry) {
-		// TODO furnish this
+		this.sectionEventBusManager.fireAnonymousEvent("viewDocument", new Object[] {fileEntry});
 	}
 
 	@Override
 	public void subscribe(EventBusManager eventBusManager) {
+		this.sectionEventBusManager = eventBusManager;
+		this.sectionEventBusManager.register(AttachmentEditorEventBus.class, getEventBus());
 	}
 }

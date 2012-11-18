@@ -109,7 +109,7 @@ public class PageFlowPathAssessor {
 	}
 	
 	public boolean isOnLastPage() {
-		return this.name.endsWith(this.currentTaskName + "-->End");
+		return this.name.endsWith(this.currentTaskName + "-->End") || this.name.endsWith(this.currentTaskName + "-->Join-->End");
 	}
 
 	private void createOrderedPageList() {

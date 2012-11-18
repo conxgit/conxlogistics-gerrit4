@@ -6,6 +6,7 @@ import java.util.Stack;
 
 import org.vaadin.mvp.eventbus.EventBusManager;
 import org.vaadin.mvp.presenter.BasePresenter;
+import org.vaadin.mvp.presenter.IPresenter;
 import org.vaadin.mvp.presenter.PresenterFactory;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
@@ -16,9 +17,11 @@ import com.conx.logistics.kernel.pageflow.ui.ext.mvp.IContainerItemPresenter;
 import com.conx.logistics.kernel.pageflow.ui.ext.mvp.IVaadinDataComponent;
 import com.conx.logistics.kernel.pageflow.ui.mvp.editor.multilevel.view.IMultiLevelEditorView;
 import com.conx.logistics.kernel.pageflow.ui.mvp.editor.multilevel.view.MultiLevelEditorView;
+import com.conx.logistics.kernel.ui.common.mvp.StartableApplicationEventBus;
 import com.conx.logistics.kernel.ui.components.domain.editor.MultiLevelEntityEditor;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
+import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.ui.Component;
@@ -32,6 +35,7 @@ public class MultiLevelEditorPresenter extends BasePresenter<IMultiLevelEditorVi
 	private Stack<MasterDetailComponent> editorStack;
 	private MasterDetailComponent originEditorComponent;
 	private Map<String, Object> config;
+	private StartableApplicationEventBus appEventBus;
 
 	@Override
 	public void onConfigure(Map<String, Object> params) {
@@ -42,6 +46,10 @@ public class MultiLevelEditorPresenter extends BasePresenter<IMultiLevelEditorVi
 		this.config = params;
 		this.componentModel = (MultiLevelEntityEditor) params.get(IEntityEditorFactory.COMPONENT_MODEL);
 		this.factory = (VaadinPageFactoryImpl) params.get(IEntityEditorFactory.VAADIN_COMPONENT_FACTORY);
+		@SuppressWarnings("unchecked")
+		IPresenter<?, ? extends StartableApplicationEventBus> appPresenter = (IPresenter<?, ? extends StartableApplicationEventBus>) config
+				.get(IEntityEditorFactory.FACTORY_PARAM_MVP_CURRENT_APP_PRESENTER);
+		this.appEventBus = appPresenter.getEventBus();
 		this.originEditorComponent = this.componentModel.getContent();
 
 		this.getView().init();
@@ -122,6 +130,14 @@ public class MultiLevelEditorPresenter extends BasePresenter<IMultiLevelEditorVi
 			VaadinPageDataBuilder.applyItemDataSource(editorComponent, containers[0], item, provideLocalizedFactory(mdc).getPresenterFactory(), this.config);
 		} else {
 			throw new Exception("Multi Level Editor supports one and only one container for onSetItemDataSource(Item, Container...)");
+		}
+	}
+	
+	public void onViewDocument(FileEntry viewable) throws Exception {
+		if (this.appEventBus == null) {
+			throw new Exception("The StartableApplicationEventBus was not provided in the configuration map.");
+		} else {
+			this.appEventBus.openDocument(viewable);
 		}
 	}
 }

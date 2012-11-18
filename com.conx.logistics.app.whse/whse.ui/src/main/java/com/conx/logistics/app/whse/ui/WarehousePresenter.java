@@ -22,69 +22,72 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 @Presenter(view = WarehouseView.class)
-public class WarehousePresenter extends BasePresenter<IWarehouseView, WarehouseEventBus>{
+public class WarehousePresenter extends BasePresenter<IWarehouseView, WarehouseEventBus> {
 
-  private MainMVPApplication application;
-  private FeatureTabbedView fv;
-  
-  private WarehouseNavigationPresenter navPresenter;
-  
-  private IPresenter<?, ?extends EventBus> contentPresenter;
-  
+	private MainMVPApplication application;
+	private FeatureTabbedView fv;
 
-  public void onStart(MainMVPApplication app) {
-    // keep a reference to the application instance
-    this.application = app;
-    
-    // set the applications main windows (the view)
-    //this.application.setMainWindow((Window) this.view);
-    
-    // load the nav presenter
-    IPresenterFactory pf = application.getPresenterFactory();
-    this.navPresenter = (WarehouseNavigationPresenter) pf.createPresenter(WarehouseNavigationPresenter.class);
-    
-    // start nav presenter
-    WarehouseNavigationEventBus cpneb = (WarehouseNavigationEventBus)application.createEventBuss(WarehouseNavigationEventBus.class,this.navPresenter);
-    cpneb.start(application);
-    
-    application.createEventBuss(WarehouseEventBus.class,this);
-    
-    IWarehouseNavigationView navView = this.navPresenter.getView();
-	this.view.setNavigation(navView);
-    
-    //load fv
-	fv = new FeatureTabbedView(this.application,this);
-    this.view.setContent(this.fv);
-  }
-  
-  public void onOpenModule(Class<? extends BasePresenter<?, ? extends EventBus>> presenter) {
-    // load the menu presenter
-    IPresenterFactory pf = application.getPresenterFactory();
-    this.contentPresenter = pf.createPresenter(presenter);
-    this.view.setContent((Component) this.contentPresenter.getView());
-  }
-  
-  public void onOpenFeatureView(Feature feature)
-  {
-	  fv.setFeature(feature);
-  }
-  
-  public void onShowDialog(Window dialog) {
-    this.application.getMainWindow().addWindow(dialog);
-  }
-  
-  public void onOpenDocument(FileEntry fileEntry) {
-	  fv.setFeature(new DocViewFeature(fileEntry));
-  }
-  
-  @Override
-  public void bind() {
-    VerticalLayout mainLayout = this.view.getMainLayout();
-    HorizontalSplitPanel layoutPanel = this.view.getSplitLayout();
-    layoutPanel.setStyleName("main-split");
-    layoutPanel.setSizeFull();
-    mainLayout.setSizeFull();    
-    mainLayout.setExpandRatio(layoutPanel, 1.0f);
-    layoutPanel.setSplitPosition(200, HorizontalSplitPanel.UNITS_PIXELS);
-  }
+	private WarehouseNavigationPresenter navPresenter;
+
+	private IPresenter<?, ? extends EventBus> contentPresenter;
+
+	public void onStart(MainMVPApplication app) {
+		// keep a reference to the application instance
+		this.application = app;
+
+		// set the applications main windows (the view)
+		// this.application.setMainWindow((Window) this.view);
+
+		// load the nav presenter
+		IPresenterFactory pf = application.getPresenterFactory();
+		this.navPresenter = (WarehouseNavigationPresenter) pf.createPresenter(WarehouseNavigationPresenter.class);
+
+		// start nav presenter
+		WarehouseNavigationEventBus cpneb = (WarehouseNavigationEventBus) application.createEventBuss(WarehouseNavigationEventBus.class,
+				this.navPresenter);
+		cpneb.start(application);
+
+		application.createEventBuss(WarehouseEventBus.class, this);
+
+		IWarehouseNavigationView navView = this.navPresenter.getView();
+		this.view.setNavigation(navView);
+
+		// load fv
+		fv = new FeatureTabbedView(this.application, this);
+		this.view.setContent(this.fv);
+	}
+
+	public void onOpenModule(Class<? extends BasePresenter<?, ? extends EventBus>> presenter) {
+		// load the menu presenter
+		IPresenterFactory pf = application.getPresenterFactory();
+		this.contentPresenter = pf.createPresenter(presenter);
+		this.view.setContent((Component) this.contentPresenter.getView());
+	}
+
+	public void onOpenFeatureView(Feature feature) {
+		fv.setFeature(feature);
+	}
+
+	public void onCloseFeatureView(Feature feature) {
+		fv.clearFeature(feature);
+	}
+
+	public void onShowDialog(Window dialog) {
+		this.application.getMainWindow().addWindow(dialog);
+	}
+
+	public void onOpenDocument(FileEntry fileEntry) {
+		fv.setFeature(new DocViewFeature(fileEntry));
+	}
+
+	@Override
+	public void bind() {
+		VerticalLayout mainLayout = this.view.getMainLayout();
+		HorizontalSplitPanel layoutPanel = this.view.getSplitLayout();
+		layoutPanel.setStyleName("main-split");
+		layoutPanel.setSizeFull();
+		mainLayout.setSizeFull();
+		mainLayout.setExpandRatio(layoutPanel, 1.0f);
+		layoutPanel.setSplitPosition(200, HorizontalSplitPanel.UNITS_PIXELS);
+	}
 }

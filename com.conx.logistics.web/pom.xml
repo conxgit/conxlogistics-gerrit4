@@ -18,6 +18,7 @@
     <module>web.app</module>
     -->
     <module>web.app.sprint2</module>
+    <module>web.app.sprint2.mock.wizard.sk</module>
     <module>web.app.sprint2.mock.page.sk</module>
   </modules>
 </project>
