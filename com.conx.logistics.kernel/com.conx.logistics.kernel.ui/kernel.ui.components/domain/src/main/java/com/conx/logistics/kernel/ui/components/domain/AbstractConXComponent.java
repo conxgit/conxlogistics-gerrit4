@@ -9,13 +9,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.ForceDiscriminator;
+
 import com.conx.logistics.kernel.datasource.domain.DataSource;
 import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
 
+@SuppressWarnings("deprecation")
 @Entity
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @Table(name="sysuicomponent")
 //@DiscriminatorOptions(force=true)
+// TODO THIS IS A HACK TO MAKE QUERIES WORK.
+@ForceDiscriminator
 public class AbstractConXComponent extends MultitenantBaseEntity implements Sizeable {
 
     private static final long serialVersionUID = 6207901499318773670L;

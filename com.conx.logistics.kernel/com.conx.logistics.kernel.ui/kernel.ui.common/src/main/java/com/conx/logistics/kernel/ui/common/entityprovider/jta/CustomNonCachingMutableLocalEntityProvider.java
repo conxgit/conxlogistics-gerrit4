@@ -20,6 +20,7 @@ public class CustomNonCachingMutableLocalEntityProvider<T> extends MutableLocalE
 	public CustomNonCachingMutableLocalEntityProvider(Class<T> entityClass, EntityManagerFactory entityManagerFactory, UserTransaction userTransaction) {
 		super(entityClass, entityManagerFactory.createEntityManager());
 		this.userTransaction = userTransaction;
+		this.setEntitiesDetached(false);
 	}
 
 	@Override

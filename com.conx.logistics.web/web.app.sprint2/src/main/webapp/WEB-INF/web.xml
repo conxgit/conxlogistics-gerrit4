@@ -18,7 +18,7 @@
 
 	<servlet>
 		<servlet-name>webappServlet</servlet-name>
-		<servlet-class>com.conx.logistics.web.servlet.MainAppServlet</servlet-class>	
+		<servlet-class>com.conx.logistics.web.servlet.AutowiringApplicationServlet</servlet-class>	
         <init-param>
             <param-name>widgetset</param-name>
             <param-value>com.conx.logistics.kernel.ui.vaadin.widgetsets.ConXWidgetset</param-value>

@@ -7,7 +7,7 @@
     <relativePath>..</relativePath>
   </parent>
   <artifactId>com.conx.logistics.web.app.sprint2</artifactId>
-  <version>2.0.1.RC1</version>
+  <version>2.0.2.RC1</version>
   <packaging>war</packaging>
 	<dependencies>
 		<!-- ConX -->

@@ -5,15 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.vaadin.mvp.eventbus.EventBus;
 import org.vaadin.mvp.presenter.BasePresenter;
 
-import com.conx.logistics.app.whse.ui.asn.ASNSearchPresenter;
 import com.conx.logistics.kernel.ui.components.dao.services.IComponentDAOService;
 import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent;
 import com.conx.logistics.kernel.ui.service.contribution.IViewContribution;
 import com.conx.logistics.mdm.domain.application.Feature;
 import com.vaadin.Application;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Form;
 
 public class ASNSearchViewContributionImpl implements IViewContribution {
 	
@@ -21,10 +18,6 @@ public class ASNSearchViewContributionImpl implements IViewContribution {
 
 	protected Logger logger = LoggerFactory.getLogger(ASNSearchViewContributionImpl.class);
 
-	private Component view;
-
-	private Form userForm;
-	
 	private IComponentDAOService componentDAOService;
 
 	@Override

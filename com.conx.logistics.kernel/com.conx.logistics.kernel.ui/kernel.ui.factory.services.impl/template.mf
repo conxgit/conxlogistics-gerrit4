@@ -5,6 +5,7 @@ Bundle-SymbolicName: com.conx.logistics.kernel.ui.factory.services.impl
 Import-Package: com.conx.logistics.app.whse.rcv.rcv.dao.services;version="[1.0.0,2.0.0)",
   com.conx.logistics.kernel.metamodel.dao.services;version="[1.0.0,2.0.0)",
   com.conx.logistics.kernel.ui.factory.services.data;version="[1.0.0,2.0.0)",
+  com.conx.logistics.kernel.system.dao.services.application;version="[1.0.0,2.0.0)",
   com.conx.logistics.mdm.dao.services;version="[1.0.0,2.0.0)",
   com.conx.logistics.mdm.dao.services.documentlibrary;version="[1.0.0,2.0.0)",
   com.conx.logistics.mdm.dao.services.note;version="[1.0.0,2.0.0)",
@@ -12,7 +13,6 @@ Import-Package: com.conx.logistics.app.whse.rcv.rcv.dao.services;version="[1.0.0
   com.conx.logistics.app.whse.dao.services;version="[1.0.0,2.0.0)",
   com.conx.logistics.kernel.documentlibrary.remote.services;version="[1.0.0,2.0.0)",
   com.conx.logistics.app.whse.im.dao.services;version="[1.0.0,2.0.0)",
+  org.springframework.beans.factory.annotation;version="[3.0,3.1)",
   org.springframework.transaction;version="[3.0,3.1)",
-  org.springframework.transaction.support;version="[3.0,3.1)",
-  org.springframework.transaction.aspectj;version="[3.0,3.1)",
-  org.springframework.beans.factory.annotation;version="[3.0,3.1)"
+  org.springframework.transaction.aspectj;version="[3.0,3.1)"

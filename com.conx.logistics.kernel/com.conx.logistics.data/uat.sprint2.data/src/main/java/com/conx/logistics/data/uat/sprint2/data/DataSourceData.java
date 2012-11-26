@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.conx.logistics.app.whse.rcv.rcv.domain.Arrival;
 import com.conx.logistics.app.whse.rcv.rcv.domain.Receive;
 import com.conx.logistics.app.whse.rcv.rcv.domain.ReceiveLine;
 import com.conx.logistics.kernel.datasource.dao.services.IDataSourceDAOService;
@@ -26,12 +27,13 @@ public class DataSourceData {
 	/** Logger available to subclasses */
 	protected static final Log logger = LogFactory.getLog(DataSourceData.class);
 
-	public final static DataSource provideDefaultReceiveDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
+	public final static DataSource provideDefaultReceiveDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService,
+			EntityManager em) throws Exception {
 		EntityType rcvET = EntityTypeData.provide(entityTypeDAOService, em, Receive.class);
 
 		String[] visibleFieldNames = { "id", "code", "name", "dateCreated", "dateLastUpdated", "warehouse" };
 		List<String> visibleFieldNamesSet = Arrays.asList(visibleFieldNames);
-		
+
 		DataSource receiveDS = dataSourceDAOService.provideCustomDataSource("default", rcvET, visibleFieldNamesSet);
 		HashSet<DataSourceField> flds = new HashSet<DataSourceField>(receiveDS.getDSFields());
 		for (DataSourceField fld : flds) {
@@ -49,17 +51,41 @@ public class DataSourceData {
 
 		return receiveDS;
 	}
-	
-	public final static DataSource provideDefaultReceiveLineDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
+
+	public final static DataSource provideDefaultArrivalDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService,
+			EntityManager em) throws Exception {
+		EntityType arvlET = EntityTypeData.provide(entityTypeDAOService, em, Arrival.class);
+		String[] visibleFieldNames = { "id", "code", "name", "dateCreated", "dateLastUpdated" };
+		List<String> visibleFieldNamesSet = Arrays.asList(visibleFieldNames);
+
+		DataSource arvlDS = dataSourceDAOService.provideCustomDataSource("default", arvlET, visibleFieldNamesSet);
+		HashSet<DataSourceField> flds = new HashSet<DataSourceField>(arvlDS.getAllDSFields());
+		for (DataSourceField fld : flds) {
+			if (visibleFieldNamesSet.contains(fld.getName()))
+				fld.setHidden(false);
+			else {
+				fld.setHidden(true);
+				dataSourceDAOService.update(fld);
+			}
+		}
+
+		arvlDS = dataSourceDAOService.update(arvlDS);
+
+		return arvlDS;
+	}
+
+	public final static DataSource provideDefaultReceiveLineDS(IEntityTypeDAOService entityTypeDAOService,
+			IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
 		EntityType rcvLineET = EntityTypeData.provide(entityTypeDAOService, em, ReceiveLine.class);
 
 		DataSource receiveLineDS;
 		try {
 
-			String[] visibleFieldNames = { "id", "code", "name", "dateCreated", "dateLastUpdated","lineNumber","expectedOuterPackCount","expectedProdTotalWeight","expectedProdTotalVolume","product" };
+			String[] visibleFieldNames = { "id", "code", "name", "dateCreated", "dateLastUpdated", "lineNumber", "expectedOuterPackCount",
+					"expectedProdTotalWeight", "expectedProdTotalVolume", "product" };
 			List<String> visibleFieldNamesSet = Arrays.asList(visibleFieldNames);
 			receiveLineDS = dataSourceDAOService.provideCustomDataSource("default", rcvLineET, visibleFieldNamesSet);
-			
+
 			for (DataSourceField fld : receiveLineDS.getDSFields()) {
 				if (visibleFieldNamesSet.contains(fld.getName()))
 					fld.setHidden(false);
@@ -69,32 +95,31 @@ public class DataSourceData {
 				if ("product".equals(fld.getName())) {
 					fld.setValueXPath("code");
 				}
-				
+
 				if ("parentReceive".equals(fld.getName())) {
 					fld.setForeignKey("parentReceive.id");
 				}
 			}
 
 			receiveLineDS = dataSourceDAOService.update(receiveLineDS);
-		}
-		catch (Exception e) 
-		{
+		} catch (Exception e) {
 			StringWriter sw = new StringWriter();
 			e.printStackTrace(new PrintWriter(sw));
 			String stacktrace = sw.toString();
 			logger.error(stacktrace);
 			throw e;
-		}	
+		}
 
 		return receiveLineDS;
-	}	
+	}
 
-	public final static DataSource provideBasicFormReceiveDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
+	public final static DataSource provideBasicFormReceiveDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService,
+			EntityManager em) throws Exception {
 		EntityType rcvET = EntityTypeData.provide(entityTypeDAOService, em, Receive.class);
 
 		String[] visibleFieldNames = { "id", "code", "name", "dateCreated", "dateLastUpdated", "warehouse" };
 		List<String> visibleFieldNamesSet = Arrays.asList(visibleFieldNames);
-		
+
 		DataSource receiveDS = dataSourceDAOService.provideCustomDataSource("basic", rcvET, visibleFieldNamesSet);
 		HashSet<DataSourceField> flds = new HashSet<DataSourceField>(receiveDS.getDSFields());
 		for (DataSourceField fld : flds) {
@@ -112,14 +137,16 @@ public class DataSourceData {
 
 		return receiveDS;
 	}
-	
-	public final static DataSource provideWeightDimsFormReceiveDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
+
+	public final static DataSource provideWeightDimsFormReceiveDS(IEntityTypeDAOService entityTypeDAOService,
+			IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
 		EntityType rcvET = EntityTypeData.provide(entityTypeDAOService, em, Receive.class);
-		
-		String[] visibleFieldNames = { "id", "code", "name", "dateCreated", "dateLastUpdated", "warehouse", "expectedTotalweight", "weightUnit", "expectedTotalVolume", "volUnit" };
+
+		String[] visibleFieldNames = { "id", "code", "name", "dateCreated", "dateLastUpdated", "warehouse", "expectedTotalweight", "weightUnit",
+				"expectedTotalVolume", "volUnit" };
 		List<String> visibleFieldNamesSet = Arrays.asList(visibleFieldNames);
 		DataSource weightDimsRcvDS = dataSourceDAOService.provideCustomDataSource("weightDims", rcvET, visibleFieldNamesSet);
-		
+
 		DataSourceField expectedTotalWeight = weightDimsRcvDS.getField("expectedTotalweight");
 		expectedTotalWeight.setRequired(true);
 		expectedTotalWeight = dataSourceDAOService.update(expectedTotalWeight);
@@ -136,7 +163,8 @@ public class DataSourceData {
 		return weightDimsRcvDS;
 	}
 
-	public final static DataSource provideFileEntryDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
+	public final static DataSource provideFileEntryDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService,
+			EntityManager em) throws Exception {
 		EntityType feET = EntityTypeData.provide(entityTypeDAOService, em, FileEntry.class);
 		String[] visibleFieldNames = { "title", "size", "createDate", "modifiedDate", "dateCreated", "docType", "mimeType" };
 		List<String> visibleFieldNamesSet = Arrays.asList(visibleFieldNames);
@@ -159,12 +187,13 @@ public class DataSourceData {
 		return feDS;
 	}
 
-	public final static DataSource provideNoteItemDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
+	public final static DataSource provideNoteItemDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService,
+			EntityManager em) throws Exception {
 		EntityType niET = EntityTypeData.provide(entityTypeDAOService, em, NoteItem.class);
 		String[] visibleFieldNames = { "id", "code", "name", "dateCreated", "dateLastUpdated", "content" };
 		List<String> visibleFieldNamesSet = Arrays.asList(visibleFieldNames);
 		DataSource niDS = dataSourceDAOService.provideCustomDataSource("default", niET, visibleFieldNamesSet);
-		
+
 		HashSet<DataSourceField> flds = new HashSet<DataSourceField>(niDS.getDSFields());
 		for (DataSourceField fld : flds) {
 			if (visibleFieldNamesSet.contains(fld.getName()))
@@ -178,7 +207,8 @@ public class DataSourceData {
 		return niDS;
 	}
 
-	public final static DataSource provideReferenceNumberDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
+	public final static DataSource provideReferenceNumberDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService,
+			EntityManager em) throws Exception {
 		EntityType rnET = EntityTypeData.provide(entityTypeDAOService, em, ReferenceNumber.class);
 		String[] visibleFieldNames = { "dateCreated", "dateLastUpdated", "value", "type" };
 		List<String> visibleFieldNamesSet = Arrays.asList(visibleFieldNames);

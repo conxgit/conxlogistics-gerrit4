@@ -102,17 +102,17 @@ public class EntityLineEditorGridPresenter extends ConfigurableBasePresenter<IEn
 			@Override
 			public void filtersWillBeAdded(CriteriaBuilder criteriaBuilder, CriteriaQuery<?> query, List<Predicate> predicates) {
 				Root<?> lineEntityRoot = query.getRoots().iterator().next();
-
-				String fkPath = EntityLineEditorGridPresenter.this.tableComponent.getDataSource().getForeignKeyPath();
-				Path<?> fkParentIdPath = null;
-				String[] fkPathTokens = StringUtil.split(fkPath, ".");
-				for (String token : fkPathTokens) {
-					if (fkParentIdPath == null)
-						fkParentIdPath = lineEntityRoot.get(token);
-					else
-						fkParentIdPath = fkParentIdPath.get(token);
-				}
-				predicates.add(criteriaBuilder.equal(fkParentIdPath, ((BaseEntity) EntityLineEditorGridPresenter.this.parentEntityItem.getEntity()).getId()));
+				Path<Object> ownerIdPath = lineEntityRoot.get("ownerEntityId");
+//				String fkPath = EntityLineEditorGridPresenter.this.tableComponent.getDataSource().getForeignKeyPath();
+//				Path<?> fkParentIdPath = null;
+//				String[] fkPathTokens = StringUtil.split(fkPath, ".");
+//				for (String token : fkPathTokens) {
+//					if (fkParentIdPath == null)
+//						fkParentIdPath = lineEntityRoot.get(token);
+//					else
+//						fkParentIdPath = fkParentIdPath.get(token);
+//				}
+				predicates.add(criteriaBuilder.equal(ownerIdPath, ((BaseEntity) EntityLineEditorGridPresenter.this.parentEntityItem.getEntity()).getId()));
 			}
 		});
 		this.entityContainer.applyFilters();

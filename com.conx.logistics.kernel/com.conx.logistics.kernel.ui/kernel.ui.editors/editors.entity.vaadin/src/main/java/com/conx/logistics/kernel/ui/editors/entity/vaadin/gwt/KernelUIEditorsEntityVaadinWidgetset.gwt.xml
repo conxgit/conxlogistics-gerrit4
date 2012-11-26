@@ -60,5 +60,7 @@
 
     
 
+    
+
     <inherits name="com.conx.logistics.kernel.ui.filteredtable.gwt.KernelUIFilteredTableWidgetset" />
 </module>

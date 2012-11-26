@@ -62,10 +62,6 @@ public class ReferenceNumberEditorPresenter extends ConfigurableBasePresenter<IR
 		this.entityContainer = (JPAContainer<ReferenceNumber>) this.mainApplication.createPersistenceContainer(ReferenceNumber.class);
 		this.visibleFieldNames = refNumComponent.getDataSource().getVisibleFieldNames();
 		this.formVisibleFieldNames = Arrays.asList("value", "type");
-		Set<String> nestedFieldNames = refNumComponent.getDataSource().getNestedFieldNames();
-		for (String npp : nestedFieldNames) {
-			entityContainer.addNestedContainerProperty(npp);
-		}
 		this.getView().addCreateReferenceNumberListener(this);
 		this.getView().addSaveReferenceNumberListener(this);
 		this.getView().setContainerDataSource(entityContainer, visibleFieldNames, formVisibleFieldNames);

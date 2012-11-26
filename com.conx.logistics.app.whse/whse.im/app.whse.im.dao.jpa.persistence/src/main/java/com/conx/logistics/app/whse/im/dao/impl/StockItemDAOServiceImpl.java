@@ -117,6 +117,7 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 			itemSet.setArrivalReceipt(parentArrivalReceipt);
 			itemSet.setArrival(parentArrivalReceipt.getParentArrival());
 			itemSet.setArrivalReceiptLine(parentArrivalReceiptLine);
+			itemSet.setOwnerEntityId(parentArrivalReceiptLine.getId());
 			itemSet = em.merge(itemSet);
 		}
 		return itemSet;
@@ -423,6 +424,8 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 		stockItem.setOuterPackUnit(parentRcvLine.getProduct().getOuterPackUnit());
 		stockItem.setExpectedOuterPackCount(parentRcvLine.getProduct().getOuterPackCount());
 		stockItem.setOuterPackCount(parentRcvLine.getProduct().getOuterPackCount());
+		
+		stockItem.setOwnerEntityId(itemSet.getId());
 
 		Folder fldr = documentRepositoryService.provideFolderForEntity(et, stockItem.getId());
 		stockItem.setDocFolder(fldr);

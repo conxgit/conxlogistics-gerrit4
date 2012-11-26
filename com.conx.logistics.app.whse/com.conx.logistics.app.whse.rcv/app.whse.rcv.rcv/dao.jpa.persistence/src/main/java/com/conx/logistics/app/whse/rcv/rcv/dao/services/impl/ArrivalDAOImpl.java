@@ -109,6 +109,7 @@ public class ArrivalDAOImpl implements IArrivalDAOService {
 		try {		
 			arrv = em.getReference(Arrival.class, arrivalId);
 			receipt.setParentArrival(arrv);
+			receipt.setOwnerEntityId(arrivalId);
 			receipt = em.merge(receipt);
 			arrv.getReceipts().add(receipt);
 			arrv = update(arrv);

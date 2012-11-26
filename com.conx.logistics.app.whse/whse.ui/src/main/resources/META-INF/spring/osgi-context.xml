@@ -39,5 +39,11 @@
 		<osgi:service-properties>
 		    <entry key="code" value="WHSE.RCVNG.RCV.SEARCH"/>
 		  </osgi:service-properties>		
-	</osgi:service>		
+	</osgi:service>
+	
+	<osgi:service ref="arvlSearchViewContribution"  interface="com.conx.logistics.kernel.ui.service.contribution.IViewContribution">
+		<osgi:service-properties>
+		    <entry key="code" value="WHSE.RCVNG.ARVLS.SEARCH_ARVL"/>
+		  </osgi:service-properties>		
+	</osgi:service>	
 </beans>

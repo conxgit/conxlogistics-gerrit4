@@ -364,8 +364,8 @@ public class ASNSearchPresenter extends
 		this.application = app;
 
 		// -- Init task def table
-		EntityManagerFactory kernelSystemEntityManagerFactory = this.application
-				.getKernelSystemEntityManagerFactory();
+		EntityManagerFactory kernelSystemEntityManagerFactory = this.application.
+				getEntityManagerFactoryManager().getKernelSystemEmf();
 		this.kernelSystemEntityManager = kernelSystemEntityManagerFactory
 				.createEntityManager();
 		this.asns = JPAContainerFactory.make(ASN.class,
@@ -534,7 +534,7 @@ public class ASNSearchPresenter extends
 	 * 
 	 */
 	public void onCreateASN() throws ViewFactoryException {
-		this.kernelSystemEntityManagerFactory = application.getKernelSystemEntityManagerFactory();
+		this.kernelSystemEntityManagerFactory = application.getEntityManagerFactoryManager().getKernelSystemEmf();
 		this.kernelSystemEntityManager = this.kernelSystemEntityManagerFactory.createEntityManager();
 		
 		//Find ASN Search feature
@@ -553,7 +553,7 @@ public class ASNSearchPresenter extends
 	    //IPresenterFactory pf = application.getPresenterFactory();
 	    //WarehousePresenter whsePresenter = (WarehousePresenter) pf.createPresenter(WarehousePresenter.class);		
 		
-	    WarehouseEventBus whseeb = (WarehouseEventBus)application.getEeventBusManager().getEventBus(WarehouseEventBus.class);
+	    WarehouseEventBus whseeb = (WarehouseEventBus)application.getPresenterFactory().getEventBusManager().getEventBus(WarehouseEventBus.class);
 	    whseeb.openFeatureView(searchFeature);
 		/*
 		ASN td = new ASN();

@@ -31,7 +31,6 @@ public class FeatureTabbedView extends TabSheet implements IFeatureView {
 	private Feature currentFeature;
 	private MainMVPApplication app;
 	private IPresenter<?, ? extends EventBus> viewPresenter;
-	private IEntityEditorFactory entityEditorFactory;
 
 	private HashMap<String, Object> entityFactoryPresenterParams;
 
@@ -41,11 +40,10 @@ public class FeatureTabbedView extends TabSheet implements IFeatureView {
 		this.app = app;
 		this.currentUser = this.app.getCurrentUser();
 		this.viewPresenter = viewPresenter;
-		this.entityEditorFactory = app.getEntityEditorFactory();
 		this.viewCache = new HashMap<Feature, Component>();
 
 		this.entityFactoryPresenterParams = new HashMap<String, Object>();
-		this.entityFactoryPresenterParams.putAll(app.getEntityFactoryPresenterParams());
+		this.entityFactoryPresenterParams.putAll(app.provideEntityEditorFactoryParams());
 
 		setSizeFull();
 		setStyleName("conx-entity-editor-detail-tabsheet");
@@ -55,6 +53,7 @@ public class FeatureTabbedView extends TabSheet implements IFeatureView {
 		Component component = viewCache.get(feature);
 		if (component != null) {
 			this.removeComponent(component);
+			viewCache.remove(feature);
 		}
 	}
 
@@ -143,14 +142,14 @@ public class FeatureTabbedView extends TabSheet implements IFeatureView {
 				if (vc != null) {
 					try {
 						AbstractConXComponent componentModel = vc.getComponentModel(this.app, feature);
-						if (Validator.isNotNull(componentModel) && Validator.isNotNull(entityEditorFactory)) {
+						if (Validator.isNotNull(componentModel)) {
 							VerticalLayout viewContainer = new VerticalLayout();
 							viewContainer.setSizeFull();
 
 							this.entityFactoryPresenterParams.put(IEntityEditorFactory.FACTORY_PARAM_MVP_CURRENT_APP_PRESENTER, this.viewPresenter);
 							this.entityFactoryPresenterParams.put(IEntityEditorFactory.FACTORY_PARAM_MVP_EDITOR_CONTAINER, viewContainer);
-							Map<IPresenter<?, ? extends EventBus>, EventBus> mvp = (Map<IPresenter<?, ? extends EventBus>, EventBus>) entityEditorFactory
-									.create(componentModel, this.entityFactoryPresenterParams);
+							Map<IPresenter<?, ? extends EventBus>, EventBus> mvp = (Map<IPresenter<?, ? extends EventBus>, EventBus>) this.app
+									.getEntityEditorFactory().create(componentModel, this.entityFactoryPresenterParams);
 							IPresenter<?, ? extends EventBus> viewPresenter = mvp.keySet().iterator().next();
 
 							Component newView = (Component) viewPresenter.getView();
@@ -176,13 +175,4 @@ public class FeatureTabbedView extends TabSheet implements IFeatureView {
 		}
 		return view;
 	}
-
-	public IEntityEditorFactory getEntityEditorFactory() {
-		return entityEditorFactory;
-	}
-
-	public void setEntityEditorFactory(IEntityEditorFactory entityEditorFactory) {
-		this.entityEditorFactory = entityEditorFactory;
-	}
-
 }

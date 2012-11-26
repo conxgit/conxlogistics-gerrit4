@@ -8,6 +8,7 @@ import javax.persistence.TypedQuery;
 import org.vaadin.mvp.presenter.BasePresenter;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
+import com.conx.logistics.kernel.persistence.services.IEntityContainerProvider;
 import com.conx.logistics.kernel.system.dao.services.application.IApplicationDAOService;
 import com.conx.logistics.kernel.system.data.HierarchicalFeatureContainer;
 import com.conx.logistics.kernel.system.ui.ControlPanelEventBus;
@@ -48,7 +49,7 @@ public class ControlPanelNavigationPresenter extends
 	public void onStart(MainMVPApplication mainApp)
 	{
 		this.mainApp = mainApp;
-		this.kernelSystemEntityManagerFactory = mainApp.getKernelSystemEntityManagerFactory();
+		this.kernelSystemEntityManagerFactory = mainApp.getDaoProvider().provideByDAOClass(IEntityContainerProvider.class).getEmf();
 		this.kernelSystemEntityManager = this.kernelSystemEntityManagerFactory.createEntityManager();
 		
 		//== Find ControlPanel system app and init container filter

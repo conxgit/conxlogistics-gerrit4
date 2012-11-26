@@ -6,48 +6,51 @@ public interface IWarehouseApplicationDAOService {
 	/**
 	 * Warehouse App
 	 */
-	//== App
+	// == App
 	public static final String WAREHOUSE_APP_NAME = "Warehouse";
 	public static final String WAREHOUSE_APP_CODE = "WHSE";
-	
-	//==== Receiving Featureset
-	public static final String WAREHOUSE_APP_RECEIVING_NAME = "Receiving";
-	public static final String WAREHOUSE_APP_RECEIVING_CODE = "RCVNG";	
-	
-	//==== Receiving ASN Featureset
-	public static final String WAREHOUSE_APP_RECEIVING_ASN_NAME = "ASN's";
-	public static final String WAREHOUSE_APP_RECEIVING_ASN_CODE = "ASN";		
-	
-	//========= Receiving ASN :: Search Feature
-	public static final String WAREHOUSE_APP_RECEIVING_ASN_SEARCH_NAME = "Search";
-	public static final String WAREHOUSE_APP_RECEIVING_ASN_SEARCH_CODE = "SEARCH";	
-	
-	
-	//========= Receiving ASN :: New ASN Feature
-	public static final String WAREHOUSE_APP_RECEIVING_ASN_NEW_NAME = "New";
-	public static final String WAREHOUSE_APP_RECEIVING_ASN_NEW_CODE = "NEW";	
-	
-	//==== Receiving ASN Featureset
-	public static final String WAREHOUSE_APP_RECEIVING_RCV_NAME = "Receives";
-	public static final String WAREHOUSE_APP_RECEIVING_RCV_CODE = "RCV";
-	
-	//========= Receiving RCV :: Search Feature
-	public static final String WAREHOUSE_APP_RECEIVING_RCV_SEARCH_NAME = "Search";
-	public static final String WAREHOUSE_APP_RECEIVING_RCV_SEARCH_CODE = "SEARCH";	
-	public static final String WAREHOUSE_APP_RECEIVING_RCV_SEARCH_COMPONENT = "searchReceives";
-	
-	//========= Receiving RCV :: New ASN Feature
-	public static final String WAREHOUSE_APP_RECEIVING_RCV_NEW_NAME = "New";
-	public static final String WAREHOUSE_APP_RECEIVING_RCV_NEW_CODE = "NEW";	
-	
-	//========= Receiving ARVL :: Search Feature
-	public static final String WAREHOUSE_APP_RECEIVING_ARVL_SEARCH_NAME = "Search";
-	public static final String WAREHOUSE_APP_RECEIVING_ARVL_SEARCH_CODE = "SEARCH";	
-	public static final String WAREHOUSE_APP_RECEIVING_ARVL_SEARCH_COMPONENT = "searchArrivals";
-	
-	//========= Receiving ARVL :: New ASN Feature
-	public static final String WAREHOUSE_APP_RECEIVING_ARVL_NEW_NAME = "New";
-	public static final String WAREHOUSE_APP_RECEIVING_ARVL_NEW_CODE = "NEW";		
 
-	public Application provideApplicationMetadata();	
+	// ==== Receiving Featureset
+	public static final String WAREHOUSE_APP_RECEIVING_NAME = "Receiving";
+	public static final String WAREHOUSE_APP_RECEIVING_CODE = "RCVNG";
+
+	// ==== Receiving ASN Featureset
+	public static final String WAREHOUSE_APP_RECEIVING_ASN_NAME = "ASN's";
+	public static final String WAREHOUSE_APP_RECEIVING_ASN_CODE = "ASN";
+
+	// ========= Receiving ASN :: Search ASN Feature
+	public static final String WAREHOUSE_APP_RECEIVING_ASN_SEARCH_NAME = "Search";
+	public static final String WAREHOUSE_APP_RECEIVING_ASN_SEARCH_CODE = "SEARCH_ASN";
+
+	// ========= Receiving ASN :: New ASN Feature
+	public static final String WAREHOUSE_APP_RECEIVING_ASN_NEW_NAME = "New";
+	public static final String WAREHOUSE_APP_RECEIVING_ASN_NEW_CODE = "NEW_ASN";
+
+	// ==== Receiving Receive Featureset
+	public static final String WAREHOUSE_APP_RECEIVING_RCV_NAME = "Receives";
+	public static final String WAREHOUSE_APP_RECEIVING_RCV_CODE = "RCVS";
+
+	// ========= Receiving RCV :: Search Receives Feature
+	public static final String WAREHOUSE_APP_RECEIVING_RCV_SEARCH_NAME = "Search";
+	public static final String WAREHOUSE_APP_RECEIVING_RCV_SEARCH_CODE = "SEARCH_RCV";
+	public static final String WAREHOUSE_APP_RECEIVING_RCV_SEARCH_COMPONENT = "searchReceives";
+
+	// ========= Receiving RCV :: New Receive Feature
+	public static final String WAREHOUSE_APP_RECEIVING_RCV_NEW_NAME = "New";
+	public static final String WAREHOUSE_APP_RECEIVING_RCV_NEW_CODE = "NEW_RCV";
+
+	// ==== Receiving Arrival Featureset
+	public static final String WAREHOUSE_APP_RECEIVING_ARVL_NAME = "Arrivals";
+	public static final String WAREHOUSE_APP_RECEIVING_ARVL_CODE = "ARVLS";
+
+	// ========= Receiving ARVL :: Search Arrivals Feature
+	public static final String WAREHOUSE_APP_RECEIVING_ARVL_SEARCH_NAME = "Search";
+	public static final String WAREHOUSE_APP_RECEIVING_ARVL_SEARCH_CODE = "SEARCH_ARVL";
+	public static final String WAREHOUSE_APP_RECEIVING_ARVL_SEARCH_COMPONENT = "searchArrivals";
+
+	// ========= Receiving ARVL :: New Arrival Feature
+	public static final String WAREHOUSE_APP_RECEIVING_ARVL_NEW_NAME = "New";
+	public static final String WAREHOUSE_APP_RECEIVING_ARVL_NEW_CODE = "NEW_ARVL";
+
+	public Application provideApplicationMetadata();
 }

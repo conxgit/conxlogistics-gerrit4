@@ -1,0 +1,8 @@
+Bundle-ManifestVersion: 2
+Bundle-Version: 1.0.0
+Bundle-Name: ConX Kernel Persistence Services Implementation
+Bundle-SymbolicName: com.conx.logistics.kernel.persistence.services.impl
+Import-Package: org.osgi.framework;version="0",
+  javax.persistence;version="0",
+  com.conx.logistics.kernel.persistence.services;version="[1.0.0,2.0.0)"
+

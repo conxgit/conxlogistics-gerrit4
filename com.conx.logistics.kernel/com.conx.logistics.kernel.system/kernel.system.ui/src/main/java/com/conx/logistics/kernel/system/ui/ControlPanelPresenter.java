@@ -40,10 +40,8 @@ public class ControlPanelPresenter extends BasePresenter<IControlPanelView, Cont
     // load the nav presenter
     IPresenterFactory pf = application.getPresenterFactory();
     this.navPresenter = (ControlPanelNavigationPresenter) pf.createPresenter(ControlPanelNavigationPresenter.class);
-    
-    // start nav presenter
-    ControlPanelNavigationEventBus cpneb = (ControlPanelNavigationEventBus)application.createEventBuss(ControlPanelNavigationEventBus.class,this.navPresenter);
-    cpneb.start(application);
+//    this.navPresenter.getEventBus().start(application);
+    // FIXME THIS NEEDS UPDATING
     
     IControlPanelNavigationView navView = this.navPresenter.getView();
 	this.view.setNavigation(navView);

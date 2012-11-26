@@ -61,6 +61,7 @@ public class ArrivalReceiptDAOImpl implements IArrivalReceiptDAOService {
 		if (existingRecord == null) {
 			newRecord.setName(name);
 			newRecord.setCode(name);
+			newRecord.setOwnerEntityId(parentArrivalId);
 		} else {
 			newRecord = existingRecord;
 		}
@@ -82,6 +83,7 @@ public class ArrivalReceiptDAOImpl implements IArrivalReceiptDAOService {
 		if (existingRecord == null) {
 			newRecord.setName(name);
 			newRecord.setCode(name);
+			newRecord.setOwnerEntityId(arrivalReceiptId);
 		} else {
 			newRecord = existingRecord;
 		}

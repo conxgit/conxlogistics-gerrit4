@@ -4,9 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 
-import org.antlr.grammar.v3.ANTLRv3Parser.finallyClause_return;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.mvp.presenter.BasePresenter;
@@ -18,8 +16,6 @@ import com.conx.logistics.kernel.ui.common.mvp.docviewer.view.DocViewerView;
 import com.conx.logistics.kernel.ui.common.mvp.docviewer.view.IDocViewerView;
 import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.vaadin.terminal.ExternalResource;
-import com.vaadin.terminal.StreamResource;
-import com.vaadin.terminal.StreamResource.StreamSource;
 import com.vaadin.ui.Embedded;
 
 @Presenter(view = DocViewerView.class)
@@ -28,7 +24,6 @@ public class DocViewerPresenter extends BasePresenter<IDocViewerView, DocViewerE
 	private FileEntry fileEntry;
 	
 	
-	@SuppressWarnings("rawtypes")
 	public void onViewDocument(FileEntry fileEntry) {
 		this.fileEntry = fileEntry;
     	try {
@@ -36,7 +31,7 @@ public class DocViewerPresenter extends BasePresenter<IDocViewerView, DocViewerE
 			String version = fileEntry.getVersion();
 			
 			MainMVPApplication mvpApp = (MainMVPApplication)super.getApplication();
-			IRemoteDocumentRepository docLibRepository = mvpApp.getRemoteDocumentRepository();
+			IRemoteDocumentRepository docLibRepository = mvpApp.getDaoProvider().provideByDAOClass(IRemoteDocumentRepository.class);
 			
 			String docUrl = docLibRepository.getFileAsURL(fileEntryId,version);
 			ExternalResource eress = new ExternalResource(docUrl, fileEntry.getMimeType()); 

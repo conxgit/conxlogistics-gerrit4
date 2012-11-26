@@ -145,6 +145,70 @@ public class UIComponentModelData {
 
 		return rcvSearchMDC;
 	}
+	
+	@SuppressWarnings("unused")
+	public final static MasterDetailComponent createArrivalSearchMasterDetail(IComponentDAOService componentDAOService, IEntityTypeDAOService entityTypeDAOService,
+			IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
+		// -- ML E.E.
+		DataSource arvlDefaultDS = getDefaultARVLDS(entityTypeDAOService, dataSourceDAOService, em);
+		DataSource basicARVLDS = getBasicFormARVLDS(entityTypeDAOService, dataSourceDAOService, em);
+		MasterDetailComponent arvlSearchMDC = new MasterDetailComponent("searchArrivals", "Arrivals", basicARVLDS);
+		arvlSearchMDC = (MasterDetailComponent) componentDAOService.add((AbstractConXComponent) arvlSearchMDC);
+
+		LineEditorContainerComponent lecc = new LineEditorContainerComponent(arvlSearchMDC.getCode() + "-lineEditorContainerComponent", arvlSearchMDC.getName() + " Line Editor");
+		try {
+			lecc = (LineEditorContainerComponent) componentDAOService.add((AbstractConXComponent) lecc);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		/**
+		 * Line Editors
+		 */
+		// A. -- RCV Basic Line Editor
+		FieldSet basicFormFieldSet = createFieldSet("Basic", basicARVLDS, componentDAOService);
+
+		// -- Simple Form
+		ConXSimpleForm arvlBasicForm = new ConXSimpleForm(basicARVLDS, "Basic");
+		arvlBasicForm.setFieldSet(basicFormFieldSet);
+		arvlBasicForm = (ConXSimpleForm) componentDAOService.add((AbstractConXComponent) arvlBasicForm);
+		
+		LineEditorComponent arvlBasicFormLE = new LineEditorComponent(lecc.getCode() + "-basicAttrs", "Basic", lecc);
+		arvlBasicFormLE.setContent(arvlBasicForm);
+		arvlBasicFormLE = (LineEditorComponent) componentDAOService.add((AbstractConXComponent) arvlBasicFormLE);
+		
+		// -- RcvLines
+		DataSource arvlRcptDefaultDS = getARVLReceiptDS(entityTypeDAOService, dataSourceDAOService, em);
+		ConXTable arvlLinesTable = new ConXDetailTable();
+		arvlLinesTable.setDataSource(arvlRcptDefaultDS);
+		arvlLinesTable = (ConXTable) componentDAOService.add((AbstractConXComponent) arvlLinesTable);
+		LineEditorComponent arvlLinesLE = new LineEditorComponent(lecc.getCode() + "-arvlLines", "Arrival Lines", lecc);
+		arvlLinesLE.setContent(arvlLinesTable);
+		arvlLinesLE = (LineEditorComponent) componentDAOService.add((AbstractConXComponent) arvlLinesLE);		
+		
+		
+		// -- RefNum's,Attachments, and Notes
+//		LineEditorComponent referenceNumbersLE = provideReferenceNumberEditor(componentDAOService, entityTypeDAOService, dataSourceDAOService, em, lecc);
+		LineEditorComponent attachmentsLE = provideAttachmentLineEditor(componentDAOService, entityTypeDAOService, dataSourceDAOService, em, lecc);
+//		LineEditorComponent notesLE = provideNotesLineEditor(componentDAOService, entityTypeDAOService, dataSourceDAOService, em, lecc);
+
+		lecc.getLineEditors().add(arvlLinesLE);
+		lecc.getLineEditors().add(arvlBasicFormLE);
+//		lecc.getLineEditors().add(referenceNumbersLE);
+		lecc.getLineEditors().add(attachmentsLE);
+//		lecc.getLineEditors().add(notesLE);
+
+		arvlSearchMDC.setLineEditorPanel(lecc);
+
+		ConXTable arvlSearchTable = new ConXTable();
+		arvlSearchTable.setDataSource(basicARVLDS);
+//		arvlSearchTable.setRecordEditor(createArrivalFormMasterDetail(arvlSearchMDC, componentDAOService, entityTypeDAOService, dataSourceDAOService, em));
+		arvlSearchTable = (ConXTable) componentDAOService.add((AbstractConXComponent) arvlSearchTable);
+		arvlSearchMDC.setMasterComponent(arvlSearchTable);
+		arvlSearchMDC = (MasterDetailComponent) componentDAOService.update((AbstractConXComponent) arvlSearchMDC);
+
+		return arvlSearchMDC;
+	}
 
 	@SuppressWarnings("unused")
 	public final static MasterDetailComponent createReceiveFormMasterDetail(MasterDetailComponent searchMDC, IComponentDAOService componentDAOService, IEntityTypeDAOService entityTypeDAOService,
@@ -247,14 +311,26 @@ public class UIComponentModelData {
 	private static DataSource getDefaultRCVDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
 		return DataSourceData.provideDefaultReceiveDS(entityTypeDAOService, dataSourceDAOService, em);
 	}
+	
+	private static DataSource getDefaultARVLDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
+		return DataSourceData.provideDefaultArrivalDS(entityTypeDAOService, dataSourceDAOService, em);
+	}
 
 	private static DataSource getBasicFormRCVDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
 		return DataSourceData.provideBasicFormReceiveDS(entityTypeDAOService, dataSourceDAOService, em);
 	}
 	
+	private static DataSource getBasicFormARVLDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
+		return DataSourceData.provideDefaultArrivalDS(entityTypeDAOService, dataSourceDAOService, em);
+	}
+	
 	private static DataSource getRcvLineDefaultDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
 		return DataSourceData.provideDefaultReceiveLineDS(entityTypeDAOService, dataSourceDAOService, em);
-	}	
+	}
+	
+	private static DataSource getARVLReceiptDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
+		return DataSourceData.provideDefaultArrivalDS(entityTypeDAOService, dataSourceDAOService, em);
+	}
 	
 	private static DataSource getWeightDimsRCVDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {
 		return DataSourceData.provideWeightDimsFormReceiveDS(entityTypeDAOService, dataSourceDAOService, em);

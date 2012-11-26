@@ -38,4 +38,7 @@
 	<bean id="rcvSearchViewContribution" class="com.conx.logistics.app.whse.ui.contribution.rcv.RCVSearchViewContributionImpl">
 		<property name="componentDAOService" ref="componentDAOService"/>
 	</bean>
+	<bean id="arvlSearchViewContribution" class="com.conx.logistics.app.whse.ui.contribution.arvl.ArrivalSearchViewContributionImpl">
+		<property name="componentDAOService" ref="componentDAOService"/>
+	</bean>
 </beans>

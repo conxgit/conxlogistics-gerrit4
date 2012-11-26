@@ -13,7 +13,6 @@ import com.conx.logistics.app.whse.data.HierarchicalFeatureContainer;
 import com.conx.logistics.app.whse.ui.WarehouseEventBus;
 import com.conx.logistics.app.whse.ui.navigation.view.IWarehouseNavigationView;
 import com.conx.logistics.app.whse.ui.navigation.view.WarehouseNavigationView;
-import com.conx.logistics.kernel.system.dao.services.application.IApplicationDAOService;
 import com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication;
 import com.conx.logistics.kernel.ui.vaadin.common.ConXNavigationAccordion;
 import com.conx.logistics.mdm.domain.application.Application;
@@ -27,7 +26,7 @@ import com.vaadin.ui.Tree;
 
 @Presenter(view = WarehouseNavigationView.class)
 public class WarehouseNavigationPresenter extends
-		BasePresenter<IWarehouseNavigationView, WarehouseEventBus> {
+		BasePresenter<IWarehouseNavigationView, WarehouseNavigationEventBus> {
 
 	private final ObjectProperty<Feature> currentFeature = new ObjectProperty<Feature>(null, Feature.class);
 	private ConXNavigationAccordion navigationTree;
@@ -48,7 +47,7 @@ public class WarehouseNavigationPresenter extends
 	public void onStart(MainMVPApplication mainApp)
 	{
 		this.mainApp = mainApp;
-		this.kernelSystemEntityManagerFactory = mainApp.getKernelSystemEntityManagerFactory();
+		this.kernelSystemEntityManagerFactory = mainApp.getEntityManagerFactoryManager().getKernelSystemEmf();
 		this.kernelSystemEntityManager = this.kernelSystemEntityManagerFactory.createEntityManager();
 		
 		//== Find ControlPanel system app and init container filter
@@ -125,8 +124,7 @@ public class WarehouseNavigationPresenter extends
 		//}
 		currentFeature.setValue(f);
 		//String fragment = (f != null ? f.getFragmentName() : "");
-		WarehouseEventBus eb = this.getEventBus();
-		
+		WarehouseEventBus eb = this.mainApp.getPresenterFactory().getEventBusManager().getEventBus(WarehouseEventBus.class);
 		eb.openFeatureView(f);
 		//updateFeatureList(currentList);
 	}

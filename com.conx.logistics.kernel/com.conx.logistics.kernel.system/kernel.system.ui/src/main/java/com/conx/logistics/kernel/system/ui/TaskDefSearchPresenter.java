@@ -18,6 +18,7 @@ import org.vaadin.mvp.presenter.IPresenterFactory;
 import org.vaadin.mvp.presenter.ViewFactoryException;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
+import com.conx.logistics.kernel.persistence.services.IEntityContainerProvider;
 import com.conx.logistics.kernel.system.ui.view.TaskDefSearchView;
 import com.conx.logistics.kernel.system.ui.view.ITaskDefSearchView;
 import com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication;
@@ -43,8 +44,7 @@ import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.Window;
 
 @Presenter(view = TaskDefSearchView.class)
-public class TaskDefSearchPresenter extends
-		BasePresenter<ITaskDefSearchView, TaskDefSearchEventBus> {
+public class TaskDefSearchPresenter extends BasePresenter<ITaskDefSearchView, TaskDefSearchEventBus> {
 
 	private MainMVPApplication application;
 	private FeatureTabbedView fv;
@@ -59,12 +59,10 @@ public class TaskDefSearchPresenter extends
 		this.application = app;
 
 		// -- Init task def table
-		EntityManagerFactory kernelSystemEntityManagerFactory = this.application
-				.getKernelSystemEntityManagerFactory();
-		this.kernelSystemEntityManager = kernelSystemEntityManagerFactory
-				.createEntityManager();
-		this.taskDefs = JPAContainerFactory.make(TaskDefinition.class,
-				this.kernelSystemEntityManager);
+		EntityManagerFactory kernelSystemEntityManagerFactory = this.application.getDaoProvider().provideByDAOClass(IEntityContainerProvider.class)
+				.getEmf();
+		this.kernelSystemEntityManager = kernelSystemEntityManagerFactory.createEntityManager();
+		this.taskDefs = JPAContainerFactory.make(TaskDefinition.class, this.kernelSystemEntityManager);
 
 		this.view.getSearchGrid().setContainerDataSource(this.taskDefs);
 		this.view.getSearchGrid().setSizeFull();
@@ -76,42 +74,31 @@ public class TaskDefSearchPresenter extends
 			private static final long serialVersionUID = 7230326485331772539L;
 
 			public void itemClick(ItemClickEvent event) {
-				showDetailView((JPAContainerItem<TaskDefinition>) event
-						.getItem());
+				showDetailView((JPAContainerItem<TaskDefinition>) event.getItem());
 			}
 		});
 
 		this.view.getSearchGrid().setColumnHeader("name", "Name");
 		this.view.getSearchGrid().setColumnHeader("description", "Description");
-		this.view.getSearchGrid().setColumnHeader("bpmn2ProcDefURL",
-				"BPMN2.0 Proc");
+		this.view.getSearchGrid().setColumnHeader("bpmn2ProcDefURL", "BPMN2.0 Proc");
 		this.view.getSearchGrid().setVisibleColumns(
-				new Object[] { "name", "description", "bpmn2ProcDefURL",
-						"version", "dateCreated", "dateLastUpdated" });
+				new Object[] { "name", "description", "bpmn2ProcDefURL", "version", "dateCreated", "dateLastUpdated" });
 
 		// -- Init detail form
-		Collection<?> visibleProps = java.util.Arrays.asList(new Object[] {
-				"name", "description", "bpmn2ProcDefURL", "version",
-				"dateCreated", "dateLastUpdated", "parentApplication" });
-		Collection<?> editableProps = java.util.Arrays
-				.asList(new Object[] { "name", "description",
-						"bpmn2ProcDefURL", "parentApplication" });
+		Collection<?> visibleProps = java.util.Arrays.asList(new Object[] { "name", "description", "bpmn2ProcDefURL", "version", "dateCreated",
+				"dateLastUpdated", "parentApplication" });
+		Collection<?> editableProps = java.util.Arrays.asList(new Object[] { "name", "description", "bpmn2ProcDefURL", "parentApplication" });
 
-		this.view.getTaskDefForm().setFormFieldFactory(
-				new BasicFieldFactory(this.application
-						.getEntityTypeContainerFactory(), visibleProps,
-						editableProps));
+		this.view.getTaskDefForm().setFormFieldFactory(new BasicFieldFactory(visibleProps, editableProps));
 
-		this.view.getTaskDefForm().setItemDataSource(
-				this.taskDefs.createEntityItem(new TaskDefinition()));
+		this.view.getTaskDefForm().setItemDataSource(this.taskDefs.createEntityItem(new TaskDefinition()));
 		this.view.getTaskDefForm().setEnabled(false);
 		this.view.getTaskDefForm().setWriteThrough(false);
 		this.view.getTaskDefForm().setCaption("Task Def Editor");
 		this.view.getTaskDefForm().addStyleName("bordered"); // Custom style
 		this.view.getTaskDefForm().getField("name").setReadOnly(false);
 		this.view.getTaskDefForm().getField("description").setReadOnly(false);
-		this.view.getTaskDefForm().getField("bpmn2ProcDefURL")
-				.setReadOnly(false);
+		this.view.getTaskDefForm().getField("bpmn2ProcDefURL").setReadOnly(false);
 	}
 
 	private void showDetailView(JPAContainerItem<TaskDefinition> entityItem) {
@@ -147,8 +134,7 @@ public class TaskDefSearchPresenter extends
 		defaultDetailView = new VerticalLayout();
 		defaultDetailView.setSizeFull();
 		defaultDetailView.addComponent(defaultDetailViewMessage);
-		defaultDetailView.setComponentAlignment(defaultDetailViewMessage,
-				Alignment.MIDDLE_CENTER);
+		defaultDetailView.setComponentAlignment(defaultDetailViewMessage, Alignment.MIDDLE_CENTER);
 		// this.view.setDetailComponent(this.view.getDetailLayout());
 	}
 
@@ -162,8 +148,7 @@ public class TaskDefSearchPresenter extends
 		td.setName("new task def");
 		td.setBpmn2ProcDefURL("Enter New BPMN2.0 Process URL");
 		// BeanItem<TaskDefinition> beanItem = new BeanItem<TaskDefinition>(td);
-		this.view.getTaskDefForm().setItemDataSource(
-				this.taskDefs.createEntityItem(td));
+		this.view.getTaskDefForm().setItemDataSource(this.taskDefs.createEntityItem(td));
 		this.view.getTaskDefForm().setEnabled(true);
 		resetButtons(true, false, true);
 	}
@@ -187,23 +172,21 @@ public class TaskDefSearchPresenter extends
 	}
 
 	public void onEditTaskDef() {
-		if (this.view.getSearchGrid().getValue() != null)
-		{
+		if (this.view.getSearchGrid().getValue() != null) {
 			this.view.getTaskDefForm().setEnabled(true);
 			resetButtons(true, false, false);
 		}
 	}
-	
+
 	public void onCancelTaskDef() {
 		this.view.getTaskDefForm().discard();
 		this.view.getTaskDefForm().setEnabled(false);
 		resetButtons(false, true, false);
-	}	
-	
-	private void resetButtons(boolean saveEnable, boolean editEnable, boolean cancelEnable)
-	{
-		//this.view.getSaveTaskDef().setEnabled(saveEnable);
-		//this.view.getEditTaskDef().setEnabled(editEnable);
-		//this.view.getCancelEditTaskDef().setEnabled(cancelEnable);
+	}
+
+	private void resetButtons(boolean saveEnable, boolean editEnable, boolean cancelEnable) {
+		// this.view.getSaveTaskDef().setEnabled(saveEnable);
+		// this.view.getEditTaskDef().setEnabled(editEnable);
+		// this.view.getCancelEditTaskDef().setEnabled(cancelEnable);
 	}
 }

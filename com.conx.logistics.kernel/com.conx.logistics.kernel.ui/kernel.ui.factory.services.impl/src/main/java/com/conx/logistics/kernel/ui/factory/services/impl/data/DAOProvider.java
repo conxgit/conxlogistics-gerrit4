@@ -14,6 +14,7 @@ import com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveDAOService;
 import com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveLineDAOService;
 import com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository;
 import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
+import com.conx.logistics.kernel.system.dao.services.application.IFeatureDAOService;
 import com.conx.logistics.kernel.ui.factory.services.data.IDAOProvider;
 import com.conx.logistics.mdm.dao.services.IBaseEntityDAOService;
 import com.conx.logistics.mdm.dao.services.IEntityMetadataDAOService;
@@ -56,6 +57,8 @@ public class DAOProvider implements IDAOProvider {
 	private ILocationDAOService locationDAOService;
 //	@Autowired
 	private IBaseEntityDAOService baseEntityDAOService;
+//  @Autowired
+	private IFeatureDAOService featureDAOService;
 	
 	public void start() {
 	}
@@ -272,5 +275,15 @@ public class DAOProvider implements IDAOProvider {
 	public void setRemoteDocumentRepositoryService(IRemoteDocumentRepository remoteDocumentRepositoryService) {
 		this.provideDaoCache().put(IRemoteDocumentRepository.class, remoteDocumentRepositoryService);
 		this.remoteDocumentRepositoryService = remoteDocumentRepositoryService;
+	}
+
+	public IFeatureDAOService getFeatureDAOService() {
+		return featureDAOService;
+	}
+
+	@Autowired
+	public void setFeatureDAOService(IFeatureDAOService featureDAOService) {
+		this.provideDaoCache().put(IFeatureDAOService.class, featureDAOService);
+		this.featureDAOService = featureDAOService;
 	}
 }

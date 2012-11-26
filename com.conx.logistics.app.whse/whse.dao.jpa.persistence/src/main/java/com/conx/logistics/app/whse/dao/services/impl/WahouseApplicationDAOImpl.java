@@ -20,22 +20,22 @@ import com.conx.logistics.mdm.domain.application.Feature;
 @Transactional
 @Repository
 public class WahouseApplicationDAOImpl implements IWarehouseApplicationDAOService {
-	protected Logger logger = LoggerFactory.getLogger(this.getClass());	
-    /**
-     * Spring will inject a managed JPA {@link EntityManager} into this field.
-     */
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
+	/**
+	 * Spring will inject a managed JPA {@link EntityManager} into this field.
+	 */
 	@PersistenceContext
-    private EntityManager em;	
-	
-    @Autowired
-    private IFeatureDAOService featureDaoService;
-    
-    @Autowired
-    private IFeatureSetDAOService featureSetDaoService;    	
-    
-    @Autowired
-    private IApplicationDAOService applicationDaoService;  
-    
+	private EntityManager em;
+
+	@Autowired
+	private IFeatureDAOService featureDaoService;
+
+	@Autowired
+	private IFeatureSetDAOService featureSetDaoService;
+
+	@Autowired
+	private IApplicationDAOService applicationDaoService;
+
 	public void setEm(EntityManager em) {
 		this.em = em;
 	}
@@ -43,99 +43,126 @@ public class WahouseApplicationDAOImpl implements IWarehouseApplicationDAOServic
 	@Override
 	public Application provideApplicationMetadata() {
 		Application cpApp = applicationDaoService.findApplicationByCode(IWarehouseApplicationDAOService.WAREHOUSE_APP_CODE);
-		if (Validator.isNull(cpApp))
-		{
+		if (Validator.isNull(cpApp)) {
 			/**
-			 *
+			 * 
 			 * Warehouse App
 			 * 
 			 **/
 			cpApp = new Application(IWarehouseApplicationDAOService.WAREHOUSE_APP_CODE);
 			cpApp.setName(IWarehouseApplicationDAOService.WAREHOUSE_APP_NAME);
 			cpApp.setThemeIconPath("");
-			
+
 			cpApp = applicationDaoService.addApplication(cpApp);
-			
+
 			/**
 			 * Receiving Featureset
 			 */
-			Feature mfs = new Feature(cpApp,null,IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_CODE);
-			mfs.setName(IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_NAME);
-			mfs = featureDaoService.addFeature(mfs);
-			cpApp.getFeatures().add(mfs);
-			
-			
-			//-- ASN
-			Feature smfs = new Feature(cpApp,mfs,IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_ASN_CODE);
-			smfs.setName(IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_ASN_NAME);
-			smfs.setFeatureSet(true);
-			smfs = featureDaoService.addFeature(smfs);
-			mfs.getChildFeatures().add(smfs);
-			mfs = featureDaoService.updateFeature(mfs);		
-			
-			Feature searchFt = new Feature(cpApp,smfs, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_ASN_SEARCH_CODE);
-			searchFt.setName(WAREHOUSE_APP_RECEIVING_ASN_SEARCH_NAME);
-			searchFt = featureDaoService.addFeature(searchFt);
-			smfs.getChildFeatures().add(searchFt);
-			
-			Feature ft = new Feature(cpApp,smfs, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_ASN_NEW_CODE);
-			ft.setName(WAREHOUSE_APP_RECEIVING_ASN_NEW_NAME);
-			ft.setTaskFeature(true);
-			ft.setOnCompletionFeature(searchFt);
-			ft.setCode("whse.rcv.asn.CreateNewASNByOrgV1.0");
-			ft.setExternalCode("KERNEL.PAGEFLOW.STARTTASK");
-			ft.setName("New");
-			ft = featureDaoService.addFeature(ft);
-			smfs.getChildFeatures().add(ft);	
-			
-			smfs = featureDaoService.updateFeature(smfs);
-			
-			
-			//-- Receive
-			smfs = new Feature(cpApp,mfs,IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_CODE);
-			smfs.setName(IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_NAME);
-			smfs.setFeatureSet(true);
-			smfs = featureDaoService.addFeature(smfs);
-			mfs.getChildFeatures().add(smfs);
-			mfs = featureDaoService.updateFeature(mfs);		
-			
-			searchFt = new Feature(cpApp,smfs, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_SEARCH_CODE);
-			searchFt.setName(WAREHOUSE_APP_RECEIVING_RCV_SEARCH_NAME);
-			searchFt.setCaption("Receives");
-			searchFt.setIconUrl("breadcrumb/img/conx-bread-crumb-grid-highlighted.png");
-			searchFt.setComponentModelCode(IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_SEARCH_COMPONENT);
-			searchFt = featureDaoService.addFeature(searchFt);
-			smfs.getChildFeatures().add(searchFt);
-			
-			ft = new Feature(cpApp,smfs, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_NEW_CODE);
-			ft.setName(WAREHOUSE_APP_RECEIVING_RCV_NEW_NAME);
-			ft.setTaskFeature(true);
-			ft.setOnCompletionFeature(searchFt);
-			ft.setCode("whse.rcv.asn.CreateNewRCVByOrgV1.0");
-			ft.setExternalCode("KERNEL.PAGEFLOW.STARTTASK");
-			ft.setName("New");
-			ft = featureDaoService.addFeature(ft);
-			smfs.getChildFeatures().add(ft);	
-			
-			ft = new Feature(cpApp,smfs, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_NEW_CODE);
-			ft.setName(WAREHOUSE_APP_RECEIVING_ARVL_NEW_NAME);
-			ft.setTaskFeature(true);
-			ft.setOnCompletionFeature(searchFt);
-			ft.setCode("whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0");
-			ft.setExternalCode("KERNEL.PAGEFLOW.STARTTASK");
-			ft.setName("New");
-			ft = featureDaoService.addFeature(ft);
-			smfs.getChildFeatures().add(ft);			
+			Feature warehouseFeatureSet = new Feature(cpApp, null, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_CODE);
+			warehouseFeatureSet.setName(IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_NAME);
+			warehouseFeatureSet = featureDaoService.addFeature(warehouseFeatureSet);
+			cpApp.getFeatures().add(warehouseFeatureSet);
 
-			cpApp = applicationDaoService.updateApplication(cpApp);					
-			try {
-				//em.flush();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			/*
+			 * ASNs
+			 */
+			// ASN Feature Set
+			Feature asnFeatureSet = new Feature(cpApp, warehouseFeatureSet, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_ASN_CODE);
+			asnFeatureSet.setName(IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_ASN_NAME);
+			asnFeatureSet.setFeatureSet(true);
+			asnFeatureSet = featureDaoService.addFeature(asnFeatureSet);
+			warehouseFeatureSet.getChildFeatures().add(asnFeatureSet);
+			warehouseFeatureSet = featureDaoService.updateFeature(warehouseFeatureSet);
+
+			// ASN Search Feature
+			Feature searchAsnFeature = new Feature(cpApp, asnFeatureSet, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_ASN_SEARCH_CODE);
+			searchAsnFeature.setName(WAREHOUSE_APP_RECEIVING_ASN_SEARCH_NAME);
+			searchAsnFeature = featureDaoService.addFeature(searchAsnFeature);
+			asnFeatureSet.getChildFeatures().add(searchAsnFeature);
+
+			// ASN New Feature
+			Feature newAsnFeature = new Feature(cpApp, asnFeatureSet, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_ASN_NEW_CODE);
+			newAsnFeature.setName(WAREHOUSE_APP_RECEIVING_ASN_NEW_NAME);
+			newAsnFeature.setTaskFeature(true);
+			newAsnFeature.setOnCompletionFeature(searchAsnFeature);
+			newAsnFeature.setCode("whse.rcv.asn.CreateNewASNByOrgV1.0");
+			newAsnFeature.setExternalCode("KERNEL.PAGEFLOW.STARTTASK");
+			newAsnFeature = featureDaoService.addFeature(newAsnFeature);
+			asnFeatureSet.getChildFeatures().add(newAsnFeature);
+
+			// Update ASN Feature Set
+			asnFeatureSet = featureDaoService.updateFeature(asnFeatureSet);
+
+			/*
+			 * Receives
+			 */
+			// Receive Feature Set
+			Feature receiveFeatureSet = new Feature(cpApp, warehouseFeatureSet, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_CODE);
+			receiveFeatureSet.setName(IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_NAME);
+			receiveFeatureSet.setFeatureSet(true);
+			receiveFeatureSet = featureDaoService.addFeature(receiveFeatureSet);
+			warehouseFeatureSet.getChildFeatures().add(receiveFeatureSet);
+
+			// Receive Search Feature
+			Feature searchReceiveFeature = new Feature(cpApp, receiveFeatureSet, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_SEARCH_CODE);
+			searchReceiveFeature.setName(WAREHOUSE_APP_RECEIVING_RCV_SEARCH_NAME);
+			searchReceiveFeature.setCaption("Receives");
+			searchReceiveFeature.setIconUrl("breadcrumb/img/conx-bread-crumb-grid-highlighted.png");
+			searchReceiveFeature.setComponentModelCode(IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_SEARCH_COMPONENT);
+			searchReceiveFeature = featureDaoService.addFeature(searchReceiveFeature);
+			receiveFeatureSet.getChildFeatures().add(searchReceiveFeature);
+
+			// Receive New Feature
+			/*Feature newReceiveFeature = new Feature(cpApp, smfs, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_NEW_CODE);
+			newReceiveFeature.setName(WAREHOUSE_APP_RECEIVING_RCV_NEW_NAME);
+			newReceiveFeature.setTaskFeature(true);
+			newReceiveFeature.setOnCompletionFeature(searchReceiveFeature);
+			newReceiveFeature.setCode("whse.rcv.asn.CreateNewRCVByOrgV1.0");
+			newReceiveFeature.setExternalCode("KERNEL.PAGEFLOW.STARTTASK");
+			newReceiveFeature = featureDaoService.addFeature(newReceiveFeature);
+			receiveFeatureSet.getChildFeatures().add(newReceiveFeature);*/
+			
+			// Update Receive Feature Set
+			receiveFeatureSet = featureDaoService.updateFeature(receiveFeatureSet);
+
+			/*
+			 * Arrivals
+			 */
+			// Arrival Feature Set
+			Feature arrivalFeatureSet = new Feature(cpApp, warehouseFeatureSet, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_ARVL_CODE);
+			arrivalFeatureSet.setName(IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_ARVL_NAME);
+			arrivalFeatureSet.setFeatureSet(true);
+			arrivalFeatureSet = featureDaoService.addFeature(arrivalFeatureSet);
+			warehouseFeatureSet.getChildFeatures().add(arrivalFeatureSet);
+			
+			
+			// Arrival Search Feature
+			Feature searchArrivalFeature = new Feature(cpApp, arrivalFeatureSet, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_ARVL_SEARCH_CODE);
+			searchArrivalFeature.setName(IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_SEARCH_NAME);
+			searchArrivalFeature.setCaption(IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_ARVL_NAME);
+			searchArrivalFeature.setIconUrl("breadcrumb/img/conx-bread-crumb-grid-highlighted.png");
+			searchArrivalFeature.setComponentModelCode(IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_ARVL_SEARCH_COMPONENT);
+			searchArrivalFeature = featureDaoService.addFeature(searchArrivalFeature);
+			arrivalFeatureSet.getChildFeatures().add(searchArrivalFeature);
+
+			// Arrival New Feature
+			Feature newArrivalFeature = new Feature(cpApp, arrivalFeatureSet, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_ARVL_NEW_CODE);
+			newArrivalFeature.setName(WAREHOUSE_APP_RECEIVING_ARVL_NEW_NAME);
+			newArrivalFeature.setTaskFeature(true);
+			newArrivalFeature.setOnCompletionFeature(searchArrivalFeature);
+			newArrivalFeature.setCode("whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0");
+			newArrivalFeature.setExternalCode("KERNEL.PAGEFLOW.STARTTASK");
+			newArrivalFeature = featureDaoService.addFeature(newArrivalFeature);
+			arrivalFeatureSet.getChildFeatures().add(newArrivalFeature);
+			
+			// Update Arrival Feature Set
+			arrivalFeatureSet = featureDaoService.updateFeature(arrivalFeatureSet);
+
+			// Update Warehouse Feature Set
+			warehouseFeatureSet = featureDaoService.updateFeature(warehouseFeatureSet);
+			cpApp = applicationDaoService.updateApplication(cpApp);
 		}
-		
+
 		return cpApp;
 	}
 }

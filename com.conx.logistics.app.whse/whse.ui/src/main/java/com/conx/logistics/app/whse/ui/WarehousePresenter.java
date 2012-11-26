@@ -6,7 +6,6 @@ import org.vaadin.mvp.presenter.IPresenter;
 import org.vaadin.mvp.presenter.IPresenterFactory;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
-import com.conx.logistics.app.whse.ui.navigation.WarehouseNavigationEventBus;
 import com.conx.logistics.app.whse.ui.navigation.WarehouseNavigationPresenter;
 import com.conx.logistics.app.whse.ui.navigation.view.IWarehouseNavigationView;
 import com.conx.logistics.app.whse.ui.view.IWarehouseView;
@@ -41,13 +40,7 @@ public class WarehousePresenter extends BasePresenter<IWarehouseView, WarehouseE
 		// load the nav presenter
 		IPresenterFactory pf = application.getPresenterFactory();
 		this.navPresenter = (WarehouseNavigationPresenter) pf.createPresenter(WarehouseNavigationPresenter.class);
-
-		// start nav presenter
-		WarehouseNavigationEventBus cpneb = (WarehouseNavigationEventBus) application.createEventBuss(WarehouseNavigationEventBus.class,
-				this.navPresenter);
-		cpneb.start(application);
-
-		application.createEventBuss(WarehouseEventBus.class, this);
+		this.navPresenter.getEventBus().start(this.application);
 
 		IWarehouseNavigationView navView = this.navPresenter.getView();
 		this.view.setNavigation(navView);
