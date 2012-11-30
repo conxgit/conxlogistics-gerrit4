@@ -39,13 +39,20 @@ public class AcceptASNLinesWIH implements WorkItemHandler {
 	public void executeWorkItem(WorkItem workItem, WorkItemManager manager) {
 
 		try {
-			HashMap varsIn = (HashMap)workItem.getParameter("asnVarMapIn");
+//			ASN asnIn = (ASN)workItem.getParameter("asnIn");
 
 			//asn = this.asnDao.update(asn);
 			
 			//Map<String, Object> output = new HashMap<String, Object>();
 			//output.put("asnParamsOut",asnParamsIn);
-			manager.completeWorkItem(workItem.getId(), null);
+			Map<String, Object> parameters = workItem.getParameters();
+			if (parameters.get("asnIn") != null) {
+				Map<String, Object> results = new HashMap<String, Object>();
+				results.put("asnOut", parameters.get("asnIn"));
+				manager.completeWorkItem(workItem.getId(), results);
+			} else {
+				manager.completeWorkItem(workItem.getId(), null);
+			}
 			//WIUtils.waitTillCompleted(workItem,1000L);
 		}
 		catch (Exception e)

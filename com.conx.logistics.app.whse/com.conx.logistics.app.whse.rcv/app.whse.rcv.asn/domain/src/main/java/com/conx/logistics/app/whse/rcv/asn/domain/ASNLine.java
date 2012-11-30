@@ -12,7 +12,10 @@ import javax.persistence.Table;
 
 import com.conx.logistics.app.whse.rcv.asn.shared.type.ASNLINESTATUS;
 import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
+import com.conx.logistics.mdm.domain.product.DimUnit;
+import com.conx.logistics.mdm.domain.product.PackUnit;
 import com.conx.logistics.mdm.domain.product.Product;
+import com.conx.logistics.mdm.domain.product.WeightUnit;
 import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber;
 
 @Entity
@@ -46,6 +49,34 @@ public class ASNLine extends MultitenantBaseEntity {
     private Double expectedTotalHeight;
 
     private Double expectedTotalVolume;
+    
+    @ManyToOne(targetEntity = PackUnit.class)
+    @JoinColumn
+    private PackUnit expectedInnerPackUnit;
+
+    @ManyToOne(targetEntity = PackUnit.class)
+    @JoinColumn
+    private PackUnit expectedOuterPackUnit;
+
+    @ManyToOne(targetEntity = WeightUnit.class)
+    @JoinColumn
+    private WeightUnit expectedWeightUnit;
+
+    @ManyToOne(targetEntity = DimUnit.class)
+    @JoinColumn
+    private DimUnit expectedLengthUnit;
+    
+    @ManyToOne(targetEntity = DimUnit.class)
+    @JoinColumn
+    private DimUnit expectedWidthUnit;
+    
+    @ManyToOne(targetEntity = DimUnit.class)
+    @JoinColumn
+    private DimUnit expectedHeightUnit;
+
+    @ManyToOne(targetEntity = DimUnit.class)
+    @JoinColumn
+    private DimUnit expectedVolUnit;
 
     @Enumerated(EnumType.STRING)
     private ASNLINESTATUS status;
@@ -144,5 +175,61 @@ public class ASNLine extends MultitenantBaseEntity {
 
 	public void setRefNumber(ReferenceNumber refNumber) {
 		this.refNumber = refNumber;
+	}
+
+	public PackUnit getExpectedInnerPackUnit() {
+		return expectedInnerPackUnit;
+	}
+
+	public void setExpectedInnerPackUnit(PackUnit expectedInnerPackUnit) {
+		this.expectedInnerPackUnit = expectedInnerPackUnit;
+	}
+
+	public PackUnit getExpectedOuterPackUnit() {
+		return expectedOuterPackUnit;
+	}
+
+	public void setExpectedOuterPackUnit(PackUnit expectedOuterPackUnit) {
+		this.expectedOuterPackUnit = expectedOuterPackUnit;
+	}
+
+	public WeightUnit getExpectedWeightUnit() {
+		return expectedWeightUnit;
+	}
+
+	public void setExpectedWeightUnit(WeightUnit expectedWeightUnit) {
+		this.expectedWeightUnit = expectedWeightUnit;
+	}
+
+	public DimUnit getExpectedLengthUnit() {
+		return expectedLengthUnit;
+	}
+
+	public void setExpectedLengthUnit(DimUnit expectedLengthUnit) {
+		this.expectedLengthUnit = expectedLengthUnit;
+	}
+
+	public DimUnit getExpectedWidthUnit() {
+		return expectedWidthUnit;
+	}
+
+	public void setExpectedWidthUnit(DimUnit expectedWidthUnit) {
+		this.expectedWidthUnit = expectedWidthUnit;
+	}
+
+	public DimUnit getExpectedHeightUnit() {
+		return expectedHeightUnit;
+	}
+
+	public void setExpectedHeightUnit(DimUnit expectedHeightUnit) {
+		this.expectedHeightUnit = expectedHeightUnit;
+	}
+
+	public DimUnit getExpectedVolUnit() {
+		return expectedVolUnit;
+	}
+
+	public void setExpectedVolUnit(DimUnit expectedVolUnit) {
+		this.expectedVolUnit = expectedVolUnit;
 	}
 }

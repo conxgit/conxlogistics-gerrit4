@@ -19,7 +19,11 @@ import com.conx.logistics.kernel.pageflow.ui.ext.grid.VaadinMatchGrid;
 import com.conx.logistics.kernel.pageflow.ui.ext.mvp.IConfigurablePresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.IPageDataHandler;
 import com.conx.logistics.kernel.pageflow.ui.mvp.PagePresenter;
+import com.conx.logistics.kernel.pageflow.ui.mvp.editor.EditorPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.editor.form.EditorFormPresenter;
+import com.conx.logistics.kernel.pageflow.ui.mvp.editor.form.header.EditorFormHeaderPresenter;
+import com.conx.logistics.kernel.pageflow.ui.mvp.editor.grid.EditorGridPresenter;
+import com.conx.logistics.kernel.pageflow.ui.mvp.editor.grid.header.EditorGridHeaderPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.editor.multilevel.MultiLevelEditorPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.EntityLineEditorPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.EntityLineEditorSectionPresenter;
@@ -67,60 +71,36 @@ public class VaadinPageFactoryImpl {
 		this.presenterFactory = presenterFactory;
 	}
 
-	private void setPagePresenterData(PagePresenter pagePresenter, Component component) {
-		pagePresenter.setPageContent(component);
-		pagePresenter.setDataHandler(new IPageDataHandler() {
-
-			@Override
-			public void setParameterData(PagePresenter source, Map<String, Object> params) {
-				try {
-					VaadinPageDataBuilder.applyParamData(source.getConfig(), source.getPageContent(), params, VaadinPageFactoryImpl.this.presenterFactory);
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-
-			@Override
-			public Object getResultData(PagePresenter source) {
-				Map<String, Object> resultDataMap = new HashMap<String, Object>(VaadinPageDataBuilder.buildResultDataMap(source.getParameterData(),
-						VaadinPageDataBuilder.buildResultData(source.getPageContent()), source.getPage().getResultKeyMap()));
-				return resultDataMap;
-			}
-		});
-	}
-	
 	public Component createComponent(AbstractConXComponent componentModel) {
 		if (componentModel instanceof MasterDetailComponent) {
 			ConXVerticalSplitPanel splitPanel = new ConXVerticalSplitPanel();
 			splitPanel.setSizeFull();
-//			splitPanel.setStyleName("conx-entity-editor");
 			splitPanel.setSplitPosition(50);
 
 			final Component firstComponent = create(((MasterDetailComponent) componentModel).getMasterComponent());
 			final Component secondComponent = create(((MasterDetailComponent) componentModel).getLineEditorPanel());
-			
+
 			splitPanel.setFirstComponent(firstComponent);
 			splitPanel.setSecondComponent(secondComponent);
-			
+
 			splitPanel.addSplitPositionChangeListener(new ISplitPositionChangeListener() {
-				
+
 				@Override
 				public void onSplitPositionChanged(Integer newPos, int posUnit, boolean posReversed) {
 				}
-				
+
 				@Override
 				public void onSecondComponentHeightChanged(int height) {
 				}
-				
+
 				@Override
 				public void onFirstComponentHeightChanged(int height) {
 					if (height > 0) {
-						firstComponent.setHeight(height,com.vaadin.terminal.Sizeable.UNITS_PIXELS);
+						firstComponent.setHeight(height, com.vaadin.terminal.Sizeable.UNITS_PIXELS);
 					}
 				}
 			});
+
 			return splitPanel;
 		} else if (componentModel instanceof SearchGrid) {
 			EntitySearchGrid component = new EntitySearchGrid((SearchGrid) componentModel);
@@ -135,7 +115,7 @@ public class VaadinPageFactoryImpl {
 		} else if (componentModel instanceof CollapsiblePhysicalAttributeConfirmActualsForm) {
 			return new VaadinCollapsiblePhysicalAttributeConfirmActualsForm((CollapsiblePhysicalAttributeConfirmActualsForm) componentModel);
 		}
-		
+
 		// FIXME this should return null
 		return new VerticalLayout();
 	}
@@ -166,6 +146,35 @@ public class VaadinPageFactoryImpl {
 			presenter = presenterFactory.createPresenter(EntityLineEditorSectionPresenter.class);
 		} else if (componentModel instanceof MultiLevelEntityEditor) {
 			presenter = presenterFactory.createPresenter(MultiLevelEditorPresenter.class);
+		} else if (ConXForm.class.isAssignableFrom(componentModel.getClass()) || ConXTable.class.isAssignableFrom(componentModel.getClass())) {
+			presenter = presenterFactory.createPresenter(EditorPresenter.class);
+		}
+
+		if (presenter instanceof IConfigurablePresenter) {
+			((IConfigurablePresenter) presenter).onConfigure(params);
+		}
+
+		return presenter;
+	}
+
+	public IPresenter<?, ? extends EventBus> createEditorHeaderPresenter(AbstractConXComponent componentModel) throws Exception {
+		IPresenter<?, ? extends EventBus> presenter = null;
+		if (ConXForm.class.isAssignableFrom(componentModel.getClass())) {
+			presenter = this.presenterFactory.createPresenter(EditorFormHeaderPresenter.class);
+		} else if (ConXTable.class.isAssignableFrom(componentModel.getClass())) {
+			presenter = this.presenterFactory.createPresenter(EditorGridHeaderPresenter.class);
+		}
+
+		return presenter;
+	}
+
+	public IPresenter<?, ? extends EventBus> createEditorPresenter(AbstractConXComponent componentModel, Map<String, Object> params) throws Exception {
+		params.put(IEntityEditorFactory.COMPONENT_MODEL, componentModel);
+		params.put(IEntityEditorFactory.VAADIN_COMPONENT_FACTORY, this);
+
+		IPresenter<?, ? extends EventBus> presenter = null;
+		if (ConXTable.class.isAssignableFrom(componentModel.getClass())) {
+			presenter = presenterFactory.createPresenter(EditorGridPresenter.class);
 		} else if (ConXForm.class.isAssignableFrom(componentModel.getClass())) {
 			presenter = presenterFactory.createPresenter(EditorFormPresenter.class);
 		}
@@ -177,7 +186,8 @@ public class VaadinPageFactoryImpl {
 		return presenter;
 	}
 
-	public IPresenter<?, ? extends EventBus> createLineEditorSectionContentPresenter(AbstractConXComponent componentModel, Map<String, Object> params) throws Exception {
+	public IPresenter<?, ? extends EventBus> createLineEditorSectionContentPresenter(AbstractConXComponent componentModel, Map<String, Object> params)
+			throws Exception {
 		params.put(IEntityEditorFactory.COMPONENT_MODEL, componentModel);
 		params.put(IEntityEditorFactory.VAADIN_COMPONENT_FACTORY, this);
 
@@ -198,7 +208,7 @@ public class VaadinPageFactoryImpl {
 
 		return presenter;
 	}
-	
+
 	public IPresenter<?, ? extends EventBus> createLineEditorSectionHeaderPresenter(AbstractConXComponent componentModel) throws Exception {
 		IPresenter<?, ? extends EventBus> presenter = null;
 		if (ConXForm.class.isAssignableFrom(componentModel.getClass())) {
@@ -217,8 +227,8 @@ public class VaadinPageFactoryImpl {
 			this.config.putAll(initParams);
 
 			AbstractConXComponent componentModel = ((TaskPage) ((IModelDrivenPageFlowPage) page).getComponentModel()).getContent();
-			Component component = create(componentModel);
-			setPagePresenterData(pagePresenter, component);
+			pagePresenter.setPageContent(create(componentModel));
+			pagePresenter.setDataHandler(new PagePresenterDataHandler());
 			pagePresenter.init(this.config);
 
 			return pagePresenter;
@@ -235,8 +245,10 @@ public class VaadinPageFactoryImpl {
 	}
 
 	public boolean correspondsToPresenter(AbstractConXComponent componentModel) {
-		if (componentModel instanceof LineEditorContainerComponent || componentModel instanceof LineEditorComponent || componentModel instanceof MultiLevelEntityEditor
-				|| ConXForm.class.isAssignableFrom(componentModel.getClass())) {
+		if (componentModel != null
+				&& (componentModel instanceof LineEditorContainerComponent || componentModel instanceof LineEditorComponent
+						|| componentModel instanceof MultiLevelEntityEditor || ConXForm.class.isAssignableFrom(componentModel.getClass()) || ConXTable.class
+							.isAssignableFrom(componentModel.getClass()))) {
 			return true;
 		}
 		return false;
@@ -248,5 +260,28 @@ public class VaadinPageFactoryImpl {
 
 	public Map<String, Object> getConfig() {
 		return this.config;
+	}
+
+	private class PagePresenterDataHandler implements IPageDataHandler {
+
+		@Override
+		public void setParameterData(PagePresenter source, Map<String, Object> params) {
+			try {
+				VaadinPageDataBuilder
+						.applyParamData(source.getConfig(), source.getPageContent(), params, VaadinPageFactoryImpl.this.presenterFactory);
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public Object getResultData(PagePresenter source) {
+			Map<String, Object> resultDataMap = new HashMap<String, Object>(VaadinPageDataBuilder.buildResultDataMap(source.getParameterData(),
+					VaadinPageDataBuilder.buildResultData(source.getPageContent()), source.getPage().getResultKeyMap()));
+			return resultDataMap;
+		}
+
 	}
 }

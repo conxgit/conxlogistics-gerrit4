@@ -131,11 +131,11 @@ public class VaadinPageDataBuilder {
 		}
 	}
 
-	public static void applyItemDataSource(Component component, Container itemContainer, Item item,
-			final PresenterFactory presenterFactory, Map<String, Object> config) throws Exception {
+	public static void applyItemDataSource(Component component, Container itemContainer, Item item, final PresenterFactory presenterFactory,
+			Map<String, Object> config) throws Exception {
 		applyItemDataSource(true, component, itemContainer, item, presenterFactory, config);
 	}
-	
+
 	public static void applyItemDataSource(boolean isEventDeclaritive, Component component, Container itemContainer, Item item,
 			final PresenterFactory presenterFactory, Map<String, Object> config) throws Exception {
 		if (component instanceof ConXVerticalSplitPanel) {
@@ -611,7 +611,9 @@ public class VaadinPageDataBuilder {
 		boolean isFirst = true;
 		for (String section : sections) {
 			if (!isFirst) {
-				title += " ";
+				if (section.length() > 1) {
+					title += " ";
+				}
 			}
 			title += section;
 			if (!"".equals(section)) {

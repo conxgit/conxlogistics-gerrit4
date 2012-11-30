@@ -2,69 +2,111 @@ package com.conx.logistics.kernel.pageflow.ui.mvp.editor.form;
 
 import java.util.Map;
 
-import org.vaadin.mvp.eventbus.EventBus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.vaadin.mvp.eventbus.EventBusManager;
 import org.vaadin.mvp.presenter.BasePresenter;
-import org.vaadin.mvp.presenter.IPresenter;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
+import com.conx.logistics.kernel.pageflow.services.IPageComponent;
 import com.conx.logistics.kernel.pageflow.ui.builder.VaadinPageDataBuilder;
 import com.conx.logistics.kernel.pageflow.ui.builder.VaadinPageFactoryImpl;
-import com.conx.logistics.kernel.pageflow.ui.ext.form.VaadinCollapsibleConfirmActualsForm;
-import com.conx.logistics.kernel.pageflow.ui.ext.form.VaadinConfirmActualsForm;
 import com.conx.logistics.kernel.pageflow.ui.ext.mvp.IConfigurablePresenter;
-import com.conx.logistics.kernel.pageflow.ui.ext.mvp.IContainerItemPresenter;
-import com.conx.logistics.kernel.pageflow.ui.mvp.editor.form.header.EditorFormHeaderPresenter;
+import com.conx.logistics.kernel.pageflow.ui.ext.mvp.lineeditor.section.IEditorContentPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.editor.form.view.EditorFormView;
 import com.conx.logistics.kernel.pageflow.ui.mvp.editor.form.view.IEditorFormView;
-import com.conx.logistics.kernel.ui.components.domain.form.CollapsibleConfirmActualsForm;
-import com.conx.logistics.kernel.ui.components.domain.form.ConXCollapseableSectionForm;
+import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.form.header.EntityLineEditorFormHeaderEventBus;
 import com.conx.logistics.kernel.ui.components.domain.form.ConXForm;
-import com.conx.logistics.kernel.ui.components.domain.form.ConfirmActualsForm;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
-import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinCollapsibleSectionForm;
+import com.conx.logistics.kernel.ui.factory.services.data.IDAOProvider;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinForm;
+import com.conx.logistics.kernel.ui.forms.vaadin.listeners.IFormChangeListener;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
-import com.vaadin.ui.Component;
+import com.vaadin.data.util.BeanItem;
 
 @Presenter(view = EditorFormView.class)
-public class EditorFormPresenter extends BasePresenter<IEditorFormView, EditorFormEventBus> implements IConfigurablePresenter, IContainerItemPresenter {
+public class EditorFormPresenter extends BasePresenter<IEditorFormView, EditorFormEventBus> implements IEditorContentPresenter,
+		IConfigurablePresenter, IFormChangeListener {
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
+
 	private ConXForm formComponent;
 	private VaadinPageFactoryImpl factory;
-	private IPresenter<?, ? extends EventBus> headerPresenter;
+	private EventBusManager sectionEventBusManager;
+	private IDAOProvider daoProvider;
 	private Map<String, Object> config;
+
+	@Override
+	public void onSetItemDataSource(Item item, Container... container) throws Exception {
+		if (container.length == 1) {
+			VaadinPageDataBuilder.applyItemDataSource(false, this.getView().getForm(), container[0], item, this.factory.getPresenterFactory(),
+					this.config);
+		} else {
+			throw new Exception("Could not set item datasource. Expected one container, but got " + container.length);
+		}
+	}
 
 	@Override
 	public void onConfigure(Map<String, Object> params) throws Exception {
 		this.config = params;
 		this.formComponent = (ConXForm) params.get(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL);
 		this.factory = (VaadinPageFactoryImpl) params.get(IEntityEditorFactory.VAADIN_COMPONENT_FACTORY);
+		this.daoProvider = (IDAOProvider) params.get(IPageComponent.DAO_PROVIDER);
 
-		this.headerPresenter = this.factory.getPresenterFactory().createPresenter(EditorFormHeaderPresenter.class);
-		((EditorFormHeaderPresenter) this.headerPresenter).attachGridPresenter(this);
-		this.getView().setForm(createVaadinForm());
-		this.getView().setOwner(this);
-	}
-
-	private VaadinForm createVaadinForm() throws Exception {
-		if (this.formComponent instanceof ConfirmActualsForm) {
-			return new VaadinConfirmActualsForm((ConfirmActualsForm) this.formComponent);
-		} else if (this.formComponent instanceof CollapsibleConfirmActualsForm) {
-			return new VaadinCollapsibleConfirmActualsForm((CollapsibleConfirmActualsForm) this.formComponent);
-		} else if (this.formComponent instanceof ConXCollapseableSectionForm) {
-			this.getView().setHeader((Component) this.headerPresenter.getView());
-			return new VaadinCollapsibleSectionForm((ConXCollapseableSectionForm) this.formComponent);
+		if (this.sectionEventBusManager != null) {
+			this.sectionEventBusManager.register(EntityLineEditorFormHeaderEventBus.class, this);
 		}
 
-		throw new Exception("The provided component model could not be turned into a VaadinForm");
+		this.getView().setForm((VaadinForm) this.factory.createComponent(this.formComponent));
+		this.getView().addListener(this);
 	}
 
 	@Override
-	public void onSetItemDataSource(Item item, Container... container) throws Exception {
-		if (container.length == 1) {
-			VaadinPageDataBuilder.applyItemDataSource(this.getView().getForm(), container[0], item, this.factory.getPresenterFactory(), this.config);
+	public void onFormChanged() {
+		this.sectionEventBusManager.fireAnonymousEvent("enableValidate");
+		this.sectionEventBusManager.fireAnonymousEvent("disableSave");
+		this.sectionEventBusManager.fireAnonymousEvent("enableReset");
+	}
+	
+	public void onValidate() throws Exception {
+		if (this.getView().getForm().validateForm()) {
+			this.sectionEventBusManager.fireAnonymousEvent("disableValidate");
+			this.sectionEventBusManager.fireAnonymousEvent("enableSave");
+			this.sectionEventBusManager.fireAnonymousEvent("enableReset");
 		} else {
-			throw new Exception("Could not set item datasource. Expected one container, but got " + container.length);
+			this.sectionEventBusManager.fireAnonymousEvent("disableValidate");
+			this.sectionEventBusManager.fireAnonymousEvent("disableSave");
+			this.sectionEventBusManager.fireAnonymousEvent("enableReset");
 		}
+	}
+	
+	public void onSave() throws Exception {
+		if (this.getView().getForm().saveForm()) {
+			if (this.getView().getForm().getItemDataSource() instanceof BeanItem<?>) {
+				Object bean = ((BeanItem<?>) this.getView().getForm().getItemDataSource()).getBean();
+				VaadinPageDataBuilder.saveInstance(bean, this.daoProvider);
+			}
+			
+			this.sectionEventBusManager.fireAnonymousEvent("disableValidate");
+			this.sectionEventBusManager.fireAnonymousEvent("disableSave");
+			this.sectionEventBusManager.fireAnonymousEvent("disableReset");
+		} else {
+			this.sectionEventBusManager.fireAnonymousEvent("disableValidate");
+			this.sectionEventBusManager.fireAnonymousEvent("disableSave");
+			this.sectionEventBusManager.fireAnonymousEvent("enableReset");
+		}
+	}
+	
+	public void onReset() throws Exception {
+		this.getView().getForm().resetForm();
+		this.sectionEventBusManager.fireAnonymousEvent("disableValidate");
+		this.sectionEventBusManager.fireAnonymousEvent("disableSave");
+		this.sectionEventBusManager.fireAnonymousEvent("disableReset");
+	}
+	
+	@Override
+	public void subscribe(EventBusManager eventBusManager) {
+		this.sectionEventBusManager = eventBusManager;
+		this.sectionEventBusManager.register(EditorFormEventBus.class, getEventBus());
 	}
 }

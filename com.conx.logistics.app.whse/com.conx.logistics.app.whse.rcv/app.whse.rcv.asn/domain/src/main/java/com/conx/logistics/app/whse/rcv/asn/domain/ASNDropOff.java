@@ -21,7 +21,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.conx.logistics.app.whse.domain.docktype.DockType;
 import com.conx.logistics.app.whse.rcv.asn.shared.type.DROPMODE;
 import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
-import com.conx.logistics.mdm.domain.geolocation.Address;
+import com.conx.logistics.mdm.domain.geolocation.AddressTypeAddress;
 import com.conx.logistics.mdm.domain.organization.Organization;
 
 @Entity
@@ -33,17 +33,17 @@ public class ASNDropOff extends MultitenantBaseEntity implements Serializable {
     @JoinColumn
     private Organization cfs;
 
-    @ManyToOne(targetEntity = Address.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = AddressTypeAddress.class, fetch = FetchType.EAGER)
     @JoinColumn
-    private Address cfsAddress;
+    private AddressTypeAddress cfsAddress;
 
     @ManyToOne(targetEntity = Organization.class, fetch = FetchType.EAGER)
     @JoinColumn
     private Organization dropOffAt;
 
-    @ManyToOne(targetEntity = Address.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = AddressTypeAddress.class, fetch = FetchType.EAGER)
     @JoinColumn
-    private Address dropOffAtAddress;
+    private AddressTypeAddress dropOffAtAddress;
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "S-")
@@ -74,11 +74,11 @@ public class ASNDropOff extends MultitenantBaseEntity implements Serializable {
 		this.cfs = cfs;
 	}
 
-	public Address getCfsAddress() {
+	public AddressTypeAddress getCfsAddress() {
 		return cfsAddress;
 	}
 
-	public void setCfsAddress(Address cfsAddress) {
+	public void setCfsAddress(AddressTypeAddress cfsAddress) {
 		this.cfsAddress = cfsAddress;
 	}
 
@@ -90,11 +90,11 @@ public class ASNDropOff extends MultitenantBaseEntity implements Serializable {
 		this.dropOffAt = dropOffAt;
 	}
 
-	public Address getDropOffAtAddress() {
+	public AddressTypeAddress getDropOffAtAddress() {
 		return dropOffAtAddress;
 	}
 
-	public void setDropOffAtAddress(Address dropOffAtAddress) {
+	public void setDropOffAtAddress(AddressTypeAddress dropOffAtAddress) {
 		this.dropOffAtAddress = dropOffAtAddress;
 	}
 

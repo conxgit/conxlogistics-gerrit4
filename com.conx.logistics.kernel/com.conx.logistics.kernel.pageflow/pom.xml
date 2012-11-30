@@ -13,6 +13,7 @@
   	<module>com.conx.logistics.kernel.pageflow.engine</module>
   	<module>pageflow.ui</module>
   	<module>pageflow.tests</module>
+  	<module>pageflow.tests.sprint2.asn</module>
   	<!-- <module>sprint2.integration.tests</module> -->
   	<module>vaadin.testbench</module>
   	<module>pageflow.engine.mock</module>

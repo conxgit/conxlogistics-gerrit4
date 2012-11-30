@@ -12,7 +12,7 @@ public class EditorFormHeaderView extends VerticalLayout implements IEditorFormH
 	
 	private EntityEditorToolStrip toolStrip;
 	private EntityEditorToolStripButton verifyButton;
-	private EntityEditorToolStripButton editButton;
+	private EntityEditorToolStripButton saveButton;
 	private EntityEditorToolStripButton resetButton;
 	
 	@UiField
@@ -27,8 +27,8 @@ public class EditorFormHeaderView extends VerticalLayout implements IEditorFormH
 		this.verifyButton = this.toolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_VERIFY_PNG);
 		this.verifyButton.setEnabled(false);
 		
-		this.editButton = this.toolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_EDIT_PNG);
-		this.editButton.setEnabled(false);
+		this.saveButton = this.toolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_SAVE_PNG);
+		this.saveButton.setEnabled(false);
 		
 		this.resetButton = this.toolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_RESET_PNG);
 		this.resetButton.setEnabled(false);
@@ -55,18 +55,18 @@ public class EditorFormHeaderView extends VerticalLayout implements IEditorFormH
 	}
 
 	@Override
-	public void addEditListener(ClickListener listener) {
-		this.editButton.addListener(listener);
+	public void addSaveListener(ClickListener listener) {
+		this.saveButton.addListener(listener);
 	}
 
 	@Override
-	public void setEditEnabled(boolean isEnabled) {
-		this.editButton.setEnabled(isEnabled);
+	public void setSaveEnabled(boolean isEnabled) {
+		this.saveButton.setEnabled(isEnabled);
 	}
 
 	@Override
-	public boolean isEditEnabled() {
-		return this.editButton.isEnabled();
+	public boolean isSaveEnabled() {
+		return this.saveButton.isEnabled();
 	}
 
 	@Override

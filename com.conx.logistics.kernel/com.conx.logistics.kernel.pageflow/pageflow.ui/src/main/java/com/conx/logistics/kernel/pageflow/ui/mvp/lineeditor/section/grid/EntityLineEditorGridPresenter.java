@@ -16,7 +16,7 @@ import com.conx.logistics.kernel.pageflow.services.IPageComponent;
 import com.conx.logistics.kernel.pageflow.ui.builder.VaadinPageDataBuilder;
 import com.conx.logistics.kernel.pageflow.ui.builder.VaadinPageFactoryImpl;
 import com.conx.logistics.kernel.pageflow.ui.ext.mvp.IConfigurablePresenter;
-import com.conx.logistics.kernel.pageflow.ui.ext.mvp.lineeditor.section.ILineEditorSectionContentPresenter;
+import com.conx.logistics.kernel.pageflow.ui.ext.mvp.lineeditor.section.IEditorContentPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.editor.multilevel.MultiLevelEditorEventBus;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.grid.view.EntityLineEditorGridView;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.grid.view.IEntityLineEditorGridView;
@@ -35,7 +35,7 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 
 @Presenter(view = EntityLineEditorGridView.class)
-public class EntityLineEditorGridPresenter extends BasePresenter<IEntityLineEditorGridView, EntityLineEditorGridEventBus> implements IEditListener, ILineEditorSectionContentPresenter,
+public class EntityLineEditorGridPresenter extends BasePresenter<IEntityLineEditorGridView, EntityLineEditorGridEventBus> implements IEditListener, IEditorContentPresenter,
 		IConfigurablePresenter, ISelectListener {
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 	private boolean initialized = false;

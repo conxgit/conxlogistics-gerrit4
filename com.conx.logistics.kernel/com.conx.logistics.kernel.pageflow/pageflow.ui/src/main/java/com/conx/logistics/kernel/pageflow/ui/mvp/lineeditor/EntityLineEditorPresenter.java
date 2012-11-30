@@ -93,6 +93,7 @@ public class EntityLineEditorPresenter extends BasePresenter<IEntityLineEditorVi
 				((EntityLineEditorSectionPresenter) this.lineEditorSectionCache.get(lineEditorComponent)).onSetItemDataSource(item, containers);
 			} catch (Exception e) {
 				lastCaughtException = e;
+				e.printStackTrace();
 			}
 		}
 

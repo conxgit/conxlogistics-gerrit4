@@ -15,7 +15,7 @@ import com.conx.logistics.kernel.pageflow.ui.builder.VaadinPageFactoryImpl;
 import com.conx.logistics.kernel.pageflow.ui.ext.mvp.IConfigurablePresenter;
 import com.conx.logistics.kernel.pageflow.ui.ext.mvp.IContainerItemPresenter;
 import com.conx.logistics.kernel.pageflow.ui.ext.mvp.ILocalizedEventSubscriber;
-import com.conx.logistics.kernel.pageflow.ui.ext.mvp.lineeditor.section.ILineEditorSectionContentPresenter;
+import com.conx.logistics.kernel.pageflow.ui.ext.mvp.lineeditor.section.IEditorContentPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.editor.multilevel.MultiLevelEditorEventBus;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.view.EntityLineEditorSectionView;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.view.IEntityLineEditorSectionView;
@@ -73,8 +73,8 @@ public class EntityLineEditorSectionPresenter extends BasePresenter<IEntityLineE
 	@Override
 	public void onSetItemDataSource(Item item, Container... containers) throws Exception {
 		if (this.contentPresenter != null) {
-			if (ILineEditorSectionContentPresenter.class.isAssignableFrom(this.contentPresenter.getClass())) {
-				((ILineEditorSectionContentPresenter) this.contentPresenter).onSetItemDataSource(item, containers);
+			if (IEditorContentPresenter.class.isAssignableFrom(this.contentPresenter.getClass())) {
+				((IEditorContentPresenter) this.contentPresenter).onSetItemDataSource(item, containers);
 			}
 		} else {
 			throw new Exception("Could not set the item datasource. The content presenter was null.");

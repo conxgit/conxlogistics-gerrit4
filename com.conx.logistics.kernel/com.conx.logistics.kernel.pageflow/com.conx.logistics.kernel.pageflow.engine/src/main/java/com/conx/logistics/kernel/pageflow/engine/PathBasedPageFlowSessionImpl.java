@@ -76,11 +76,6 @@ public class PathBasedPageFlowSessionImpl implements IPageFlowSession {
 			//Get current task
 			currentTask = waitForNextTask();
 			
-
-			//Get task name
-			HashMap<String,Object> res = (HashMap<String,Object>)this.bpmService.getTaskContentObject(currentTask);
-			String taskName = (String)res.get("TaskName");
-			
 			// Update current task description
 			this.bpmService.addTaskComment(pathAssessor.getCurrentTaskId(),"Receive RL123/Confirm TruckInfo" /*pathAssessor.getCurrentPage().getDescription()*/);
 						
@@ -90,7 +85,7 @@ public class PathBasedPageFlowSessionImpl implements IPageFlowSession {
 		
 			//Get HT input VARS
 			processVars = new HashMap<String,Object>();
-			processVars.put("Content", res);
+			processVars.put("Content", this.bpmService.getTaskContentObject(currentTask));
 		} catch (Exception e) {
 			throw e;
 		}			

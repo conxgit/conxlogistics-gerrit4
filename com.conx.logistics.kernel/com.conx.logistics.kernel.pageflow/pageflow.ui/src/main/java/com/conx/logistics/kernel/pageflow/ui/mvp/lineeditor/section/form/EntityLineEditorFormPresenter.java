@@ -12,7 +12,7 @@ import com.conx.logistics.kernel.pageflow.services.IPageComponent;
 import com.conx.logistics.kernel.pageflow.ui.builder.VaadinPageDataBuilder;
 import com.conx.logistics.kernel.pageflow.ui.builder.VaadinPageFactoryImpl;
 import com.conx.logistics.kernel.pageflow.ui.ext.mvp.IConfigurablePresenter;
-import com.conx.logistics.kernel.pageflow.ui.ext.mvp.lineeditor.section.ILineEditorSectionContentPresenter;
+import com.conx.logistics.kernel.pageflow.ui.ext.mvp.lineeditor.section.IEditorContentPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.form.header.EntityLineEditorFormHeaderEventBus;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.form.view.EntityLineEditorFormView;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.form.view.IEntityLineEditorFormView;
@@ -26,7 +26,7 @@ import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItem;
 
 @Presenter(view = EntityLineEditorFormView.class)
-public class EntityLineEditorFormPresenter extends BasePresenter<IEntityLineEditorFormView, EntityLineEditorFormEventBus> implements ILineEditorSectionContentPresenter,
+public class EntityLineEditorFormPresenter extends BasePresenter<IEntityLineEditorFormView, EntityLineEditorFormEventBus> implements IEditorContentPresenter,
 		IConfigurablePresenter, IFormChangeListener {
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 	

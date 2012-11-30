@@ -24,6 +24,7 @@ import com.conx.logistics.app.whse.rcv.asn.shared.type.ASNSTATUS;
 import com.conx.logistics.app.whse.rcv.asn.shared.type.TRANSMODE;
 import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
 import com.conx.logistics.mdm.domain.geolocation.Address;
+import com.conx.logistics.mdm.domain.geolocation.AddressTypeAddress;
 import com.conx.logistics.mdm.domain.organization.Organization;
 import com.conx.logistics.mdm.domain.product.DimUnit;
 import com.conx.logistics.mdm.domain.product.PackUnit;
@@ -56,7 +57,7 @@ public class ASN extends MultitenantBaseEntity {
     private Organization consignor;
 
     @ManyToOne(targetEntity = Address.class)
-    private Address shipperAddress;
+    private AddressTypeAddress shipperAddress;
 
     @OneToMany(mappedBy="parentASN",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<ASNLine> asnLines = new java.util.HashSet<ASNLine>();
@@ -180,11 +181,11 @@ public class ASN extends MultitenantBaseEntity {
 	}
 
 
-	public Address getShipperAddress() {
+	public AddressTypeAddress getShipperAddress() {
 		return shipperAddress;
 	}
 
-	public void setShipperAddress(Address shipperAddress) {
+	public void setShipperAddress(AddressTypeAddress shipperAddress) {
 		this.shipperAddress = shipperAddress;
 	}
 

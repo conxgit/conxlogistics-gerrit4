@@ -5,31 +5,37 @@
 		http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd"
 	xmlns:osgi="http://www.springframework.org/schema/osgi">
 
-	<osgi:service ref="confirmAsnOrgPage"  interface="com.conx.logistics.kernel.pageflow.services.PageFlowPage">
+	<osgi:service ref="confirmAsnOrgPage"  interface="com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage">
 		<osgi:service-properties>
 			<entry key="PROCESS_ID" value="whse.rcv.asn.CreateNewASNByOrgV1.0"/>
 			<entry key="TASK_NAME" value="ConfirmASNOrg"/>
 		  </osgi:service-properties>		
 	</osgi:service>	
-	<osgi:service ref="addAsnRefNumsPage"  interface="com.conx.logistics.kernel.pageflow.services.PageFlowPage">
-		<osgi:service-properties>
-			<entry key="PROCESS_ID" value="whse.rcv.asn.CreateNewASNByOrgV1.0"/>
-			<entry key="TASK_NAME" value="AddASNRefNums"/>
-		  </osgi:service-properties>		
-	</osgi:service>		
-	<osgi:service ref="addAsnLinesPage"  interface="com.conx.logistics.kernel.pageflow.services.PageFlowPage">
+	<osgi:service ref="addAsnLinesPage"  interface="com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage">
 		<osgi:service-properties>
 			<entry key="PROCESS_ID" value="whse.rcv.asn.CreateNewASNByOrgV1.0"/>
 			<entry key="TASK_NAME" value="AddASNLines"/>
 		  </osgi:service-properties>		
 	</osgi:service>	
-	<osgi:service ref="addAsnLocalTransPage"  interface="com.conx.logistics.kernel.pageflow.services.PageFlowPage">
+	<osgi:service ref="addAsnCarrierInfoPage"  interface="com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage">
 		<osgi:service-properties>
 			<entry key="PROCESS_ID" value="whse.rcv.asn.CreateNewASNByOrgV1.0"/>
-			<entry key="TASK_NAME" value="AddASNLocalTrans"/>
+			<entry key="TASK_NAME" value="AddASNCarrierInfo"/>
 		  </osgi:service-properties>		
-	</osgi:service>	
-	<osgi:service ref="confirmAsnPage"  interface="com.conx.logistics.kernel.pageflow.services.PageFlowPage">
+	</osgi:service>
+	<osgi:service ref="addAsnPickUpInfoPage"  interface="com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage">
+		<osgi:service-properties>
+			<entry key="PROCESS_ID" value="whse.rcv.asn.CreateNewASNByOrgV1.0"/>
+			<entry key="TASK_NAME" value="AddASNPickUpInfo"/>
+		  </osgi:service-properties>		
+	</osgi:service>
+	<osgi:service ref="addAsnDropOffInfoPage"  interface="com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage">
+		<osgi:service-properties>
+			<entry key="PROCESS_ID" value="whse.rcv.asn.CreateNewASNByOrgV1.0"/>
+			<entry key="TASK_NAME" value="AddASNDropOffInfo"/>
+		  </osgi:service-properties>		
+	</osgi:service>
+	<osgi:service ref="confirmAsnPage"  interface="com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage">
 		<osgi:service-properties>
 			<entry key="PROCESS_ID" value="whse.rcv.asn.CreateNewASNByOrgV1.0"/>
 			<entry key="TASK_NAME" value="ConfirmASN"/>

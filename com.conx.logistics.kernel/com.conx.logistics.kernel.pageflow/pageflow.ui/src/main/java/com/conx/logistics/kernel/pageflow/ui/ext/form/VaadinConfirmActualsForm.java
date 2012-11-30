@@ -8,8 +8,6 @@ import java.util.Set;
 import com.conx.logistics.kernel.ui.components.domain.form.ConfirmActualsFieldSet;
 import com.conx.logistics.kernel.ui.components.domain.form.ConfirmActualsFieldSetField;
 import com.conx.logistics.kernel.ui.components.domain.form.ConfirmActualsForm;
-import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.EntityEditorToolStrip;
-import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.EntityEditorToolStrip.EntityEditorToolStripButton;
 import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinForm;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormAlertPanel;
@@ -19,8 +17,6 @@ import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinJPAFieldFactory;
 import com.vaadin.data.Item;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.event.MouseEvents;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.GridLayout;
@@ -31,10 +27,6 @@ import com.vaadin.ui.VerticalLayout;
 public class VaadinConfirmActualsForm extends VaadinForm {
 	private static final long serialVersionUID = -639931L;
 
-	private EntityEditorToolStrip toolStrip;
-	private EntityEditorToolStripButton verifyButton;
-	private EntityEditorToolStripButton saveButton;
-	private EntityEditorToolStripButton resetButton;
 	private VaadinFormHeader header;
 	private VaadinFormAlertPanel alertPanel;
 	private VerticalLayout layout;
@@ -73,40 +65,6 @@ public class VaadinConfirmActualsForm extends VaadinForm {
 		this.placeholder.setHeight("22px");
 		this.placeholder.setWidth("1px");
 		
-		this.toolStrip = new EntityEditorToolStrip();
-
-		this.verifyButton = this.toolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_VERIFY_PNG);
-		this.verifyButton.setEnabled(false);
-		this.verifyButton.addListener(new ClickListener() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				validateForm();
-			}
-		});
-
-		this.saveButton = this.toolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_SAVE_PNG);
-		this.saveButton.setEnabled(false);
-		this.saveButton.addListener(new ClickListener() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-			}
-		});
-
-		this.resetButton = this.toolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_RESET_PNG);
-		this.resetButton.setEnabled(true);
-		this.resetButton.addListener(new ClickListener() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				resetForm();
-			}
-		});
-		
 		this.alertPanel.setVisible(false);
 		this.alertPanel.addCloseListener(new MouseEvents.ClickListener() {
 			private static final long serialVersionUID = 5815832688929242745L;
@@ -144,7 +102,6 @@ public class VaadinConfirmActualsForm extends VaadinForm {
 
 		this.layout.setSizeFull();
 		this.layout.setStyleName("conx-entity-editor-form");
-		this.layout.addComponent(toolStrip);
 		this.layout.addComponent(header);
 		this.layout.addComponent(alertPanel);
 		this.layout.addComponent(innerLayoutPanel);
@@ -262,21 +219,9 @@ public class VaadinConfirmActualsForm extends VaadinForm {
 		return mode;
 	}
 	
-	@Override
-	protected void fireFormChangedEvent() {
-		this.saveButton.setEnabled(false);
-		this.verifyButton.setEnabled(true);
-		this.resetButton.setEnabled(true);
-		
-		super.fireFormChangedEvent();
-	}
-
 	public void resetForm() {
 		this.alertPanel.setVisible(false);
 		setItemDataSource(getItemDataSource());
-		this.saveButton.setEnabled(false);
-		this.verifyButton.setEnabled(false);
-		this.resetButton.setEnabled(false);
 	}
 
 	public boolean validateForm() {
@@ -295,12 +240,9 @@ public class VaadinConfirmActualsForm extends VaadinForm {
 			}
 		}
 		if (firstErrorFound) {
-			this.verifyButton.setEnabled(false);
 			return false;
 		} else {
 			this.alertPanel.setVisible(false);
-			this.verifyButton.setEnabled(false);
-			this.saveButton.setEnabled(true);
 			return true;
 		}
 	}

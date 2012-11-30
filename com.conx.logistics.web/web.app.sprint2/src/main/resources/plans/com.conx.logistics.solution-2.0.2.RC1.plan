@@ -41,6 +41,10 @@
 	<artifact type="bundle" name="com.conx.logistics.app.whse.rcv.asn.domain.persistence.config" version="1.0.0"/>
 	<artifact type="bundle" name="com.conx.logistics.app.whse.rcv.asn.dao.services" version="1.0.0"/>
 	<artifact type="bundle" name="com.conx.logistics.app.whse.rcv.asn.dao.jpa.persistence" version="1.0.0"/>
+	<!--  
+	<artifact type="bundle" name="com.conx.logistics.app.whse.rcv.asn.pageflow" version="1.0.0"/>
+	<artifact type="bundle" name="com.conx.logistics.app.whse.rcv.asn.workitems" version="1.0.0"/>
+	-->
 	
 	<!-- APP:WHSE:RCV:RCV -->
 	<artifact type="bundle" name="com.conx.logistics.app.whse.rcv.rcv.domain" version="1.0.0"/>

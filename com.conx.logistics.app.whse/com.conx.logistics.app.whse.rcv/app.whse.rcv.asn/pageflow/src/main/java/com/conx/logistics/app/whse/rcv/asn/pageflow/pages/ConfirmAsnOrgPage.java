@@ -19,6 +19,7 @@ public class ConfirmAsnOrgPage extends BasePageFlowPage implements IModelDrivenP
 	public Map<Class<?>, String> getParamKeyMap() {
 		if (this.paramKeyMap == null) {
 			this.paramKeyMap = new HashMap<Class<?>, String>();
+			this.paramKeyMap.put(ASN.class, "asnIn");
 		}
 		return this.paramKeyMap;
 	}

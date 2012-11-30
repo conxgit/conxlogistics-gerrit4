@@ -58,7 +58,6 @@ public class InitNewASNWIH implements WorkItemHandler {
 			
 		try
 		{
-			String userId = (String)workItem.getParameter("userIdIn");
 			Organization org = orgDao.getByCode("TESCUS1");
 			
 			newasn = new ASN();
@@ -70,10 +69,9 @@ public class InitNewASNWIH implements WorkItemHandler {
 			//asnParamsOut.put("asn", newasn);
 			
 			Map<String, Object> results = new HashMap<String, Object>();
-			Map<String, Object> asnVarMapOut = new HashMap<String, Object>();
-			asnVarMapOut.put("asnOut",newasn);
+			results.put("asnOut", newasn);
 			//results.put("asnVarMapOut",asnVarMapOut);
-			manager.completeWorkItem(workItem.getId(), asnVarMapOut);
+			manager.completeWorkItem(workItem.getId(), results);
 			//WIUtils.waitTillCompleted(workItem,1000L);
 		}
 		catch (Exception e)

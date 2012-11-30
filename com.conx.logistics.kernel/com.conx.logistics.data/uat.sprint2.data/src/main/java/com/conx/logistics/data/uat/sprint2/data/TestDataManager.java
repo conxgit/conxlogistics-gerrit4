@@ -568,7 +568,7 @@ public class TestDataManager implements ITestDataManager {
 
 				dropOff1.setDropOffAt(tescus1);
 				dropOff1.setCode("DRPOF1");
-				dropOff1.setDropOffAtAddress(tescus1_addr);
+				dropOff1.setDropOffAtAddress(tescus1_ata);
 				dropOff1.setEstimatedDropOff(new Date());
 				dropOff1 = asnDropOffDAOService.add(dropOff1);
 
@@ -669,7 +669,7 @@ public class TestDataManager implements ITestDataManager {
 
 				dropOff1.setDropOffAt(tescus1);
 				dropOff1.setCode("DRPOF21");
-				dropOff1.setDropOffAtAddress(tescus1_addr);
+				dropOff1.setDropOffAtAddress(tescus1_ata);
 				dropOff1.setEstimatedDropOff(new Date());
 				dropOff1 = asnDropOffDAOService.add(dropOff1);
 

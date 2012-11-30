@@ -8,8 +8,6 @@ import java.util.Set;
 import com.conx.logistics.kernel.ui.components.domain.form.CollapsibleConfirmActualsForm;
 import com.conx.logistics.kernel.ui.components.domain.form.ConfirmActualsFieldSet;
 import com.conx.logistics.kernel.ui.components.domain.form.ConfirmActualsFieldSetField;
-import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.EntityEditorToolStrip;
-import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.EntityEditorToolStrip.EntityEditorToolStripButton;
 import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinForm;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormAlertPanel;
@@ -20,7 +18,6 @@ import com.vaadin.data.Buffered;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.event.MouseEvents.ClickListener;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.GridLayout;
@@ -31,10 +28,6 @@ import com.vaadin.ui.VerticalLayout;
 public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 	private static final long serialVersionUID = -5917848450300621470L;
 
-	private EntityEditorToolStrip toolStrip;
-	private EntityEditorToolStripButton verifyButton;
-	private EntityEditorToolStripButton saveButton;
-	private EntityEditorToolStripButton resetButton;
 	private VaadinFormHeader header;
 	private VaadinFormAlertPanel alertPanel;
 	private Panel innerLayoutPanel;
@@ -61,45 +54,6 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 
 	@SuppressWarnings("deprecation")
 	private void initialize() {
-		this.toolStrip = new EntityEditorToolStrip();
-
-		this.verifyButton = this.toolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_VERIFY_PNG);
-		this.verifyButton.setEnabled(false);
-		this.verifyButton.addListener(new Button.ClickListener() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void buttonClick(Button.ClickEvent event) {
-				validateForm();
-			}
-		});
-
-		this.saveButton = this.toolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_SAVE_PNG);
-		this.saveButton.setEnabled(false);
-		this.saveButton.addListener(new Button.ClickListener() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void buttonClick(Button.ClickEvent event) {
-				saveForm();
-
-				VaadinCollapsibleConfirmActualsForm.this.saveButton.setEnabled(false);
-				VaadinCollapsibleConfirmActualsForm.this.verifyButton.setEnabled(false);
-				VaadinCollapsibleConfirmActualsForm.this.resetButton.setEnabled(false);
-			}
-		});
-
-		this.resetButton = this.toolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_RESET_PNG);
-		this.resetButton.setEnabled(false);
-		this.resetButton.addListener(new Button.ClickListener() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void buttonClick(Button.ClickEvent event) {
-				// resetForm();
-			}
-		});
-
 		this.alertPanel.setVisible(false);
 		this.alertPanel.addCloseListener(new ClickListener() {
 			private static final long serialVersionUID = 5815832688929242745L;
@@ -123,7 +77,6 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 
 		this.layout.setWidth("100%");
 		this.layout.setStyleName("conx-entity-editor-form");
-		this.layout.addComponent(toolStrip);
 		this.layout.addComponent(header);
 		this.layout.addComponent(alertPanel);
 		this.layout.addComponent(innerLayoutPanel);
@@ -220,14 +173,6 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 		}
 	}
 	
-	@Override
-	protected void fireFormChangedEvent() {
-		this.saveButton.setEnabled(false);
-		this.verifyButton.setEnabled(true);
-		
-		super.fireFormChangedEvent();
-	}
-
 	private int getNextIndex(GridLayout innerLayout) {
 		GridLayout expectedLayout = (GridLayout) innerLayout.getComponent(1, 0);
 		if (expectedLayout != null) {
@@ -378,12 +323,9 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 			}
 		}
 		if (firstErrorFound) {
-			this.verifyButton.setEnabled(false);
 			return false;
 		} else {
 			this.alertPanel.setVisible(false);
-			this.verifyButton.setEnabled(false);
-			this.saveButton.setEnabled(true);
 			this.alertPanel.setAlertType(AlertType.SUCCESS);
 			this.alertPanel.setMessage(this.header.getTitle() + " is valid.");
 			this.alertPanel.setVisible(true);
@@ -405,9 +347,6 @@ public class VaadinCollapsibleConfirmActualsForm extends VaadinForm {
 	public void resetForm() {
 		this.alertPanel.setVisible(false);
 		setItemDataSource(getItemDataSource());
-		this.saveButton.setEnabled(false);
-		this.verifyButton.setEnabled(false);
-		this.resetButton.setEnabled(false);
 	}
 
 	public Object getItemEntity() {

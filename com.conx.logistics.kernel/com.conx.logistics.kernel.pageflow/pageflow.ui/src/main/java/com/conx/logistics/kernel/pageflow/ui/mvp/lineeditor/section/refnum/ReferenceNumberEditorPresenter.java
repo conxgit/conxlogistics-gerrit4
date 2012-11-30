@@ -19,7 +19,7 @@ import org.vaadin.mvp.presenter.annotation.Presenter;
 
 import com.conx.logistics.kernel.pageflow.services.IPageComponent;
 import com.conx.logistics.kernel.pageflow.ui.ext.mvp.IConfigurablePresenter;
-import com.conx.logistics.kernel.pageflow.ui.ext.mvp.lineeditor.section.ILineEditorSectionContentPresenter;
+import com.conx.logistics.kernel.pageflow.ui.ext.mvp.lineeditor.section.IEditorContentPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.refnum.view.IReferenceNumberEditorView;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.refnum.view.ReferenceNumberEditorView;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.refnum.view.ReferenceNumberEditorView.ICreateReferenceNumberListener;
@@ -42,7 +42,7 @@ import com.vaadin.data.util.BeanItem;
 
 @Presenter(view = ReferenceNumberEditorView.class)
 public class ReferenceNumberEditorPresenter extends BasePresenter<IReferenceNumberEditorView, ReferenceNumberEditorEventBus> implements
-		ICreateReferenceNumberListener, ISaveReferenceNumberListener, ILineEditorSectionContentPresenter, IConfigurablePresenter {
+		ICreateReferenceNumberListener, ISaveReferenceNumberListener, IEditorContentPresenter, IConfigurablePresenter {
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 	private boolean initialized = false;
 	private Set<String> visibleFieldNames;
