@@ -19,11 +19,9 @@ import com.conx.logistics.kernel.pageflow.ui.ext.grid.VaadinMatchGrid;
 import com.conx.logistics.kernel.pageflow.ui.ext.mvp.IConfigurablePresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.IPageDataHandler;
 import com.conx.logistics.kernel.pageflow.ui.mvp.PagePresenter;
-import com.conx.logistics.kernel.pageflow.ui.mvp.editor.EditorPresenter;
+import com.conx.logistics.kernel.pageflow.ui.mvp.editor.MasterSectionPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.editor.form.EditorFormPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.editor.form.header.EditorFormHeaderPresenter;
-import com.conx.logistics.kernel.pageflow.ui.mvp.editor.grid.EditorGridPresenter;
-import com.conx.logistics.kernel.pageflow.ui.mvp.editor.grid.header.EditorGridHeaderPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.editor.multilevel.MultiLevelEditorPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.EntityLineEditorPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.EntityLineEditorSectionPresenter;
@@ -147,7 +145,7 @@ public class VaadinPageFactoryImpl {
 		} else if (componentModel instanceof MultiLevelEntityEditor) {
 			presenter = presenterFactory.createPresenter(MultiLevelEditorPresenter.class);
 		} else if (ConXForm.class.isAssignableFrom(componentModel.getClass()) || ConXTable.class.isAssignableFrom(componentModel.getClass())) {
-			presenter = presenterFactory.createPresenter(EditorPresenter.class);
+			presenter = presenterFactory.createPresenter(MasterSectionPresenter.class);
 		}
 
 		if (presenter instanceof IConfigurablePresenter) {
@@ -157,24 +155,26 @@ public class VaadinPageFactoryImpl {
 		return presenter;
 	}
 
-	public IPresenter<?, ? extends EventBus> createEditorHeaderPresenter(AbstractConXComponent componentModel) throws Exception {
+	public IPresenter<?, ? extends EventBus> createMasterSectionHeaderPresenter(AbstractConXComponent componentModel) throws Exception {
 		IPresenter<?, ? extends EventBus> presenter = null;
 		if (ConXForm.class.isAssignableFrom(componentModel.getClass())) {
 			presenter = this.presenterFactory.createPresenter(EditorFormHeaderPresenter.class);
 		} else if (ConXTable.class.isAssignableFrom(componentModel.getClass())) {
-			presenter = this.presenterFactory.createPresenter(EditorGridHeaderPresenter.class);
+//			presenter = this.presenterFactory.createPresenter(EditorGridHeaderPresenter.class);
+			throw new UnsupportedOperationException("Master Section Presenter currently has no grid implementation.");
 		}
 
 		return presenter;
 	}
 
-	public IPresenter<?, ? extends EventBus> createEditorPresenter(AbstractConXComponent componentModel, Map<String, Object> params) throws Exception {
+	public IPresenter<?, ? extends EventBus> createMasterSectionContentPresenter(AbstractConXComponent componentModel, Map<String, Object> params) throws Exception {
 		params.put(IEntityEditorFactory.COMPONENT_MODEL, componentModel);
 		params.put(IEntityEditorFactory.VAADIN_COMPONENT_FACTORY, this);
 
 		IPresenter<?, ? extends EventBus> presenter = null;
 		if (ConXTable.class.isAssignableFrom(componentModel.getClass())) {
-			presenter = presenterFactory.createPresenter(EditorGridPresenter.class);
+//			presenter = presenterFactory.createPresenter(EditorGridPresenter.class);
+			throw new UnsupportedOperationException("Master Section Presenter currently has no grid implementation.");
 		} else if (ConXForm.class.isAssignableFrom(componentModel.getClass())) {
 			presenter = presenterFactory.createPresenter(EditorFormPresenter.class);
 		}

@@ -24,7 +24,7 @@ import org.vaadin.mvp.presenter.annotation.Presenter;
 import com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository;
 import com.conx.logistics.kernel.pageflow.services.IPageComponent;
 import com.conx.logistics.kernel.pageflow.ui.ext.mvp.IConfigurablePresenter;
-import com.conx.logistics.kernel.pageflow.ui.ext.mvp.lineeditor.section.IEditorContentPresenter;
+import com.conx.logistics.kernel.pageflow.ui.ext.mvp.lineeditor.section.ILineEditorSectionContentPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.attachment.view.AttachmentEditorView;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.attachment.view.AttachmentEditorView.ICreateAttachmentListener;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.attachment.view.AttachmentEditorView.IInspectAttachmentListener;
@@ -52,7 +52,7 @@ import com.vaadin.ui.Button.ClickListener;
 
 @Presenter(view = AttachmentEditorView.class)
 public class AttachmentEditorPresenter extends BasePresenter<IAttachmentEditorView, AttachmentEditorEventBus> implements ICreateAttachmentListener,
-		ISaveAttachmentListener, IInspectAttachmentListener, IEditorContentPresenter, IConfigurablePresenter {
+		ISaveAttachmentListener, IInspectAttachmentListener, ILineEditorSectionContentPresenter, IConfigurablePresenter {
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 	private boolean initialized = false;
 	private JPAContainer<FileEntry> entityContainer;

@@ -452,7 +452,8 @@ public class ASNSearchPresenter extends
 							}
 
 							dropOffLocationOrg.setValue((asn.getDropOff().getDropOffAt().getName()));
-							dropOffLocationAddress.setValue((addressToXhtml(asn.getDropOff().getDropOffAtAddress())));
+							// FIXME
+//							dropOffLocationAddress.setValue((addressToXhtml(asn.getDropOff().getDropOffAtAddress())));
 							dropOffLocationContactName.setValue((asn.getPickup().getCfsContact().getContact().getFirstName() + " " + asn.getPickup().getCfsContact().getContact().getLastName()));
 							dropOffLocationContactPhone.setValue((asn.getPickup().getCfsContact().getContact().getCellPhoneNumber()));
 							return;
