@@ -22,6 +22,7 @@ import com.conx.logistics.app.whse.domain.docktype.DockType;
 import com.conx.logistics.app.whse.rcv.asn.shared.type.DROPMODE;
 import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
 import com.conx.logistics.mdm.domain.geolocation.AddressTypeAddress;
+import com.conx.logistics.mdm.domain.organization.ContactTypeContact;
 import com.conx.logistics.mdm.domain.organization.Organization;
 
 @Entity
@@ -36,6 +37,10 @@ public class ASNDropOff extends MultitenantBaseEntity implements Serializable {
     @ManyToOne(targetEntity = AddressTypeAddress.class, fetch = FetchType.EAGER)
     @JoinColumn
     private AddressTypeAddress cfsAddress;
+    
+    @ManyToOne(targetEntity = ContactTypeContact.class, fetch = FetchType.EAGER)
+    @JoinColumn
+    private ContactTypeContact cfsContact;
 
     @ManyToOne(targetEntity = Organization.class, fetch = FetchType.EAGER)
     @JoinColumn
@@ -144,5 +149,13 @@ public class ASNDropOff extends MultitenantBaseEntity implements Serializable {
 
 	public void setDockType(DockType dockType) {
 		this.dockType = dockType;
+	}
+
+	public ContactTypeContact getCfsContact() {
+		return cfsContact;
+	}
+
+	public void setCfsContact(ContactTypeContact cfsContact) {
+		this.cfsContact = cfsContact;
 	}
 }

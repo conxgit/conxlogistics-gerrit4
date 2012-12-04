@@ -19,4 +19,6 @@ public interface IOrganizationDAOService {
 	public Organization update(Organization record);
 	
 	public Organization provide(Organization record);
+	
+	public Organization provideDefault();
 }

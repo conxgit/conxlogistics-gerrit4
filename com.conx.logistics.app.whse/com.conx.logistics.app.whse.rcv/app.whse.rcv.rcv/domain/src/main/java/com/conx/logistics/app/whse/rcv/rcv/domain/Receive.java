@@ -68,6 +68,10 @@ public class Receive extends MultitenantBaseEntity {
     @OneToOne(targetEntity = Organization.class, fetch = FetchType.LAZY)
     @JoinColumn
     private Organization shippedFrom;
+    
+    @ManyToOne(targetEntity = Organization.class, fetch = FetchType.LAZY)
+    @JoinColumn
+    private Organization shipper;
 
     @ManyToOne(targetEntity = Organization.class, fetch = FetchType.LAZY)
     @JoinColumn
@@ -485,5 +489,13 @@ public class Receive extends MultitenantBaseEntity {
 
 	public void setExpectedDropOff(ASNDropOff expectedDropOff) {
 		this.expectedDropOff = expectedDropOff;
+	}
+
+	public Organization getShipper() {
+		return shipper;
+	}
+
+	public void setShipper(Organization shipper) {
+		this.shipper = shipper;
 	}
 }

@@ -3,6 +3,7 @@ package com.conx.logistics.kernel.ui.components.domain.search;
 import javax.persistence.Entity;
 
 import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
+import com.conx.logistics.kernel.ui.components.domain.table.ConXTable;
 
 @Entity
 public class SearchGrid extends AbstractConXComponent {

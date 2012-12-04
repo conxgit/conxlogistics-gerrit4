@@ -160,8 +160,7 @@ public class VaadinPageFactoryImpl {
 		if (ConXForm.class.isAssignableFrom(componentModel.getClass())) {
 			presenter = this.presenterFactory.createPresenter(EditorFormHeaderPresenter.class);
 		} else if (ConXTable.class.isAssignableFrom(componentModel.getClass())) {
-//			presenter = this.presenterFactory.createPresenter(EditorGridHeaderPresenter.class);
-			throw new UnsupportedOperationException("Master Section Presenter currently has no grid implementation.");
+			return null;
 		}
 
 		return presenter;
@@ -172,10 +171,7 @@ public class VaadinPageFactoryImpl {
 		params.put(IEntityEditorFactory.VAADIN_COMPONENT_FACTORY, this);
 
 		IPresenter<?, ? extends EventBus> presenter = null;
-		if (ConXTable.class.isAssignableFrom(componentModel.getClass())) {
-//			presenter = presenterFactory.createPresenter(EditorGridPresenter.class);
-			throw new UnsupportedOperationException("Master Section Presenter currently has no grid implementation.");
-		} else if (ConXForm.class.isAssignableFrom(componentModel.getClass())) {
+		if (ConXForm.class.isAssignableFrom(componentModel.getClass())) {
 			presenter = presenterFactory.createPresenter(EditorFormPresenter.class);
 		}
 

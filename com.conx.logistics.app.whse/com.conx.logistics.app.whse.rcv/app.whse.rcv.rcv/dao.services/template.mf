@@ -10,5 +10,7 @@ Import-Package:
   com.conx.logistics.app.whse.domain.docktype;version="[1.0.0,2.0.0)",
   com.conx.logistics.mdm.domain.documentlibrary;version="[1.0.0,2.0.0)",
   com.conx.logistics.mdm.domain.note;version="[1.0.0,2.0.0)",
+  com.conx.logistics.app.whse.domain.warehouse;version="[1.0.0,2.0.0)",
+  com.conx.logistics.mdm.domain.organization;version="[1.0.0,2.0.0)",
   com.conx.logistics.app.whse.rcv.rcv.domain.types;version="[1.0.0,2.0.0)",
   javax.persistence;version="0"

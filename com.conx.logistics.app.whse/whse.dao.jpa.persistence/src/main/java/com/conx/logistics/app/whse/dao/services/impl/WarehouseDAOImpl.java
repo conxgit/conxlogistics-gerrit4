@@ -138,5 +138,14 @@ public class WarehouseDAOImpl implements IWarehouseDAOService {
 	@Override
 	public void provideDefaults() {
 		provide(WarehouseCustomCONSTANTS.DEFAULT_WAREHOUSE_CODE, WarehouseCustomCONSTANTS.DEFAULT_WAREHOUSE_NAME);
+	}
+
+	@Override
+	public Warehouse provideDefault() {
+		Warehouse defaultWH = getByCode(WarehouseCustomCONSTANTS.DEFAULT_WAREHOUSE_CODE);
+		if (defaultWH == null) {
+			return provide(WarehouseCustomCONSTANTS.DEFAULT_WAREHOUSE_CODE, WarehouseCustomCONSTANTS.DEFAULT_WAREHOUSE_NAME);
+		}
+		return defaultWH;
 	}	
 }

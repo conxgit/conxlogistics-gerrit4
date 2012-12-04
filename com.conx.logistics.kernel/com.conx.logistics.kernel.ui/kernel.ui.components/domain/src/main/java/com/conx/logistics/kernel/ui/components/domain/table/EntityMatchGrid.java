@@ -1,6 +1,7 @@
 package com.conx.logistics.kernel.ui.components.domain.table;
 
 import com.conx.logistics.kernel.datasource.domain.DataSource;
+import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
 
 public class EntityMatchGrid extends ConXTable {
 	private static final long serialVersionUID = -4200861331740833004L;

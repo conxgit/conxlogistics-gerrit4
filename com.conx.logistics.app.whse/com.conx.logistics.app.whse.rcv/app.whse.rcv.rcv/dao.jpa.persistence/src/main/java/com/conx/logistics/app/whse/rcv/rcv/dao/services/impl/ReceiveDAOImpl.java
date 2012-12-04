@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.conx.logistics.app.whse.dao.services.IWarehouseDAOService;
 import com.conx.logistics.app.whse.domain.warehouse.Warehouse;
 import com.conx.logistics.app.whse.rcv.asn.domain.ASN;
 import com.conx.logistics.app.whse.rcv.asn.domain.ASNDropOff;
@@ -30,6 +32,7 @@ import com.conx.logistics.app.whse.rcv.rcv.domain.ReceiveLine;
 import com.conx.logistics.app.whse.rcv.rcv.domain.types.RECEIVELINESTATUS;
 import com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository;
 import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
+import com.conx.logistics.mdm.dao.services.IOrganizationDAOService;
 import com.conx.logistics.mdm.domain.documentlibrary.DocType;
 import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.conx.logistics.mdm.domain.documentlibrary.Folder;
@@ -37,6 +40,7 @@ import com.conx.logistics.mdm.domain.metamodel.EntityType;
 import com.conx.logistics.mdm.domain.note.Note;
 import com.conx.logistics.mdm.domain.note.NoteItem;
 import com.conx.logistics.mdm.domain.note.NoteType;
+import com.conx.logistics.mdm.domain.organization.Organization;
 import com.conx.logistics.mdm.domain.product.Product;
 
 /**
@@ -65,6 +69,12 @@ public class ReceiveDAOImpl implements IReceiveDAOService {
 
 	@Autowired
 	private IArrivalDAOService arrivalDAOService;
+	
+	@Autowired
+	private IOrganizationDAOService orgDAOService;
+	
+	@Autowired
+	private IWarehouseDAOService warehouseDAOService;
 
 	public void setEm(EntityManager em) {
 		this.em = em;
@@ -178,7 +188,8 @@ public class ReceiveDAOImpl implements IReceiveDAOService {
 	}
 
 	@Override
-	public FileEntry addAttachment(Long rcvId, String sourceFileName, String title, String description, String mimeType, DocType attachmentType) throws Exception {
+	public FileEntry addAttachment(Long rcvId, String sourceFileName, String title, String description, String mimeType,
+			DocType attachmentType) throws Exception {
 		Receive rcv = get(rcvId);
 		FileEntry fe = documentRepositoryService.addorUpdateFileEntry(rcv, attachmentType, sourceFileName, mimeType, title, description);
 		rcv = update(rcv);
@@ -187,7 +198,8 @@ public class ReceiveDAOImpl implements IReceiveDAOService {
 	}
 
 	@Override
-	public FileEntry addAttachment(Long rcvId, File sourceFile, String title, String description, String mimeType, DocType attachmentType) throws Exception {
+	public FileEntry addAttachment(Long rcvId, File sourceFile, String title, String description, String mimeType, DocType attachmentType)
+			throws Exception {
 		Receive rcv = get(rcvId);
 		FileEntry fe = documentRepositoryService.addorUpdateFileEntry(rcv, attachmentType, sourceFile, mimeType, title, description);
 		rcv = update(rcv);
@@ -196,7 +208,8 @@ public class ReceiveDAOImpl implements IReceiveDAOService {
 	}
 
 	@Override
-	public FileEntry addAttachment(Receive rcv, File sourceFile, String title, String description, String mimeType, DocType attachmentType) throws Exception {
+	public FileEntry addAttachment(Receive rcv, File sourceFile, String title, String description, String mimeType, DocType attachmentType)
+			throws Exception {
 		FileEntry fe = documentRepositoryService.addorUpdateFileEntry(rcv, attachmentType, sourceFile, mimeType, title, description);
 		rcv = update(rcv);
 
@@ -258,10 +271,10 @@ public class ReceiveDAOImpl implements IReceiveDAOService {
 			rl.setExpectedTotalHeight(0.0);
 		if (rl.getExpectedTotalWidth() == null)
 			rl.setExpectedTotalWidth(0.0);
-		
+
 		rl.setProduct(asnLine.getProduct());
 		rl.setParentReceive(rcv);
-		
+
 		rl = em.merge(rl);
 
 		return rl;
@@ -303,5 +316,40 @@ public class ReceiveDAOImpl implements IReceiveDAOService {
 		targetRcv = update(targetRcv);
 
 		return arvl;
+	}
+	
+	@Override
+	public Receive provide(Organization shipper, Organization consignee, Warehouse warehouse) {
+		Query q = em
+				.createQuery("select o from com.conx.logistics.app.whse.rcv.rcv.domain.Receive o WHERE o.consignee = :consignee AND o.shipper = :shipper");
+		q.setParameter("consignee", consignee);
+		q.setParameter("shipper", shipper);
+
+		List result =  q.getResultList();
+		if (result.size() > 0) {
+			return (Receive) result.get(0);
+		} else {
+			Receive rcv = new Receive();
+			rcv.setShipper(shipper);
+			rcv.setConsignee(consignee);
+			rcv.setWarehouse(warehouse);
+			rcv = em.merge(rcv);
+			assignRcvCode(rcv, warehouse, rcv.getId());
+			return em.merge(rcv);
+		}
+	}
+
+	@Override
+	public Receive provideDefault() {
+		Organization defaultOrg = this.orgDAOService.provideDefault();
+		Warehouse defaultWarehouse = this.warehouseDAOService.provideDefault();
+		
+		Receive rcv = new Receive();
+		rcv.setShipper(defaultOrg);
+		rcv.setConsignee(defaultOrg);
+		rcv.setWarehouse(defaultWarehouse);
+		rcv = em.merge(rcv);
+		assignRcvCode(rcv, defaultWarehouse, rcv.getId());
+		return em.merge(rcv);
 	}
 }

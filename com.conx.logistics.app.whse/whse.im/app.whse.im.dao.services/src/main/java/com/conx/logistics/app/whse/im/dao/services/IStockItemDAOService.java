@@ -16,5 +16,7 @@ public interface IStockItemDAOService {
 
 	public StockItem getByCode(String string);
 	
+	public StockItem addDynamicStockItem(StockItem newRecord, Long arrivalReceiptPK, Long arrivalReceiptLinePK) throws Exception;
+	
 	public StockItem addOneOfGroup(StockItem newRecord, Long receiveLinePK, Long arrivalReceiptPK, Long arrivalReceiptLinePK) throws Exception;
 }

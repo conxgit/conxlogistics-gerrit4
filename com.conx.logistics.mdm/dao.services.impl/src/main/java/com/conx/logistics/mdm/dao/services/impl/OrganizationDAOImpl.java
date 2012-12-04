@@ -26,6 +26,9 @@ import com.conx.logistics.mdm.domain.organization.Organization;
 @Transactional
 @Repository
 public class OrganizationDAOImpl implements IOrganizationDAOService {
+	private static final String DEFAULT_ORGANIZATION_CODE = "DEFAULT";
+	private static final String DEFAULT_ORGANIZATION_NAME = "Default";
+	
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());	
     /**
      * Spring will inject a managed JPA {@link EntityManager} into this field.
@@ -120,5 +123,17 @@ public class OrganizationDAOImpl implements IOrganizationDAOService {
 			}
 		}
 		return record;
+	}
+
+	@Override
+	public Organization provideDefault() {
+		Organization org = getByCode(DEFAULT_ORGANIZATION_CODE);
+		if (org == null) {
+			org = new Organization();
+			org.setCode(DEFAULT_ORGANIZATION_CODE);
+			org.setName(DEFAULT_ORGANIZATION_NAME);
+			org = add(org);
+		}
+		return org;
 	}
 }

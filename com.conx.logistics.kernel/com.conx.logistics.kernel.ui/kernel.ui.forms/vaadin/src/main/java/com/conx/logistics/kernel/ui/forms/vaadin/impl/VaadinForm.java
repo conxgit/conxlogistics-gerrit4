@@ -319,6 +319,11 @@ public class VaadinForm extends Form {
 	public Collection<?> getVisibleItemProperties() {
 		return visibleItemProperties;
 	}
+	
+	@Override
+	public Item getItemDataSource() {
+		return this.itemDatasource;
+	}
 
 	@Override
 	public void setVisibleItemProperties(Collection<?> visibleProperties) {

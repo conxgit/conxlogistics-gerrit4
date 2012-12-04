@@ -19,6 +19,8 @@ public interface IProductDAOService {
 	
 	public Product provide(Product record);
 	
+	public Product provideDefaultProduct();
+	
 	public Product provide(String productCode,
 			  String productDescription,
 			  String productTypeCode,

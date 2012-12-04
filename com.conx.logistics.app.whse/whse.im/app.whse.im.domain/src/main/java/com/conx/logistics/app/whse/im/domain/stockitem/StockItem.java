@@ -16,6 +16,7 @@ import com.conx.logistics.app.whse.im.domain.types.STOCKITEMCREATIONTYPE;
 import com.conx.logistics.app.whse.im.domain.types.STOCKITEMSTATUS;
 import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
 import com.conx.logistics.mdm.domain.commercialrecord.CommercialRecord;
+import com.conx.logistics.mdm.domain.organization.Organization;
 import com.conx.logistics.mdm.domain.product.DimUnit;
 import com.conx.logistics.mdm.domain.product.PackUnit;
 import com.conx.logistics.mdm.domain.product.Product;
@@ -28,6 +29,8 @@ import com.conx.logistics.mdm.domain.product.WeightUnit;
 public class StockItem extends MultitenantBaseEntity {
 	private int groupIndex;
 	
+	private int groupSize = 1;
+	
 	@ManyToOne(targetEntity = Location.class, fetch = FetchType.LAZY)
 	@JoinColumn
 	private Location location;
@@ -35,6 +38,14 @@ public class StockItem extends MultitenantBaseEntity {
 	@ManyToOne(targetEntity = Product.class, fetch = FetchType.LAZY)
 	@JoinColumn
 	private Product product;
+	
+	@ManyToOne(targetEntity = Organization.class, fetch = FetchType.LAZY)
+	@JoinColumn
+	private Product shipper;
+	
+	@ManyToOne(targetEntity = Organization.class, fetch = FetchType.LAZY)
+	@JoinColumn
+	private Product consignee;
 
 	@OneToOne(targetEntity = CommercialRecord.class, fetch = FetchType.LAZY)
 	@JoinColumn
@@ -452,5 +463,29 @@ public class StockItem extends MultitenantBaseEntity {
 
 	public void setGroupIndex(int groupIndex) {
 		this.groupIndex = groupIndex;
+	}
+
+	public int getGroupSize() {
+		return groupSize;
+	}
+
+	public void setGroupSize(int groupSize) {
+		this.groupSize = groupSize;
+	}
+
+	public Product getShipper() {
+		return shipper;
+	}
+
+	public void setShipper(Product shipper) {
+		this.shipper = shipper;
+	}
+
+	public Product getConsignee() {
+		return consignee;
+	}
+
+	public void setConsignee(Product consignee) {
+		this.consignee = consignee;
 	}
 }

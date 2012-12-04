@@ -36,5 +36,7 @@ public interface IWarehouseDAOService {
 	
 	public Warehouse provide(String code, String name);
 	
+	public Warehouse provideDefault();
+	
 	public void provideDefaults();	
 }

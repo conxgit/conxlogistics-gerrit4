@@ -51,8 +51,8 @@
 	<artifact type="bundle" name="com.conx.logistics.app.whse.rcv.rcv.domain.persistence.config" version="1.0.0"/>
 	<artifact type="bundle" name="com.conx.logistics.app.whse.rcv.rcv.dao.services" version="1.0.0"/>
 	<artifact type="bundle" name="com.conx.logistics.app.whse.rcv.rcv.dao.jpa.persistence" version="1.0.0"/>
-	<artifact type="bundle" name="com.conx.logistics.app.whse.rcv.rcv.pageflow" version="1.0.0"/>
-	<artifact type="bundle" name="com.conx.logistics.app.whse.rcv.rcv.workitems" version="1.0.0"/>
+	<!-- <artifact type="bundle" name="com.conx.logistics.app.whse.rcv.rcv.pageflow" version="1.0.0"/>
+	<artifact type="bundle" name="com.conx.logistics.app.whse.rcv.rcv.workitems" version="1.0.0"/> -->
 	<!-- 	<artifact type="bundle" name="com.conx.logistics.app.whse.rcv.asn.human-task-core.package.decorator" version="1.0.0"/>
 	 -->	
 		<!-- APP:WHSE:RCV:RCV -->
@@ -140,7 +140,7 @@
 	<artifact type="bundle" name="com.conx.logistics.kernel.bpm.impl.jbpm.bpmserver" version="1.0.0"/>
 	
 	<!-- kernel : Pageflow -->
-	<artifact type="bundle" name="com.conx.logistics.kernel.pageflow.ui" version="1.0.0"/>
+	<!-- <artifact type="bundle" name="com.conx.logistics.kernel.pageflow.ui" version="1.0.0"/> -->
 	<artifact type="bundle" name="com.conx.logistics.kernel.pageflow.engine" version="1.0.0"/>
 	
 	<!-- Sprint #2 Test Data -->	

@@ -27,6 +27,7 @@
 	<osgi:reference id="commercialValueDao" interface="com.conx.logistics.mdm.dao.services.ICommercialValueDAOService"/>
 	<osgi:reference id="rcvDao" interface="com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveDAOService"/>
 	<osgi:reference id="rcvLineDao" interface="com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveLineDAOService"/>
+	<osgi:reference id="productDao" interface="com.conx.logistics.mdm.dao.services.product.IProductDAOService"/>
 			
 	<!-- export internal interfaces -->
 	<osgi:service ref="stockItemDao" interface="com.conx.logistics.app.whse.im.dao.services.IStockItemDAOService"/>

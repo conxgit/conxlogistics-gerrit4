@@ -54,4 +54,9 @@ public class MasterSectionView extends VerticalLayout implements
 		}
 	}
 
+	@Override
+	public Component getContent() {
+		return this.content;
+	}
+
 }

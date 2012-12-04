@@ -22,6 +22,7 @@ import com.conx.logistics.app.whse.rcv.rcv.domain.types.RECEIVELINESTATUS;
 import com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository;
 import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
 import com.conx.logistics.mdm.dao.services.product.IDimUnitDAOService;
+import com.conx.logistics.mdm.dao.services.product.IProductDAOService;
 import com.conx.logistics.mdm.dao.services.product.IUnitConversionService;
 import com.conx.logistics.mdm.dao.services.product.IWeightUnitDAOService;
 import com.conx.logistics.mdm.domain.constants.DimUnitCustomCONSTANTS;
@@ -59,6 +60,9 @@ public class ReceiveLineDAOImpl implements IReceiveLineDAOService {
 
 	@Autowired
 	private IReceiveDAOService receiveDAOService;
+	
+	@Autowired
+	private IProductDAOService productDAOService;
 
 	@Override
 	public List<ReceiveLine> getAll() {
@@ -79,14 +83,14 @@ public class ReceiveLineDAOImpl implements IReceiveLineDAOService {
 		record.setCode(code);
 		record.setArrivedInnerPackCount(1);
 		record.setParentReceive(receive);
+		record.setProduct(this.productDAOService.provideDefaultProduct());
 		record = em.merge(record);
-		em.flush();
+		
 		assert record != null;
 
 		receive.getRcvLines().add(record);
 		this.receiveDAOService.update(receive);
-
-		assert record.getId() != null;
+		
 		return record;
 	}
 

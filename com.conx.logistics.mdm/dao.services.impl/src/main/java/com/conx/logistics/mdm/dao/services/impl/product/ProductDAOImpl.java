@@ -22,7 +22,6 @@ import com.conx.logistics.mdm.dao.services.ICommercialValueDAOService;
 import com.conx.logistics.mdm.dao.services.ICountryDAOService;
 import com.conx.logistics.mdm.dao.services.IEntityMetadataDAOService;
 import com.conx.logistics.mdm.dao.services.currency.ICurrencyUnitDAOService;
-import com.conx.logistics.mdm.dao.services.product.ICommodityDAOService;
 import com.conx.logistics.mdm.dao.services.product.IDimUnitDAOService;
 import com.conx.logistics.mdm.dao.services.product.IPackUnitDAOService;
 import com.conx.logistics.mdm.dao.services.product.IProductDAOService;
@@ -32,9 +31,7 @@ import com.conx.logistics.mdm.domain.commercialrecord.CommercialRecord;
 import com.conx.logistics.mdm.domain.commercialrecord.CommercialValue;
 import com.conx.logistics.mdm.domain.constants.CurrencyUnitCustomCONSTANTS;
 import com.conx.logistics.mdm.domain.currency.CurrencyUnit;
-import com.conx.logistics.mdm.domain.geolocation.Country;
 import com.conx.logistics.mdm.domain.metadata.DefaultEntityMetadata;
-import com.conx.logistics.mdm.domain.product.Commodity;
 import com.conx.logistics.mdm.domain.product.DimUnit;
 import com.conx.logistics.mdm.domain.product.PackUnit;
 import com.conx.logistics.mdm.domain.product.Product;
@@ -44,6 +41,12 @@ import com.conx.logistics.mdm.domain.product.WeightUnit;
 @Transactional
 @Repository
 public class ProductDAOImpl implements IProductDAOService {
+	private static final String DEFAULT_PRODUCT_CODE = "ConXGeneric";
+	private static final String DEFAULT_INNER_PACK_UNIT_CODE = "UNT";
+	private static final String DEFAULT_WEIGHT_UNIT_CODE = "LB";
+	private static final String DEFAULT_DIM_UNIT_CODE = "FT";
+	private static final String DEFAULT_VOL_UNIT_CODE = "CF";
+	
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());	
     /**
      * Spring will inject a managed JPA {@link EntityManager} into this field.
@@ -254,7 +257,43 @@ public class ProductDAOImpl implements IProductDAOService {
     	return prod;
 	}
 
-	
-	
-	
+	@Override
+	public Product provideDefaultProduct() {
+		Product defaultProduct = getByCode(DEFAULT_PRODUCT_CODE);
+		if (defaultProduct == null) {
+			defaultProduct = new Product();
+			defaultProduct.setCode(DEFAULT_PRODUCT_CODE);
+			defaultProduct.setName("ConX Generic");
+			defaultProduct.setProductType(productTypeDao.getByCode(DEFAULT_PRODUCT_CODE));
+			defaultProduct = em.merge(defaultProduct);
+
+    		CommercialRecord cr = new CommercialRecord();
+    		DefaultEntityMetadata emd = entityMetadataDao.provide(Product.class);
+    		cr.setParentEntityMetadata(emd);
+    		cr.setParentEntityId(defaultProduct.getId());
+    		cr = commercialRecordDao.add(cr);
+    		
+    		//Country us = countryUnitDao.provide(CurrencyUnitCustomCONSTANTS.CURRENCY_USD_COUNTRY_CODE, CurrencyUnitCustomCONSTANTS.CURRENCY_USD_COUNTRY_NAME);
+    		CurrencyUnit curr = currencyUnitDao.getByCode(CurrencyUnitCustomCONSTANTS.CURRENCY_USD_CODE);
+    		CommercialValue cv = new CommercialValue();
+    		cv.setCurrency(curr);
+    		cv.setParentCommercialRecord(cr);
+    		cv = commercialValueDao.add(cv);
+    		cr.setCommercialValue(cv);
+    		defaultProduct.setCommercialRecord(cr);  
+    		
+    		PackUnit innerPackUnit = packUnitDao.provide(DEFAULT_INNER_PACK_UNIT_CODE, DEFAULT_INNER_PACK_UNIT_CODE);
+    		defaultProduct.setInnerPackUnit(innerPackUnit);
+    		WeightUnit weightUnit = weightUnitDao.provide(DEFAULT_WEIGHT_UNIT_CODE, DEFAULT_WEIGHT_UNIT_CODE);
+    		defaultProduct.setWeightUnit(weightUnit);
+    		DimUnit dimUnit = dimUnitDao.provide(DEFAULT_DIM_UNIT_CODE, DEFAULT_DIM_UNIT_CODE);
+    		defaultProduct.setDimUnit(dimUnit);
+    		DimUnit volUnit = dimUnitDao.provide(DEFAULT_VOL_UNIT_CODE, DEFAULT_VOL_UNIT_CODE);
+    		defaultProduct.setVolUnit(volUnit);
+    		
+    		defaultProduct = em.merge(defaultProduct);
+		}
+		return defaultProduct;
+	}
+
 }

@@ -30,6 +30,7 @@ public class VaadinMatchGrid extends VerticalLayout {
 
 	private EntityEditorToolStrip unmatchedToolStrip;
 	private EntityEditorToolStrip matchedToolStrip;
+	private EntityEditorToolStripButton newMatchedItemButton;
 	private EntityEditorToolStripButton unmatchButton;
 	private EntityEditorToolStripButton matchButton;
 	private EntityEditorGrid unmatchedGrid;
@@ -220,15 +221,55 @@ public class VaadinMatchGrid extends VerticalLayout {
 			listener.onUnmatch(item);
 		}
 	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void create() {
+		try {
+			Object matchedBean = VaadinMatchGrid.this.beanConverter.onNewBean(getMatchedContainerType());
+			Container matchedContainer = this.matchedGrid.getContainerDataSource();
+//			VaadinMatchGrid.this.d
+			if (matchedContainer instanceof BeanItemContainer) {
+				BeanItem matchedItem = ((BeanItemContainer) matchedContainer).addBean(matchedBean);
+				if (this.unmatchedGrid.getContainerDataSource() instanceof JPAContainer<?>) {
+					((JPAContainer<?>)this.unmatchedGrid.getContainerDataSource()).refresh();
+				} else {
+					throw new Exception("The unmatched container must inherit JPAContainer<?> and all items must inherit JPAContainerItem<?>.");
+				}
+				
+				String message = "";
+				if (matchedItem.getItemProperty("name") != null && matchedItem.getItemProperty("name").getValue() != null) {
+					message = matchedItem.getItemProperty("name").getValue() + " was matched successfully.";
+				} else {
+					message = "The new matched item was created successfully.";
+				}
+				this.matchedAlertPanel.setAlertType(AlertType.SUCCESS);
+				this.matchedAlertPanel.setMessage(message);
+			}
+			this.matchButton.setEnabled(false);
+			match(VaadinMatchGrid.this.unmatchedGridItem);
+		} catch (Exception e) {
+			VaadinMatchGrid.this.matchButton.setComponentError(new UserError(e.getMessage()));
+			e.printStackTrace();
+		}
+	}
 
 	private void initialize() {
 		this.matchedToolStrip.setTitle(this.componentModel.getMatchedDataSource().getEntityType().getName() + "s");
+		this.newMatchedItemButton = this.matchedToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_CREATE_PNG);
 		this.unmatchButton = this.matchedToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_UNMATCH_PNG);
 		this.unmatchButton.setEnabled(false);
 		this.unmatchedToolStrip.setTitle(this.componentModel.getUnmatchedDataSource().getEntityType().getName() + "s");
 		this.matchButton = this.unmatchedToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_MATCH_PNG);
 		this.matchButton.setEnabled(false);
 
+		this.newMatchedItemButton.addListener(new ClickListener() {
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public void buttonClick(ClickEvent event) {
+				create();
+			}
+		});
 		this.unmatchButton.addListener(new ClickListener() {
 			private static final long serialVersionUID = 1L;
 
@@ -343,6 +384,7 @@ public class VaadinMatchGrid extends VerticalLayout {
 
 	public interface IBeanConversionListener {
 		public Object onConvertBean(Object bean, Class<?> originType, Class<?> targetType);
+		public Object onNewBean(Class<?> type);
 	}
 
 	public interface IMatchListener {

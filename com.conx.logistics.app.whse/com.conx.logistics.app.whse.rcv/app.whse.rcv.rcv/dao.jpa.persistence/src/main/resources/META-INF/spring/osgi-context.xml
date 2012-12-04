@@ -24,6 +24,9 @@
 	<osgi:reference id="dimUnitDao" interface="com.conx.logistics.mdm.dao.services.product.IDimUnitDAOService"/>
 	<osgi:reference id="weightUnitDao" interface="com.conx.logistics.mdm.dao.services.product.IWeightUnitDAOService"/>
 	<osgi:reference id="unitConversionService" interface="com.conx.logistics.mdm.dao.services.product.IUnitConversionService"/>
+	<osgi:reference id="productDao" interface="com.conx.logistics.mdm.dao.services.product.IProductDAOService"/>
+	<osgi:reference id="orgDao" interface="com.conx.logistics.mdm.dao.services.IOrganizationDAOService"/>
+	<osgi:reference id="warehouseDao" interface="com.conx.logistics.app.whse.dao.services.IWarehouseDAOService"/>
 			
 	<!-- export internal interfaces -->
 	<osgi:service ref="rcvDao" interface="com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveDAOService"/>

@@ -40,6 +40,7 @@ import com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocument
 import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
 import com.conx.logistics.mdm.dao.services.ICommercialRecordDAOService;
 import com.conx.logistics.mdm.dao.services.ICommercialValueDAOService;
+import com.conx.logistics.mdm.dao.services.product.IProductDAOService;
 import com.conx.logistics.mdm.domain.commercialrecord.CommercialRecord;
 import com.conx.logistics.mdm.domain.commercialrecord.CommercialValue;
 import com.conx.logistics.mdm.domain.documentlibrary.Folder;
@@ -87,6 +88,9 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 
 	@Autowired
 	private IReceiveDAOService receiveDAOService;
+	
+	@Autowired
+	private IProductDAOService productDAOService;
 
 	private ReceiveLineStockItemSet getStockItemSetByReceiveLine(Long receiveLinePK) throws Exception {
 		Query q = em.createQuery("select o from com.conx.logistics.app.whse.rcv.rcv.domain.ReceiveLineStockItemSet o WHERE o.receiveLine.id = :receiveLineId");
@@ -552,5 +556,34 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	@Override
+	public StockItem addDynamicStockItem(StockItem newRecord, Long arrivalReceiptPK, Long arrivalReceiptLinePK) throws Exception {
+		ArrivalReceipt parentArrivalReceipt = em.getReference(ArrivalReceipt.class, arrivalReceiptPK);
+		assert Validator.isNotNull(parentArrivalReceipt);
+		ArrivalReceiptLine parentArrivalReceiptLine = em.getReference(ArrivalReceiptLine.class, arrivalReceiptLinePK);
+		assert Validator.isNotNull(parentArrivalReceiptLine);
+		
+		Receive defaultReceive = null;
+		if (parentArrivalReceipt.getParentArrival() != null) {
+			if (parentArrivalReceipt.getParentArrival().getReceive() != null) {
+				defaultReceive = parentArrivalReceipt.getParentArrival().getReceive();
+			}
+		}
+		
+		if (defaultReceive == null) {
+			defaultReceive = receiveDAOService.provideDefault();
+		}
+		
+		ReceiveLine receiveLine = new ReceiveLine();
+		receiveLine.setProduct(this.productDAOService.provideDefaultProduct());
+		receiveLine.setStatus(RECEIVELINESTATUS.ARRIVING);
+		receiveLine.setExpectedInnerPackCount(newRecord.getGroupSize());
+		receiveLine = receiveLineDAOService.add(receiveLine, defaultReceive.getId());
+		
+		ReceiveLineStockItemSet itemSet = provideStockItemSet(receiveLine, parentArrivalReceipt, parentArrivalReceiptLine);
+		newRecord = processRegularStockItem(newRecord, itemSet);
+		return newRecord;
 	}
 }

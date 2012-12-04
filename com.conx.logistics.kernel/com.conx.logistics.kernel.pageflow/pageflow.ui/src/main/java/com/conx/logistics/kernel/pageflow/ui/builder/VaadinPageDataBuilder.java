@@ -41,12 +41,16 @@ import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.view.EntityLineEdito
 import com.conx.logistics.kernel.persistence.services.IEntityContainerProvider;
 import com.conx.logistics.kernel.ui.components.domain.search.SearchGrid;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.search.EntitySearchGrid;
+import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityEditorGrid;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityEditorGrid.ISelectListener;
 import com.conx.logistics.kernel.ui.factory.services.data.IDAOProvider;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinCollapsibleSectionForm;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinForm;
 import com.conx.logistics.kernel.ui.vaadin.common.ConXVerticalSplitPanel;
 import com.conx.logistics.mdm.domain.BaseEntity;
+import com.conx.logistics.mdm.domain.metamodel.EntityType;
+import com.conx.logistics.mdm.domain.metamodel.EntityTypeAttribute;
+import com.conx.logistics.mdm.domain.metamodel.PluralAttribute;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.addon.jpacontainer.filter.Filters;
@@ -55,6 +59,7 @@ import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.AbstractComponentContainer;
+import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
 
@@ -80,13 +85,23 @@ public class VaadinPageDataBuilder {
 		} else if (component instanceof VaadinCollapsibleConfirmActualsForm) {
 			VaadinCollapsibleConfirmActualsForm form = (VaadinCollapsibleConfirmActualsForm) component;
 			dataSet.add(form.getItemEntity());
+		} else {
+			if (component instanceof AbstractOrderedLayout) {
+				Iterator<Component> iterator = ((AbstractOrderedLayout) component).getComponentIterator();
+				Component nextComponent = null;
+				while (iterator.hasNext()) {
+					nextComponent = iterator.next();
+					dataSet.addAll(buildResultData(nextComponent));
+				}
+			}
 		}
 
 		return dataSet;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static Map<String, Object> buildResultDataMap(Map<String, Object> parameterData, Collection<?> data, Map<Class<?>, String> resultKeyMap) {
+	public static Map<String, Object> buildResultDataMap(Map<String, Object> parameterData, Collection<?> data,
+			Map<Class<?>, String> resultKeyMap) {
 		Set<String> parameterDataKeySet = parameterData.keySet();
 		for (String parameterDataKey : parameterDataKeySet) {
 			((Collection) data).add(parameterData.get(parameterDataKey));
@@ -107,14 +122,15 @@ public class VaadinPageDataBuilder {
 		return resultMap;
 	}
 
-	public static void applyParamData(Map<String, Object> config, Component component, Map<String, Object> params, PresenterFactory presenterFactory)
-			throws Exception {
+	public static void applyParamData(Map<String, Object> config, Component component, Map<String, Object> params,
+			PresenterFactory presenterFactory) throws Exception {
 		if (component instanceof EntitySearchGrid) {
 			applyParamDataToEntitySearchGrid(config, params, (EntitySearchGrid) component, presenterFactory);
 		} else if (component instanceof VaadinConfirmActualsForm) {
 			applyParamDataToVaadinConfirmActualsForm(config, params, (VaadinConfirmActualsForm) component, presenterFactory);
 		} else if (component instanceof VaadinCollapsibleConfirmActualsForm) {
-			applyParamDataToVaadinCollapsibleConfirmActualsForm(config, params, (VaadinCollapsibleConfirmActualsForm) component, presenterFactory);
+			applyParamDataToVaadinCollapsibleConfirmActualsForm(config, params, (VaadinCollapsibleConfirmActualsForm) component,
+					presenterFactory);
 		} else if (component instanceof VaadinCollapsibleSectionForm) {
 			applyParamDataToVaadinCollapsibleSectionForm(config, params, (VaadinCollapsibleSectionForm) component, presenterFactory);
 		} else if (component instanceof MultiLevelEditorView) {
@@ -131,22 +147,23 @@ public class VaadinPageDataBuilder {
 		}
 	}
 
-	public static void applyItemDataSource(Component component, Container itemContainer, Item item, final PresenterFactory presenterFactory,
-			Map<String, Object> config) throws Exception {
+	public static void applyItemDataSource(Component component, Container itemContainer, Item item,
+			final PresenterFactory presenterFactory, Map<String, Object> config) throws Exception {
 		applyItemDataSource(true, component, itemContainer, item, presenterFactory, config);
 	}
 
 	public static void applyItemDataSource(boolean isEventDeclaritive, Component component, Container itemContainer, Item item,
 			final PresenterFactory presenterFactory, Map<String, Object> config) throws Exception {
 		if (component instanceof ConXVerticalSplitPanel) {
-			applyItemDataSource(isEventDeclaritive, ((ConXVerticalSplitPanel) component).getFirstComponent(), itemContainer, item, presenterFactory,
-					config);
-			applyItemDataSource(isEventDeclaritive, ((ConXVerticalSplitPanel) component).getSecondComponent(), itemContainer, item, presenterFactory,
-					config);
+			applyItemDataSource(isEventDeclaritive, ((ConXVerticalSplitPanel) component).getFirstComponent(), itemContainer, item,
+					presenterFactory, config);
+			applyItemDataSource(isEventDeclaritive, ((ConXVerticalSplitPanel) component).getSecondComponent(), itemContainer, item,
+					presenterFactory, config);
 		} else if (component instanceof VaadinForm) {
 			if (item instanceof BeanItem && itemContainer instanceof BeanItemContainer) {
 				IDAOProvider daoProvider = (IDAOProvider) config.get(IPageComponent.DAO_PROVIDER);
-				IEntityContainerProvider containerProvider = (IEntityContainerProvider) config.get(IPageComponent.ENTITY_CONTAINER_PROVIDER);
+				IEntityContainerProvider containerProvider = (IEntityContainerProvider) config
+						.get(IPageComponent.ENTITY_CONTAINER_PROVIDER);
 
 				if (daoProvider == null) {
 					throw new Exception("IDAOProvider was not supplied by the config map.");
@@ -167,8 +184,8 @@ public class VaadinPageDataBuilder {
 					ebm = presenterFactory.getEventBusManager();
 				}
 
-				applyItemDataSourceToVaadinForm(isEventDeclaritive, (VaadinForm) component, (BeanItem<?>) item, (BeanItemContainer<?>) itemContainer,
-						config, ebm);
+				applyItemDataSourceToVaadinForm(isEventDeclaritive, (VaadinForm) component, (BeanItem<?>) item,
+						(BeanItemContainer<?>) itemContainer, config, ebm);
 			} else {
 				throw new Exception(
 						"Could not apply item data source to VaadinForm since item and itemContainer were not of type BeanItem and BeanItemContainer.");
@@ -176,6 +193,17 @@ public class VaadinPageDataBuilder {
 		} else if (component instanceof EntityLineEditorView) {
 			// Halt the tree at this point
 		} else if (component instanceof VaadinMatchGrid) {
+			IEntityContainerProvider provider = (IEntityContainerProvider) config.get(IPageComponent.ENTITY_CONTAINER_PROVIDER);
+			IDAOProvider daoProvider = (IDAOProvider) config.get(IPageComponent.DAO_PROVIDER);
+
+			if (provider == null) {
+				throw new Exception("IEntityContainerProvider was not supplied by the config map.");
+			} else if (daoProvider == null) {
+				throw new Exception("IDAOProvider was not supplied by the config map.");
+			}
+
+			applyItemDataSourceToVaadinMatchGrid(item, component, presenterFactory, provider, daoProvider);
+		} else if (component instanceof EntityEditorGrid) {
 			IEntityContainerProvider provider = (IEntityContainerProvider) config.get(IPageComponent.ENTITY_CONTAINER_PROVIDER);
 			IDAOProvider daoProvider = (IDAOProvider) config.get(IPageComponent.DAO_PROVIDER);
 
@@ -217,6 +245,17 @@ public class VaadinPageDataBuilder {
 			public Object onConvertBean(final Object bean, Class<?> originType, final Class<?> targetType) {
 				try {
 					return (Object) saveInstance(targetType.newInstance(), daoProvider, bean, itemBean);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+				return null;
+			}
+
+			@Override
+			public Object onNewBean(Class<?> type) {
+				try {
+					return (Object) saveInstance(type.newInstance(), daoProvider, itemBean);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -276,8 +315,8 @@ public class VaadinPageDataBuilder {
 		}
 	}
 
-	private static void applyParamDataToMultiLevelEditorView(Map<String, Object> config, Map<String, Object> params, MultiLevelEditorView view)
-			throws Exception {
+	private static void applyParamDataToMultiLevelEditorView(Map<String, Object> config, Map<String, Object> params,
+			MultiLevelEditorView view) throws Exception {
 		IEntityContainerProvider provider = (IEntityContainerProvider) config.get(IPageComponent.ENTITY_CONTAINER_PROVIDER);
 
 		if (provider == null) {
@@ -343,8 +382,8 @@ public class VaadinPageDataBuilder {
 		}
 	}
 
-	private static void applyParamDataToEntitySearchGrid(Map<String, Object> config, Map<String, Object> params, EntitySearchGrid searchGrid,
-			PresenterFactory presenterFactory) throws Exception {
+	private static void applyParamDataToEntitySearchGrid(Map<String, Object> config, Map<String, Object> params,
+			EntitySearchGrid searchGrid, PresenterFactory presenterFactory) throws Exception {
 		IEntityContainerProvider provider = (IEntityContainerProvider) config.get(IPageComponent.ENTITY_CONTAINER_PROVIDER);
 
 		if (provider == null) {
@@ -479,13 +518,33 @@ public class VaadinPageDataBuilder {
 		return paramInstanceMap;
 	}
 
+	// FIXME Add an applyItemDataSource impl for grids
+	@SuppressWarnings("unused")
+	private static PluralAttribute provideGridAttribute(Class<?> propertyType, Object bean, IDAOProvider daoProvider) throws Exception {
+		PluralAttribute gridAttribute = null;
+		EntityType beanEntityType = daoProvider.provideByDAOClass(IEntityTypeDAOService.class).provide(bean.getClass()), attributeType = null;
+		Set<EntityTypeAttribute> beanAttributes = beanEntityType.getAllDeclaredAttributes();
+		for (EntityTypeAttribute attribute : beanAttributes) {
+			if (attribute.getAttribute() instanceof PluralAttribute) {
+				attributeType = attribute.getAttribute().getEntityType();
+				if (attributeType != null) {
+					if (propertyType.isAssignableFrom(attributeType.getJavaType())) {
+						gridAttribute = (PluralAttribute) attribute.getAttribute();
+						return gridAttribute;
+					}
+				}
+			}
+		}
+		return gridAttribute;
+	}
+
 	@SuppressWarnings("unchecked")
 	public static <T> T saveInstance(T instance, IDAOProvider daoProvider, Object... parentInstances) throws Exception {
 		if (daoProvider != null) {
 			if (instance instanceof StockItem) {
 				if (((BaseEntity) instance).getId() == null) {
+					Map<Class<?>, Collection<Object>> paramInstanceMap = buildParamInstanceMap(parentInstances);
 					if (parentInstances.length == 2) {
-						Map<Class<?>, Collection<Object>> paramInstanceMap = buildParamInstanceMap(parentInstances);
 						if (paramInstanceMap.get(ReceiveLine.class) != null && paramInstanceMap.get(ArrivalReceiptLine.class) != null) {
 							DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 							def.setName("pageflow.ui.data");
@@ -510,8 +569,30 @@ public class VaadinPageDataBuilder {
 						} else {
 							throw new Exception("saveInstance(StockItem) needs a ReceiveLine and an ArrivalReceipt.");
 						}
+					} else if (parentInstances.length == 1) {
+						if (paramInstanceMap.get(ArrivalReceiptLine.class) != null) {
+							DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+							def.setName("pageflow.ui.data");
+							def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+							TransactionStatus status = daoProvider.provideByDAOClass(PlatformTransactionManager.class).getTransaction(def);
+							T result = null;
+							try {
+								result = (T) daoProvider.provideByDAOClass(IStockItemDAOService.class).addDynamicStockItem(
+										(StockItem) instance,
+										((ArrivalReceiptLine) paramInstanceMap.get(ArrivalReceiptLine.class).iterator().next())
+												.getParentArrivalReceipt().getId(),
+										((ArrivalReceiptLine) paramInstanceMap.get(ArrivalReceiptLine.class).iterator().next()).getId());
+								if (!status.isCompleted()) {
+									daoProvider.provideByDAOClass(PlatformTransactionManager.class).commit(status);
+								}
+							} catch (Exception e) {
+								daoProvider.provideByDAOClass(PlatformTransactionManager.class).rollback(status);
+								e.printStackTrace();
+							}
+							return result;
+						}
 					} else {
-						throw new Exception("saveInstance(StockItem) needs a ReceiveLine and an ArrivalReceipt.");
+						throw new Exception("saveInstance(StockItem) needs a ReceiveLine and an ArrivalReceipt OR just an ArrivalReceipt.");
 					}
 				} else {
 					daoProvider.provideByDAOClass(IStockItemDAOService.class).update((StockItem) instance);
