@@ -27,7 +27,7 @@ public class Location extends MultitenantBaseEntity {
 
     private Integer row;
 
-    private Integer column;
+    private Integer col;
 
     private String level;
 
@@ -47,12 +47,12 @@ public class Location extends MultitenantBaseEntity {
 		this.row = row;
 	}
 
-	public Integer getColumn() {
-		return column;
+	public Integer getCol() {
+		return col;
 	}
 
 	public void setColumn(Integer column) {
-		this.column = column;
+		this.col = column;
 	}
 
 	public String getLevel() {
