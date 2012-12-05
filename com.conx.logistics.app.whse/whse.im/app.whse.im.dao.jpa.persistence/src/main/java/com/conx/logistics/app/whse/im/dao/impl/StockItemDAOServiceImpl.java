@@ -461,7 +461,9 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 			rcvLine_ = em.merge(rcvLine_);
 			throw new Exception("Cannot attach a Stock Item to a Receive Line with an expected inner pack count of 0 (or null).");
 		} else if (expectedReceiveLineInnerPackCount == 0) {
-			throw new Exception("Cannot attach a Stock Item to a Receive Line with an expected inner pack count of 0 (or null).");
+			// FIXME LOG AN ERROR - THIS SHOULD NOT HAPPEN
+//			throw new Exception("Cannot attach a Stock Item to a Receive Line with an expected inner pack count of 0 (or null).");
+			expectedReceiveLineInnerPackCount = 1;
 		}
 		if (arrivedReceiveLineInnerPackCount == null) {
 			arrivedReceiveLineInnerPackCount = 0;
@@ -471,9 +473,10 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 			arrvlItemNew.setInnerPackCount(stockItemPackCount);
 			arrvlItemNew = em.merge(arrvlItemNew);
 		} else if (stockItemPackCount == 0) {
-			throw new Exception("Stock Item Inner Pack count is zero - this should be impossible");
+			// FIXME LOG AN ERROR - THIS SHOULD NOT HAPPEN
+//			throw new Exception("Stock Item Inner Pack count is zero - this should be impossible");
+			stockItemPackCount = 1;
 		}
-
 		arrivedReceiveLineInnerPackCount += stockItemPackCount;
 		rcvLine_.setArrivedInnerPackCount(arrivedReceiveLineInnerPackCount);
 		int remainingInnerPackCount = expectedReceiveLineInnerPackCount - arrivedReceiveLineInnerPackCount;
