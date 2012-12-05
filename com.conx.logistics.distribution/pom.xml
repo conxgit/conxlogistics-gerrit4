@@ -20,5 +20,6 @@
 		</module>
 		-->
   		<!-- <module>virgo-bundles-sprint1</module> -->
+  		<module>sprint2</module>
 	</modules>
 </project>

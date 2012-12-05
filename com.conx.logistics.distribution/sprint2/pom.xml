@@ -1,0 +1,656 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>com.conx.logistics.distribution</artifactId>
+    <groupId>com.conx.logistics</groupId>
+    <version>1.0.0</version>
+    <relativePath>..</relativePath>
+  </parent>
+  <artifactId>com.conx.logistics.distribution.sprint2</artifactId>
+  <packaging>pom</packaging>
+  <properties>
+  	<virgo.repository.base>E:/dev/Runtimes/virgo-tomcat-server-3.0.3.RELEASE-DEV4/repository</virgo.repository.base>
+  </properties>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>clean plugins</id>
+						<phase>clean</phase>
+						<configuration>
+							<tasks>
+								<delete>
+									<fileset dir="plugins" includes="**/*.jar"
+										excludes="com.springsource.org.jgroups-2.2.8.jar, com.springsource.org.objectweb.asm-1.5.3.jar, **/.gitignore" />
+								</delete>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>plugins</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+							<stripVersion>false</stripVersion>
+							<includeScope>runtime</includeScope>
+							<excludeTransitive>true</excludeTransitive>
+						</configuration>
+					</execution>
+
+					<!-- This copy won't work in hudson, so committing jars for now <execution> 
+						<id>copy earlier version of asm</id> <phase>generate-resources</phase> <goals> 
+						<goal>copy</goal> </goals> <configuration> <artifactItems> <artifactItem> 
+						<groupId>org.objectweb.asm</groupId> <artifactId>com.springsource.org.objectweb.asm</artifactId> 
+						<version>1.5.3</version> <type>jar</type> overWrite>true</overWrite> </artifactItem> 
+						<artifactItem> <groupId>org.jgroups</groupId> <artifactId>com.springsource.org.jgroups</artifactId> 
+						<version>2.2.8</version> <type>jar</type> <overWrite>true</overWrite> </artifactItem> 
+						</artifactItems> <outputDirectory>plugins</outputDirectory> <overWriteReleases>true</overWriteReleases> 
+						</configuration> </execution -->
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>copy to virgo repository</id>
+						<phase>package</phase>
+						<configuration>
+							<tasks>
+							  <copy todir="${virgo.repository.base}/conxbootstrap">
+							    <filelist dir="plugins">
+							      <file name="com.conx.logistics.common.utils-1.0.0.jar"/>
+							      <file name="com.conx.logistics.data.uat.sprint2.data-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.bpm.impl.jbpm.bpmserver.persistence-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.bpm.impl.jbpm.bpmserver-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.bpm.impl.jbpm.persistence.datasource-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.bpm.impl.jbpm.shared-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.bpm.impl.jbpm.taskserver.osgi.fragment.human-task-core-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.bpm.impl.jbpm.taskserver.persistence-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.bpm.impl.jbpm.taskserver-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.bpm.services-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.persistence.datasource-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.persistence.dynaconfiguration-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.persistence.services.impl-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.persistence.services-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.persistence.tm.jta-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.system.dao.jpa.persistence-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.system.dao.services-1.0.0.jar"/>
+							    </filelist>
+							  </copy>
+							  <copy todir="${virgo.repository.base}/conx/component">
+							    <filelist dir="plugins">
+							      <file name="com.conx.logistics.kernel.ui.components.dao.jpa.persistence-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.ui.components.dao.services-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.ui.components.domain.persistence.config-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.ui.components.domain-1.0.0.jar"/>
+							    </filelist>
+							  </copy>	
+							  <copy todir="${virgo.repository.base}/conx/datasource">
+							    <filelist dir="plugins">
+							      <file name="com.conx.logistics.kernel.datasource.dao.jpa.persistence-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.datasource.dao.services-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.datasource.domain.persistence.config-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.datasource.domain-1.0.0.jar"/>
+							    </filelist>
+							  </copy>		
+							  <copy todir="${virgo.repository.base}/conx/doclib">
+							    <filelist dir="plugins">
+							      <file name="com.conx.logistics.kernel.documentlibrary.remote.services.impl-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.documentlibrary.remote.services-1.0.0.jar"/>
+							    </filelist>
+							  </copy>		
+							  <copy todir="${virgo.repository.base}/conx/im">
+							    <filelist dir="plugins">
+							      <file name="com.conx.logistics.app.whse.im.dao.jpa.persistence-1.0.0.jar"/>
+							      <file name="com.conx.logistics.app.whse.im.dao.services-1.0.0.jar"/>
+							      <file name="com.conx.logistics.app.whse.im.domain.persistence.config-1.0.0.jar"/>
+							      <file name="com.conx.logistics.app.whse.im.domain-1.0.0.jar"/>
+							    </filelist>
+							  </copy>		
+							  <copy todir="${virgo.repository.base}/conx/mdm">
+							    <filelist dir="plugins">
+							      <file name="com.conx.logistics.mdm.dao.services.impl-1.0.0.jar"/>
+							      <file name="com.conx.logistics.mdm.dao.services-1.0.0.jar"/>
+							      <file name="com.conx.logistics.mdm.domain.persistence.config-1.0.0.jar"/>
+							      <file name="com.conx.logistics.mdm.domain-1.0.0.jar"/>
+							    </filelist>
+							  </copy>			
+							  <copy todir="${virgo.repository.base}/conx/metamodel">
+							    <filelist dir="plugins">
+							      <file name="com.conx.logistics.kernel.metamodel.dao.jpa.persistence-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.metamodel.dao.services-1.0.0.jar"/>
+							    </filelist>
+							  </copy>	
+							  <copy todir="${virgo.repository.base}/conx/pageflow">
+							    <filelist dir="plugins">
+							      <file name="com.conx.logistics.kernel.pageflow.engine-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.pageflow.services-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.pageflow.ui-1.0.0.jar"/>
+							    </filelist>
+							  </copy>	
+							  <copy todir="${virgo.repository.base}/conx/portal">
+							    <filelist dir="plugins">
+							      <file name="com.conx.logistics.kernel.portal.remote.services.impl-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.portal.remote.services-1.0.0.jar"/>
+							    </filelist>
+							  </copy>			
+							  <copy todir="${virgo.repository.base}/conx/reporting">
+							    <filelist dir="plugins">
+							      <file name="com.conx.logistics.reporting.remote.services-1.0.0.jar"/>
+							      <file name="com.conx.logistics.reporting.jasperreports.service.impl-1.0.0.jar"/>
+							    </filelist>
+							  </copy>			
+							  <copy todir="${virgo.repository.base}/conx/tms">
+							    <filelist dir="plugins">
+							      <file name="com.conx.logistics.app.tms.domain-1.0.0.jar"/>
+							    </filelist>
+							  </copy>	
+							  <copy todir="${virgo.repository.base}/conx/ui">
+							    <filelist dir="plugins">
+							      <file name="com.conx.logistics.app.whse.ui-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.system.ui-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.ui.common-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.ui.editors.entity.vaadin-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.ui.factory.services.impl-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.ui.factory.services-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.ui.forms.vaadin-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.ui.manager-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.ui.services-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.workspace.ui-1.0.0.jar"/>
+							    </filelist>
+							  </copy>	
+							  <copy todir="${virgo.repository.base}/conx/web">
+							    <filelist dir="plugins">
+							      <file name="com.conx.logistics.web.app.sprint2-2.0.2.RC1.war"/>
+							    </filelist>
+							  </copy>			
+							  <copy todir="${virgo.repository.base}/conx/wms">
+							    <filelist dir="plugins">
+							      <file name="com.conx.logistics.app.whse.dao.jpa.persistence-1.0.0.jar"/>
+							      <file name="com.conx.logistics.app.whse.dao.services-1.0.0.jar"/>
+							      <file name="com.conx.logistics.app.whse.domain.persistence.config-1.0.0.jar"/>
+							      <file name="com.conx.logistics.app.whse.domain-1.0.0.jar"/>
+							      <file name="com.conx.logistics.app.whse.rcv.asn.dao.jpa.persistence-1.0.0.jar"/>
+							      <file name="com.conx.logistics.app.whse.rcv.asn.dao.services-1.0.0.jar"/>
+							      <file name="com.conx.logistics.app.whse.rcv.asn.domain.osgi.fragment.human-task-core-1.0.0.jar"/>
+							      <file name="com.conx.logistics.app.whse.rcv.asn.domain.persistence.config-1.0.0.jar"/>
+							      <file name="com.conx.logistics.app.whse.rcv.asn.domain-1.0.0.jar"/>
+							      <file name="com.conx.logistics.app.whse.rcv.asn.workitems-1.0.0.jar"/>
+							      <file name="com.conx.logistics.app.whse.rcv.asn.pageflow-1.0.0.jar"/>
+							      <file name="com.conx.logistics.app.whse.rcv.rcv.dao.jpa.persistence-1.0.0.jar"/>
+							      <file name="com.conx.logistics.app.whse.rcv.rcv.dao.services-1.0.0.jar"/>
+							      <file name="com.conx.logistics.app.whse.rcv.rcv.domain.osgi.fragment.human-task-core-1.0.0.jar"/>
+							      <file name="com.conx.logistics.app.whse.rcv.rcv.domain.persistence.config-1.0.0.jar"/>
+							      <file name="com.conx.logistics.app.whse.rcv.rcv.domain-1.0.0.jar"/>
+							      <file name="com.conx.logistics.app.whse.rcv.rcv.pageflow-1.0.0.jar"/>
+							      <file name="com.conx.logistics.app.whse.rcv.rcv.workitems-1.0.0.jar"/>
+							    </filelist>
+							  </copy>							  				  						  							  					  				  						  						  					  					  						  					  						  
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>			
+<!-- 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/virgo-osgi-bundles.xml</descriptor>
+					</descriptors>
+					<appendAssemblyId>false</appendAssemblyId>
+				</configuration>
+			</plugin> -->
+		</plugins>
+	</build>
+
+	<dependencies>
+	    <!-- Bootstraping Bundles : stage 1 -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.common.utils</artifactId>
+			<version>1.0.0</version>
+		</dependency>	    
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.persistence.datasource</artifactId>
+			<version>1.0.0</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.persistence.tm.jta</artifactId>
+			<version>1.0.0</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.persistence.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.persistence.services.impl</artifactId>
+			<version>1.0.0</version>
+		</dependency>		
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.persistence.dynaconfiguration</artifactId>
+			<version>1.0.0</version>
+		</dependency>				
+ 
+	<!-- Bootstraping Bundles : stage 2 (fragments)-->
+		<!-- MDM -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.mdm.domain</artifactId>
+			<version>1.0.0</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.mdm.domain.persistence.config</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.mdm.dao.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.mdm.dao.services.impl</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+	 
+ 		<!-- Reporting -->
+ 		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.reporting.remote.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.reporting.jasperreports.service.impl</artifactId>
+			<version>1.0.0</version>
+		</dependency>	
+		
+		<!-- APP:TMS -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.tms.domain</artifactId>
+			<version>1.0.0</version>
+		</dependency>			
+
+    	<!-- APP:WHSE -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.domain</artifactId>
+			<version>1.0.0</version>
+		</dependency>    
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.domain.persistence.config</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.dao.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.dao.jpa.persistence</artifactId>
+			<version>1.0.0</version>
+		</dependency>						
+
+		<!-- APP:WHSE:IM -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.im.domain</artifactId>
+			<version>1.0.0</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.im.domain.persistence.config</artifactId>
+			<version>1.0.0</version>
+		</dependency>			
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.im.dao.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.im.dao.jpa.persistence</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+								
+		<!-- APP:WHSE:RCV:ASN -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.rcv.asn.domain</artifactId>
+			<version>1.0.0</version>
+		</dependency>		
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.rcv.asn.domain.persistence.config</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.rcv.asn.dao.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.rcv.asn.dao.jpa.persistence</artifactId>
+			<version>1.0.0</version>
+		</dependency>		
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.rcv.asn.domain.osgi.fragment.human-task-core</artifactId>
+			<version>1.0.0</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.rcv.asn.workitems</artifactId>
+			<version>1.0.0</version>
+		</dependency>		
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.rcv.asn.pageflow</artifactId>
+			<version>1.0.0</version>
+		</dependency>		
+
+		<!-- APP:WHSE:RCV:RCV -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.rcv.rcv.domain</artifactId>
+			<version>1.0.0</version>
+		</dependency>		
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.rcv.rcv.domain.persistence.config</artifactId>
+			<version>1.0.0</version>
+		</dependency>		
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.rcv.rcv.dao.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.rcv.rcv.dao.jpa.persistence</artifactId>
+			<version>1.0.0</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.rcv.rcv.pageflow</artifactId>
+			<version>1.0.0</version>
+		</dependency>		
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.rcv.rcv.workitems</artifactId>
+			<version>1.0.0</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.rcv.rcv.domain.osgi.fragment.human-task-core</artifactId>
+			<version>1.0.0</version>
+		</dependency>			
+
+		<!-- Kernel UI:  -->
+		<!-- UI Required services: BPM Services -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.bpm.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>		
+
+		<!-- UI Required services: PageFlow Services -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.pageflow.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>			
+							
+		<!-- UI Required services: kernel.system Services -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.system.dao.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.system.dao.jpa.persistence</artifactId>
+			<version>1.0.0</version>
+		</dependency>				
+		
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.ui.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		
+		<!-- kernel : DocLib -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.documentlibrary.remote.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.documentlibrary.remote.services.impl</artifactId>
+			<version>1.0.0</version>
+		</dependency>				
+		
+		<!-- kernel : PortalServices -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.portal.remote.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.portal.remote.services.impl</artifactId>
+			<version>1.0.0</version>
+		</dependency>	
+				
+		<!-- kernel : MetaModel -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.metamodel.dao.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.metamodel.dao.jpa.persistence</artifactId>
+			<version>1.0.0</version>
+		</dependency>		
+		
+		<!-- kernel : DataSource -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.datasource.domain</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.datasource.domain.persistence.config</artifactId>
+			<version>1.0.0</version>
+		</dependency>			
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.datasource.dao.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>		
+		
+		<!-- kernel : Component UI Model -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.ui.components.domain</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.ui.components.domain.persistence.config</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.ui.components.dao.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.ui.components.dao.jpa.persistence</artifactId>
+			<version>1.0.0</version>
+		</dependency>							
+		
+		<!-- kernel : Factory Services Model -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.ui.manager</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.ui.factory.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.ui.factory.services.impl</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		
+		<!-- kernel : UI References -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.ui.forms.vaadin</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.ui.editors.entity.vaadin</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.ui.common</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.system.ui</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.workspace.ui</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.app.whse.ui</artifactId>
+			<version>1.0.0</version>
+		</dependency>												
+		
+		<!-- Kernel: BPM : DataSource -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.bpm.impl.jbpm.persistence.datasource</artifactId>
+			<version>1.0.0</version>
+		</dependency>	
+		
+		<!-- Kernel: BPM : HumanTaskService -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.bpm.impl.jbpm.taskserver.persistence</artifactId>
+			<version>1.0.0</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.bpm.impl.jbpm.taskserver</artifactId>
+			<version>1.0.0</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.bpm.impl.jbpm.taskserver.osgi.fragment.human-task-core</artifactId>
+			<version>1.0.0</version>
+		</dependency>			
+		
+		<!-- Kernel: BPM : BPM Server -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.bpm.impl.jbpm.bpmserver.persistence</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.bpm.impl.jbpm.bpmserver</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.bpm.impl.jbpm.shared</artifactId>
+			<version>1.0.0</version>
+		</dependency>		
+		
+		<!-- kernel : Pageflow -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.pageflow.ui</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.pageflow.engine</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		
+		<!-- Sprint #2 Test Data -->	
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.data.uat.sprint2.data</artifactId>
+			<version>1.0.0</version>
+		</dependency>	
+		
+		<!-- Sprint #2 Web Application -->	
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.web.app.sprint2</artifactId>
+			<version>2.0.2.RC1</version>
+			<type>war</type>
+		</dependency>			
+	</dependencies>  
+</project>
