@@ -577,6 +577,7 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 		}
 		
 		ReceiveLine receiveLine = new ReceiveLine();
+		receiveLine.setExpectedInnerPackCount(1);
 		receiveLine.setProduct(this.productDAOService.provideDefaultProduct());
 		receiveLine.setStatus(RECEIVELINESTATUS.ARRIVING);
 		receiveLine.setExpectedInnerPackCount(newRecord.getGroupSize());

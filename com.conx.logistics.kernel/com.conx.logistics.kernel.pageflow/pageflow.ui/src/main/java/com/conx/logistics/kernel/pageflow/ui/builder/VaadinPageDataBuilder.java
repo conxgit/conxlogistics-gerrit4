@@ -235,6 +235,7 @@ public class VaadinPageDataBuilder {
 		@SuppressWarnings({ "rawtypes" })
 		final Object itemBean = (item instanceof JPAContainerItem<?>) ? ((JPAContainerItem) item).getEntity()
 				: (item instanceof BeanItem<?>) ? ((BeanItem) item).getBean() : null;
+		((VaadinMatchGrid) component).setItemBean(itemBean);
 		((VaadinMatchGrid) component).setBeanConverter(new IBeanConversionListener() {
 			/*
 			 * private boolean returnFlag = false; private Object returnValue =
@@ -308,10 +309,12 @@ public class VaadinPageDataBuilder {
 			}
 		});
 
-		try {
-			((VaadinMatchGrid) component).addParentConsumptionFilter(Filters.not(Filters.eq("status", RECEIVELINESTATUS.ARRIVED)));
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (ReceiveLine.class.isAssignableFrom(((VaadinMatchGrid) component).getUnmatchedContainerType())) {
+			try {
+				((VaadinMatchGrid) component).addParentConsumptionFilter(Filters.not(Filters.eq("status", RECEIVELINESTATUS.ARRIVED)));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

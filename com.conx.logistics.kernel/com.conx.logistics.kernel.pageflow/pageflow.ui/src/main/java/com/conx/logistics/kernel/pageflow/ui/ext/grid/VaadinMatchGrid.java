@@ -2,9 +2,19 @@ package com.conx.logistics.kernel.pageflow.ui.ext.grid;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import com.conx.logistics.app.whse.rcv.rcv.domain.ArrivalReceiptLine;
+import com.conx.logistics.app.whse.rcv.rcv.domain.Receive;
+import com.conx.logistics.app.whse.rcv.rcv.domain.ReceiveLine;
 import com.conx.logistics.kernel.ui.components.domain.table.EntityMatchGrid;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.EntityEditorToolStrip;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.EntityEditorToolStrip.EntityEditorToolStripButton;
@@ -15,6 +25,7 @@ import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormAlertPanel.Alert
 import com.conx.logistics.kernel.ui.vaadin.common.ConXVerticalSplitPanel;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
+import com.vaadin.addon.jpacontainer.util.DefaultQueryModifierDelegate;
 import com.vaadin.data.Container;
 import com.vaadin.data.Container.Filter;
 import com.vaadin.data.Item;
@@ -44,6 +55,7 @@ public class VaadinMatchGrid extends VerticalLayout {
 	private ConXVerticalSplitPanel content;
 	private VaadinFormAlertPanel unmatchedAlertPanel;
 	private VaadinFormAlertPanel matchedAlertPanel;
+	private Object itemBean;
 
 	public VaadinMatchGrid(EntityMatchGrid componentModel) {
 		this.componentModel = componentModel;
@@ -58,6 +70,14 @@ public class VaadinMatchGrid extends VerticalLayout {
 		this.matchedAlertPanel = new VaadinFormAlertPanel();
 
 		initialize();
+	}
+
+	public Object getItemBean() {
+		return this.itemBean;
+	}
+
+	public void setItemBean(Object itemBean) {
+		this.itemBean = itemBean;
 	}
 
 	private Object getUnmatchedBeanById(Item item) {
@@ -81,15 +101,17 @@ public class VaadinMatchGrid extends VerticalLayout {
 				if (matchedContainer instanceof BeanItemContainer) {
 					matchedItem = ((BeanItemContainer) matchedContainer).addBean(matchedBean);
 					onMatch(matchedItem, item);
-					
+
 					if (item instanceof JPAContainerItem<?>) {
-//						((JPAContainer<?>)this.unmatchedGrid.getContainerDataSource()).refreshItem(((JPAContainerItem) item).getItemId());
-						((JPAContainer<?>)this.unmatchedGrid.getContainerDataSource()).refresh();
-//						((JPAContainer<?>)this.unmatchedGrid.getContainerDataSource()).applyFilters();
+						// ((JPAContainer<?>)this.unmatchedGrid.getContainerDataSource()).refreshItem(((JPAContainerItem)
+						// item).getItemId());
+						((JPAContainer<?>) this.unmatchedGrid.getContainerDataSource()).refresh();
+						// ((JPAContainer<?>)this.unmatchedGrid.getContainerDataSource()).applyFilters();
 					} else {
-						throw new Exception("The unmatched container must inherit JPAContainer<?> and all items must inherit JPAContainerItem<?>.");
+						throw new Exception(
+								"The unmatched container must inherit JPAContainer<?> and all items must inherit JPAContainerItem<?>.");
 					}
-					
+
 					String message = "";
 					if (matchedItem.getItemProperty("name") != null && matchedItem.getItemProperty("name").getValue() != null) {
 						message = matchedItem.getItemProperty("name").getValue() + " was matched successfully.";
@@ -113,7 +135,8 @@ public class VaadinMatchGrid extends VerticalLayout {
 			} else {
 				String message = "";
 				if (item.getItemProperty("name") != null && item.getItemProperty("name").getValue() != null) {
-					message = "Could not match " + item.getItemProperty("name").getValue() + ". Could not get the bean from matched grid with the bean converter.";
+					message = "Could not match " + item.getItemProperty("name").getValue()
+							+ ". Could not get the bean from matched grid with the bean converter.";
 				} else {
 					message = "Could not match the selected item. Could not get the bean from matched grid with the bean converter.";
 				}
@@ -143,29 +166,29 @@ public class VaadinMatchGrid extends VerticalLayout {
 		this.updateMatchedItemCount();
 	}
 
-	/*private void hideMatchableItem(Item matchedItem, Item matchedItemParent) throws Exception {
-		Filter newMatchFilter = null;
-		Container unmatchedContainer = this.unmatchedGrid.getContainerDataSource();
-		if (unmatchedContainer instanceof JPAContainer) {
-			newMatchFilter = new Not(new Compare.Equal("id", matchedItemParent.getItemProperty("id").getValue()));
-			((JPAContainer<?>) unmatchedContainer).addContainerFilter(newMatchFilter);
-		} else if (unmatchedContainer instanceof BeanItemContainer) {
-			newMatchFilter = new Not(new Compare.Equal("id", matchedItemParent.getItemProperty("id").getValue()));
-			((BeanItemContainer<?>) unmatchedContainer).addContainerFilter(newMatchFilter);
-		} else {
-			String message = "";
-			if (matchedItemParent.getItemProperty("name") != null && matchedItemParent.getItemProperty("name").getValue() != null) {
-				message = "Could not match " + matchedItemParent.getItemProperty("name").getValue() + ". The unmatched container is incompatible.";
-			} else {
-				message = "Could not match the selected item. The unmatched container is incompatible.";
-			}
-			this.unmatchedAlertPanel.setAlertType(AlertType.ERROR);
-			this.unmatchedAlertPanel.setMessage(message);
-			throw new Exception(message);
-		}
-		this.unmatchedItemIdFilterMap.put(matchedItem, newMatchFilter);
-	}
-*/
+	/*
+	 * private void hideMatchableItem(Item matchedItem, Item matchedItemParent)
+	 * throws Exception { Filter newMatchFilter = null; Container
+	 * unmatchedContainer = this.unmatchedGrid.getContainerDataSource(); if
+	 * (unmatchedContainer instanceof JPAContainer) { newMatchFilter = new
+	 * Not(new Compare.Equal("id",
+	 * matchedItemParent.getItemProperty("id").getValue())); ((JPAContainer<?>)
+	 * unmatchedContainer).addContainerFilter(newMatchFilter); } else if
+	 * (unmatchedContainer instanceof BeanItemContainer) { newMatchFilter = new
+	 * Not(new Compare.Equal("id",
+	 * matchedItemParent.getItemProperty("id").getValue()));
+	 * ((BeanItemContainer<?>)
+	 * unmatchedContainer).addContainerFilter(newMatchFilter); } else { String
+	 * message = ""; if (matchedItemParent.getItemProperty("name") != null &&
+	 * matchedItemParent.getItemProperty("name").getValue() != null) { message =
+	 * "Could not match " + matchedItemParent.getItemProperty("name").getValue()
+	 * + ". The unmatched container is incompatible."; } else { message =
+	 * "Could not match the selected item. The unmatched container is incompatible."
+	 * ; } this.unmatchedAlertPanel.setAlertType(AlertType.ERROR);
+	 * this.unmatchedAlertPanel.setMessage(message); throw new
+	 * Exception(message); } this.unmatchedItemIdFilterMap.put(matchedItem,
+	 * newMatchFilter); }
+	 */
 	private void unhideMatchableItem(Item matchedItem) throws Exception {
 		Container unmatchedContainer = this.unmatchedGrid.getContainerDataSource();
 		Filter unmatchedItemFilter = this.unmatchedItemIdFilterMap.get(matchedItem);
@@ -180,7 +203,8 @@ public class VaadinMatchGrid extends VerticalLayout {
 			} else {
 				String message = "";
 				if (matchedItem.getItemProperty("name") != null && matchedItem.getItemProperty("name").getValue() != null) {
-					message = "Could not match " + matchedItem.getItemProperty("name").getValue() + ". The unmatched container is incompatible.";
+					message = "Could not match " + matchedItem.getItemProperty("name").getValue()
+							+ ". The unmatched container is incompatible.";
 				} else {
 					message = "Could not match the selected item. The unmatched container is incompatible.";
 				}
@@ -197,7 +221,8 @@ public class VaadinMatchGrid extends VerticalLayout {
 		unhideMatchableItem(item);
 		this.unmatchButton.setEnabled(false);
 		this.unmatchedAlertPanel.setAlertType(AlertType.SUCCESS);
-		this.unmatchedAlertPanel.setMessage(this.componentModel.getUnmatchedDataSource().getEntityType().getName() + " was replaced successfully.");
+		this.unmatchedAlertPanel.setMessage(this.componentModel.getUnmatchedDataSource().getEntityType().getName()
+				+ " was replaced successfully.");
 		this.updateMatchedItemCount();
 		onUnmatch(item);
 	}
@@ -221,21 +246,22 @@ public class VaadinMatchGrid extends VerticalLayout {
 			listener.onUnmatch(item);
 		}
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void create() {
 		try {
 			Object matchedBean = VaadinMatchGrid.this.beanConverter.onNewBean(getMatchedContainerType());
 			Container matchedContainer = this.matchedGrid.getContainerDataSource();
-//			VaadinMatchGrid.this.d
+			// VaadinMatchGrid.this.d
 			if (matchedContainer instanceof BeanItemContainer) {
 				BeanItem matchedItem = ((BeanItemContainer) matchedContainer).addBean(matchedBean);
 				if (this.unmatchedGrid.getContainerDataSource() instanceof JPAContainer<?>) {
-					((JPAContainer<?>)this.unmatchedGrid.getContainerDataSource()).refresh();
+					((JPAContainer<?>) this.unmatchedGrid.getContainerDataSource()).refresh();
 				} else {
-					throw new Exception("The unmatched container must inherit JPAContainer<?> and all items must inherit JPAContainerItem<?>.");
+					throw new Exception(
+							"The unmatched container must inherit JPAContainer<?> and all items must inherit JPAContainerItem<?>.");
 				}
-				
+
 				String message = "";
 				if (matchedItem.getItemProperty("name") != null && matchedItem.getItemProperty("name").getValue() != null) {
 					message = matchedItem.getItemProperty("name").getValue() + " was matched successfully.";
@@ -264,7 +290,7 @@ public class VaadinMatchGrid extends VerticalLayout {
 
 		this.newMatchedItemButton.addListener(new ClickListener() {
 			private static final long serialVersionUID = 1L;
-			
+
 			@Override
 			public void buttonClick(ClickEvent event) {
 				create();
@@ -327,11 +353,13 @@ public class VaadinMatchGrid extends VerticalLayout {
 		this.unmatchedAlertPanel.setVisible(true);
 		this.unmatchedAlertPanel.setCloseable(false);
 		this.unmatchedAlertPanel.setAlertType(AlertType.ERROR);
-		this.unmatchedAlertPanel.setMessage("No " + this.componentModel.getUnmatchedDataSource().getEntityType().getName() + " has been matched yet.");
+		this.unmatchedAlertPanel.setMessage("No " + this.componentModel.getUnmatchedDataSource().getEntityType().getName()
+				+ " has been matched yet.");
 		this.matchedAlertPanel.setCloseable(false);
 		this.matchedAlertPanel.setVisible(false);
 		this.matchedAlertPanel.setAlertType(AlertType.ERROR);
-		this.matchedAlertPanel.setMessage("No " + this.componentModel.getUnmatchedDataSource().getEntityType().getName() + " has been created yet.");
+		this.matchedAlertPanel.setMessage("No " + this.componentModel.getUnmatchedDataSource().getEntityType().getName()
+				+ " has been created yet.");
 
 		VerticalLayout unmatchedGridLayout = new VerticalLayout();
 		unmatchedGridLayout.addComponent(this.unmatchedToolStrip);
@@ -367,6 +395,24 @@ public class VaadinMatchGrid extends VerticalLayout {
 	public void setUnMatchedContainer(Container container) {
 		this.unmatchedGrid.setContainerDataSource(container);
 		this.unmatchedGrid.setVisibleColumns(this.componentModel.getUnmatchedDataSource().getVisibleFieldNames().toArray(new String[0]));
+		if (container instanceof JPAContainer<?>) {
+			if (((JPAContainer<?>) container).getEntityClass().isAssignableFrom(ReceiveLine.class)) {
+				if (itemBean instanceof ArrivalReceiptLine) {
+					final Receive rcv = ((ArrivalReceiptLine) itemBean).getParentArrivalReceipt().getParentArrival().getReceive();
+					((JPAContainer<?>) container).getEntityProvider().setQueryModifierDelegate(new DefaultQueryModifierDelegate() {
+						@Override
+						public void filtersWillBeAdded(CriteriaBuilder criteriaBuilder, CriteriaQuery<?> query, List<Predicate> predicates) {
+							if (criteriaBuilder != null && query != null && predicates != null) {
+								Root<?> root = query.getRoots().iterator().next();
+								Path<?> rcvId = root.get("parentReceive").get("id");
+								predicates.add(criteriaBuilder.equal(rcvId, rcv.getId()));
+							}
+						}
+					});
+				}
+			}
+
+		}
 	}
 
 	public void setMatchedContainer(Container container) {
@@ -384,6 +430,7 @@ public class VaadinMatchGrid extends VerticalLayout {
 
 	public interface IBeanConversionListener {
 		public Object onConvertBean(Object bean, Class<?> originType, Class<?> targetType);
+
 		public Object onNewBean(Class<?> type);
 	}
 
@@ -400,7 +447,7 @@ public class VaadinMatchGrid extends VerticalLayout {
 	public void addListener(ISelectListener listener) {
 		this.matchedGrid.addSelectListener(listener);
 	}
-	
+
 	public void addParentConsumptionFilter(Filter filter) throws Exception {
 		if (this.unmatchedGrid.getContainerDataSource() instanceof JPAContainer<?>) {
 			((JPAContainer<?>) this.unmatchedGrid.getContainerDataSource()).addContainerFilter(filter);
@@ -413,7 +460,8 @@ public class VaadinMatchGrid extends VerticalLayout {
 
 	private void updateMatchedItemCount() {
 		this.matchedAlertPanel.setAlertType(AlertType.INFO);
-		this.matchedAlertPanel.setMessage(this.matchedGrid.getContainerDataSource().size() + " " + this.componentModel.getMatchedDataSource().getEntityType().getName() + "(s) have been matched.");
+		this.matchedAlertPanel.setMessage(this.matchedGrid.getContainerDataSource().size() + " "
+				+ this.componentModel.getMatchedDataSource().getEntityType().getName() + "(s) have been matched.");
 		this.matchedAlertPanel.setVisible(true);
 	}
 }
