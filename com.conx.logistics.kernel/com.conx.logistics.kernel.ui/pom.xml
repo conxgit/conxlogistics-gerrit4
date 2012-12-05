@@ -20,5 +20,6 @@
   	<module>kernel.ui.components</module>
   	<module>kernel.ui.factory.services</module>
   	<module>kernel.ui.factory.services.impl</module>
+  	<module>com.conx.logistics.kernel.ui.manager</module>
   </modules>
 </project>
