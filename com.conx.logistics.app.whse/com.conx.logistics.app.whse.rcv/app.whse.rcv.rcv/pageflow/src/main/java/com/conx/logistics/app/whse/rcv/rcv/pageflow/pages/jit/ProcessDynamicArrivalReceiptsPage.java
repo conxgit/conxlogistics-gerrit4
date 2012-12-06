@@ -127,7 +127,7 @@ public class ProcessDynamicArrivalReceiptsPage extends BasePageFlowPage implemen
 		ds.getDSFields().add(dsField);
 		FieldSetField fsf = new FieldSetField(0, dsField, orgFieldSet);
 		orgFieldSet.getFields().add(fsf);
-		dsField = new DataSourceField("consignee", ds, ds, stockItemType, "Shipper Consignee", null);
+		dsField = new DataSourceField("consignee", ds, ds, stockItemType, "Consignee Organization", null);
 		ds.getDSFields().add(dsField);
 		fsf = new FieldSetField(0, dsField, orgFieldSet);
 		orgFieldSet.getFields().add(fsf);

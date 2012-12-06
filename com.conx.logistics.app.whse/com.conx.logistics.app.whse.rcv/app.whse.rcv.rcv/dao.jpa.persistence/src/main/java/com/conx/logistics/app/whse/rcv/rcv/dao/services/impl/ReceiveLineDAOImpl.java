@@ -68,6 +68,26 @@ public class ReceiveLineDAOImpl implements IReceiveLineDAOService {
 	public List<ReceiveLine> getAll() {
 		return em.createQuery("select o from com.conx.logistics.app.whse.rcv.rcv.domain.ReceiveLine o", ReceiveLine.class).getResultList();
 	}
+	
+	private void assignCode(ReceiveLine receiveLine) {
+		String format = String.format("%%0%dd", 6);
+		String paddedId = String.format(format, receiveLine.getId());
+		String code = "RL" + paddedId;
+		receiveLine.setName(code);
+		receiveLine.setCode(code);
+	}
+
+	private void assignCode(ReceiveLine receiveLine, Receive parentReceive) {
+		if (parentReceive == null || parentReceive.getName() == null) {
+			assignCode(receiveLine);
+		} else {
+			String format = String.format("%%0%dd", 3);
+			String paddedId = String.format(format, receiveLine.getId());
+			String code = parentReceive.getCode() + "-RL" + String.valueOf(paddedId);
+			receiveLine.setName(code);
+			receiveLine.setCode(code);
+		}
+	}
 
 	@Override
 	public ReceiveLine add(ReceiveLine record, Long parentReceivePK) {
@@ -76,15 +96,11 @@ public class ReceiveLineDAOImpl implements IReceiveLineDAOService {
 		Receive receive = this.receiveDAOService.get(parentReceivePK);
 		assert receive != null;
 
-		String format = String.format("%%0%dd", 6);
-		String paddedId = String.format(format, receive.getRcvLines().size() + 1);
-		String code = "R" + receive.getCode() + paddedId;
-		record.setName(code);
-		record.setCode(code);
 		record.setArrivedInnerPackCount(1);
 		record.setParentReceive(receive);
 		record.setProduct(this.productDAOService.provideDefaultProduct());
 		record = em.merge(record);
+		assignCode(record, receive);
 		
 		assert record != null;
 

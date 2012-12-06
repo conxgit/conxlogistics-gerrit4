@@ -2,6 +2,7 @@ package com.conx.logistics.kernel.ui.forms.vaadin.impl;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Set;
 
 import com.conx.logistics.kernel.ui.components.domain.form.ConXCollapseableSectionForm;
@@ -9,6 +10,8 @@ import com.conx.logistics.kernel.ui.components.domain.form.FieldSet;
 import com.conx.logistics.kernel.ui.components.domain.form.FieldSetField;
 import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
 import com.conx.logistics.kernel.ui.forms.vaadin.IVaadinForm;
+import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormAlertPanel.AlertType;
+import com.vaadin.data.Buffered;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.event.MouseEvents.ClickListener;
@@ -179,6 +182,46 @@ public class VaadinCollapsibleSectionForm extends VaadinForm implements IVaadinF
 		} else {
 			this.alertPanel.setVisible(false);
 			return true;
+		}
+	}
+	
+	@Override
+	public boolean saveForm() {
+		LinkedList<SourceException> problems = null;
+
+		// Only commit on valid state if so requested
+		if (!isInvalidCommitted() && !isValid()) {
+			validate();
+		}
+
+		Set<Field> fieldSet = fields.keySet();
+
+		// Try to commit all
+		for (Field field : fieldSet) {
+			try {
+				// Commit only non-readonly fields.
+				if (!field.isReadOnly()) {
+					field.commit();
+				}
+			} catch (final Buffered.SourceException e) {
+				if (problems == null) {
+					problems = new LinkedList<SourceException>();
+				}
+				problems.add(e);
+			}
+		}
+
+		// No problems occurred
+		if (problems == null) {
+			this.alertPanel.setAlertType(AlertType.SUCCESS);
+			this.alertPanel.setMessage(this.header.getTitle() + " was saved successfully.");
+			this.alertPanel.setVisible(true);
+			return true;
+		} else {
+			this.alertPanel.setAlertType(AlertType.ERROR);
+			this.alertPanel.setMessage(problems.iterator().next().getMessage());
+			this.alertPanel.setVisible(true);
+			return false;
 		}
 	}
 
