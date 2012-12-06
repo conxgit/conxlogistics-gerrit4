@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.conx.logistics.app.whse.im.domain.stockitem.StockItem;
 import com.conx.logistics.app.whse.rcv.rcv.domain.Arrival;
 import com.conx.logistics.app.whse.rcv.rcv.domain.Receive;
 import com.conx.logistics.app.whse.rcv.rcv.domain.ReceiveLine;
@@ -73,6 +74,37 @@ public class DataSourceData {
 
 		return arvlDS;
 	}
+	
+	public final static DataSource provideDefaultSIDS(IEntityTypeDAOService entityTypeDAOService, IDataSourceDAOService dataSourceDAOService,
+			EntityManager em) throws Exception {
+		EntityType siET = EntityTypeData.provide(entityTypeDAOService, em, StockItem.class);
+		//arrivalItemName,sku,receiveLineName,arrivalName,consigneeCode,stockCount,usedStockCount,arrivalItemStatus,location,bcLabelGenField
+		String[] visibleFieldNames = { "id", "code", "name","innerPackCount","usedInnerPackCount","innerPackUnit","location","status","dateCreated", "dateLastUpdated" };
+		List<String> visibleFieldNamesSet = Arrays.asList(visibleFieldNames);
+
+		DataSource siDS = dataSourceDAOService.provideCustomDataSource("default", siET, visibleFieldNamesSet);
+		HashSet<DataSourceField> flds = new HashSet<DataSourceField>(siDS.getAllDSFields());
+		for (DataSourceField fld : flds) {
+			if (visibleFieldNamesSet.contains(fld.getName()))
+				fld.setHidden(false);
+			else {
+				fld.setHidden(true);
+				dataSourceDAOService.update(fld);
+			}
+			
+			if ("location".equals(fld.getName())) {
+				fld.setValueXPath("code");
+			}
+
+			if ("innerPackUnit".equals(fld.getName())) {
+				fld.setValueXPath("code");
+			}			
+		}
+
+		siDS = dataSourceDAOService.update(siDS);
+
+		return siDS;
+	}	
 
 	public final static DataSource provideDefaultReceiveLineDS(IEntityTypeDAOService entityTypeDAOService,
 			IDataSourceDAOService dataSourceDAOService, EntityManager em) throws Exception {

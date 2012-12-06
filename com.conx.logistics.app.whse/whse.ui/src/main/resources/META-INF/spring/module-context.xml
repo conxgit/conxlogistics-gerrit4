@@ -31,7 +31,9 @@
 	<bean id="warehouseAppContribution" class="com.conx.logistics.app.whse.ui.contribution.WarehouseAppContributionImpl" init-method="start">
 		<property name="globalTransactionManager" ref="globalJtaTransactionManager"></property>
 		<property name="warehouseApplicationDAOService" ref="warehouseApplicationDAOService"></property>
-	</bean>				
+	</bean>		
+	
+	<!-- Receiving -->		
 	<bean id="asnSearchViewContribution" class="com.conx.logistics.app.whse.ui.contribution.asn.ASNSearchViewContributionImpl">
 		<property name="componentDAOService" ref="componentDAOService"/>
 	</bean>
@@ -41,4 +43,9 @@
 	<bean id="arvlSearchViewContribution" class="com.conx.logistics.app.whse.ui.contribution.arvl.ArrivalSearchViewContributionImpl">
 		<property name="componentDAOService" ref="componentDAOService"/>
 	</bean>
+	
+	<!-- Inventory Management -->
+	<bean id="siSearchViewContribution" class="com.conx.logistics.app.whse.ui.contribution.stockitem.StockItemSearchViewContributionImpl">
+		<property name="componentDAOService" ref="componentDAOService"/>
+	</bean>	
 </beans>

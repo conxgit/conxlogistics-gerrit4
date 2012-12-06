@@ -51,6 +51,21 @@ public interface IWarehouseApplicationDAOService {
 	// ========= Receiving ARVL :: New Arrival Feature
 	public static final String WAREHOUSE_APP_RECEIVING_ARVL_NEW_NAME = "New";
 	public static final String WAREHOUSE_APP_RECEIVING_ARVL_NEW_CODE = "NEW_ARVL";
+	
+	
+	// ==== IM Featureset
+	public static final String WAREHOUSE_APP_IM_NAME = "Inventory Management";
+	public static final String WAREHOUSE_APP_IM_CODE = "IM";
+
+	// ==== IM ASN Featureset
+	public static final String WAREHOUSE_APP_IM_STOCKITEM_NAME = "StockItems";
+	public static final String WAREHOUSE_APP_IM_STOCKITEM_CODE = "SI";
+
+	// ========= IM STOCKITEM :: Search STOCKITEM Feature
+	public static final String WAREHOUSE_APP_IM_STOCKITEM_SEARCH_NAME = "Search StockItems";
+	public static final String WAREHOUSE_APP_IM_STOCKITEM_SEARCH_CODE = "SEARCH_SI";
+	public static final String WAREHOUSE_APP_IM_STOCKITEM_SEARCH_COMPONENT = "searchStockItems";
+
 
 	public Application provideApplicationMetadata();
 }

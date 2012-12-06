@@ -19,6 +19,7 @@
 		<!-- <module>domain.tests</module> <module>osgi.fragment.human-task-core</module> -->
 		<!-- <module>pageflow.tests.web</module> -->
 		<module>pageflow.tests</module>
+		<module>osgi.fragment.human-task-core</module>
 		<!-- <module>dao.tests</module> -->
 	</modules>
 </project>

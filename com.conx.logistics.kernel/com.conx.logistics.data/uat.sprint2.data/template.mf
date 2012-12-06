@@ -24,6 +24,7 @@ Import-Package:
   com.conx.logistics.app.whse.domain.warehouse;version="1.0.0",
   com.conx.logistics.app.whse.rcv.rcv.dao.services;version="1.0.0",
   com.conx.logistics.app.whse.rcv.rcv.domain;version="1.0.0",
+  com.conx.logistics.app.whse.im.domain.stockitem;version="1.0.0",
   com.conx.logistics.kernel.datasource.dao.services;version="1.0.0",
   com.conx.logistics.kernel.datasource.domain;version="1.0.0",
   com.conx.logistics.kernel.ui.components.dao.services;version="1.0.0",

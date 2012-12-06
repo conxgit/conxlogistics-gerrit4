@@ -157,6 +157,41 @@ public class WahouseApplicationDAOImpl implements IWarehouseApplicationDAOServic
 			
 			// Update Arrival Feature Set
 			arrivalFeatureSet = featureDaoService.updateFeature(arrivalFeatureSet);
+			
+			
+
+			/**
+			 * IM Featureset
+			 */
+			Feature imFeatureSet = new Feature(cpApp, null, IWarehouseApplicationDAOService.WAREHOUSE_APP_IM_CODE);
+			imFeatureSet.setName(IWarehouseApplicationDAOService.WAREHOUSE_APP_IM_NAME);
+			imFeatureSet = featureDaoService.addFeature(imFeatureSet);
+			cpApp.getFeatures().add(imFeatureSet);
+
+			/*
+			 * StockItems
+			 */
+			// StockItem Feature Set
+			Feature siFeatureSet = new Feature(cpApp, imFeatureSet, IWarehouseApplicationDAOService.WAREHOUSE_APP_IM_STOCKITEM_CODE);
+			siFeatureSet.setName(IWarehouseApplicationDAOService.WAREHOUSE_APP_IM_STOCKITEM_NAME);
+			siFeatureSet.setFeatureSet(true);
+			siFeatureSet = featureDaoService.addFeature(siFeatureSet);
+			imFeatureSet.getChildFeatures().add(siFeatureSet);
+			imFeatureSet = featureDaoService.updateFeature(imFeatureSet);
+			
+			// StockItem Search Feature
+			Feature searchSIFeature = new Feature(cpApp, siFeatureSet, IWarehouseApplicationDAOService.WAREHOUSE_APP_IM_STOCKITEM_SEARCH_CODE);
+			searchSIFeature.setName(IWarehouseApplicationDAOService.WAREHOUSE_APP_IM_STOCKITEM_SEARCH_NAME);
+			searchSIFeature.setCaption(IWarehouseApplicationDAOService.WAREHOUSE_APP_IM_STOCKITEM_SEARCH_NAME);
+			searchSIFeature.setIconUrl("breadcrumb/img/conx-bread-crumb-grid-highlighted.png");
+			searchSIFeature.setComponentModelCode(IWarehouseApplicationDAOService.WAREHOUSE_APP_IM_STOCKITEM_SEARCH_COMPONENT);
+			searchSIFeature = featureDaoService.addFeature(searchSIFeature);
+			siFeatureSet.getChildFeatures().add(searchSIFeature);
+
+
+			// Update StockItem Feature Set
+			siFeatureSet = featureDaoService.updateFeature(siFeatureSet);
+			
 
 			// Update Warehouse Feature Set
 			warehouseFeatureSet = featureDaoService.updateFeature(warehouseFeatureSet);

@@ -47,6 +47,8 @@ public class VaadinMatchGrid extends VerticalLayout {
 	private EntityEditorGrid unmatchedGrid;
 	private Item unmatchedGridItem;
 	private EntityEditorGrid matchedGrid;
+
+
 	private Item matchedGridItem;
 	private EntityMatchGrid componentModel;
 	private IBeanConversionListener beanConverter;
@@ -248,13 +250,14 @@ public class VaadinMatchGrid extends VerticalLayout {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private void create() {
+	public Item create() {
+		BeanItem matchedItem = null;
 		try {
 			Object matchedBean = VaadinMatchGrid.this.beanConverter.onNewBean(getMatchedContainerType());
 			Container matchedContainer = this.matchedGrid.getContainerDataSource();
 			// VaadinMatchGrid.this.d
 			if (matchedContainer instanceof BeanItemContainer) {
-				BeanItem matchedItem = ((BeanItemContainer) matchedContainer).addBean(matchedBean);
+				matchedItem = ((BeanItemContainer) matchedContainer).addBean(matchedBean);
 				if (this.unmatchedGrid.getContainerDataSource() instanceof JPAContainer<?>) {
 					((JPAContainer<?>) this.unmatchedGrid.getContainerDataSource()).refresh();
 				} else {
@@ -271,12 +274,11 @@ public class VaadinMatchGrid extends VerticalLayout {
 				this.matchedAlertPanel.setAlertType(AlertType.SUCCESS);
 				this.matchedAlertPanel.setMessage(message);
 			}
-			this.matchButton.setEnabled(false);
-			match(VaadinMatchGrid.this.unmatchedGridItem);
 		} catch (Exception e) {
 			VaadinMatchGrid.this.matchButton.setComponentError(new UserError(e.getMessage()));
 			e.printStackTrace();
 		}
+		return matchedItem;
 	}
 
 	private void initialize() {
@@ -293,7 +295,7 @@ public class VaadinMatchGrid extends VerticalLayout {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				create();
+//				create();
 			}
 		});
 		this.unmatchButton.addListener(new ClickListener() {
@@ -463,5 +465,13 @@ public class VaadinMatchGrid extends VerticalLayout {
 		this.matchedAlertPanel.setMessage(this.matchedGrid.getContainerDataSource().size() + " "
 				+ this.componentModel.getMatchedDataSource().getEntityType().getName() + "(s) have been matched.");
 		this.matchedAlertPanel.setVisible(true);
+	}
+	
+	public EntityEditorToolStripButton getNewMatchedItemButton() {
+		return newMatchedItemButton;
+	}
+	
+	public EntityEditorGrid getMatchedGrid() {
+		return matchedGrid;
 	}
 }

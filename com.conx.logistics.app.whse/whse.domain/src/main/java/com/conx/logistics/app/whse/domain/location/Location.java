@@ -51,7 +51,7 @@ public class Location extends MultitenantBaseEntity {
 		return col;
 	}
 
-	public void setColumn(Integer column) {
+	public void setCol(Integer column) {
 		this.col = column;
 	}
 

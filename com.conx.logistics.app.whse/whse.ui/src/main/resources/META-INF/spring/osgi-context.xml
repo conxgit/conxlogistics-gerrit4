@@ -29,6 +29,7 @@
 		  </osgi:service-properties>		
 	</osgi:service>	
 	
+	<!-- Receiving -->
 	<osgi:service ref="asnSearchViewContribution"  interface="com.conx.logistics.kernel.ui.service.contribution.IViewContribution">
 		<osgi:service-properties>
 		    <entry key="code" value="WHSE.RCVNG.ASN.SEARCH"/>
@@ -46,4 +47,11 @@
 		    <entry key="code" value="WHSE.RCVNG.ARVLS.SEARCH_ARVL"/>
 		  </osgi:service-properties>		
 	</osgi:service>	
+	
+	<!-- Inventory Management -->
+	<osgi:service ref="siSearchViewContribution"  interface="com.conx.logistics.kernel.ui.service.contribution.IViewContribution">
+		<osgi:service-properties>
+		    <entry key="code" value="WHSE.IM.SI.SEARCH_SI"/>
+		  </osgi:service-properties>		
+	</osgi:service>		
 </beans>

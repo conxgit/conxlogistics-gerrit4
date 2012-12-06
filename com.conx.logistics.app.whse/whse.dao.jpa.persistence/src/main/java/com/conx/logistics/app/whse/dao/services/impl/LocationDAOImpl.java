@@ -65,7 +65,7 @@ public class LocationDAOImpl implements ILocationDAOService {
 
 	@Override
 	public Location add(Location record) {
-		String name = record.getRow() + "-" + record.getColumn() + "-" + record.getLevel();
+		String name = record.getRow() + "-" + record.getCol() + "-" + record.getLevel();
 		record.setCode(name);
 		record.setName(name);
 		record = em.merge(record);
@@ -118,7 +118,7 @@ public class LocationDAOImpl implements ILocationDAOService {
 		if (location == null) {
 			location = new Location();
 			location.setRow(row);
-			location.setColumn(column);
+			location.setCol(column);
 			location.setLevel(level);
 			location = add(location);
 		}

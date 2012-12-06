@@ -204,6 +204,7 @@ public class TestDataManager implements ITestDataManager {
 		// Create Datasource/Component models
 		UIComponentModelData.createReceiveSearchMasterDetail(componentDAOService, entityTypeDAOService, dataSourceDAOService, em);
 		UIComponentModelData.createArrivalSearchMasterDetail(componentDAOService, entityTypeDAOService, dataSourceDAOService, em);
+		UIComponentModelData.createStockItemSearchMasterDetail(componentDAOService, entityTypeDAOService, dataSourceDAOService, em);
 	}
 
 	public static Receive[] createPrint2Data(ASN[] asns, PlatformTransactionManager globalTransactionManager, EntityManager em, IOrganizationDAOService orgDaoService,

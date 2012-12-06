@@ -38,6 +38,7 @@ import com.conx.logistics.kernel.ui.components.domain.form.CollapsibleConfirmAct
 import com.conx.logistics.kernel.ui.components.domain.form.CollapsiblePhysicalAttributeConfirmActualsForm;
 import com.conx.logistics.kernel.ui.components.domain.form.ConXCollapseableSectionForm;
 import com.conx.logistics.kernel.ui.components.domain.form.ConXForm;
+import com.conx.logistics.kernel.ui.components.domain.form.ConXSimpleForm;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorContainerComponent;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent;
@@ -49,6 +50,7 @@ import com.conx.logistics.kernel.ui.components.domain.table.EntityMatchGrid;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.search.EntitySearchGrid;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinCollapsibleSectionForm;
+import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinSimpleForm;
 import com.conx.logistics.kernel.ui.vaadin.common.ConXAbstractSplitPanel.ISplitPositionChangeListener;
 import com.conx.logistics.kernel.ui.vaadin.common.ConXVerticalSplitPanel;
 import com.vaadin.ui.Component;
@@ -70,6 +72,7 @@ public class VaadinPageFactoryImpl {
 	}
 
 	public Component createComponent(AbstractConXComponent componentModel) {
+		assert componentModel != null: "componentModel must be not null";
 		if (componentModel instanceof MasterDetailComponent) {
 			ConXVerticalSplitPanel splitPanel = new ConXVerticalSplitPanel();
 			splitPanel.setSizeFull();
@@ -112,10 +115,13 @@ public class VaadinPageFactoryImpl {
 			return new VaadinMatchGrid((EntityMatchGrid) componentModel);
 		} else if (componentModel instanceof CollapsiblePhysicalAttributeConfirmActualsForm) {
 			return new VaadinCollapsiblePhysicalAttributeConfirmActualsForm((CollapsiblePhysicalAttributeConfirmActualsForm) componentModel);
+		} else if (componentModel instanceof ConXSimpleForm) {
+			return new VaadinSimpleForm((ConXSimpleForm) componentModel);
 		}
-
+		else
+			throw new IllegalArgumentException(componentModel.getCaption() + "is not support");
 		// FIXME this should return null
-		return new VerticalLayout();
+		//return new VerticalLayout();
 	}
 
 	public Component create(AbstractConXComponent componentModel) {

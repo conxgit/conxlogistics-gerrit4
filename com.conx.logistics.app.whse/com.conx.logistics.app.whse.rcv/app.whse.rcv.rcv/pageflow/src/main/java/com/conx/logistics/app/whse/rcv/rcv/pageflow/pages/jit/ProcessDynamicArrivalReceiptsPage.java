@@ -16,11 +16,13 @@ import com.conx.logistics.kernel.ui.components.domain.attachment.AttachmentEdito
 import com.conx.logistics.kernel.ui.components.domain.editor.MultiLevelEntityEditor;
 import com.conx.logistics.kernel.ui.components.domain.form.CollapsiblePhysicalAttributeConfirmActualsForm;
 import com.conx.logistics.kernel.ui.components.domain.form.ConXCollapseableSectionForm;
+import com.conx.logistics.kernel.ui.components.domain.form.ConXSimpleForm;
 import com.conx.logistics.kernel.ui.components.domain.form.FieldSet;
 import com.conx.logistics.kernel.ui.components.domain.form.FieldSetField;
 import com.conx.logistics.kernel.ui.components.domain.form.PhysicalAttributeConfirmActualsFieldSet;
 import com.conx.logistics.kernel.ui.components.domain.form.PhysicalAttributeConfirmActualsFieldSetField;
 import com.conx.logistics.kernel.ui.components.domain.layout.ConXGridLayout;
+import com.conx.logistics.kernel.ui.components.domain.masterdetail.CreateNewLineEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorContainerComponent;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent;
@@ -66,6 +68,9 @@ public class ProcessDynamicArrivalReceiptsPage extends BasePageFlowPage implemen
 	}
 	
 	private MasterDetailComponent buildArrivalReceiptLineMasterDetail(DataSource fileEntryDataSource, DataSource referenceNumberDs, DataSource arrivalReceiptDataSource) {
+		/**
+		 * Create receiveLine grid: ds etc
+		 */
 		EntityType receiveLineType = new EntityType("Receive Line", ReceiveLine.class, null, null, null, "whreceiveline");
 		DataSource receiveLineDs = new DataSource("receiveLineDS", receiveLineType);
 		DataSourceField receiveLineDsField = new DataSourceField("name", receiveLineDs, receiveLineDs, receiveLineType, "Name", null);
@@ -88,7 +93,13 @@ public class ProcessDynamicArrivalReceiptsPage extends BasePageFlowPage implemen
 		receiveLineDsField.setHidden(false);
 		receiveLineDs.getDSFields().add(receiveLineDsField);
 
+		/**
+		 * Create stockItem dataSources
+		 */		
 		EntityType stockItemType = new EntityType("Stock Item", StockItem.class, null, null, null, "whstockitem");
+
+		
+		//-- stockItem dataSources: stockItemDS
 		DataSource stockItemDs = new DataSource("stockItemDS", stockItemType);
 		DataSourceField stockItemDsField = new DataSourceField("name", stockItemDs, stockItemDs, stockItemType, "Name", null);
 		stockItemDsField.setHidden(false);
@@ -100,16 +111,63 @@ public class ProcessDynamicArrivalReceiptsPage extends BasePageFlowPage implemen
 		stockItemDsField.setHidden(false);
 		stockItemDs.getDSFields().add(stockItemDsField);
 
+		//- StockItem Grid
 		EntityMatchGrid grid = new EntityMatchGrid(receiveLineDs, stockItemDs);
 
+		//- StockItem LineEditor Container
 		LineEditorContainerComponent lecc = new LineEditorContainerComponent();
+		
+		//-- LE: New StockItem  Form
+		DataSource newStockItemDS = new DataSource("newStockItemDS", stockItemType);
+		FieldSet newSIFormFieldSet = new FieldSet();
+		
+		//--- Shipper
+		DataSourceField dsField = new DataSourceField("shipper", newStockItemDS, newStockItemDS, stockItemType, "Shipper", null);
+		dsField.setRequired(true);
+		newStockItemDS.getDSFields().add(dsField);
+		FieldSetField fsf = new FieldSetField(0, dsField, null);
+		newSIFormFieldSet.getFields().add(fsf);
+		
+		//--- Consignee
+		dsField = new DataSourceField("consignee", newStockItemDS, newStockItemDS, stockItemType, "Consignee", null);
+		dsField.setRequired(true);
+		newStockItemDS.getDSFields().add(dsField);
+		fsf = new FieldSetField(0, dsField, null);
+		newSIFormFieldSet.getFields().add(fsf);
+		
+		//--- Product
+		dsField = new DataSourceField("product", newStockItemDS, newStockItemDS, stockItemType, "Product", null);
+		dsField.setRequired(true);
+		newStockItemDS.getDSFields().add(dsField);
+		fsf = new FieldSetField(0, dsField, null);
+		newSIFormFieldSet.getFields().add(fsf);		
+		
+		//--- Product
+		dsField = new DataSourceField("groupSize", newStockItemDS, newStockItemDS, stockItemType, "Group Size", null);
+		dsField.setRequired(true);
+		newStockItemDS.getDSFields().add(dsField);
+		fsf = new FieldSetField(0, dsField, null);
+		newSIFormFieldSet.getFields().add(fsf);		
+		
+		ConXSimpleForm newSIForm = new ConXSimpleForm(newStockItemDS);
+		newSIForm.setFieldSet(newSIFormFieldSet);
+		newSIForm.setCaption("Required Fields");
+		
+		CreateNewLineEditorComponent cnlec = new CreateNewLineEditorComponent(lecc);
+		cnlec.setOrdinal(2);
+		cnlec.setCaption("Enter New StockItem Fields");
+		cnlec.setContent(newSIForm);
+		lecc.getLineEditors().add(cnlec);
 
+		
+		//-- LE: StockItem Attachments
 		LineEditorComponent lec = new LineEditorComponent(lecc);
 		lec.setCaption("Attachments");
 		lec.setOrdinal(100);
 		lec.setContent(new AttachmentEditorComponent(fileEntryDataSource));
 		lecc.getLineEditors().add(lec);
 		
+		//-- LE: StockItem Ref Nums
 		lec = new LineEditorComponent(lecc);
 		lec.setCaption("Reference Numbers");
 		lec.setOrdinal(101);
@@ -118,22 +176,23 @@ public class ProcessDynamicArrivalReceiptsPage extends BasePageFlowPage implemen
 		
 		DataSource ds = new DataSource("stockItemDS", stockItemType);
 		
+		//-- LE: StockItem Organization Form
 		ConXCollapseableSectionForm orgForm = new ConXCollapseableSectionForm(ds);
 		orgForm.setCaption("Organization");
 		FieldSet orgFieldSet = new FieldSet();
 		orgFieldSet.setCaption("General");
 		orgFieldSet.setForm(orgForm);
-		DataSourceField dsField = new DataSourceField("shipper", ds, ds, stockItemType, "Shipper Organization", null);
+		dsField = new DataSourceField("shipper", ds, ds, stockItemType, "Shipper Organization", null);
 		ds.getDSFields().add(dsField);
-		FieldSetField fsf = new FieldSetField(0, dsField, orgFieldSet);
+		fsf = new FieldSetField(0, dsField, orgFieldSet);
 		orgFieldSet.getFields().add(fsf);
 		dsField = new DataSourceField("consignee", ds, ds, stockItemType, "Consignee Organization", null);
 		ds.getDSFields().add(dsField);
 		fsf = new FieldSetField(0, dsField, orgFieldSet);
 		orgFieldSet.getFields().add(fsf);
-		
 		orgForm.getFieldSetSet().add(orgFieldSet);
 		
+		//-- LE: StockItem Basic Form
 		ConXCollapseableSectionForm basicForm = new ConXCollapseableSectionForm(ds);
 		basicForm.setCaption("Basic");
 		FieldSet fieldSet = new FieldSet();
@@ -148,7 +207,20 @@ public class ProcessDynamicArrivalReceiptsPage extends BasePageFlowPage implemen
 		fsf = new FieldSetField(0, dsField, fieldSet);
 		fieldSet.getFields().add(fsf);
 		basicForm.getFieldSetSet().add(fieldSet);
-
+		
+		lec = new LineEditorComponent(lecc);
+		lec.setOrdinal(1);
+		lec.setCaption("Basic");
+		lec.setContent(basicForm);
+		lecc.getLineEditors().add(lec);
+		
+		lec = new LineEditorComponent(lecc);
+		lec.setOrdinal(2);
+		lec.setCaption("Organization");
+		lec.setContent(orgForm);
+		lecc.getLineEditors().add(lec);
+		
+		//-- LE: StockItem Weight & Dims Form
 		CollapsiblePhysicalAttributeConfirmActualsForm weightDimsForm = new CollapsiblePhysicalAttributeConfirmActualsForm(stockItemDs, "Confirm Truck Info");
 		// Weight FieldSet
 		PhysicalAttributeConfirmActualsFieldSet physicalAttributefieldSet = new PhysicalAttributeConfirmActualsFieldSet();
@@ -264,18 +336,8 @@ public class ProcessDynamicArrivalReceiptsPage extends BasePageFlowPage implemen
 		lec.setContent(weightDimsForm);
 		lecc.getLineEditors().add(lec);
 		
-		lec = new LineEditorComponent(lecc);
-		lec.setOrdinal(1);
-		lec.setCaption("Basic");
-		lec.setContent(basicForm);
-		lecc.getLineEditors().add(lec);
-		
-		lec = new LineEditorComponent(lecc);
-		lec.setOrdinal(2);
-		lec.setCaption("Organization");
-		lec.setContent(orgForm);
-		lecc.getLineEditors().add(lec);
 
+		//-- MDE
 		MasterDetailComponent mdc = new MasterDetailComponent();
 		mdc.setMasterComponent(grid);
 		mdc.setLineEditorPanel(lecc);

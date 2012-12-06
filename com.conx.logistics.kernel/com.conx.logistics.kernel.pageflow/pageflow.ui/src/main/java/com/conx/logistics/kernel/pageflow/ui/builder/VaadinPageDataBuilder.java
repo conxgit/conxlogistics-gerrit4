@@ -256,7 +256,9 @@ public class VaadinPageDataBuilder {
 			@Override
 			public Object onNewBean(Class<?> type) {
 				try {
-					return (Object) saveInstance(type.newInstance(), daoProvider, itemBean);
+					// TODO
+					return type.newInstance();
+//					return (Object) saveInstance(type.newInstance(), daoProvider, itemBean);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

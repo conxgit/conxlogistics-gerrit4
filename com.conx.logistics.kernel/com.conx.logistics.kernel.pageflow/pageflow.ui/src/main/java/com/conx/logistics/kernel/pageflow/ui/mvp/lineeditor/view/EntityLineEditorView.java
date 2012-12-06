@@ -60,4 +60,10 @@ public class EntityLineEditorView extends VerticalLayout implements IEntityLineE
 	public EntityLineEditorView() {
 		setSizeFull();
 	}
+
+	@Override
+	public void removeAllTabs() {
+		if (this.content != null)
+			this.content.removeAllComponents();
+	}
 }
