@@ -69,10 +69,10 @@ public class ReceiveDAOImpl implements IReceiveDAOService {
 
 	@Autowired
 	private IArrivalDAOService arrivalDAOService;
-	
+
 	@Autowired
 	private IOrganizationDAOService orgDAOService;
-	
+
 	@Autowired
 	private IWarehouseDAOService warehouseDAOService;
 
@@ -149,21 +149,22 @@ public class ReceiveDAOImpl implements IReceiveDAOService {
 
 		Receive rcv = new Receive();
 		rcv = add(rcv);
-		asn = em.merge(asn);
 
-		// -Assign defaults
-		assignRcvCode(rcv, asn.getWarehouse()/* warehouse */, rcv.getId());
-
-		// -Copy basic attrs
+		assignCode(rcv, asn);
 		rcv.setWarehouse(asn.getWarehouse());
+		rcv.setShippedFrom(asn.getShippedFrom());
+		rcv.setConsignee(asn.getConsignee());
+		rcv.setVolUnit(asn.getVolUnit());
+		rcv.setWeightUnit(asn.getWeightUnit());
+		rcv.setExpectedTotalLen(asn.getExpectedTotalLen());
+		rcv.setExpectedTotalWidth(asn.getExpectedTotalWidth());
+		rcv.setExpectedTotalHeight(asn.getExpectedTotalHeight());
+		rcv.setDimUnit(asn.getDimUnit());
+		rcv.setOuterPackUnit(asn.getOuterPackUnit());
+		rcv.setTenant(asn.getTenant());
 
-		// -Copy singular attrs
-		copySingularAttrs(rcv, asn);
-
-		// -Copy plural attrs
-		// -- Pickup/Dropoff
-		// rcv.setPickUp(copyPickUp(asn.getPickup()));
-		// rcv.setDropOff(copyDropOff(asn.getDropOff()));
+		// TODO MAKE SURE THE ASN'S PICKUP AND DROPOFF GET COPIED INTO THE
+		// RECEIVE
 
 		// -- RcvLine's
 		for (ASNLine asnLine : asn.getAsnLines()) {
@@ -214,12 +215,6 @@ public class ReceiveDAOImpl implements IReceiveDAOService {
 		rcv = update(rcv);
 
 		return fe;
-	}
-
-	private void copySingularAttrs(Receive rcv, ASN asn) {
-		rcv.setDimUnit(asn.getDimUnit());
-		rcv.setOuterPackUnit(asn.getOuterPackUnit());
-		rcv.setTenant(asn.getTenant());
 	}
 
 	private DropOff copyDropOff(ASNDropOff asnDropOff) {
@@ -280,12 +275,24 @@ public class ReceiveDAOImpl implements IReceiveDAOService {
 		return rl;
 	}
 
-	private void assignRcvCode(Receive newRecord, Warehouse warehouse, Long id) {
+	private void assignCode(Receive newRecord) {
 		String format = String.format("%%0%dd", 6);
-		String paddedId = String.format(format, id);
-		String code = "R" + warehouse.getCode() + paddedId;
+		String paddedId = String.format(format, newRecord.getId());
+		String code = "R" + paddedId;
 		newRecord.setName(code);
 		newRecord.setCode(code);
+	}
+
+	private void assignCode(Receive receive, ASN parentAsn) {
+		if (parentAsn == null || parentAsn.getName() == null) {
+			assignCode(receive);
+		} else {
+			String format = String.format("%%0%dd", 3);
+			String paddedId = String.format(format, receive.getId());
+			String code = parentAsn.getName() + "-R" + String.valueOf(paddedId);
+			receive.setName(code);
+			receive.setCode(code);
+		}
 	}
 
 	@Override
@@ -317,15 +324,15 @@ public class ReceiveDAOImpl implements IReceiveDAOService {
 
 		return arvl;
 	}
-	
+
 	@Override
 	public Receive provide(Organization shipper, Organization consignee, Warehouse warehouse) {
 		Query q = em
-				.createQuery("select o from com.conx.logistics.app.whse.rcv.rcv.domain.Receive o WHERE o.consignee = :consignee AND o.shipper = :shipper");
-		q.setParameter("consignee", consignee);
-		q.setParameter("shipper", shipper);
+				.createQuery("select o from com.conx.logistics.app.whse.rcv.rcv.domain.Receive o WHERE o.consignee.id = :consigneeId AND o.shipper.id = :shipperId");
+		q.setParameter("consigneeId", consignee.getId());
+		q.setParameter("shipperId", shipper.getId());
 
-		List result =  q.getResultList();
+		List<?> result = q.getResultList();
 		if (result.size() > 0) {
 			return (Receive) result.get(0);
 		} else {
@@ -334,7 +341,7 @@ public class ReceiveDAOImpl implements IReceiveDAOService {
 			rcv.setConsignee(consignee);
 			rcv.setWarehouse(warehouse);
 			rcv = em.merge(rcv);
-			assignRcvCode(rcv, warehouse, rcv.getId());
+			assignCode(rcv);
 			return em.merge(rcv);
 		}
 	}
@@ -343,13 +350,6 @@ public class ReceiveDAOImpl implements IReceiveDAOService {
 	public Receive provideDefault() {
 		Organization defaultOrg = this.orgDAOService.provideDefault();
 		Warehouse defaultWarehouse = this.warehouseDAOService.provideDefault();
-		
-		Receive rcv = new Receive();
-		rcv.setShipper(defaultOrg);
-		rcv.setConsignee(defaultOrg);
-		rcv.setWarehouse(defaultWarehouse);
-		rcv = em.merge(rcv);
-		assignRcvCode(rcv, defaultWarehouse, rcv.getId());
-		return em.merge(rcv);
+		return provide(defaultOrg, defaultOrg, defaultWarehouse);
 	}
 }

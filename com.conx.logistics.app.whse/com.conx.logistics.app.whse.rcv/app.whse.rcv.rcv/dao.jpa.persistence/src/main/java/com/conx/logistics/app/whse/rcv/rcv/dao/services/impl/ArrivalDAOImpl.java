@@ -28,29 +28,30 @@ import com.conx.logistics.mdm.domain.note.Note;
 import com.conx.logistics.mdm.domain.note.NoteItem;
 import com.conx.logistics.mdm.domain.note.NoteType;
 
-
 /**
- * Implementation of {@link Arrival} that uses JPA for persistence.<p />
+ * Implementation of {@link Arrival} that uses JPA for persistence.
+ * <p />
  * <p/>
- * This class is marked as {@link Transactional}. The Spring configuration for this module, enables AspectJ weaving for
- * adding transaction demarcation to classes annotated with <code>@Transactional</code>.
+ * This class is marked as {@link Transactional}. The Spring configuration for
+ * this module, enables AspectJ weaving for adding transaction demarcation to
+ * classes annotated with <code>@Transactional</code>.
  */
 @Transactional
 @Repository
 public class ArrivalDAOImpl implements IArrivalDAOService {
-	protected Logger logger = LoggerFactory.getLogger(this.getClass());	
-    /**
-     * Spring will inject a managed JPA {@link EntityManager} into this field.
-     */
-    @PersistenceContext
-    private EntityManager em;	
-    
-    @Autowired
-    private IRemoteDocumentRepository documentRepositoryService;
-    
-    @Autowired
-    private IEntityTypeDAOService entityTypeDAOService;
-    
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
+	/**
+	 * Spring will inject a managed JPA {@link EntityManager} into this field.
+	 */
+	@PersistenceContext
+	private EntityManager em;
+
+	@Autowired
+	private IRemoteDocumentRepository documentRepositoryService;
+
+	@Autowired
+	private IEntityTypeDAOService entityTypeDAOService;
+
 	public void setEm(EntityManager em) {
 		this.em = em;
 	}
@@ -58,37 +59,51 @@ public class ArrivalDAOImpl implements IArrivalDAOService {
 	@Override
 	public Arrival get(long id) {
 		return em.getReference(Arrival.class, id);
-	}    
+	}
 
 	@Override
 	public List<Arrival> getAll() {
-		return em.createQuery("select o from com.conx.logistics.app.whse.rcv.rcv.domain.Arrival o",Arrival.class).getResultList();
-	}	
+		return em.createQuery("select o from com.conx.logistics.app.whse.rcv.rcv.domain.Arrival o", Arrival.class).getResultList();
+	}
+
+	private void assignCode(Arrival arrival) {
+		String format = String.format("%%0%dd", 6);
+		String paddedId = String.format(format, arrival.getId());
+		String code = "A" + paddedId;
+		arrival.setName(code);
+		arrival.setCode(code);
+	}
+
+	private void assignCode(Arrival arrival, Receive parentReceive) {
+		if (parentReceive == null || parentReceive.getName() == null) {
+			assignCode(arrival);
+		} else {
+			String format = String.format("%%0%dd", 3);
+			String paddedId = String.format(format, arrival.getId());
+			String code = parentReceive.getName() + "-A" + String.valueOf(paddedId);
+			arrival.setName(code);
+			arrival.setCode(code);
+		}
+	}
 
 	@Override
 	public Arrival add(Arrival arvl, Receive parentReceive) throws Exception {
-//		em.joinTransaction();
 		arvl.setReceive(parentReceive);
 		arvl = em.merge(arvl);
-		
-	    String format = String.format("%%0%dd",2); 
-	    String paddedId = String.format(format,arvl.getId());
-	    String code = "A"+parentReceive.getCode()+"-"+paddedId;
-	    arvl.setName(code);		
-	    arvl.setCode(code);
-		
-		//Doc Folder
+		assignCode(arvl, parentReceive);
+
+		// Doc Folder
 		EntityType et = entityTypeDAOService.provide(Arrival.class);
 		Folder fldr = documentRepositoryService.provideFolderForEntity(et, arvl.getId());
 		fldr = em.merge(fldr);
 		arvl.setDocFolder(fldr);
-		
-		//Note
+
+		// Note
 		Note note = new Note();
 		note.setCode(arvl.getCode());
 		note = em.merge(note);
 		arvl.setNote(note);
-		
+
 		arvl = em.merge(arvl);
 		em.flush();
 		return arvl;
@@ -106,7 +121,7 @@ public class ArrivalDAOImpl implements IArrivalDAOService {
 
 	public ArrivalReceipt addArrivalReceipt(Long arrivalId, ArrivalReceipt receipt) throws Exception {
 		Arrival arrv = null;
-		try {		
+		try {
 			arrv = em.getReference(Arrival.class, arrivalId);
 			receipt.setParentArrival(arrv);
 			receipt.setOwnerEntityId(arrivalId);
@@ -118,30 +133,32 @@ public class ArrivalDAOImpl implements IArrivalDAOService {
 			e.printStackTrace(new PrintWriter(sw));
 			String stacktrace = sw.toString();
 			logger.error(stacktrace);
-			
+
 			throw e;
-		}	
-		
+		}
+
 		return receipt;
 	}
-	
+
 	@Override
-	public FileEntry addAttachment(Long arvlId, String sourceFileName, String title, String description, String mimeType, DocType attachmentType) throws Exception {
+	public FileEntry addAttachment(Long arvlId, String sourceFileName, String title, String description, String mimeType,
+			DocType attachmentType) throws Exception {
 		Arrival arvl = get(arvlId);
-		FileEntry fe = documentRepositoryService.addorUpdateFileEntry(arvl,attachmentType,sourceFileName, mimeType, title, description);
+		FileEntry fe = documentRepositoryService.addorUpdateFileEntry(arvl, attachmentType, sourceFileName, mimeType, title, description);
 		arvl = update(arvl);
-		
+
 		return fe;
 	}
-	
+
 	@Override
-	public FileEntry addAttachment(Long arvlId, File sourceFile, String title, String description, String mimeType, DocType attachmentType) throws Exception {
+	public FileEntry addAttachment(Long arvlId, File sourceFile, String title, String description, String mimeType, DocType attachmentType)
+			throws Exception {
 		Arrival arvl = get(arvlId);
-		FileEntry fe = documentRepositoryService.addorUpdateFileEntry(arvl,attachmentType,sourceFile, mimeType, title, description);
+		FileEntry fe = documentRepositoryService.addorUpdateFileEntry(arvl, attachmentType, sourceFile, mimeType, title, description);
 		arvl = update(arvl);
-		
+
 		return fe;
-	}	
+	}
 
 	@Override
 	public NoteItem addNoteItem(Long arvlId, String content, NoteType noteType) throws Exception {
@@ -151,11 +168,11 @@ public class ArrivalDAOImpl implements IArrivalDAOService {
 		ni.setNoteType(noteType);
 		ni.setContent(content);
 		ni = em.merge(ni);
-		
+
 		arvl.getNote().getNotes().add(ni);
-		
+
 		arvl = em.merge(arvl);
-		
+
 		return ni;
 	}
 }

@@ -88,12 +88,30 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 
 	@Autowired
 	private IReceiveDAOService receiveDAOService;
-	
+
 	@Autowired
 	private IProductDAOService productDAOService;
 
+	private ReceiveLineStockItemSet getStockItemSetByStockItem(Long stockItemPK) throws Exception {
+		StockItem stockItem = get(stockItemPK);
+
+		Query q = em
+				.createQuery("select o from com.conx.logistics.app.whse.rcv.rcv.domain.ReceiveLineStockItemSet o WHERE o.id = :itemSetId");
+		q.setParameter("itemSetId", stockItem.getOwnerEntityId());
+		ReceiveLineStockItemSet itemSet = null;
+		try {
+			itemSet = (ReceiveLineStockItemSet) q.getSingleResult();
+			return itemSet;
+		} catch (NoResultException e) {
+			return null;
+		} catch (NonUniqueResultException e) {
+			throw new Exception("There was more than one ReceiveLineStockItemSet for this ReceiveLine");
+		}
+	}
+
 	private ReceiveLineStockItemSet getStockItemSetByReceiveLine(Long receiveLinePK) throws Exception {
-		Query q = em.createQuery("select o from com.conx.logistics.app.whse.rcv.rcv.domain.ReceiveLineStockItemSet o WHERE o.receiveLine.id = :receiveLineId");
+		Query q = em
+				.createQuery("select o from com.conx.logistics.app.whse.rcv.rcv.domain.ReceiveLineStockItemSet o WHERE o.receiveLine.id = :receiveLineId");
 		q.setParameter("receiveLineId", receiveLinePK);
 		ReceiveLineStockItemSet itemSet = null;
 		try {
@@ -106,14 +124,15 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 		}
 	}
 
-	private ReceiveLineStockItemSet provideStockItemSet(ReceiveLine receiveLine, ArrivalReceipt parentArrivalReceipt, ArrivalReceiptLine parentArrivalReceiptLine) throws Exception {
+	private ReceiveLineStockItemSet provideStockItemSet(ReceiveLine receiveLine, ArrivalReceipt parentArrivalReceipt,
+			ArrivalReceiptLine parentArrivalReceiptLine) throws Exception {
 		assert (receiveLine != null);
 		assert (receiveLine.getId() != null);
 		assert (parentArrivalReceipt != null);
 		assert (parentArrivalReceipt.getId() != null);
 		assert (parentArrivalReceiptLine != null);
 		assert (parentArrivalReceiptLine.getId() != null);
-		
+
 		ReceiveLineStockItemSet itemSet = getStockItemSetByReceiveLine(receiveLine.getId());
 		if (itemSet == null) {
 			itemSet = new ReceiveLineStockItemSet();
@@ -128,14 +147,15 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 	}
 
 	@Override
-	public StockItem addOneOfGroup(StockItem newRecord, Long receiveLinePK, Long arrivalReceiptPK, Long arrivalReceiptLinePK) throws Exception {
+	public StockItem addOneOfGroup(StockItem newRecord, Long receiveLinePK, Long arrivalReceiptPK, Long arrivalReceiptLinePK)
+			throws Exception {
 		ReceiveLine parentReceiveLine = em.getReference(ReceiveLine.class, receiveLinePK);
 		assert Validator.isNotNull(parentReceiveLine);
 		ArrivalReceipt parentArrivalReceipt = em.getReference(ArrivalReceipt.class, arrivalReceiptPK);
 		assert Validator.isNotNull(parentArrivalReceipt);
 		ArrivalReceiptLine parentArrivalReceiptLine = em.getReference(ArrivalReceiptLine.class, arrivalReceiptLinePK);
 		assert Validator.isNotNull(parentArrivalReceiptLine);
-		
+
 		ReceiveLineStockItemSet itemSet = provideStockItemSet(parentReceiveLine, parentArrivalReceipt, parentArrivalReceiptLine);
 		newRecord = processRegularStockItem(newRecord, itemSet);
 		return newRecord;
@@ -345,23 +365,6 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 		Arrival parentArrival = itemSet.getArrival();
 		String parentRcvLineName = parentRcvLine.getName();
 
-		String arrvlItemName = null;
-		if (Validator.isNotNull(itemSet.getGroupSize()) && itemSet.getGroupSize() > 0) {
-			String formatIndex = String.format("%02d", stockItem.getGroupIndex());
-			String formatSize = String.format("%02d", itemSet.getGroupSize());
-			arrvlItemName = parentRcvLineName + "L" + parentRcvLine.getLineNumber() + formatIndex + "_" + formatSize;
-		} else {
-			arrvlItemName = parentRcvLineName + "L" + parentRcvLine.getLineNumber() + "_" + (parentRcvLine.getArrivedInnerPackCount() == null ? "0" : parentRcvLine.getArrivedInnerPackCount());
-		}
-		
-		StockItem existingStockItem = getByCode(arrvlItemName);
-		if (existingStockItem == null) {
-			stockItem.setName(arrvlItemName);
-			stockItem.setCode(arrvlItemName);
-		} else {
-			stockItem = existingStockItem;
-		}
-		
 		// -- Update ArrivalReceipt[Line]
 		if (Validator.isNull(itemSet.getArrivalReceiptLine())) {
 			ArrivalReceipt ar = itemSet.getArrivalReceipt();
@@ -428,13 +431,23 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 		stockItem.setOuterPackUnit(parentRcvLine.getProduct().getOuterPackUnit());
 		stockItem.setExpectedOuterPackCount(parentRcvLine.getProduct().getOuterPackCount());
 		stockItem.setOuterPackCount(parentRcvLine.getProduct().getOuterPackCount());
-		
+
 		stockItem.setOwnerEntityId(itemSet.getId());
 
 		Folder fldr = documentRepositoryService.provideFolderForEntity(et, stockItem.getId());
 		stockItem.setDocFolder(fldr);
 
 		stockItem = (StockItem) update(stockItem);
+		
+		String arrvlItemName = null;
+		String format = String.format("%%0%dd", 3);
+		String paddedId = String.format(format, stockItem.getId());
+		arrvlItemName = parentRcvLineName + "-SI" + paddedId;
+		
+		stockItem.setName(arrvlItemName);
+		stockItem.setCode(arrvlItemName);
+		stockItem = em.merge(stockItem);
+				
 		log.debug("Created Stock Item[" + stockItem.getName() + "]...");
 
 		itemSet.getStockItems().add(stockItem);
@@ -442,12 +455,12 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 
 		// Update parent receive line
 		updateParentRcvLine(stockItem, null, itemSet, false);
-		em.flush();
-		
+
 		return stockItem;
 	}
 
-	public void updateParentRcvLine(StockItem arrvlItemNew, StockItem arrvlItemOld, ReceiveLineStockItemSet itemSet, boolean delete) throws Exception {
+	public void updateParentRcvLine(StockItem arrvlItemNew, StockItem arrvlItemOld, ReceiveLineStockItemSet itemSet, boolean delete)
+			throws Exception {
 		ReceiveLine rcvLine_ = null;
 		rcvLine_ = itemSet.getReceiveLine();
 
@@ -462,7 +475,8 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 			throw new Exception("Cannot attach a Stock Item to a Receive Line with an expected inner pack count of 0 (or null).");
 		} else if (expectedReceiveLineInnerPackCount == 0) {
 			// FIXME LOG AN ERROR - THIS SHOULD NOT HAPPEN
-//			throw new Exception("Cannot attach a Stock Item to a Receive Line with an expected inner pack count of 0 (or null).");
+			// throw new
+			// Exception("Cannot attach a Stock Item to a Receive Line with an expected inner pack count of 0 (or null).");
 			expectedReceiveLineInnerPackCount = 1;
 		}
 		if (arrivedReceiveLineInnerPackCount == null) {
@@ -474,7 +488,8 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 			arrvlItemNew = em.merge(arrvlItemNew);
 		} else if (stockItemPackCount == 0) {
 			// FIXME LOG AN ERROR - THIS SHOULD NOT HAPPEN
-//			throw new Exception("Stock Item Inner Pack count is zero - this should be impossible");
+			// throw new
+			// Exception("Stock Item Inner Pack count is zero - this should be impossible");
 			stockItemPackCount = 1;
 		}
 		arrivedReceiveLineInnerPackCount += stockItemPackCount;
@@ -502,7 +517,8 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 	}
 
 	private void updateOwnerReceive(ReceiveLine rcvLine_) throws Exception {
-		int ttlLinesArrived = receiveLineDAOService.findReceiveLinesByStatusAndReceive(RECEIVELINESTATUS.ARRIVED, rcvLine_.getParentReceive().getId()).size();
+		int ttlLinesArrived = receiveLineDAOService.findReceiveLinesByStatusAndReceive(RECEIVELINESTATUS.ARRIVED,
+				rcvLine_.getParentReceive().getId()).size();
 		int ttlLines = rcvLine_.getParentReceive().getRcvLines().size();
 		log.debug("Receive[" + rcvLine_.getName() + "] ttlLinesArrived:" + ttlLinesArrived);
 		log.debug("Receive[" + rcvLine_.getName() + "] ttlLines:" + ttlLines);
@@ -530,8 +546,24 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 		 * * convFactor.intValue()); }
 		 */
 		// Product.updateProductAvailability(record.getProduct());
-
-		return em.merge(record);
+		record = em.merge(record);
+		ReceiveLineStockItemSet itemSet = getStockItemSetByStockItem(record.getId());
+		if (itemSet != null) {
+			if (itemSet.getStockItems().size() == 1) {
+				// Only perform this update if this is the only StockItem for
+				// the whole Receive
+				Receive receive = itemSet.getArrivalReceipt().getParentArrival().getReceive();
+				if (receive.getRcvLines().size() == 1) {
+					if (record.getShipper() != null) {
+						receive.setShipper(record.getShipper());
+					}
+					if (record.getConsignee() != null) {
+						receive.setConsignee(record.getConsignee());
+					}
+				}
+			}
+		}
+		return record;
 	}
 
 	@Override
@@ -567,25 +599,17 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 		assert Validator.isNotNull(parentArrivalReceipt);
 		ArrivalReceiptLine parentArrivalReceiptLine = em.getReference(ArrivalReceiptLine.class, arrivalReceiptLinePK);
 		assert Validator.isNotNull(parentArrivalReceiptLine);
-		
+
 		Receive defaultReceive = null;
-		if (parentArrivalReceipt.getParentArrival() != null) {
-			if (parentArrivalReceipt.getParentArrival().getReceive() != null) {
-				defaultReceive = parentArrivalReceipt.getParentArrival().getReceive();
-			}
-		}
-		
-		if (defaultReceive == null) {
-			defaultReceive = receiveDAOService.provideDefault();
-		}
-		
+		defaultReceive = receiveDAOService.provideDefault();
+
 		ReceiveLine receiveLine = new ReceiveLine();
 		receiveLine.setExpectedInnerPackCount(1);
 		receiveLine.setProduct(this.productDAOService.provideDefaultProduct());
 		receiveLine.setStatus(RECEIVELINESTATUS.ARRIVING);
 		receiveLine.setExpectedInnerPackCount(newRecord.getGroupSize());
 		receiveLine = receiveLineDAOService.add(receiveLine, defaultReceive.getId());
-		
+
 		ReceiveLineStockItemSet itemSet = provideStockItemSet(receiveLine, parentArrivalReceipt, parentArrivalReceiptLine);
 		newRecord = processRegularStockItem(newRecord, itemSet);
 		return newRecord;

@@ -41,11 +41,11 @@ public class StockItem extends MultitenantBaseEntity {
 	
 	@ManyToOne(targetEntity = Organization.class, fetch = FetchType.LAZY)
 	@JoinColumn
-	private Product shipper;
+	private Organization shipper;
 	
 	@ManyToOne(targetEntity = Organization.class, fetch = FetchType.LAZY)
 	@JoinColumn
-	private Product consignee;
+	private Organization consignee;
 
 	@OneToOne(targetEntity = CommercialRecord.class, fetch = FetchType.LAZY)
 	@JoinColumn
@@ -473,19 +473,19 @@ public class StockItem extends MultitenantBaseEntity {
 		this.groupSize = groupSize;
 	}
 
-	public Product getShipper() {
+	public Organization getShipper() {
 		return shipper;
 	}
 
-	public void setShipper(Product shipper) {
+	public void setShipper(Organization shipper) {
 		this.shipper = shipper;
 	}
 
-	public Product getConsignee() {
+	public Organization getConsignee() {
 		return consignee;
 	}
 
-	public void setConsignee(Product consignee) {
+	public void setConsignee(Organization consignee) {
 		this.consignee = consignee;
 	}
 }

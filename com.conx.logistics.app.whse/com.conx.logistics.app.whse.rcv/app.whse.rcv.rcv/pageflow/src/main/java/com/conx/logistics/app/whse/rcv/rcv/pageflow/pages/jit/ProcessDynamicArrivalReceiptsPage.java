@@ -118,14 +118,30 @@ public class ProcessDynamicArrivalReceiptsPage extends BasePageFlowPage implemen
 		
 		DataSource ds = new DataSource("stockItemDS", stockItemType);
 		
+		ConXCollapseableSectionForm orgForm = new ConXCollapseableSectionForm(ds);
+		orgForm.setCaption("Organization");
+		FieldSet orgFieldSet = new FieldSet();
+		orgFieldSet.setCaption("General");
+		orgFieldSet.setForm(orgForm);
+		DataSourceField dsField = new DataSourceField("shipper", ds, ds, stockItemType, "Shipper Organization", null);
+		ds.getDSFields().add(dsField);
+		FieldSetField fsf = new FieldSetField(0, dsField, orgFieldSet);
+		orgFieldSet.getFields().add(fsf);
+		dsField = new DataSourceField("consignee", ds, ds, stockItemType, "Shipper Consignee", null);
+		ds.getDSFields().add(dsField);
+		fsf = new FieldSetField(0, dsField, orgFieldSet);
+		orgFieldSet.getFields().add(fsf);
+		
+		orgForm.getFieldSetSet().add(orgFieldSet);
+		
 		ConXCollapseableSectionForm basicForm = new ConXCollapseableSectionForm(ds);
 		basicForm.setCaption("Basic");
 		FieldSet fieldSet = new FieldSet();
 		
 		fieldSet.setCaption("General");
-		DataSourceField dsField = new DataSourceField("location", ds, ds, stockItemType, "Location", null);
+		dsField = new DataSourceField("location", ds, ds, stockItemType, "Location", null);
 		ds.getDSFields().add(dsField);
-		FieldSetField fsf = new FieldSetField(0, dsField, fieldSet);
+		fsf = new FieldSetField(0, dsField, fieldSet);
 		fieldSet.getFields().add(fsf);
 		dsField = new DataSourceField("product", ds, ds, stockItemType, "Product", null);
 		ds.getDSFields().add(dsField);
@@ -243,7 +259,7 @@ public class ProcessDynamicArrivalReceiptsPage extends BasePageFlowPage implemen
 		weightDimsForm.getFieldSetSet().add(physicalAttributefieldSet);
 
 		lec = new LineEditorComponent(lecc);
-		lec.setOrdinal(2);
+		lec.setOrdinal(3);
 		lec.setCaption("Weight & Dimensions");
 		lec.setContent(weightDimsForm);
 		lecc.getLineEditors().add(lec);
@@ -252,6 +268,12 @@ public class ProcessDynamicArrivalReceiptsPage extends BasePageFlowPage implemen
 		lec.setOrdinal(1);
 		lec.setCaption("Basic");
 		lec.setContent(basicForm);
+		lecc.getLineEditors().add(lec);
+		
+		lec = new LineEditorComponent(lecc);
+		lec.setOrdinal(2);
+		lec.setCaption("Organization");
+		lec.setContent(orgForm);
 		lecc.getLineEditors().add(lec);
 
 		MasterDetailComponent mdc = new MasterDetailComponent();
