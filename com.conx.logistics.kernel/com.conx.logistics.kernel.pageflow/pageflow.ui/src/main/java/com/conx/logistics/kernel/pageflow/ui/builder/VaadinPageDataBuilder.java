@@ -31,9 +31,9 @@ import com.conx.logistics.kernel.pageflow.services.IPageComponent;
 import com.conx.logistics.kernel.pageflow.ui.ext.form.VaadinCollapsibleConfirmActualsForm;
 import com.conx.logistics.kernel.pageflow.ui.ext.form.VaadinConfirmActualsForm;
 import com.conx.logistics.kernel.pageflow.ui.ext.grid.VaadinMatchGrid;
-import com.conx.logistics.kernel.pageflow.ui.ext.grid.VaadinMatchGrid.IBeanConversionListener;
 import com.conx.logistics.kernel.pageflow.ui.ext.grid.VaadinMatchGrid.IMatchListener;
 import com.conx.logistics.kernel.pageflow.ui.ext.mvp.IVaadinDataComponent;
+import com.conx.logistics.kernel.pageflow.ui.mvp.editor.MasterSectionEventBus;
 import com.conx.logistics.kernel.pageflow.ui.mvp.editor.multilevel.MultiLevelEditorPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.editor.multilevel.view.MultiLevelEditorView;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.EntityLineEditorEventBus;
@@ -43,6 +43,7 @@ import com.conx.logistics.kernel.ui.components.domain.search.SearchGrid;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.search.EntitySearchGrid;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityEditorGrid;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityEditorGrid.ISelectListener;
+import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
 import com.conx.logistics.kernel.ui.factory.services.data.IDAOProvider;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinCollapsibleSectionForm;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinForm;
@@ -236,36 +237,7 @@ public class VaadinPageDataBuilder {
 		final Object itemBean = (item instanceof JPAContainerItem<?>) ? ((JPAContainerItem) item).getEntity()
 				: (item instanceof BeanItem<?>) ? ((BeanItem) item).getBean() : null;
 		((VaadinMatchGrid) component).setItemBean(itemBean);
-		((VaadinMatchGrid) component).setBeanConverter(new IBeanConversionListener() {
-			/*
-			 * private boolean returnFlag = false; private Object returnValue =
-			 * null;
-			 */
-
-			@Override
-			public Object onConvertBean(final Object bean, Class<?> originType, final Class<?> targetType) {
-				try {
-					return (Object) saveInstance(targetType.newInstance(), daoProvider, bean, itemBean);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-				return null;
-			}
-
-			@Override
-			public Object onNewBean(Class<?> type) {
-				try {
-					// TODO
-					return type.newInstance();
-//					return (Object) saveInstance(type.newInstance(), daoProvider, itemBean);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-				return null;
-			}
-		});
+		((VaadinMatchGrid) component).setDaoProvider(daoProvider);
 
 		final BeanItemContainer<BaseEntity> matchedContainer = (BeanItemContainer<BaseEntity>) containerProvider
 				.createBeanContainer(((VaadinMatchGrid) component).getMatchedContainerType());
@@ -311,11 +283,19 @@ public class VaadinPageDataBuilder {
 			}
 		});
 
-		if (ReceiveLine.class.isAssignableFrom(((VaadinMatchGrid) component).getUnmatchedContainerType())) {
+		if (((VaadinMatchGrid) component).isDynamic()) {
 			try {
-				((VaadinMatchGrid) component).addParentConsumptionFilter(Filters.not(Filters.eq("status", RECEIVELINESTATUS.ARRIVED)));
+				((VaadinMatchGrid) component).addParentConsumptionFilter(Filters.eq("status", RECEIVELINESTATUS.ARRIVING));
 			} catch (Exception e) {
 				e.printStackTrace();
+			}
+		} else {
+			if (ReceiveLine.class.isAssignableFrom(((VaadinMatchGrid) component).getUnmatchedContainerType())) {
+				try {
+					((VaadinMatchGrid) component).addParentConsumptionFilter(Filters.not(Filters.eq("status", RECEIVELINESTATUS.ARRIVED)));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -510,14 +490,16 @@ public class VaadinPageDataBuilder {
 	private static Map<Class<?>, Collection<Object>> buildParamInstanceMap(Object[] parentInstances) {
 		HashMap<Class<?>, Collection<Object>> paramInstanceMap = new HashMap<Class<?>, Collection<Object>>();
 		for (Object parentInstance : parentInstances) {
-			Collection<Object> collection = paramInstanceMap.get(parentInstance.getClass());
-			if (collection == null) {
-				collection = new LinkedList<Object>();
-				paramInstanceMap.put(parentInstance.getClass(), collection);
-			}
+			if (parentInstance != null) {
+				Collection<Object> collection = paramInstanceMap.get(parentInstance.getClass());
+				if (collection == null) {
+					collection = new LinkedList<Object>();
+					paramInstanceMap.put(parentInstance.getClass(), collection);
+				}
 
-			if (!collection.contains(parentInstance)) {
-				collection.add(parentInstance);
+				if (!collection.contains(parentInstance)) {
+					collection.add(parentInstance);
+				}
 			}
 		}
 		return paramInstanceMap;
@@ -541,6 +523,40 @@ public class VaadinPageDataBuilder {
 			}
 		}
 		return gridAttribute;
+	}
+
+	public static void saveNewInstance(Object instance, IDAOProvider daoProvider, EventBusManager eventBusManager,
+			Map<String, Object> config, Object... parentInstances) throws Exception {
+		if (instance instanceof BaseEntity && ((BaseEntity) instance).getId() == null) {
+			MultiLevelEditorPresenter mlePresenter = (MultiLevelEditorPresenter) config
+					.get(IEntityEditorFactory.FACTORY_PARAM_MVP_CURRENT_MLENTITY_EDITOR_PRESENTER);
+			if (mlePresenter == null) {
+				throw new Exception("The MLE presenter was null, so the entity could not be saved.");
+			}
+
+			Item currentEditorItemDataSource = mlePresenter.getCurrentItemDataSource();
+			Object bean = null;
+			if (currentEditorItemDataSource instanceof BeanItem<?>) {
+				bean = ((BeanItem<?>) currentEditorItemDataSource).getBean();
+			} else if (currentEditorItemDataSource instanceof JPAContainerItem<?>) {
+				bean = ((JPAContainerItem<?>) currentEditorItemDataSource).getEntity();
+			} else {
+				throw new Exception("The current MLE presenter's item datasource was the wrong type.");
+			}
+
+			if (bean == null) {
+				throw new Exception("The bean of the MLE presenter's item datasource was null.");
+			} else {
+				instance = saveInstance(instance, daoProvider, bean);
+			}
+
+			MasterSectionEventBus masterSectionEventBus = eventBusManager.getEventBus(MasterSectionEventBus.class);
+			if (masterSectionEventBus != null) {
+				masterSectionEventBus.addNewBeanItem(instance);
+			} else {
+				throw new Exception("EntityLineEditorEventBus could not be fetched from the event bus manager.");
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")

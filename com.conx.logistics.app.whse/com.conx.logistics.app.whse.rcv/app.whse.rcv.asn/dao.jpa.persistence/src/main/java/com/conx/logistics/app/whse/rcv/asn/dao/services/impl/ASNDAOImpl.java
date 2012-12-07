@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.conx.logistics.app.whse.rcv.asn.dao.services.IASNDAOService;
@@ -28,10 +27,7 @@ import com.conx.logistics.app.whse.rcv.asn.domain.ASNLine;
 import com.conx.logistics.app.whse.rcv.asn.domain.ASNPickup;
 import com.conx.logistics.common.utils.Validator;
 import com.conx.logistics.mdm.dao.services.IEntityMetadataDAOService;
-import com.conx.logistics.mdm.dao.services.referencenumber.IReferenceNumberDAOService;
 import com.conx.logistics.mdm.domain.metadata.DefaultEntityMetadata;
-import com.conx.logistics.mdm.domain.organization.Organization;
-import com.conx.logistics.mdm.domain.product.Product;
 import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber;
 import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumberType;
 
@@ -56,9 +52,6 @@ public class ASNDAOImpl implements IASNDAOService {
 	@Autowired
 	private IEntityMetadataDAOService entityMetadataDAOService;
 
-	@Autowired
-	private IReferenceNumberDAOService referenceNumberDAOService;
-
 	public void setEm(EntityManager em) {
 		this.em = em;
 	}
@@ -75,6 +68,10 @@ public class ASNDAOImpl implements IASNDAOService {
 
 	@Override
 	public ASN add(ASN record) {
+		if (record.getId() == null) {
+			record = em.merge(record);
+		}
+		assignCode(record);
 		record = em.merge(record);
 		return record;
 	}
@@ -87,6 +84,14 @@ public class ASNDAOImpl implements IASNDAOService {
 	@Override
 	public ASN update(ASN record) {
 		return em.merge(record);
+	}
+
+	private void assignCode(ASN newRecord) {
+		String format = String.format("%%0%dd", 6);
+		String paddedId = String.format(format, newRecord.getId());
+		String code = "ASN" + paddedId;
+		newRecord.setName(code);
+		newRecord.setCode(code);
 	}
 
 	@Override

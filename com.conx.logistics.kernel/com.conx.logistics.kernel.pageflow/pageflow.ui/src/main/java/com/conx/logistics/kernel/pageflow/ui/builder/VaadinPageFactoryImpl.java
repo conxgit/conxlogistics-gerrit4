@@ -30,6 +30,7 @@ import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.form.EntityL
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.form.header.EntityLineEditorFormHeaderPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.grid.EntityLineEditorGridPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.grid.header.EntityLineEditorGridHeaderPresenter;
+import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.notes.NotesEditorPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.refnum.ReferenceNumberEditorPresenter;
 import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
 import com.conx.logistics.kernel.ui.components.domain.attachment.AttachmentEditorComponent;
@@ -42,6 +43,7 @@ import com.conx.logistics.kernel.ui.components.domain.form.ConXSimpleForm;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorContainerComponent;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent;
+import com.conx.logistics.kernel.ui.components.domain.note.NoteEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.page.TaskPage;
 import com.conx.logistics.kernel.ui.components.domain.referencenumber.ReferenceNumberEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.search.SearchGrid;
@@ -198,6 +200,8 @@ public class VaadinPageFactoryImpl {
 			presenter = presenterFactory.createPresenter(AttachmentEditorPresenter.class);
 		} else if (componentModel instanceof ReferenceNumberEditorComponent) {
 			presenter = presenterFactory.createPresenter(ReferenceNumberEditorPresenter.class);
+		} else if (componentModel instanceof NoteEditorComponent) {
+			presenter = presenterFactory.createPresenter(NotesEditorPresenter.class);
 		} else if (ConXTable.class.isAssignableFrom(componentModel.getClass())) {
 			presenter = presenterFactory.createPresenter(EntityLineEditorGridPresenter.class);
 		} else if (ConXForm.class.isAssignableFrom(componentModel.getClass())) {

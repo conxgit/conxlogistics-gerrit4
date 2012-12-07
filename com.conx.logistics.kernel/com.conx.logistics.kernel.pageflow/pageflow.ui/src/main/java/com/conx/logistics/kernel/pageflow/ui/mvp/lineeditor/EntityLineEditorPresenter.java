@@ -86,12 +86,12 @@ public class EntityLineEditorPresenter extends BasePresenter<IEntityLineEditorVi
 					}
 				}
 			}
-
-			EntityLineEditorSectionPresenter presenter = null;
-			for (LineEditorComponent orderedLineEditorComponent : this.lineEditorSectionOrdinalCache) {
-				presenter = this.lineEditorSectionCache.get(orderedLineEditorComponent);
-				((IEntityLineEditorView) getView()).addTab((Component) presenter.getView(), orderedLineEditorComponent.getCaption());
-			}
+		}
+		
+		EntityLineEditorSectionPresenter presenter = null;
+		for (LineEditorComponent orderedLineEditorComponent : this.lineEditorSectionOrdinalCache) {
+			presenter = this.lineEditorSectionCache.get(orderedLineEditorComponent);
+			((IEntityLineEditorView) getView()).addTab((Component) presenter.getView(), orderedLineEditorComponent.getCaption());
 		}
 
 		Exception lastCaughtException = null;

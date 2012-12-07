@@ -69,7 +69,7 @@ public class ArrivalDAOImpl implements IArrivalDAOService {
 	private void assignCode(Arrival arrival) {
 		String format = String.format("%%0%dd", 6);
 		String paddedId = String.format(format, arrival.getId());
-		String code = "A" + paddedId;
+		String code = "AVL" + paddedId;
 		arrival.setName(code);
 		arrival.setCode(code);
 	}
@@ -80,7 +80,7 @@ public class ArrivalDAOImpl implements IArrivalDAOService {
 		} else {
 			String format = String.format("%%0%dd", 3);
 			String paddedId = String.format(format, arrival.getId());
-			String code = parentReceive.getName() + "-A" + String.valueOf(paddedId);
+			String code = parentReceive.getName() + "-AVL" + String.valueOf(paddedId);
 			arrival.setName(code);
 			arrival.setCode(code);
 		}

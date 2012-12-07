@@ -15,6 +15,7 @@ import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.refNum.ReferenceNu
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityGridFilterManager;
 import com.conx.logistics.kernel.ui.filteredtable.FilterTable;
 import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
+import com.conx.logistics.kernel.ui.forms.vaadin.listeners.IFormChangeListener;
 import com.conx.logistics.kernel.ui.vaadin.common.ConXAbstractSplitPanel.ISplitPositionChangeListener;
 import com.conx.logistics.kernel.ui.vaadin.common.ConXVerticalSplitPanel;
 import com.vaadin.data.Container;
@@ -66,21 +67,26 @@ public class ReferenceNumberEditorView extends VerticalLayout implements IRefere
 		
 		this.formToolStrip = new EntityEditorToolStrip();
 		this.validateButton = this.formToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_VERIFY_PNG);
-		this.validateButton.setEnabled(false);
+		this.validateButton.setEnabled(true);
 		this.validateButton.addListener(new ClickListener() {
 			private static final long serialVersionUID = 2217714313753854212L;
 
 			@Override
 			public void buttonClick(ClickEvent event) {
+				ReferenceNumberEditorView.this.validateButton.setEnabled(false);
+				ReferenceNumberEditorView.this.saveButton.setEnabled(true);
 			}
 		});
 		this.saveButton = this.formToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_SAVE_PNG);
+		this.saveButton.setEnabled(false);
 		this.saveButton.addListener(new ClickListener() {
 			private static final long serialVersionUID = 2217714313753854212L;
 
 			@Override
 			public void buttonClick(ClickEvent event) {
 				ReferenceNumberEditorView.this.form.commit();
+				onSaveReferenceNumber(ReferenceNumberEditorView.this.form.getItemDataSource());
+				ReferenceNumberEditorView.this.saveButton.setEnabled(false);
 			}
 		});
 		this.resetButton = this.formToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_RESET_PNG);
@@ -157,6 +163,13 @@ public class ReferenceNumberEditorView extends VerticalLayout implements IRefere
 		this.masterLayout.setExpandRatio(grid, 1.0f);
 		
 		this.form.setFormFieldFactory(new ConXFieldFactory());
+		this.form.addListener(new IFormChangeListener() {
+			
+			@Override
+			public void onFormChanged() {
+				ReferenceNumberEditorView.this.validateButton.setEnabled(true);
+			}
+		});
 		
 		this.detailLayout.setSizeFull();
 		this.detailLayout.addComponent(formToolStrip);
@@ -264,5 +277,10 @@ public class ReferenceNumberEditorView extends VerticalLayout implements IRefere
 	@Override
 	public void onSecondComponentHeightChanged(int height) {
 		this.form.getLayout().setHeight((height - 41) + "px");
+	}
+
+	@Override
+	public void addFormChangeListener(IFormChangeListener listener) {
+		this.form.addListener(listener);
 	}
 }

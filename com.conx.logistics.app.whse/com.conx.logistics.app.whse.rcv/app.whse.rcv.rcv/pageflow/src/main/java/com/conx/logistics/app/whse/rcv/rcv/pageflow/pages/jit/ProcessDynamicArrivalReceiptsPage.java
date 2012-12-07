@@ -113,6 +113,7 @@ public class ProcessDynamicArrivalReceiptsPage extends BasePageFlowPage implemen
 
 		//- StockItem Grid
 		EntityMatchGrid grid = new EntityMatchGrid(receiveLineDs, stockItemDs);
+		grid.setDynamic(true);
 
 		//- StockItem LineEditor Container
 		LineEditorContainerComponent lecc = new LineEditorContainerComponent();

@@ -1,12 +1,20 @@
 package com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.notes;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormHeader;
+import com.conx.logistics.kernel.ui.forms.vaadin.listeners.IFormChangeListener;
+import com.vaadin.data.Property;
+import com.vaadin.event.FieldEvents.TextChangeEvent;
+import com.vaadin.event.FieldEvents.TextChangeListener;
+import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 public class NoteEditorForm extends Form {
@@ -16,6 +24,7 @@ public class NoteEditorForm extends Form {
 	private VerticalLayout layout;
 	private GridLayout innerLayout;
 	private Panel innerLayoutPanel;
+	private Set<IFormChangeListener> listeners;
 	
 	private FormMode mode;
 	
@@ -24,6 +33,7 @@ public class NoteEditorForm extends Form {
 		this.layout = new VerticalLayout();
 		this.innerLayout = new GridLayout(4, 3);
 		this.innerLayoutPanel = new Panel();
+		this.listeners = new HashSet<IFormChangeListener>();
 		
 		initialize();
 	}
@@ -63,11 +73,39 @@ public class NoteEditorForm extends Form {
 		if (propertyId == null || field == null) {
             return;
         }
+		
+		if (field instanceof TextField) {
+			((TextField) field).addListener(new TextChangeListener() {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void textChange(TextChangeEvent event) {
+					fireFieldChangedEvent();
+				}
+			});
+		} else if (field instanceof AbstractField) {
+			((AbstractField) field).setImmediate(true);
+			((AbstractField) field).addListener(new ValueChangeListener() {
+				private static final long serialVersionUID = 1L;
+				
+				@Override
+				public void valueChange(Property.ValueChangeEvent event) {
+					fireFieldChangedEvent();
+				}
+			});
+		}
+		
 		if ("content".equals(propertyId)) {
 			field.setSizeFull();
 			innerLayout.addComponent(field, 0, 1, 3, 2);
 		} else {
 			innerLayout.addComponent(field);
+		}
+	}
+	
+	private void fireFieldChangedEvent() {
+		for (IFormChangeListener listener : listeners) {
+			listener.onFormChanged();
 		}
 	}
 	
@@ -91,5 +129,9 @@ public class NoteEditorForm extends Form {
 	public void setItemDataSource(com.vaadin.data.Item newDataSource, Collection<?> propertyIds) {
 		this.innerLayout.removeAllComponents();
 		super.setItemDataSource(newDataSource, propertyIds);
+	}
+	
+	public void addListener(IFormChangeListener listener) {
+		this.listeners.add(listener);
 	}
 }

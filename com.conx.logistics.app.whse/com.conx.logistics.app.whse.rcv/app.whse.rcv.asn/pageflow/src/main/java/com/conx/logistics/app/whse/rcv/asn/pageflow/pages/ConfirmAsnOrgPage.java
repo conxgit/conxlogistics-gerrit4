@@ -29,6 +29,7 @@ public class ConfirmAsnOrgPage extends BasePageFlowPage implements IModelDrivenP
 		if (this.resultKeyMap == null) {
 			this.resultKeyMap = new HashMap<Class<?>, String>();
 			this.resultKeyMap.put(ASN.class, "asnOut");
+			this.resultKeyMap.put(Organization.class, "orgOut");
 		}
 		return this.resultKeyMap;
 	}

@@ -16,8 +16,10 @@ import com.conx.logistics.kernel.pageflow.ui.ext.mvp.IConfigurablePresenter;
 import com.conx.logistics.kernel.pageflow.ui.ext.mvp.IContainerItemPresenter;
 import com.conx.logistics.kernel.pageflow.ui.ext.mvp.ILocalizedEventSubscriber;
 import com.conx.logistics.kernel.pageflow.ui.mvp.editor.multilevel.MultiLevelEditorEventBus;
+import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.form.EntityLineEditorFormPresenter;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.view.EntityLineEditorSectionView;
 import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.view.IEntityLineEditorSectionView;
+import com.conx.logistics.kernel.ui.components.domain.masterdetail.CreateNewLineEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorComponent;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
 import com.vaadin.data.Container;
@@ -31,7 +33,6 @@ public class EntityLineEditorSectionPresenter extends BasePresenter<IEntityLineE
 	private IPresenter<?, ? extends EventBus> contentPresenter;
 	private LineEditorComponent componentModel;
 	private VaadinPageFactoryImpl factory;
-	private EventBusManager sectionEventBusManager;
 
 	@Override
 	public void onConfigure(Map<String, Object> params) throws Exception {
@@ -41,12 +42,12 @@ public class EntityLineEditorSectionPresenter extends BasePresenter<IEntityLineE
 		HashMap<String, Object> childParams = null;
 
 		if (this.componentModel != null) {
-			this.sectionEventBusManager = new EventBusManager();
-			this.sectionEventBusManager.register(EntityLineEditorSectionEventBus.class, this);
+			EventBusManager sectionEventBusManager = new EventBusManager();
+//			sectionEventBusManager.register(EntityLineEditorSectionEventBus.class, this);
 			// Add the MLE Event Bus if it exists
 			EventBus mleEventBus = this.factory.getPresenterFactory().getEventBusManager().getEventBus(MultiLevelEditorEventBus.class);
 			if (mleEventBus != null) {
-				this.sectionEventBusManager.register(MultiLevelEditorEventBus.class, mleEventBus);
+				sectionEventBusManager.register(MultiLevelEditorEventBus.class, mleEventBus);
 			}
 
 			childParams = new HashMap<String, Object>(params);
@@ -54,10 +55,10 @@ public class EntityLineEditorSectionPresenter extends BasePresenter<IEntityLineE
 			this.contentPresenter = this.factory.createLineEditorSectionContentPresenter(this.componentModel.getContent(), childParams);
 
 			if (this.headerPresenter instanceof ILocalizedEventSubscriber) {
-				((ILocalizedEventSubscriber) this.headerPresenter).subscribe(this.sectionEventBusManager);
+				((ILocalizedEventSubscriber) this.headerPresenter).subscribe(sectionEventBusManager);
 			}
 			if (this.contentPresenter instanceof ILocalizedEventSubscriber) {
-				((ILocalizedEventSubscriber) this.contentPresenter).subscribe(this.sectionEventBusManager);
+				((ILocalizedEventSubscriber) this.contentPresenter).subscribe(sectionEventBusManager);
 			}
 
 			if (this.headerPresenter != null) {
@@ -66,6 +67,13 @@ public class EntityLineEditorSectionPresenter extends BasePresenter<IEntityLineE
 			if (this.contentPresenter != null) {
 				this.getView().setContent((Component) this.contentPresenter.getView());
 			}
+			
+			if (this.componentModel instanceof CreateNewLineEditorComponent) {
+				if (this.contentPresenter instanceof EntityLineEditorFormPresenter) {
+					((EntityLineEditorFormPresenter) this.contentPresenter).setNewLineEditor(true);
+				}
+			}
+			
 		}
 	}
 

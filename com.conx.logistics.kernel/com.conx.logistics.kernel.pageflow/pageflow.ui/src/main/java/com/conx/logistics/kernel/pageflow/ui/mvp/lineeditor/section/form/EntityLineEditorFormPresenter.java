@@ -26,20 +26,22 @@ import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItem;
 
 @Presenter(view = EntityLineEditorFormView.class)
-public class EntityLineEditorFormPresenter extends BasePresenter<IEntityLineEditorFormView, EntityLineEditorFormEventBus> implements ILineEditorSectionContentPresenter,
-		IConfigurablePresenter, IFormChangeListener {
+public class EntityLineEditorFormPresenter extends BasePresenter<IEntityLineEditorFormView, EntityLineEditorFormEventBus> implements
+		ILineEditorSectionContentPresenter, IConfigurablePresenter, IFormChangeListener {
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
-	
+
 	private ConXForm formComponent;
 	private VaadinPageFactoryImpl factory;
 	private EventBusManager sectionEventBusManager;
 	private IDAOProvider daoProvider;
 	private Map<String, Object> config;
-	
+	private boolean isNewLineEditor;
+
 	@Override
 	public void onSetItemDataSource(Item item, Container... container) throws Exception {
 		if (container.length == 1) {
-			VaadinPageDataBuilder.applyItemDataSource(false, this.getView().getForm(), container[0], item, this.factory.getPresenterFactory(), this.config);
+			VaadinPageDataBuilder.applyItemDataSource(false, this.getView().getForm(), container[0], item,
+					this.factory.getPresenterFactory(), this.config);
 		} else {
 			throw new Exception("Could not set item datasource. Expected one container, but got " + container.length);
 		}
@@ -51,11 +53,11 @@ public class EntityLineEditorFormPresenter extends BasePresenter<IEntityLineEdit
 		this.formComponent = (ConXForm) params.get(IEntityEditorFactory.FACTORY_PARAM_MVP_COMPONENT_MODEL);
 		this.factory = (VaadinPageFactoryImpl) params.get(IEntityEditorFactory.VAADIN_COMPONENT_FACTORY);
 		this.daoProvider = (IDAOProvider) params.get(IPageComponent.DAO_PROVIDER);
-		
+
 		if (this.sectionEventBusManager != null) {
 			this.sectionEventBusManager.register(EntityLineEditorFormHeaderEventBus.class, this);
 		}
-		
+
 		this.getView().setForm((VaadinForm) this.factory.createComponent(this.formComponent));
 		this.getView().addListener(this);
 	}
@@ -66,7 +68,7 @@ public class EntityLineEditorFormPresenter extends BasePresenter<IEntityLineEdit
 		this.sectionEventBusManager.fireAnonymousEvent("disableSave");
 		this.sectionEventBusManager.fireAnonymousEvent("enableReset");
 	}
-	
+
 	public void onValidate() throws Exception {
 		if (this.getView().getForm().validateForm()) {
 			this.sectionEventBusManager.fireAnonymousEvent("disableValidate");
@@ -78,14 +80,18 @@ public class EntityLineEditorFormPresenter extends BasePresenter<IEntityLineEdit
 			this.sectionEventBusManager.fireAnonymousEvent("enableReset");
 		}
 	}
-	
+
 	public void onSave() throws Exception {
 		if (this.getView().getForm().saveForm()) {
 			if (this.getView().getForm().getItemDataSource() instanceof BeanItem<?>) {
 				Object bean = ((BeanItem<?>) this.getView().getForm().getItemDataSource()).getBean();
-				VaadinPageDataBuilder.saveInstance(bean, this.daoProvider);
+				if (!isNewLineEditor) {
+					VaadinPageDataBuilder.saveInstance(bean, this.daoProvider);
+				} else {
+					VaadinPageDataBuilder.saveNewInstance(bean, this.daoProvider, this.factory.getPresenterFactory().getEventBusManager(), this.config);
+				}
 			}
-			
+
 			this.sectionEventBusManager.fireAnonymousEvent("disableValidate");
 			this.sectionEventBusManager.fireAnonymousEvent("disableSave");
 			this.sectionEventBusManager.fireAnonymousEvent("disableReset");
@@ -95,7 +101,7 @@ public class EntityLineEditorFormPresenter extends BasePresenter<IEntityLineEdit
 			this.sectionEventBusManager.fireAnonymousEvent("enableReset");
 		}
 	}
-	
+
 	public void onReset() throws Exception {
 		this.getView().getForm().resetForm();
 		this.sectionEventBusManager.fireAnonymousEvent("disableValidate");
@@ -107,5 +113,13 @@ public class EntityLineEditorFormPresenter extends BasePresenter<IEntityLineEdit
 	public void subscribe(EventBusManager eventBusManager) {
 		this.sectionEventBusManager = eventBusManager;
 		this.sectionEventBusManager.register(EntityLineEditorFormEventBus.class, getEventBus());
+	}
+
+	public void setNewLineEditor(boolean isNewLineEditor) {
+		this.isNewLineEditor = isNewLineEditor;
+	}
+
+	public boolean isNewLineEditor() {
+		return this.isNewLineEditor;
 	}
 }

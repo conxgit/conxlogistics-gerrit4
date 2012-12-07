@@ -1,18 +1,12 @@
 package com.conx.logistics.mdm.dao.services.impl.documentlibrary;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Root;
+import javax.persistence.Query;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,14 +22,13 @@ import com.conx.logistics.mdm.domain.documentlibrary.Folder;
 @Transactional
 @Repository
 public class FolderDAOImpl implements IFolderDAOService {
-	protected Logger logger = LoggerFactory.getLogger(this.getClass());	
-    /**
-     * Spring will inject a managed JPA {@link EntityManager} into this field.
-     */
-    @PersistenceContext
-    private EntityManager em;	
-    
-    
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
+	/**
+	 * Spring will inject a managed JPA {@link EntityManager} into this field.
+	 */
+	@PersistenceContext
+	private EntityManager em;
+
 	public void setEm(EntityManager em) {
 		this.em = em;
 	}
@@ -43,51 +36,60 @@ public class FolderDAOImpl implements IFolderDAOService {
 	@Override
 	public Folder get(long id) {
 		return em.getReference(Folder.class, id);
-	}    
+	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Folder> getAll() {
-		return em.createQuery("select o from com.conx.logistics.mdm.domain.documentlibrary.Folder o record by o.id",Folder.class).getResultList();
+		return em.createQuery("select o from com.conx.logistics.mdm.domain.documentlibrary.Folder o record by o.id")
+				.getResultList();
 	}
 	
-	@Override
-	public Folder getByFolderIdOrName(Long folderId,String name) {
-		Folder org = null;
-		
-		try
-		{
-			CriteriaBuilder builder = em.getCriteriaBuilder();
-			CriteriaQuery<Folder> query = builder.createQuery(Folder.class);
-			Root<Folder> rootEntity = query.from(Folder.class);
-			ParameterExpression<Long> p1 = builder.parameter(Long.class);
-			ParameterExpression<String> p2 = builder.parameter(String.class);
-			query.select(rootEntity).where(builder.or(builder.equal(rootEntity.get("folderId"), p1),builder.equal(rootEntity.get("name"), p2)));
+	private Folder getByName(String name) throws Exception {
+		try {
+			Query query = em.createQuery("select o from com.conx.logistics.mdm.domain.documentlibrary.Folder o WHERE o.name = :name");
+			query.setParameter("name", name);
+			return (Folder) query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+	
+	private Folder getByFolderId(Long folderId) throws Exception {
+		try {
+			Query query = em.createQuery("select o from com.conx.logistics.mdm.domain.documentlibrary.Folder o WHERE o.folderId = :folderId");
+			query.setParameter("folderId", folderId);
+			return (Folder) query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
 
-			TypedQuery<Folder> typedQuery = em.createQuery(query);
-			typedQuery.setParameter(p1, folderId);
-			typedQuery.setParameter(p2, name);
-			org = typedQuery.getSingleResult();
-		}
-		catch(NoResultException e){}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		catch(Error e)
-		{
-			StringWriter sw = new StringWriter();
-			e.printStackTrace(new PrintWriter(sw));
-			String stacktrace = sw.toString();
-			logger.error(stacktrace);
-		}		
+	@Override
+	public Folder getByFolderIdOrName(Long folderId, String name) {
+		assert (folderId != null || name != null) : "Both parameters were null.";
 		
-		return org;
-	}	
+		if (folderId != null) {
+			try {
+				return getByFolderId(folderId);
+			} catch (Exception e) {
+				return null;
+			}
+		} else if (name != null) {
+			try {
+				return getByName(name);
+			} catch (Exception e) {
+				return null;
+			}
+		}
+		
+		return null;
+	}
 
 	@Override
 	public Folder add(Folder record) {
 		record = em.merge(record);
-		
+
 		return record;
 	}
 
@@ -101,22 +103,19 @@ public class FolderDAOImpl implements IFolderDAOService {
 		return em.merge(record);
 	}
 
-
 	@Override
 	public Folder provide(Folder record) {
-		Folder existingRecord = getByFolderIdOrName(record.getFolderId(),record.getName());
-		if (Validator.isNull(existingRecord))
-		{		
+		Folder existingRecord = getByFolderIdOrName(record.getFolderId(), record.getName());
+		if (Validator.isNull(existingRecord)) {
 			record = update(record);
 		}
 		return record;
 	}
-	
+
 	@Override
 	public Folder provide(Long folderId, String name) {
 		Folder res = null;
-		if ((res = getByFolderIdOrName(folderId,name)) == null)
-		{
+		if ((res = getByFolderIdOrName(folderId, name)) == null) {
 			Folder unit = new Folder();
 
 			unit.setFolderId(folderId);
@@ -125,16 +124,15 @@ public class FolderDAOImpl implements IFolderDAOService {
 			res = add(unit);
 		}
 		return res;
-	}	
-	
+	}
+
 	@Override
-	public void provideDefaults()
-	{
+	public void provideDefaults() {
 	}
 
 	@Override
 	public FileEntry addFileEntry(Long folderId, DocType attachmentType, FileEntry fileEntry) {
-		Folder res =  getByFolderIdOrName(folderId,null);
+		Folder res = getByFolderIdOrName(folderId, null);
 		attachmentType = em.merge(attachmentType);
 		fileEntry.setDocType(attachmentType);
 		fileEntry.setFolder(res);
@@ -146,16 +144,15 @@ public class FolderDAOImpl implements IFolderDAOService {
 
 	@Override
 	public Folder addFileEntries(Long folderId, Set<FileEntry> fileEntries) {
-		for (FileEntry fe : fileEntries)
-		{
+		for (FileEntry fe : fileEntries) {
 			addFileEntry(folderId, fe.getDocType(), fe);
 		}
-		return getByFolderIdOrName(folderId,null);
+		return getByFolderIdOrName(folderId, null);
 	}
 
 	@Override
 	public Folder deleteFileEntry(Long folderId, FileEntry fileEntry) {
-		Folder res =  getByFolderIdOrName(folderId,null);
+		Folder res = getByFolderIdOrName(folderId, null);
 		fileEntry = em.merge(fileEntry);
 		res.getFiles().remove(fileEntry);
 		res = em.merge(res);
@@ -164,10 +161,9 @@ public class FolderDAOImpl implements IFolderDAOService {
 
 	@Override
 	public Folder deleteFileEntries(Long folderId, Set<FileEntry> fileEntries) {
-		for (FileEntry fe : fileEntries)
-		{
+		for (FileEntry fe : fileEntries) {
 			deleteFileEntry(folderId, fe);
 		}
-		return getByFolderIdOrName(folderId,null);
+		return getByFolderIdOrName(folderId, null);
 	}
 }

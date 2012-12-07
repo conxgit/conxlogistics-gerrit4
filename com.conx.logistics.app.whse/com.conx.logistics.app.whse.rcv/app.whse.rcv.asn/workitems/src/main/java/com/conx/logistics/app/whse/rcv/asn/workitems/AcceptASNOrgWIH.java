@@ -22,6 +22,7 @@ import com.conx.logistics.app.whse.rcv.asn.domain.ASN;
 import com.conx.logistics.app.whse.rcv.asn.domain.ASNDropOff;
 import com.conx.logistics.app.whse.rcv.asn.domain.ASNPickup;
 import com.conx.logistics.mdm.dao.services.IOrganizationDAOService;
+import com.conx.logistics.mdm.domain.organization.Organization;
 
 public class AcceptASNOrgWIH implements WorkItemHandler {
 	private static final Logger logger = LoggerFactory.getLogger(AcceptASNOrgWIH.class);
@@ -64,6 +65,8 @@ public class AcceptASNOrgWIH implements WorkItemHandler {
 //			output.put("asnOut", asn);
 			Map<String, Object> parameters = workItem.getParameters();
 			if (parameters.get("asnIn") != null) {
+				ASN asn = (ASN) parameters.get("asnIn");
+				asn.setConsignor((Organization) parameters.get("orgIn"));
 				Map<String, Object> results = new HashMap<String, Object>();
 				results.put("asnOut", parameters.get("asnIn"));
 				manager.completeWorkItem(workItem.getId(), results);

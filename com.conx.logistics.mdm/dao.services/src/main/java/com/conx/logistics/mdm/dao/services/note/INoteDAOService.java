@@ -3,6 +3,7 @@ package com.conx.logistics.mdm.dao.services.note;
 import java.util.List;
 import java.util.Set;
 
+import com.conx.logistics.mdm.domain.BaseEntity;
 import com.conx.logistics.mdm.domain.note.Note;
 import com.conx.logistics.mdm.domain.note.NoteItem;
 import com.conx.logistics.mdm.domain.note.NoteType;
@@ -13,6 +14,8 @@ public interface INoteDAOService {
 	public List<Note> getAll();
 
 	public Note add(Note record);
+	
+	public Note provideNoteForEntity(BaseEntity baseEntity);
 	
 	public Note addNoteItem(Long noteId, NoteItem noteItem);
 	

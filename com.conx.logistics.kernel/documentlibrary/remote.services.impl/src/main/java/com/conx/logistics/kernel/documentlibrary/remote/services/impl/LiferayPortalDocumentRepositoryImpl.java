@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -39,6 +42,7 @@ import com.conx.logistics.common.utils.HTTPUtil;
 import com.conx.logistics.common.utils.StringUtil;
 import com.conx.logistics.common.utils.Validator;
 import com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository;
+import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
 import com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService;
 import com.conx.logistics.mdm.domain.BaseEntity;
 import com.conx.logistics.mdm.domain.documentlibrary.DocType;
@@ -52,6 +56,9 @@ import flexjson.JSONDeserializer;
 @Service
 public class LiferayPortalDocumentRepositoryImpl implements
 		IRemoteDocumentRepository {
+	
+	@PersistenceContext
+	private EntityManager em;
 	
 	static public final String CONXDOCREPO_SERVER_HOSTNAME = "conxdocrepo.server.hostname";//localhost
 	static public final String CONXDOCREPO_SERVER_PORT = "conxdocrepo.server.port";//8080
@@ -76,9 +83,11 @@ public class LiferayPortalDocumentRepositoryImpl implements
 	private String port;
 	private String loginGroupId;
 	
-	
 	@Autowired
 	private IFolderDAOService folderDAOService;
+	
+	@Autowired
+	private IEntityTypeDAOService entityTypeDAOService;
 	
 	@Override
 	public void init()
@@ -700,6 +709,7 @@ public class LiferayPortalDocumentRepositoryImpl implements
 		return fldr;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Folder provideFolderForEntity(Class entityJavaClass, Long entityId)  throws Exception  {
 		String st = entityJavaClass.getSimpleName();
@@ -733,7 +743,7 @@ public class LiferayPortalDocumentRepositoryImpl implements
 			String title,
 			String description) throws Exception {
 		FileEntry fe = null;
-		Folder df = entity.getDocFolder();
+		Folder df = provideFolderForEntity(entity);
 
 		fe = addorUpdateFileEntry(Long.toString(df.getFolderId()), sourceFile, mimeType, title, description);
 		
@@ -765,5 +775,30 @@ public class LiferayPortalDocumentRepositoryImpl implements
 			String description) throws Exception {
 		FileEntry fe = addorUpdateFileEntry(Long.toString(folder.getFolderId()), sourceFileName, mimeType, title, description);
 		return fe;
+	}
+
+	@Override
+	public Folder provideFolderForEntity(BaseEntity entity) throws Exception {
+		assert (entity != null) : "The entity was null.";
+		assert (entity.getId() != null || entity.getCode() != null) : "The entity was not persistent.";
+		
+		if (entity.getDocFolder() == null) {
+			EntityType entityType = this.entityTypeDAOService.provide(entity.getClass());
+			assert (entityType != null) : "Could not provide an EntityType for this entity";
+			Folder newFolder = this.provideFolderForEntity(entityType, entity.getId());
+			newFolder = em.merge(newFolder);
+			assert (newFolder != null) : "Could not create a folder for this entity";
+			entity.setDocFolder(newFolder);
+		}
+		
+		return entity.getDocFolder();
+	}
+
+	public IEntityTypeDAOService getEntityTypeDAOService() {
+		return entityTypeDAOService;
+	}
+
+	public void setEntityTypeDAOService(IEntityTypeDAOService entityTypeDAOService) {
+		this.entityTypeDAOService = entityTypeDAOService;
 	}	
 }

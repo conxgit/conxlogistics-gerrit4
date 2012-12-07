@@ -12,4 +12,6 @@ public interface MasterSectionEventBus extends EventBus {
 	public void configure(Map<String, Object> params);
 	@Event(handlers = { MasterSectionPresenter.class })
 	public void setItemDataSource(Item item);
+	@Event(handlers = { MasterSectionPresenter.class })
+	public void addNewBeanItem(Object newBean);
 }

@@ -61,4 +61,5 @@ Import-Package: com.conx.logistics.app.whse.rcv.asn.domain;version="1.0.0",
 Export-Template: com.conx.logistics.kernel.system.ui.*,
   com.conx.logistics.kernel.system.ui.navigation.*,
   com.conx.logistics.kernel.system.ui.view.*
+Excluded-Imports: com.conx.logistics.app.whse.ui.*
 

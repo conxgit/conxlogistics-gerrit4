@@ -278,7 +278,7 @@ public class ReceiveDAOImpl implements IReceiveDAOService {
 	private void assignCode(Receive newRecord) {
 		String format = String.format("%%0%dd", 6);
 		String paddedId = String.format(format, newRecord.getId());
-		String code = "R" + paddedId;
+		String code = "RCV" + paddedId;
 		newRecord.setName(code);
 		newRecord.setCode(code);
 	}
@@ -289,7 +289,7 @@ public class ReceiveDAOImpl implements IReceiveDAOService {
 		} else {
 			String format = String.format("%%0%dd", 3);
 			String paddedId = String.format(format, receive.getId());
-			String code = parentAsn.getName() + "-R" + String.valueOf(paddedId);
+			String code = parentAsn.getName() + "-RCV" + String.valueOf(paddedId);
 			receive.setName(code);
 			receive.setCode(code);
 		}

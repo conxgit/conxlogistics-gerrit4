@@ -2,25 +2,26 @@ package com.conx.logistics.kernel.ui.forms.vaadin.impl;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import com.conx.logistics.kernel.ui.components.domain.form.ConXSimpleForm;
 import com.conx.logistics.kernel.ui.components.domain.form.FieldSet;
 import com.conx.logistics.kernel.ui.components.domain.form.FieldSetField;
 import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
-import com.conx.logistics.kernel.ui.forms.vaadin.IVaadinForm;
+import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormAlertPanel.AlertType;
 import com.conx.logistics.kernel.ui.forms.vaadin.listeners.IFormChangeListener;
+import com.vaadin.data.Buffered;
 import com.vaadin.data.Item;
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.event.MouseEvents.ClickEvent;
 import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.ui.Field;
-import com.vaadin.ui.Form;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 
-public class VaadinSimpleForm extends Form implements IVaadinForm {
+public class VaadinSimpleForm extends VaadinForm {
 	private static final long serialVersionUID = -639931L;
 
 	private VaadinFormHeader header;
@@ -35,6 +36,8 @@ public class VaadinSimpleForm extends Form implements IVaadinForm {
 	private FormMode mode;
 
 	public VaadinSimpleForm(ConXSimpleForm componentForm) {
+		super.setComponentModel(componentForm);
+		
 		this.header = new VaadinFormHeader();
 		this.layout = new VerticalLayout();
 		this.innerLayout = new GridLayout(4, 3);
@@ -44,6 +47,46 @@ public class VaadinSimpleForm extends Form implements IVaadinForm {
 		this.fields = new HashSet<Field>();
 
 		initialize();
+	}
+	
+	@Override
+	public boolean saveForm() {
+		LinkedList<SourceException> problems = null;
+
+		// Only commit on valid state if so requested
+		if (!isInvalidCommitted() && !isValid()) {
+			validate();
+		}
+
+		Set<Field> fieldSet = fields;
+
+		// Try to commit all
+		for (Field field : fieldSet) {
+			try {
+				// Commit only non-readonly fields.
+				if (!field.isReadOnly()) {
+					field.commit();
+				}
+			} catch (final Buffered.SourceException e) {
+				if (problems == null) {
+					problems = new LinkedList<SourceException>();
+				}
+				problems.add(e);
+			}
+		}
+
+		// No problems occurred
+		if (problems == null) {
+			this.alertPanel.setAlertType(AlertType.SUCCESS);
+			this.alertPanel.setMessage(this.header.getTitle() + " was saved successfully.");
+			this.alertPanel.setVisible(true);
+			return true;
+		} else {
+			this.alertPanel.setAlertType(AlertType.ERROR);
+			this.alertPanel.setMessage(problems.iterator().next().getMessage());
+			this.alertPanel.setVisible(true);
+			return false;
+		}
 	}
 
 	@SuppressWarnings("deprecation")
@@ -77,7 +120,6 @@ public class VaadinSimpleForm extends Form implements IVaadinForm {
 		this.layout.setExpandRatio(innerLayoutPanel, 1.0f);
 
 		setImmediate(true);
-		setFormMode(FormMode.EDITING);
 		setFormFieldFactory(new VaadinJPAFieldFactory());
 		setLayout(layout);
 		// False so that commit() must be called explicitly
@@ -89,20 +131,7 @@ public class VaadinSimpleForm extends Form implements IVaadinForm {
 	public FormMode getMode() {
 		return mode;
 	}
-
-	@Override
-	public void setFormMode(FormMode mode) {
-		this.mode = mode;
-		switch (mode) {
-		case CREATING:
-			this.header.setAction("Creating");
-			break;
-		case EDITING:
-			this.header.setAction("Editing");
-			break;
-		}
-	}
-
+	
 	@Override
 	public void setTitle(String title) {
 		this.header.setTitle(title);
@@ -148,11 +177,6 @@ public class VaadinSimpleForm extends Form implements IVaadinForm {
 		this.innerLayout.removeAllComponents();
 		this.fields.clear();
 		super.setItemDataSource(newDataSource);
-	}
-
-	@Override
-	public FormMode getFormMode() {
-		return mode;
 	}
 
 	public void onFormChanged() {

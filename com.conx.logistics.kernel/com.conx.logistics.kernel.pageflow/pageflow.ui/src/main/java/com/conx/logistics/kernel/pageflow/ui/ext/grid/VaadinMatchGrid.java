@@ -2,30 +2,21 @@ package com.conx.logistics.kernel.pageflow.ui.ext.grid;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
-import com.conx.logistics.app.whse.rcv.rcv.domain.ArrivalReceiptLine;
-import com.conx.logistics.app.whse.rcv.rcv.domain.Receive;
-import com.conx.logistics.app.whse.rcv.rcv.domain.ReceiveLine;
+import com.conx.logistics.kernel.pageflow.ui.builder.VaadinPageDataBuilder;
 import com.conx.logistics.kernel.ui.components.domain.table.EntityMatchGrid;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.EntityEditorToolStrip;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.EntityEditorToolStrip.EntityEditorToolStripButton;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityEditorGrid;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityEditorGrid.ISelectListener;
+import com.conx.logistics.kernel.ui.factory.services.data.IDAOProvider;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormAlertPanel;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormAlertPanel.AlertType;
 import com.conx.logistics.kernel.ui.vaadin.common.ConXVerticalSplitPanel;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
-import com.vaadin.addon.jpacontainer.util.DefaultQueryModifierDelegate;
 import com.vaadin.data.Container;
 import com.vaadin.data.Container.Filter;
 import com.vaadin.data.Item;
@@ -47,17 +38,15 @@ public class VaadinMatchGrid extends VerticalLayout {
 	private EntityEditorGrid unmatchedGrid;
 	private Item unmatchedGridItem;
 	private EntityEditorGrid matchedGrid;
-
-
 	private Item matchedGridItem;
 	private EntityMatchGrid componentModel;
-	private IBeanConversionListener beanConverter;
 	private Set<IMatchListener> subscribers;
 	private Map<Item, Filter> unmatchedItemIdFilterMap;
 	private ConXVerticalSplitPanel content;
 	private VaadinFormAlertPanel unmatchedAlertPanel;
 	private VaadinFormAlertPanel matchedAlertPanel;
 	private Object itemBean;
+	private IDAOProvider daoProvider;
 
 	public VaadinMatchGrid(EntityMatchGrid componentModel) {
 		this.componentModel = componentModel;
@@ -96,7 +85,7 @@ public class VaadinMatchGrid extends VerticalLayout {
 	private void match(Item item) throws Exception {
 		Object unmatchedBean = getUnmatchedBeanById(item);
 		if (unmatchedBean != null) {
-			Object matchedBean = this.beanConverter.onConvertBean(unmatchedBean, getUnmatchedContainerType(), getMatchedContainerType());
+			Object matchedBean = VaadinPageDataBuilder.saveInstance(getMatchedContainerType().newInstance(), this.daoProvider, unmatchedBean, itemBean);
 			if (matchedBean != null) {
 				Container matchedContainer = this.matchedGrid.getContainerDataSource();
 				Item matchedItem = null;
@@ -168,29 +157,6 @@ public class VaadinMatchGrid extends VerticalLayout {
 		this.updateMatchedItemCount();
 	}
 
-	/*
-	 * private void hideMatchableItem(Item matchedItem, Item matchedItemParent)
-	 * throws Exception { Filter newMatchFilter = null; Container
-	 * unmatchedContainer = this.unmatchedGrid.getContainerDataSource(); if
-	 * (unmatchedContainer instanceof JPAContainer) { newMatchFilter = new
-	 * Not(new Compare.Equal("id",
-	 * matchedItemParent.getItemProperty("id").getValue())); ((JPAContainer<?>)
-	 * unmatchedContainer).addContainerFilter(newMatchFilter); } else if
-	 * (unmatchedContainer instanceof BeanItemContainer) { newMatchFilter = new
-	 * Not(new Compare.Equal("id",
-	 * matchedItemParent.getItemProperty("id").getValue()));
-	 * ((BeanItemContainer<?>)
-	 * unmatchedContainer).addContainerFilter(newMatchFilter); } else { String
-	 * message = ""; if (matchedItemParent.getItemProperty("name") != null &&
-	 * matchedItemParent.getItemProperty("name").getValue() != null) { message =
-	 * "Could not match " + matchedItemParent.getItemProperty("name").getValue()
-	 * + ". The unmatched container is incompatible."; } else { message =
-	 * "Could not match the selected item. The unmatched container is incompatible."
-	 * ; } this.unmatchedAlertPanel.setAlertType(AlertType.ERROR);
-	 * this.unmatchedAlertPanel.setMessage(message); throw new
-	 * Exception(message); } this.unmatchedItemIdFilterMap.put(matchedItem,
-	 * newMatchFilter); }
-	 */
 	private void unhideMatchableItem(Item matchedItem) throws Exception {
 		Container unmatchedContainer = this.unmatchedGrid.getContainerDataSource();
 		Filter unmatchedItemFilter = this.unmatchedItemIdFilterMap.get(matchedItem);
@@ -249,55 +215,18 @@ public class VaadinMatchGrid extends VerticalLayout {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public Item create() {
-		BeanItem matchedItem = null;
-		try {
-			Object matchedBean = VaadinMatchGrid.this.beanConverter.onNewBean(getMatchedContainerType());
-			Container matchedContainer = this.matchedGrid.getContainerDataSource();
-			// VaadinMatchGrid.this.d
-			if (matchedContainer instanceof BeanItemContainer) {
-				matchedItem = ((BeanItemContainer) matchedContainer).addBean(matchedBean);
-				if (this.unmatchedGrid.getContainerDataSource() instanceof JPAContainer<?>) {
-					((JPAContainer<?>) this.unmatchedGrid.getContainerDataSource()).refresh();
-				} else {
-					throw new Exception(
-							"The unmatched container must inherit JPAContainer<?> and all items must inherit JPAContainerItem<?>.");
-				}
-
-				String message = "";
-				if (matchedItem.getItemProperty("name") != null && matchedItem.getItemProperty("name").getValue() != null) {
-					message = matchedItem.getItemProperty("name").getValue() + " was matched successfully.";
-				} else {
-					message = "The new matched item was created successfully.";
-				}
-				this.matchedAlertPanel.setAlertType(AlertType.SUCCESS);
-				this.matchedAlertPanel.setMessage(message);
-			}
-		} catch (Exception e) {
-			VaadinMatchGrid.this.matchButton.setComponentError(new UserError(e.getMessage()));
-			e.printStackTrace();
-		}
-		return matchedItem;
-	}
-
 	private void initialize() {
+		if (this.componentModel.isDynamic()) {
+			this.newMatchedItemButton = this.matchedToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_CREATE_PNG);
+		}
+		
 		this.matchedToolStrip.setTitle(this.componentModel.getMatchedDataSource().getEntityType().getName() + "s");
-		this.newMatchedItemButton = this.matchedToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_CREATE_PNG);
 		this.unmatchButton = this.matchedToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_UNMATCH_PNG);
 		this.unmatchButton.setEnabled(false);
 		this.unmatchedToolStrip.setTitle(this.componentModel.getUnmatchedDataSource().getEntityType().getName() + "s");
 		this.matchButton = this.unmatchedToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_MATCH_PNG);
 		this.matchButton.setEnabled(false);
 
-		this.newMatchedItemButton.addListener(new ClickListener() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-//				create();
-			}
-		});
 		this.unmatchButton.addListener(new ClickListener() {
 			private static final long serialVersionUID = 1L;
 
@@ -352,7 +281,7 @@ public class VaadinMatchGrid extends VerticalLayout {
 		this.unmatchedGrid.setSizeFull();
 		this.matchedGrid.setSizeFull();
 
-		this.unmatchedAlertPanel.setVisible(true);
+		this.unmatchedAlertPanel.setVisible(!this.componentModel.isDynamic());
 		this.unmatchedAlertPanel.setCloseable(false);
 		this.unmatchedAlertPanel.setAlertType(AlertType.ERROR);
 		this.unmatchedAlertPanel.setMessage("No " + this.componentModel.getUnmatchedDataSource().getEntityType().getName()
@@ -397,43 +326,29 @@ public class VaadinMatchGrid extends VerticalLayout {
 	public void setUnMatchedContainer(Container container) {
 		this.unmatchedGrid.setContainerDataSource(container);
 		this.unmatchedGrid.setVisibleColumns(this.componentModel.getUnmatchedDataSource().getVisibleFieldNames().toArray(new String[0]));
-		if (container instanceof JPAContainer<?>) {
-			if (((JPAContainer<?>) container).getEntityClass().isAssignableFrom(ReceiveLine.class)) {
-				if (itemBean instanceof ArrivalReceiptLine) {
-					final Receive rcv = ((ArrivalReceiptLine) itemBean).getParentArrivalReceipt().getParentArrival().getReceive();
-					((JPAContainer<?>) container).getEntityProvider().setQueryModifierDelegate(new DefaultQueryModifierDelegate() {
-						@Override
-						public void filtersWillBeAdded(CriteriaBuilder criteriaBuilder, CriteriaQuery<?> query, List<Predicate> predicates) {
-							if (criteriaBuilder != null && query != null && predicates != null) {
-								Root<?> root = query.getRoots().iterator().next();
-								Path<?> rcvId = root.get("parentReceive").get("id");
-								predicates.add(criteriaBuilder.equal(rcvId, rcv.getId()));
-							}
-						}
-					});
-				}
-			}
-
-		}
+//		if (container instanceof JPAContainer<?>) {
+//			if (((JPAContainer<?>) container).getEntityClass().isAssignableFrom(ReceiveLine.class)) {
+//				if (itemBean instanceof ArrivalReceiptLine) {
+//					final Receive rcv = ((ArrivalReceiptLine) itemBean).getParentArrivalReceipt().getParentArrival().getReceive();
+//					((JPAContainer<?>) container).getEntityProvider().setQueryModifierDelegate(new DefaultQueryModifierDelegate() {
+//						@Override
+//						public void filtersWillBeAdded(CriteriaBuilder criteriaBuilder, CriteriaQuery<?> query, List<Predicate> predicates) {
+//							if (criteriaBuilder != null && query != null && predicates != null) {
+//								Root<?> root = query.getRoots().iterator().next();
+//								Path<?> rcvId = root.get("parentReceive").get("id");
+//								predicates.add(criteriaBuilder.equal(rcvId, rcv.getId()));
+//							}
+//						}
+//					});
+//				}
+//			}
+//
+//		}
 	}
 
 	public void setMatchedContainer(Container container) {
 		this.matchedGrid.setContainerDataSource(container);
 		this.matchedGrid.setVisibleColumns(this.componentModel.getMatchedDataSource().getVisibleFieldNames().toArray(new String[0]));
-	}
-
-	public IBeanConversionListener getBeanConverter() {
-		return beanConverter;
-	}
-
-	public void setBeanConverter(IBeanConversionListener subscriber) {
-		this.beanConverter = subscriber;
-	}
-
-	public interface IBeanConversionListener {
-		public Object onConvertBean(Object bean, Class<?> originType, Class<?> targetType);
-
-		public Object onNewBean(Class<?> type);
 	}
 
 	public interface IMatchListener {
@@ -466,12 +381,24 @@ public class VaadinMatchGrid extends VerticalLayout {
 				+ this.componentModel.getMatchedDataSource().getEntityType().getName() + "(s) have been matched.");
 		this.matchedAlertPanel.setVisible(true);
 	}
-	
+
 	public EntityEditorToolStripButton getNewMatchedItemButton() {
 		return newMatchedItemButton;
 	}
-	
+
 	public EntityEditorGrid getMatchedGrid() {
 		return matchedGrid;
+	}
+	
+	public EntityEditorGrid getUnmatchedGrid() {
+		return matchedGrid;
+	}
+	
+	public boolean isDynamic() {
+		return this.componentModel.isDynamic();
+	}
+
+	public void setDaoProvider(IDAOProvider daoProvider) {
+		this.daoProvider = daoProvider;
 	}
 }

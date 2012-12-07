@@ -24,8 +24,10 @@ import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.EntityLineEditorEven
 import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.EntityEditorToolStrip.EntityEditorToolStripButton;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
+import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
+import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
@@ -47,7 +49,29 @@ public class MasterSectionPresenter extends BasePresenter<IMasterSectionView, Ma
 	private VaadinPageFactoryImpl factory;
 	private EventBusManager sectionEventBusManager;
 	private Map<String, Object> config;
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void onAddNewBeanItem(Object newBean) throws Exception {
+		if (this.contentPresenter == null) {
+			if (this.getView().getContent() instanceof VaadinMatchGrid) {
+				Container container = ((VaadinMatchGrid) this.getView().getContent()).getMatchedGrid().getContainerDataSource();
+				if (container instanceof BeanItemContainer) {
+					Item item = ((BeanItemContainer) container).addBean(newBean);
+					if (((VaadinMatchGrid) this.getView().getContent()).getUnmatchedGrid().getContainerDataSource() instanceof JPAContainer<?>) {
+						((JPAContainer<?>) ((VaadinMatchGrid) this.getView().getContent()).getUnmatchedGrid().getContainerDataSource()).refresh();
+					}
+					EntityLineEditorEventBus lineEditorEventBus = this.factory.getPresenterFactory().getEventBusManager().getEventBus(EntityLineEditorEventBus.class);
+					if (lineEditorEventBus != null) {
+						lineEditorEventBus.setItemDataSource(item, container);
+					} else {
+						throw new Exception("EntityLineEditorEventBus could not be fetched from the event bus manager.");
+					}
+				}
+			}
+		}
+	}
 
+	@SuppressWarnings("serial")
 	@Override
 	public void onConfigure(Map<String, Object> params) throws Exception {
 		this.config = params;
@@ -92,17 +116,35 @@ public class MasterSectionPresenter extends BasePresenter<IMasterSectionView, Ma
 					EntityEditorToolStripButton newEntityButton = ((VaadinMatchGrid) contentComponent).getNewMatchedItemButton();
 					newEntityButton.addListener(new ClickListener() {
 
+						@SuppressWarnings({ "unchecked", "rawtypes" })
 						@Override
 						public void buttonClick(ClickEvent event) {
 							assert (MasterSectionPresenter.this.factory != null);
 							assert (MasterSectionPresenter.this.factory.getPresenterFactory() != null);
 							assert (MasterSectionPresenter.this.factory.getPresenterFactory().getEventBusManager() != null);
 
-							Item newItem = ((VaadinMatchGrid) contentComponent).create();
-							EntityLineEditorEventBus eventBus = MasterSectionPresenter.this.factory.getPresenterFactory()
-									.getEventBusManager().getEventBus(EntityLineEditorEventBus.class);
-							if (eventBus != null) {
-								eventBus.setNewItemDataSource(newItem,((VaadinMatchGrid) contentComponent).getMatchedGrid().getContainerDataSource());
+							try {
+								BeanItemContainer container = new BeanItemContainer(((VaadinMatchGrid) contentComponent)
+										.getMatchedContainerType());
+								Object bean = ((VaadinMatchGrid) contentComponent).getMatchedContainerType().newInstance();
+								Item item = container.addBean(bean);
+								EntityLineEditorEventBus eventBus = MasterSectionPresenter.this.factory.getPresenterFactory()
+										.getEventBusManager().getEventBus(EntityLineEditorEventBus.class);
+								if (eventBus != null) {
+									eventBus.setNewItemDataSource(item, container);
+								}
+							} catch (IllegalArgumentException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (ClassNotFoundException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (InstantiationException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (IllegalAccessException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
 							}
 						}
 					});

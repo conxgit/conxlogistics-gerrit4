@@ -1,4 +1,4 @@
-package com.conx.logistics.kernel.ui.editors.entity.vaadin.mvp.notes.view;
+package com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.notes.view;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,8 +45,8 @@ public class NotesEditorView extends VerticalLayout implements INotesEditorView,
 	private VerticalLayout defaultPanel;
 	private boolean detailHidden;
 	
-	private Set<ICreateNoteListener> createNoteListenerSet;
-	private Set<ISaveNoteListener> saveNoteListenerSet;
+	private Set<ICreateNotesListener> createNotesListenerSet;
+	private Set<ISaveNotesListener> saveNotesListenerSet;
 	
 	private EntityEditorToolStrip formToolStrip;
 	private EntityEditorToolStripButton validateButton;
@@ -62,12 +62,12 @@ public class NotesEditorView extends VerticalLayout implements INotesEditorView,
 		this.form = new NoteEditorForm();
 		this.defaultPanel = new VerticalLayout();
 		this.detailHidden = true;
-		this.createNoteListenerSet = new HashSet<ICreateNoteListener>();
-		this.saveNoteListenerSet = new HashSet<ISaveNoteListener>();
+		this.createNotesListenerSet = new HashSet<ICreateNotesListener>();
+		this.saveNotesListenerSet = new HashSet<ISaveNotesListener>();
 		
 		this.formToolStrip = new EntityEditorToolStrip();
 		this.validateButton = this.formToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_VERIFY_PNG);
-		this.validateButton.setEnabled(false);
+		this.validateButton.setEnabled(true);
 		this.validateButton.addListener(new ClickListener() {
 			private static final long serialVersionUID = 2217714313753854212L;
 
@@ -78,13 +78,14 @@ public class NotesEditorView extends VerticalLayout implements INotesEditorView,
 			}
 		});
 		this.saveButton = this.formToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_SAVE_PNG);
+		this.saveButton.setEnabled(false);
 		this.saveButton.addListener(new ClickListener() {
 			private static final long serialVersionUID = 2217714313753854212L;
 
 			@Override
 			public void buttonClick(ClickEvent event) {
 				NotesEditorView.this.form.commit();
-				onSaveNote(NotesEditorView.this.form.getItemDataSource());
+				onSaveNotes(NotesEditorView.this.form.getItemDataSource());
 				NotesEditorView.this.saveButton.setEnabled(false);
 			}
 		});
@@ -106,6 +107,7 @@ public class NotesEditorView extends VerticalLayout implements INotesEditorView,
 		defaultPanelCaption.setContentMode(Label.CONTENT_XHTML);
 		
 		this.defaultPanel.setSizeFull();
+		this.defaultPanel.removeAllComponents();
 		this.defaultPanel.addComponent(defaultPanelCaption);
 		this.defaultPanel.setComponentAlignment(defaultPanelCaption, Alignment.MIDDLE_CENTER);
 		
@@ -147,7 +149,7 @@ public class NotesEditorView extends VerticalLayout implements INotesEditorView,
 			@Override
 			public void buttonClick(ClickEvent event) {
 				if (detailHidden) {
-					onCreateNote();
+					onCreateNotes();
 				} else {
 					hideDetail();
 				}
@@ -174,12 +176,12 @@ public class NotesEditorView extends VerticalLayout implements INotesEditorView,
 		this.detailLayout.addComponent(form);
 		this.detailLayout.setExpandRatio(form, 1.0f);
 		
-		this.splitPanel.removeAllComponents();
 		this.splitPanel.setStyleName("conx-entity-editor");
+		this.splitPanel.removeAllComponents();
 		this.splitPanel.addComponent(masterLayout);
 		this.splitPanel.addComponent(detailLayout);
-		this.splitPanel.setImmediate(true);
 		this.splitPanel.setSizeFull();
+		this.splitPanel.setImmediate(true);
 		this.splitPanel.addSplitPositionChangeListener(this);
 		
 		hideDetail();
@@ -228,16 +230,26 @@ public class NotesEditorView extends VerticalLayout implements INotesEditorView,
 		this.visibleFormFields = visibleFormFields;
 	}
 	
-	public void onCreateNote() {
-		for (ICreateNoteListener listener : createNoteListenerSet) {
-			listener.onCreateNote();
+	public void onCreateNotes() {
+		for (ICreateNotesListener listener : createNotesListenerSet) {
+			listener.onCreateNotes();
 		}
 	}
 	
-	public void onSaveNote(Item item) {
-		for (ISaveNoteListener listener : saveNoteListenerSet) {
-			listener.onSaveNote(item);
+	public void onSaveNotes(Item item) {
+		for (ISaveNotesListener listener : saveNotesListenerSet) {
+			listener.onSaveNotes(item);
 		}
+	}
+	
+	@Override
+	public void addCreateNotesListener(ICreateNotesListener listener) {
+		createNotesListenerSet.add(listener);
+	}
+	
+	@Override
+	public void addSaveNotesListener(ISaveNotesListener listener) {
+		saveNotesListenerSet.add(listener);
 	}
 	
 	@Override
@@ -246,24 +258,14 @@ public class NotesEditorView extends VerticalLayout implements INotesEditorView,
 		form.setItemDataSource(item, visibleFormFields);
 	}
 	
-	@Override
-	public void addCreateNoteListener(ICreateNoteListener listener) {
-		createNoteListenerSet.add(listener);
+	public interface ICreateNotesListener {
+		public void onCreateNotes();
 	}
 	
-	@Override
-	public void addSaveNoteListener(ISaveNoteListener listener) {
-		saveNoteListenerSet.add(listener);
+	public interface ISaveNotesListener {
+		public void onSaveNotes(Item item);
 	}
 	
-	public interface ICreateNoteListener {
-		public void onCreateNote();
-	}
-	
-	public interface ISaveNoteListener {
-		public void onSaveNote(Item item);
-	}
-
 	@Override
 	public void onSplitPositionChanged(Integer newPos, int posUnit, boolean posReversed) {
 	}
@@ -275,5 +277,10 @@ public class NotesEditorView extends VerticalLayout implements INotesEditorView,
 	@Override
 	public void onSecondComponentHeightChanged(int height) {
 		this.form.getLayout().setHeight((height - 41) + "px");
+	}
+
+	@Override
+	public void addFormChangeListener(IFormChangeListener listener) {
+		this.form.addListener(listener);
 	}
 }

@@ -32,6 +32,7 @@ public class MultiLevelEditorPresenter extends BasePresenter<IMultiLevelEditorVi
 	private MultiLevelEntityEditor componentModel;
 	private Map<MasterDetailComponent, Component> editorCache;
 	private Map<MasterDetailComponent, VaadinPageFactoryImpl> factoryCache;
+	private Map<MasterDetailComponent, Item> itemDataSourceCache;
 	private Stack<MasterDetailComponent> editorStack;
 	private MasterDetailComponent originEditorComponent;
 	private Map<String, Object> config;
@@ -41,6 +42,7 @@ public class MultiLevelEditorPresenter extends BasePresenter<IMultiLevelEditorVi
 	public void onConfigure(Map<String, Object> params) {
 		this.editorCache = new HashMap<MasterDetailComponent, Component>();
 		this.factoryCache = new HashMap<MasterDetailComponent, VaadinPageFactoryImpl>();
+		this.itemDataSourceCache = new HashMap<MasterDetailComponent, Item>();
 		this.editorStack = new Stack<MasterDetailComponent>();
 		
 		this.config = params;
@@ -57,6 +59,18 @@ public class MultiLevelEditorPresenter extends BasePresenter<IMultiLevelEditorVi
 
 		onRenderEditor(this.originEditorComponent);
 	}
+	
+	/**
+	 * Adds the MLE to the configuration of its sub-presenters and sub-components.
+	 * 
+	 * @param factoryConfig
+	 * @return
+	 */
+	private Map<String, Object> adaptLocalizedFactoryConfig(Map<String, Object> factoryConfig) {
+		factoryConfig = new HashMap<String, Object>(factoryConfig);
+		factoryConfig.put(IEntityEditorFactory.FACTORY_PARAM_MVP_CURRENT_MLENTITY_EDITOR_PRESENTER, this);
+		return factoryConfig;
+	}
 
 	private VaadinPageFactoryImpl provideLocalizedFactory(MasterDetailComponent componentModel) {
 		VaadinPageFactoryImpl localizedFactory = this.factoryCache.get(componentModel);
@@ -67,7 +81,7 @@ public class MultiLevelEditorPresenter extends BasePresenter<IMultiLevelEditorVi
 			// bus manager
 			localEventBusManager.register(MultiLevelEditorEventBus.class, this);
 			localPresenterFactory = new PresenterFactory(localEventBusManager, externalPresenterFactory.getLocale());
-			localizedFactory = new VaadinPageFactoryImpl(this.factory.getConfig(), localPresenterFactory);
+			localizedFactory = new VaadinPageFactoryImpl(adaptLocalizedFactoryConfig(this.factory.getConfig()), localPresenterFactory);
 			// Store this localized factory in the cache
 			this.factoryCache.put(componentModel, localizedFactory);
 		}
@@ -105,10 +119,11 @@ public class MultiLevelEditorPresenter extends BasePresenter<IMultiLevelEditorVi
 
 	public void onRenderEditor(MasterDetailComponent componentModel, Item item, Container itemContainer) throws Exception {
 		Component editorComponent = prepareEditor(componentModel);
+		this.itemDataSourceCache.put(componentModel, item);
 		VaadinPageDataBuilder.applyItemDataSource(editorComponent, itemContainer, item, provideLocalizedFactory(componentModel).getPresenterFactory(), this.config);
 		this.getView().setContent(editorComponent);
 	}
-
+	
 	@Override
 	public Object getData() {
 		Component originalEditor = this.editorCache.get(this.componentModel.getContent());
@@ -127,6 +142,7 @@ public class MultiLevelEditorPresenter extends BasePresenter<IMultiLevelEditorVi
 		if (containers.length == 1) {
 			MasterDetailComponent mdc = getCurrentEditorComponentModel();
 			Component editorComponent = this.editorCache.get(mdc);
+			this.itemDataSourceCache.put(mdc, item);
 			VaadinPageDataBuilder.applyItemDataSource(editorComponent, containers[0], item, provideLocalizedFactory(mdc).getPresenterFactory(), this.config);
 		} else {
 			throw new Exception("Multi Level Editor supports one and only one container for onSetItemDataSource(Item, Container...)");
@@ -139,5 +155,9 @@ public class MultiLevelEditorPresenter extends BasePresenter<IMultiLevelEditorVi
 		} else {
 			this.appEventBus.openDocument(viewable);
 		}
+	}
+	
+	public Item getCurrentItemDataSource() {
+		return this.itemDataSourceCache.get(getCurrentEditorComponentModel());
 	}
 }

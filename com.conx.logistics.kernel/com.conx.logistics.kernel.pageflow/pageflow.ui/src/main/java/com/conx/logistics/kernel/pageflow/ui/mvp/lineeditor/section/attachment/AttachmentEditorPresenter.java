@@ -84,7 +84,7 @@ public class AttachmentEditorPresenter extends BasePresenter<IAttachmentEditorVi
 	}
 
 	@Override
-	public void onSetItemDataSource(Item item, Container... container) {
+	public void onSetItemDataSource(Item item, Container... container) throws Exception {
 		BaseEntity entity = null;
 		if (item instanceof BeanItem) {
 			entity = (BaseEntity) ((BeanItem<?>) item).getBean();
@@ -93,9 +93,17 @@ public class AttachmentEditorPresenter extends BasePresenter<IAttachmentEditorVi
 		}
 
 		if (entity != null) {
-			this.docFolder = entity.getDocFolder();
-			if (this.docFolder == null) {
-				// TODO add code that creates a docFolder if one does not exist
+			DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+			def.setName("pageflow.ui.data");
+			def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+			TransactionStatus status = this.daoProvider.provideByDAOClass(PlatformTransactionManager.class).getTransaction(def);
+			
+			try {
+				this.docFolder = this.daoProvider.provideByDAOClass(IRemoteDocumentRepository.class).provideFolderForEntity(entity);
+				this.daoProvider.provideByDAOClass(PlatformTransactionManager.class).commit(status);
+			} catch (Exception e) {
+				e.printStackTrace();
+				this.daoProvider.provideByDAOClass(PlatformTransactionManager.class).rollback(status);
 			}
 
 			if (!initialized) {

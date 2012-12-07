@@ -19,6 +19,7 @@
 	<!-- import external interfaces -->
 	<osgi:reference id="folderDao" interface="com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService"/>
 	<osgi:reference id="basicTypeDao" interface="com.conx.logistics.kernel.metamodel.dao.services.IBasicTypeDAOService"/>
+	<osgi:reference id="entityTypeDao" interface="com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService"/>
 	
 	<!-- export internal interfaces -->
 	<osgi:service ref="lplDocLibService" interface="com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository"/>

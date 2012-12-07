@@ -3,7 +3,6 @@ package com.conx.logistics.mdm.dao.services.documentlibrary;
 import java.util.List;
 import java.util.Set;
 
-import com.conx.logistics.mdm.domain.BaseEntity;
 import com.conx.logistics.mdm.domain.documentlibrary.DocType;
 import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.conx.logistics.mdm.domain.documentlibrary.Folder;

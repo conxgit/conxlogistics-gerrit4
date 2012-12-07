@@ -442,7 +442,7 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 		String arrvlItemName = null;
 		String format = String.format("%%0%dd", 3);
 		String paddedId = String.format(format, stockItem.getId());
-		arrvlItemName = parentRcvLineName + "-SI" + paddedId;
+		arrvlItemName = parentRcvLineName + "-SKI" + paddedId;
 		
 		stockItem.setName(arrvlItemName);
 		stockItem.setCode(arrvlItemName);
