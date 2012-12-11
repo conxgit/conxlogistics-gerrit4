@@ -69,6 +69,21 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<configuration>
+					<filesets>
+						<!-- clean target folder -->
+						<fileset>
+							<directory>target</directory>
+							<includes>
+								<include>*.*</include>
+							</includes>
+						</fileset>
+					</filesets>
+				</configuration>		
+			</plugin>
+			<plugin>
 				<groupId>com.springsource.bundlor</groupId>
 				<artifactId>com.springsource.bundlor.maven</artifactId>
 				<executions>

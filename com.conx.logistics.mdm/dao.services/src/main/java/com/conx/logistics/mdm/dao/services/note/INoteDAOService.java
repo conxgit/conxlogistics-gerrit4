@@ -15,7 +15,7 @@ public interface INoteDAOService {
 
 	public Note add(Note record);
 	
-	public Note provideNoteForEntity(BaseEntity baseEntity);
+	public BaseEntity provideNoteForEntity(BaseEntity baseEntity);
 	
 	public Note addNoteItem(Long noteId, NoteItem noteItem);
 	

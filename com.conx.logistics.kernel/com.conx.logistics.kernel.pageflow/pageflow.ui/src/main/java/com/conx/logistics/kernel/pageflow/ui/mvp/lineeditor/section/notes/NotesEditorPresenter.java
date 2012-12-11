@@ -45,8 +45,8 @@ import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItem;
 
 @Presenter(view = NotesEditorView.class)
-public class NotesEditorPresenter extends BasePresenter<INotesEditorView, NotesEditorEventBus> implements
-		ICreateNotesListener, ISaveNotesListener, ILineEditorSectionContentPresenter, IConfigurablePresenter {
+public class NotesEditorPresenter extends BasePresenter<INotesEditorView, NotesEditorEventBus> implements ICreateNotesListener,
+		ISaveNotesListener, ILineEditorSectionContentPresenter, IConfigurablePresenter {
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 	private boolean initialized = false;
 	private Set<String> visibleFieldNames;
@@ -56,14 +56,13 @@ public class NotesEditorPresenter extends BasePresenter<INotesEditorView, NotesE
 	private NoteEditorComponent noteComponent;
 	private JPAContainer<NoteItem> entityContainer;
 	private IEntityContainerProvider entityContainerProvider;
-	private Note note;
 	private IDAOProvider daoProvider;
 
 	@SuppressWarnings("unchecked")
 	private void initialize() {
 		this.entityContainer = (JPAContainer<NoteItem>) this.entityContainerProvider.createNonCachingPersistenceContainer(NoteItem.class);
 		this.visibleFieldNames = this.noteComponent.getDataSource().getVisibleFieldNames();
-		this.formVisibleFieldNames = Arrays.asList("value", "type");
+		this.formVisibleFieldNames = Arrays.asList("noteType", "content");
 		Set<String> nestedFieldNames = noteComponent.getDataSource().getNestedFieldNames();
 		for (String npp : nestedFieldNames) {
 			entityContainer.addNestedContainerProperty(npp);
@@ -93,24 +92,25 @@ public class NotesEditorPresenter extends BasePresenter<INotesEditorView, NotesE
 		Object bean = getBean(item);
 		if (bean instanceof BaseEntity) {
 			this.entity = (BaseEntity) bean;
-			
-			DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-			def.setName("pageflow.ui.data");
-			def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-			TransactionStatus status = this.daoProvider.provideByDAOClass(PlatformTransactionManager.class).getTransaction(def);
-			
-			try {
-				this.note = this.daoProvider.provideByDAOClass(INoteDAOService.class).provideNoteForEntity(this.entity);
-				this.daoProvider.provideByDAOClass(PlatformTransactionManager.class).commit(status);
-			} catch (Exception e) {
-				e.printStackTrace();
-				this.daoProvider.provideByDAOClass(PlatformTransactionManager.class).rollback(status);
+			if (this.entity.getNote() == null) {
+				DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+				def.setName("pageflow.ui.data");
+				def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+				TransactionStatus status = this.daoProvider.provideByDAOClass(PlatformTransactionManager.class).getTransaction(def);
+
+				try {
+					this.entity = this.daoProvider.provideByDAOClass(INoteDAOService.class).provideNoteForEntity(this.entity);
+					this.daoProvider.provideByDAOClass(PlatformTransactionManager.class).commit(status);
+				} catch (Exception e) {
+					e.printStackTrace();
+					this.daoProvider.provideByDAOClass(PlatformTransactionManager.class).rollback(status);
+				}
 			}
-			
+
 			if (!isInitialized()) {
 				initialize();
 			}
-			
+
 			updateQueryFilter();
 		}
 	}
@@ -123,7 +123,7 @@ public class NotesEditorPresenter extends BasePresenter<INotesEditorView, NotesE
 
 				Path<Note> parentNote = fromFileEntry.<Note> get("note");
 				Path<Long> pathId = parentNote.get("id");
-				predicates.add(criteriaBuilder.equal(pathId, NotesEditorPresenter.this.note.getId()));
+				predicates.add(criteriaBuilder.equal(pathId, NotesEditorPresenter.this.entity.getNote().getId()));
 			}
 		});
 		this.entityContainer.applyFilters();
@@ -153,8 +153,8 @@ public class NotesEditorPresenter extends BasePresenter<INotesEditorView, NotesE
 	@Override
 	public void onCreateNotes() {
 		NoteItem noteItem = new NoteItem();
-		noteItem.setNote(this.note);
-		
+		noteItem.setNote(this.entity.getNote());
+
 		Object newId = this.entityContainer.addEntity(noteItem);
 		this.newEntityItem = this.entityContainer.getItem(newId);
 		this.getView().setItemDataSource(newEntityItem, FormMode.CREATING);

@@ -92,8 +92,9 @@ public class EntityLineEditorFormHeaderPresenter extends BasePresenter<IEntityLi
 	
 	@Override
 	public void subscribe(EventBusManager eventBusManager) {
+		// FIXME Make sure this code doesn't do something silly
 		this.sectionEventBusManager = eventBusManager;
-		this.sectionEventBusManager.register(EntityLineEditorFormHeaderEventBus.class, getEventBus());
+		this.sectionEventBusManager.register(EntityLineEditorFormHeaderEventBus.class, this);
 	}
 	
 	public void onEnableValidate() {

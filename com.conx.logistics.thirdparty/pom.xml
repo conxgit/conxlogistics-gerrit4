@@ -56,8 +56,8 @@
 		<module>flexjson</module>
 		<module>vaadin-addon-tableexport</module>
 		<module>vaadin-addon-portallayout</module>
-		<module>barbecue</module>
-		<module>itext</module>
+		<!-- <module>barbecue</module>
+		<module>itext</module> -->
 		<module>vaadin686</module>
 	</modules>
 	<build>

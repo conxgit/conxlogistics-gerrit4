@@ -146,20 +146,20 @@ public class NoteDAOImpl implements INoteDAOService {
 	}
 
 	@Override
-	public Note provideNoteForEntity(BaseEntity baseEntity) {
+	public BaseEntity provideNoteForEntity(BaseEntity baseEntity) {
 		assert (baseEntity != null) : "The entity was null.";
 		assert (baseEntity.getId() != null || baseEntity.getCode() != null) : "The entity was not persistent.";
-
-		Note note = baseEntity.getNote();
-		if (note == null) {
-			note = new Note();
+		
+		if (baseEntity.getNote() == null) {
+			Note note = new Note();
 			note = em.merge(note);
 			note.setCode(baseEntity.getCode() + "-NT" + note.getId());
 			note.setName(note.getCode());
 			note = em.merge(note);
 			baseEntity.setNote(note);
+			em.merge(baseEntity);
 		}
 		
-		return note;
+		return baseEntity;
 	}
 }

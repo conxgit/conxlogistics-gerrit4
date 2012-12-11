@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1432,7 +1433,15 @@ public class StringUtil {
 		else {
 			return String.valueOf(obj);
 		}
-	}	
+	}
+	
+	public static boolean isNumber(String string) {
+		return NumberUtils.isNumber(string);
+	}
+	
+	public static Number toNumber(String string) {
+		return NumberUtils.createNumber(string);
+	}
 
 	
 	private static final char[] _HEX_DIGITS = {

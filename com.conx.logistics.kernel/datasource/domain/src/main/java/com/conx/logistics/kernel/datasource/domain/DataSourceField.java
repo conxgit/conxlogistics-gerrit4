@@ -15,7 +15,6 @@ import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.Type.PersistenceType;
 
 import com.conx.logistics.common.utils.StringUtil;
-import com.conx.logistics.kernel.datasource.domain.validators.Validator;
 import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
 import com.conx.logistics.mdm.domain.metamodel.AbstractType;
 import com.conx.logistics.mdm.domain.metamodel.EntityType;
@@ -33,7 +32,13 @@ public class DataSourceField extends MultitenantBaseEntity {
 	
 	@OneToMany(mappedBy = "parentDataSourceField", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<DataSourceField> childDataSourceFields = new HashSet<DataSourceField>();
-
+	
+	@OneToMany(mappedBy = "field", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<DataSourceFieldValidator> validators = new HashSet<DataSourceFieldValidator>();
+	
+	@OneToMany(mappedBy = "field", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<DataSourceFieldDependenceExpression> dependenceExpressions = new HashSet<DataSourceFieldDependenceExpression>();
+	
 	public DataSourceField() {
 	}
 
@@ -895,8 +900,8 @@ public class DataSourceField extends MultitenantBaseEntity {
 	 * @see com.smartgwt.client.docs.Validation Validation overview and related
 	 *      methods
 	 */
-	@OneToMany
-	Set<Validator> validators = new HashSet<Validator>();
+//	@OneToMany
+//	Set<Validator> validators = new HashSet<Validator>();
 
 	/**
 	 * A ValueMap is a set of legal values for a field.
@@ -1207,7 +1212,9 @@ public class DataSourceField extends MultitenantBaseEntity {
 	 */
 	// private SummaryFunction summaryFunction;
 
+	@SuppressWarnings("unused")
 	private boolean isDataSourceField() {
+		// TODO Make sure this gets looked at
 		return dataSource != null;
 	}
 
@@ -1438,13 +1445,13 @@ public class DataSourceField extends MultitenantBaseEntity {
 		this.dataType = dataType;
 	}
 
-	public Set<Validator> getValidators() {
-		return validators;
-	}
-
-	public void setValidators(Set<Validator> validators) {
-		this.validators = validators;
-	}
+//	public Set<Validator> getValidators() {
+//		return validators;
+//	}
+//
+//	public void setValidators(Set<Validator> validators) {
+//		this.validators = validators;
+//	}
 
 	public String getJPAPath() {
 		if (com.conx.logistics.common.utils.Validator.isNotNull(valueXPath)) {
@@ -1550,4 +1557,17 @@ public class DataSourceField extends MultitenantBaseEntity {
 	public void setChildDataSourceFields(Set<DataSourceField> childDataSourceFields) {
 		this.childDataSourceFields = childDataSourceFields;
 	}
+
+	public Set<DataSourceFieldValidator> getValidators() {
+		return validators;
+	}
+
+	public Set<DataSourceFieldDependenceExpression> getDependenceExpressions() {
+		return dependenceExpressions;
+	}
+
+	public void setDependenceExpressions(Set<DataSourceFieldDependenceExpression> dependenceExpressions) {
+		this.dependenceExpressions = dependenceExpressions;
+	}
+	
 }

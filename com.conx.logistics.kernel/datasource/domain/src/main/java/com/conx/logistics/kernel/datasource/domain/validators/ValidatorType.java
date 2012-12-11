@@ -38,6 +38,10 @@ public enum ValidatorType  {
      */
     ISFUNCTION("isFunction"),
     /**
+     * Validator evaluates to a boolean expression tree using other validators.
+     */
+    ISEXPRESSION("isExpression"),
+    /**
      * RequiredIf type validators should be specified with an <code>expression</code> property set to a {@link
      * com.smartgwt.client.docs.StringMethods stringMethod}, which takes three parameters:<ul> <li>item - the DynamicForm item
      * on which the error occurred (may be null) <li>validator - a pointer to the validator object <li>value - the value of the

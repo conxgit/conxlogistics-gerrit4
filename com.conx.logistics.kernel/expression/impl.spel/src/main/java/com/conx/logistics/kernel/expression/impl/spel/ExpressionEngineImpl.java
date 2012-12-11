@@ -35,7 +35,7 @@ public class ExpressionEngineImpl implements IExpressionEngine{
 
 	@Override
 	public <T> T evaluate(IExpressionEvaluationContext context, String expressionString, Map<String, Object> parameters, Class<T> type) {
-		StandardEvaluationContextImpl internalContext = (StandardEvaluationContextImpl)context.cast();
+		StandardEvaluationContext internalContext = (StandardEvaluationContext)context.cast();
 		internalContext.setVariables(parameters);
 		
 		return parser.parseExpression(expressionString).getValue(internalContext,type);

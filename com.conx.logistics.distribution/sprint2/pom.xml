@@ -292,16 +292,16 @@
 		</dependency>
 	 
  		<!-- Reporting -->
- 		<dependency>
+ 		<!-- <dependency>
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.reporting.remote.services</artifactId>
 			<version>1.0.0</version>
-		</dependency>	
-		<dependency>
+		</dependency>	 -->
+		<!-- <dependency>
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.reporting.jasperreports.service.impl</artifactId>
 			<version>1.0.0</version>
-		</dependency>	
+		</dependency>	 -->
 		
 		<!-- APP:TMS -->
 		<dependency>
@@ -422,11 +422,11 @@
 			<artifactId>com.conx.logistics.app.whse.rcv.rcv.workitems</artifactId>
 			<version>1.0.0</version>
 		</dependency>	
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.app.whse.rcv.rcv.domain.osgi.fragment.human-task-core</artifactId>
 			<version>1.0.0</version>
-		</dependency>			
+		</dependency> -->			
 
 		<!-- Kernel UI:  -->
 		<!-- UI Required services: BPM Services -->

@@ -1,5 +1,6 @@
 package com.conx.logistics.kernel.expression.impl.spel;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -22,5 +23,10 @@ public class StandardEvaluationContextImpl implements IExpressionEvaluationConte
 	@Override
 	public Object cast() {
 		return context;
+	}
+
+	@Override
+	public void registerMethod(String name, Method method) {
+		this.context.registerFunction(name, method);
 	}	
 }

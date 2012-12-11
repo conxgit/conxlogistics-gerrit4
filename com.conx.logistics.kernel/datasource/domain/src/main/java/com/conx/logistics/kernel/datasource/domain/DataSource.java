@@ -37,7 +37,7 @@ public class DataSource extends MultitenantBaseEntity {
 
 	@Transient
 	private Map<String, DataSourceField> dataSourceFieldMap = null;
-
+	
 	@ManyToOne
 	private EntityType entityType;
 

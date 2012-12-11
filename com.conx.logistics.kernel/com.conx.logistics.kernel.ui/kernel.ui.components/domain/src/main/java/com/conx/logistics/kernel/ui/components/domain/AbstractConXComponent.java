@@ -19,7 +19,7 @@ import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @Table(name="sysuicomponent")
 //@DiscriminatorOptions(force=true)
-// TODO THIS IS A HACK TO MAKE QUERIES WORK.
+// FIXME THIS IS A HACK TO MAKE QUERIES WORK.
 @ForceDiscriminator
 public class AbstractConXComponent extends MultitenantBaseEntity implements Sizeable {
 

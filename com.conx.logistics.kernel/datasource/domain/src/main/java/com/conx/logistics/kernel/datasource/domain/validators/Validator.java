@@ -8,11 +8,9 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
-import org.springframework.beans.factory.annotation.Value;
-
+import com.conx.logistics.kernel.datasource.domain.DataSourceField;
 import com.conx.logistics.mdm.domain.MultitenantBaseEntity;
 
 
@@ -38,10 +36,9 @@ public abstract class Validator extends MultitenantBaseEntity {
         
     }
 
-
     // ********************* Properties / Attributes ***********************
 
-    /**
+	/**
      * Indicates this validator runs on the client only. <p> Normally, if the server is trying to run validators and finds a
      * validator that it can't execute, for safety reasons validation is considered to have failed.  Use this flag to
      * explicitly mark a validator that only needs to run on the client.
@@ -103,7 +100,7 @@ public abstract class Validator extends MultitenantBaseEntity {
      * @param dependentFields dependentFields Default value is null
      */
     @Embedded
-    private Set<String> dependentFields = new HashSet<String>(); 
+    private Set<DataSourceField> dependentFields = new HashSet<DataSourceField>(); 
 
 
     /**
@@ -114,8 +111,23 @@ public abstract class Validator extends MultitenantBaseEntity {
      */
     private ValidatorType type;
     
-    
     protected String typeAsString;
+    
+    public ValidatorType getType() {
+		return type;
+	}
+
+    public void setType(ValidatorType type) {
+		this.type = type;
+	}
+
+	public Set<DataSourceField> getDependentFields() {
+		return dependentFields;
+	}
+
+	public void setDependentFields(Set<DataSourceField> dependentFields) {
+		this.dependentFields = dependentFields;
+	}
 }
 
 

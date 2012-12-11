@@ -1,19 +1,24 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <artifactId>com.conx.logistics.common</artifactId>
-    <groupId>com.conx.logistics</groupId>
-    <version>1.0.0</version>
-    <relativePath>..</relativePath>
-  </parent>
-  <artifactId>com.conx.logistics.common.utils</artifactId>
-  <name>com.conx.logistics.common.utils</name>
-  <description>com.conx.logistics.common.utils</description>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>com.conx.logistics.common</artifactId>
+		<groupId>com.conx.logistics</groupId>
+		<version>1.0.0</version>
+		<relativePath>..</relativePath>
+	</parent>
+	<artifactId>com.conx.logistics.common.utils</artifactId>
+	<name>com.conx.logistics.common.utils</name>
+	<description>com.conx.logistics.common.utils</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>org.springframework.instrument</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>com.springsource.org.apache.commons.lang</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
@@ -42,5 +47,5 @@
 				</executions>
 			</plugin>
 		</plugins>
-	</build>  
+	</build>
 </project>

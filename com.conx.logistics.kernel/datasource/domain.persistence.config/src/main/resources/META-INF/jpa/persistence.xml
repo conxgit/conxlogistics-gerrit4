@@ -5,6 +5,8 @@
 	<persistence-unit name="pu-datasource">
 		<class>com.conx.logistics.kernel.datasource.domain.DataSource</class>
 		<class>com.conx.logistics.kernel.datasource.domain.DataSourceField</class>
+		<class>com.conx.logistics.kernel.datasource.domain.DataSourceFieldValidator</class>
+		<class>com.conx.logistics.kernel.datasource.domain.DataSourceFieldDependenceExpression</class>
 		<class>com.conx.logistics.kernel.datasource.domain.validators.Validator</class>
 	</persistence-unit>
 </persistence>

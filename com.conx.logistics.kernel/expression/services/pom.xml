@@ -34,4 +34,11 @@
 			</plugin>
 		</plugins>
 	</build>  
+	<dependencies>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.common.utils</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+	</dependencies>
 </project>

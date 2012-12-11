@@ -15,7 +15,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.conx.logistics.kernel.expression.impl.spel.tests.ExpressionEngineTests.FormField;
 import com.conx.logistics.kernel.expression.services.IExpressionEngine;
 
 @ContextConfiguration(locations = { "/META-INF/spring/module-context.xml"

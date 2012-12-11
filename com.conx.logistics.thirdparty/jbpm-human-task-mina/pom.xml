@@ -15,7 +15,7 @@
 				<artifactId>maven-clean-plugin</artifactId>
 				<configuration>
 					<filesets>
-						<!-- clean old generated MANIFEST.MF files on clean -->
+						<!-- clean target folder -->
 						<fileset>
 							<directory>target</directory>
 							<includes>

@@ -397,7 +397,7 @@
 		<dependency>
 			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.thirdparty.osgi-vaadin</artifactId>
-			<version>6.7.5</version>
+			<version>6.8.6</version>
 		</dependency>
 
 		<dependency>

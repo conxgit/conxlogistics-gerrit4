@@ -112,7 +112,7 @@ public class EntityLineEditorFormPresenter extends BasePresenter<IEntityLineEdit
 	@Override
 	public void subscribe(EventBusManager eventBusManager) {
 		this.sectionEventBusManager = eventBusManager;
-		this.sectionEventBusManager.register(EntityLineEditorFormEventBus.class, getEventBus());
+		this.sectionEventBusManager.register(EntityLineEditorFormEventBus.class, this);
 	}
 
 	public void setNewLineEditor(boolean isNewLineEditor) {
