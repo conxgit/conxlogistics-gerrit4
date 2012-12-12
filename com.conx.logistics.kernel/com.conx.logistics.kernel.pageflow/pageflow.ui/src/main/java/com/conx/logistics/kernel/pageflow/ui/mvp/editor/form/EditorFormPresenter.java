@@ -13,9 +13,9 @@ import com.conx.logistics.kernel.pageflow.ui.builder.VaadinPageDataBuilder;
 import com.conx.logistics.kernel.pageflow.ui.builder.VaadinPageFactoryImpl;
 import com.conx.logistics.kernel.pageflow.ui.ext.mvp.IConfigurablePresenter;
 import com.conx.logistics.kernel.pageflow.ui.ext.mvp.IContainerItemPresenter;
+import com.conx.logistics.kernel.pageflow.ui.ext.mvp.ILocalizedEventSubscriber;
 import com.conx.logistics.kernel.pageflow.ui.mvp.editor.form.view.EditorFormView;
 import com.conx.logistics.kernel.pageflow.ui.mvp.editor.form.view.IEditorFormView;
-import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.form.header.EntityLineEditorFormHeaderEventBus;
 import com.conx.logistics.kernel.ui.components.domain.form.ConXForm;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
 import com.conx.logistics.kernel.ui.factory.services.data.IDAOProvider;
@@ -28,7 +28,7 @@ import com.vaadin.data.util.BeanItem;
 @Presenter(view = EditorFormView.class)
 public class EditorFormPresenter extends
 		BasePresenter<IEditorFormView, EditorFormEventBus> implements
-		IContainerItemPresenter, IConfigurablePresenter, IFormChangeListener {
+		IContainerItemPresenter, IConfigurablePresenter, IFormChangeListener, ILocalizedEventSubscriber {
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private ConXForm formComponent;
@@ -60,11 +60,6 @@ public class EditorFormPresenter extends
 				.get(IEntityEditorFactory.VAADIN_COMPONENT_FACTORY);
 		this.daoProvider = (IDAOProvider) params
 				.get(IPageComponent.DAO_PROVIDER);
-
-		if (this.sectionEventBusManager != null) {
-			this.sectionEventBusManager.register(
-					EntityLineEditorFormHeaderEventBus.class, this);
-		}
 
 		this.getView().setForm(
 				(VaadinForm) this.factory.createComponent(this.formComponent));
@@ -118,7 +113,7 @@ public class EditorFormPresenter extends
 	public void subscribe(EventBusManager eventBusManager) {
 		this.sectionEventBusManager = eventBusManager;
 		this.sectionEventBusManager.register(EditorFormEventBus.class,
-				getEventBus());
+				this);
 	}
 
 	private void fireEvent(String eventName) {

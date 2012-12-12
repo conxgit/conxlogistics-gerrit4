@@ -10,9 +10,9 @@ public class IsGreaterNumberValidator extends DataSourceFieldValidator {
 	private static final long serialVersionUID = -7496310890917438800L;
 
 	public IsGreaterNumberValidator(DataSourceField field, float lowerBound) {
-		String fieldValue = "#form.getField(" + getPropertyId(field) + ").getValue()";
+		String fieldValue = "#form.getField('" + getPropertyId(field) + "').getValue()";
 		this.setValidationExpression("#isNumber(" + fieldValue + ") AND (#toNumber(" + fieldValue + ") > " + String.valueOf(lowerBound) + ")");
-		this.setErrorMessage(fieldNameToTitle(field.getName()) + " was not greater than zero.");
+		this.setErrorMessage(fieldNameToTitle(field.getName()) + " must be greater than " + lowerBound + ".");
 		this.setField(field);
 	}
 	
@@ -34,6 +34,13 @@ public class IsGreaterNumberValidator extends DataSourceFieldValidator {
 					title += " ";
 				}
 			}
+			section = section.trim();
+			if (section.length() == 1) {
+				section = section.toUpperCase();
+			} else if (section.length() > 1) {
+				section = Character.toUpperCase(section.charAt(0)) + section.substring(1);
+			}
+			
 			title += section;
 			if (!"".equals(section)) {
 				isFirst = false;

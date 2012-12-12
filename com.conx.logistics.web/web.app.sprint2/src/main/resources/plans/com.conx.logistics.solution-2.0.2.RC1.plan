@@ -140,7 +140,7 @@
 	<artifact type="bundle" name="com.conx.logistics.kernel.bpm.impl.jbpm.bpmserver" version="1.0.0"/>
 	
 	<!-- kernel : Pageflow -->
-	<artifact type="bundle" name="com.conx.logistics.kernel.pageflow.ui" version="1.0.0"/>
+	<!-- <artifact type="bundle" name="com.conx.logistics.kernel.pageflow.ui" version="1.0.0"/> -->
 	<artifact type="bundle" name="com.conx.logistics.kernel.pageflow.engine" version="1.0.0"/>
 	
 	<!-- Sprint #2 Test Data -->	

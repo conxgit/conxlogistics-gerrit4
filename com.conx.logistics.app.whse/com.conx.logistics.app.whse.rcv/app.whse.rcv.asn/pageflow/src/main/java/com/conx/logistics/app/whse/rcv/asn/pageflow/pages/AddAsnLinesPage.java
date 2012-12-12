@@ -187,12 +187,13 @@ public class AddAsnLinesPage extends BasePageFlowPage implements IModelDrivenPag
 		DataSource asnLineDataSource = new DataSource("asnlineweightdimensionsformdatasource", asnLineEntityType);
 		// Build AsnLine Detail Form
 		ConXCollapseableSectionForm weightDimensionsForm = new ConXCollapseableSectionForm();
+		weightDimensionsForm.setColumnsLimit(4);
 		weightDimensionsForm.setDataSource(asnLineDataSource);
 		// Build Weight Section
 		FieldSet weightFieldSet = new FieldSet(0);
 		weightFieldSet.setCaption("Weight");
 		// Expected Total Weight Field
-		DataSourceField expectedTotalWeightDsField = new DataSourceField("expectedTotalWeight", asnLineDataSource, null, "Expected Total Weight");
+		DataSourceField expectedTotalWeightDsField = new DataSourceField("expectedTotalWeight", asnLineDataSource, null, "Expected Total Weight", 0);
 		expectedTotalWeightDsField.setRequired(true);
 		asnLineDataSource.getDSFields().add(expectedTotalWeightDsField);
 		FieldSetField expectedTotalWeightField = new FieldSetField(0);
@@ -200,7 +201,8 @@ public class AddAsnLinesPage extends BasePageFlowPage implements IModelDrivenPag
 		expectedTotalWeightField.setDataSource(asnLineDataSource);
 		weightFieldSet.getFields().add(expectedTotalWeightField);
 		// Expected Weight Unit Field
-		DataSourceField expectedWeightUnitDsField = new DataSourceField("expectedWeightUnit", asnLineDataSource, null, "Weight Unit");
+		DataSourceField expectedWeightUnitDsField = new DataSourceField("expectedWeightUnit", asnLineDataSource, null, "Weight Unit", 1);
+		expectedWeightUnitDsField.setRequired(true);
 		asnLineDataSource.getDSFields().add(expectedWeightUnitDsField);
 		FieldSetField expectedWeightUnitField = new FieldSetField(0);
 		expectedWeightUnitField.setDataSourceField(expectedWeightUnitDsField);
@@ -209,11 +211,58 @@ public class AddAsnLinesPage extends BasePageFlowPage implements IModelDrivenPag
 		// Add Weight Section to Detail Form
 		weightDimensionsForm.getFieldSetSet().add(weightFieldSet);
 		
-		// Build Volume Section
-		FieldSet volumeFieldSet = new FieldSet(0);
-		volumeFieldSet.setCaption("Volume");
+		// Build Dimensions Section
+		FieldSet dimensionsFieldSet = new FieldSet(0);
+		dimensionsFieldSet.setCaption("Dimensions");
+		// Expected Total Length Field
+		DataSourceField expectedTotalLengthDsField = new DataSourceField("expectedTotalLen", asnLineDataSource, null, "Expected Total Length", 4);
+		expectedTotalLengthDsField.setRequired(true);
+		asnLineDataSource.getDSFields().add(expectedTotalLengthDsField);
+		FieldSetField expectedTotalLengthField = new FieldSetField(0);
+		expectedTotalLengthField.setDataSourceField(expectedTotalLengthDsField);
+		expectedTotalLengthField.setDataSource(asnLineDataSource);
+		dimensionsFieldSet.getFields().add(expectedTotalLengthField);
+		// Expected Length Unit Field
+		DataSourceField expectedLengthUnitDsField = new DataSourceField("expectedLengthUnit", asnLineDataSource, null, "Expected  Length Unit", 8);
+		expectedLengthUnitDsField.setRequired(true);
+		asnLineDataSource.getDSFields().add(expectedLengthUnitDsField);
+		FieldSetField expectedLengthUnitField = new FieldSetField(0);
+		expectedLengthUnitField.setDataSourceField(expectedLengthUnitDsField);
+		expectedLengthUnitField.setDataSource(asnLineDataSource);
+		dimensionsFieldSet.getFields().add(expectedLengthUnitField);
+		// Expected Total Width Field
+		DataSourceField expectedTotalWidthDsField = new DataSourceField("expectedTotalWidth", asnLineDataSource, null, "Expected Total Width", 5);
+		expectedTotalWidthDsField.setRequired(true);
+		asnLineDataSource.getDSFields().add(expectedTotalWidthDsField);
+		FieldSetField expectedTotalWidthField = new FieldSetField(0);
+		expectedTotalWidthField.setDataSourceField(expectedTotalWidthDsField);
+		expectedTotalWidthField.setDataSource(asnLineDataSource);
+		dimensionsFieldSet.getFields().add(expectedTotalWidthField);
+		// Expected Length Unit Field
+		DataSourceField expectedWidthUnitDsField = new DataSourceField("expectedWidthUnit", asnLineDataSource, null, "Expected  Width Unit", 9);
+		expectedWidthUnitDsField.setRequired(true);
+		asnLineDataSource.getDSFields().add(expectedWidthUnitDsField);
+		FieldSetField expectedWidthUnitField = new FieldSetField(0);
+		expectedWidthUnitField.setDataSourceField(expectedWidthUnitDsField);
+		expectedWidthUnitField.setDataSource(asnLineDataSource);
+		dimensionsFieldSet.getFields().add(expectedWidthUnitField);
+		// Expected Total Height Field
+		DataSourceField expectedTotalHeightDsField = new DataSourceField("expectedTotalHeight", asnLineDataSource, null, "Expected Total Height", 6);
+		asnLineDataSource.getDSFields().add(expectedTotalHeightDsField);
+		FieldSetField expectedTotalHeightField = new FieldSetField(0);
+		expectedTotalHeightField.setDataSourceField(expectedTotalHeightDsField);
+		expectedTotalHeightField.setDataSource(asnLineDataSource);
+		dimensionsFieldSet.getFields().add(expectedTotalHeightField);
+		// Expected Height Unit Field
+		DataSourceField expectedHeightUnitDsField = new DataSourceField("expectedHeightUnit", asnLineDataSource, null, "Expected Height Unit", 10);
+		asnLineDataSource.getDSFields().add(expectedHeightUnitDsField);
+		FieldSetField expectedHeightUnitField = new FieldSetField(0);
+		expectedHeightUnitField.setDataSourceField(expectedHeightUnitDsField);
+		expectedHeightUnitField.setDataSource(asnLineDataSource);
+		dimensionsFieldSet.getFields().add(expectedHeightUnitField);
 		// Expected Total Volume Field
-		DataSourceField expectedTotalVolumeDsField = new DataSourceField("expectedTotalVolume", asnLineDataSource, null, "Expected Total Volume");
+		DataSourceField expectedTotalVolumeDsField = new DataSourceField("expectedTotalVolume", asnLineDataSource, null, "Expected Total Volume", 7);
+		expectedTotalVolumeDsField.setRequired(true);
 		// Expected Total Volume Validation Rule
 		DataSourceFieldValidator volValidator = new DataSourceFieldValidator("#form.getField('expectedTotalVolume').getValue() != null OR (#form.getField('expectedTotalLen').getValue() != null AND #form.getField('expectedTotalWidth').getValue() != null AND #form.getField('expectedTotalHeight').getValue() != null)");
 		volValidator.setErrorMessage("Volume must be provided OR length, width and height.");
@@ -224,67 +273,17 @@ public class AddAsnLinesPage extends BasePageFlowPage implements IModelDrivenPag
 		FieldSetField expectedTotalVolumeField = new FieldSetField(0);
 		expectedTotalVolumeField.setDataSourceField(expectedTotalVolumeDsField);
 		expectedTotalVolumeField.setDataSource(asnLineDataSource);
-		volumeFieldSet.getFields().add(expectedTotalVolumeField);
-		expectedTotalVolumeField.setFieldSet(volumeFieldSet);
+		dimensionsFieldSet.getFields().add(expectedTotalVolumeField);
+		expectedTotalVolumeField.setFieldSet(dimensionsFieldSet);
 		// Expected Volume Unit Field
-		DataSourceField expectedVolumeUnitDsField = new DataSourceField("expectedVolUnit", asnLineDataSource, null, "Volume Unit");
+		DataSourceField expectedVolumeUnitDsField = new DataSourceField("expectedVolUnit", asnLineDataSource, null, "Volume Unit", 11);
+		expectedVolumeUnitDsField.setRequired(true);
 		asnLineDataSource.getDSFields().add(expectedVolumeUnitDsField);
 		FieldSetField expectedVolumeUnitField = new FieldSetField(0);
 		expectedVolumeUnitField.setDataSourceField(expectedVolumeUnitDsField);
 		expectedVolumeUnitField.setDataSource(asnLineDataSource);
-		volumeFieldSet.getFields().add(expectedVolumeUnitField);
-		// Add Volume Section to Detail Form
-		weightDimensionsForm.getFieldSetSet().add(volumeFieldSet);
-		
-		// Build Dimensions Section
-		FieldSet dimensionsFieldSet = new FieldSet(0);
-		dimensionsFieldSet.setCaption("Dimensions");
-		// Expected Total Length Field
-		DataSourceField expectedTotalLengthDsField = new DataSourceField("expectedTotalLen", asnLineDataSource, null, "Expected Total Length");
-		expectedTotalLengthDsField.setRequired(true);
-		asnLineDataSource.getDSFields().add(expectedTotalLengthDsField);
-		FieldSetField expectedTotalLengthField = new FieldSetField(0);
-		expectedTotalLengthField.setDataSourceField(expectedTotalLengthDsField);
-		expectedTotalLengthField.setDataSource(asnLineDataSource);
-		dimensionsFieldSet.getFields().add(expectedTotalLengthField);
-		// Expected Length Unit Field
-		DataSourceField expectedLengthUnitDsField = new DataSourceField("expectedLengthUnit", asnLineDataSource, null, "Expected  Length Unit");
-		asnLineDataSource.getDSFields().add(expectedLengthUnitDsField);
-		FieldSetField expectedLengthUnitField = new FieldSetField(0);
-		expectedLengthUnitField.setDataSourceField(expectedLengthUnitDsField);
-		expectedLengthUnitField.setDataSource(asnLineDataSource);
-		dimensionsFieldSet.getFields().add(expectedLengthUnitField);
-		// Expected Total Width Field
-		DataSourceField expectedTotalWidthDsField = new DataSourceField("expectedTotalWidth", asnLineDataSource, null, "Expected Total Width");
-		expectedTotalWidthDsField.setRequired(true);
-		asnLineDataSource.getDSFields().add(expectedTotalWidthDsField);
-		FieldSetField expectedTotalWidthField = new FieldSetField(0);
-		expectedTotalWidthField.setDataSourceField(expectedTotalWidthDsField);
-		expectedTotalWidthField.setDataSource(asnLineDataSource);
-		dimensionsFieldSet.getFields().add(expectedTotalWidthField);
-		// Expected Length Unit Field
-		DataSourceField expectedWidthUnitDsField = new DataSourceField("expectedWidthUnit", asnLineDataSource, null, "Expected  Width Unit");
-		asnLineDataSource.getDSFields().add(expectedWidthUnitDsField);
-		FieldSetField expectedWidthUnitField = new FieldSetField(0);
-		expectedWidthUnitField.setDataSourceField(expectedWidthUnitDsField);
-		expectedWidthUnitField.setDataSource(asnLineDataSource);
-		dimensionsFieldSet.getFields().add(expectedWidthUnitField);
-		// Expected Total Height Field
-		DataSourceField expectedTotalHeightDsField = new DataSourceField("expectedTotalHeight", asnLineDataSource, null, "Expected Total Height");
-		expectedTotalHeightDsField.setRequired(true);
-		asnLineDataSource.getDSFields().add(expectedTotalHeightDsField);
-		FieldSetField expectedTotalHeightField = new FieldSetField(0);
-		expectedTotalHeightField.setDataSourceField(expectedTotalHeightDsField);
-		expectedTotalHeightField.setDataSource(asnLineDataSource);
-		dimensionsFieldSet.getFields().add(expectedTotalHeightField);
-		// Expected Height Unit Field
-		DataSourceField expectedHeightUnitDsField = new DataSourceField("expectedHeightUnit", asnLineDataSource, null, "Expected  Height Unit");
-		expectedHeightUnitDsField.setRequired(true);
-		asnLineDataSource.getDSFields().add(expectedHeightUnitDsField);
-		FieldSetField expectedHeightUnitField = new FieldSetField(0);
-		expectedHeightUnitField.setDataSourceField(expectedHeightUnitDsField);
-		expectedHeightUnitField.setDataSource(asnLineDataSource);
-		dimensionsFieldSet.getFields().add(expectedHeightUnitField);
+		dimensionsFieldSet.getFields().add(expectedVolumeUnitField);
+		expectedVolumeUnitField.setFieldSet(dimensionsFieldSet);
 		// Add Quantity Section to Detail Form
 		weightDimensionsForm.getFieldSetSet().add(dimensionsFieldSet);
 		
@@ -306,7 +305,8 @@ public class AddAsnLinesPage extends BasePageFlowPage implements IModelDrivenPag
 		quantityFieldSet.setCaption("Quantity");
 		// Expected Inner Pack Count Field
 		DataSourceField expectedInnerPackCountDsField = new DataSourceField("expectedInnerPackCount", asnLineDataSource, null,
-				"Expected Inner Pack Count");
+				"Expected Inner Pack Count", 12);
+		expectedInnerPackCountDsField.setRequired(true);
 		// Expected Total Volume Validation Rule
 		expectedInnerPackCountDsField.getValidators().add(new IsGreaterNumberValidator(expectedInnerPackCountDsField, 0.0f));
 		// Add the Inner Pack Count Data Source Field
@@ -317,7 +317,7 @@ public class AddAsnLinesPage extends BasePageFlowPage implements IModelDrivenPag
 		quantityFieldSet.getFields().add(expectedInnerPackCountField);
 		// Expected Inner Pack CountUnit Field
 		DataSourceField expectedInnerPackCountUnitDsField = new DataSourceField("expectedInnerPackUnit", asnLineDataSource, null,
-				"Expected Inner Pack Unit");
+				"Expected Inner Pack Unit", 13);
 		expectedInnerPackCountUnitDsField.setRequired(true);
 		asnLineDataSource.getDSFields().add(expectedInnerPackCountUnitDsField);
 		FieldSetField expectedInnerPackCountUnitField = new FieldSetField(0);
@@ -326,7 +326,7 @@ public class AddAsnLinesPage extends BasePageFlowPage implements IModelDrivenPag
 		quantityFieldSet.getFields().add(expectedInnerPackCountUnitField);
 		// Expected Outer Pack Count Field
 		DataSourceField expectedOuterPackCountDsField = new DataSourceField("expectedOuterPackCount", asnLineDataSource, null,
-				"Expected Outer Pack Count");
+				"Expected Outer Pack Count", 14);
 		expectedOuterPackCountDsField.getValidators().add(new IsGreaterNumberValidator(expectedOuterPackCountDsField, 0.0f));
 		asnLineDataSource.getDSFields().add(expectedOuterPackCountDsField);
 		FieldSetField expectedOuterPackCountField = new FieldSetField(0);
@@ -335,8 +335,7 @@ public class AddAsnLinesPage extends BasePageFlowPage implements IModelDrivenPag
 		quantityFieldSet.getFields().add(expectedOuterPackCountField);
 		// Expected Outer Pack Unit Field
 		DataSourceField expectedOuterPackCountUnitDsField = new DataSourceField("expectedOuterPackUnit", asnLineDataSource, null,
-				"Expected Outer Pack Unit");
-		expectedOuterPackCountUnitDsField.setRequired(true);
+				"Expected Outer Pack Unit", 15);
 		asnLineDataSource.getDSFields().add(expectedOuterPackCountUnitDsField);
 		FieldSetField expectedOuterPackCountUnitField = new FieldSetField(0);
 		expectedOuterPackCountUnitField.setDataSourceField(expectedOuterPackCountUnitDsField);

@@ -3,6 +3,7 @@ package com.conx.logistics.app.whse.rcv.asn.domain;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -26,11 +27,11 @@ public class ASNLine extends MultitenantBaseEntity {
     @JoinColumn
     private Product product;
     
-    @ManyToOne(targetEntity = ASN.class)
+    @ManyToOne(targetEntity = ASN.class, fetch = FetchType.LAZY)
     @JoinColumn
     private ASN parentASN;    
     
-    @OneToOne(targetEntity = ReferenceNumber.class)
+    @OneToOne(targetEntity = ReferenceNumber.class, fetch = FetchType.LAZY)
     @JoinColumn
     private ReferenceNumber refNumber;
 
@@ -50,31 +51,31 @@ public class ASNLine extends MultitenantBaseEntity {
 
     private Double expectedTotalVolume;
     
-    @ManyToOne(targetEntity = PackUnit.class)
+    @ManyToOne(targetEntity = PackUnit.class, fetch = FetchType.LAZY)
     @JoinColumn
     private PackUnit expectedInnerPackUnit;
 
-    @ManyToOne(targetEntity = PackUnit.class)
+    @ManyToOne(targetEntity = PackUnit.class, fetch = FetchType.LAZY)
     @JoinColumn
     private PackUnit expectedOuterPackUnit;
 
-    @ManyToOne(targetEntity = WeightUnit.class)
+    @ManyToOne(targetEntity = WeightUnit.class, fetch = FetchType.LAZY)
     @JoinColumn
     private WeightUnit expectedWeightUnit;
 
-    @ManyToOne(targetEntity = DimUnit.class)
+    @ManyToOne(targetEntity = DimUnit.class, fetch = FetchType.LAZY)
     @JoinColumn
     private DimUnit expectedLengthUnit;
     
-    @ManyToOne(targetEntity = DimUnit.class)
+    @ManyToOne(targetEntity = DimUnit.class, fetch = FetchType.LAZY)
     @JoinColumn
     private DimUnit expectedWidthUnit;
     
-    @ManyToOne(targetEntity = DimUnit.class)
+    @ManyToOne(targetEntity = DimUnit.class, fetch = FetchType.LAZY)
     @JoinColumn
     private DimUnit expectedHeightUnit;
 
-    @ManyToOne(targetEntity = DimUnit.class)
+    @ManyToOne(targetEntity = DimUnit.class, fetch = FetchType.LAZY)
     @JoinColumn
     private DimUnit expectedVolUnit;
 

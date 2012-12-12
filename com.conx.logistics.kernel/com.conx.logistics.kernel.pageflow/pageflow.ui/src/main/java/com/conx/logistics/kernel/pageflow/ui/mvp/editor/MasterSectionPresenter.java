@@ -49,7 +49,7 @@ public class MasterSectionPresenter extends BasePresenter<IMasterSectionView, Ma
 	private VaadinPageFactoryImpl factory;
 	private EventBusManager sectionEventBusManager;
 	private Map<String, Object> config;
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void onAddNewBeanItem(Object newBean) throws Exception {
 		if (this.contentPresenter == null) {
@@ -58,9 +58,11 @@ public class MasterSectionPresenter extends BasePresenter<IMasterSectionView, Ma
 				if (container instanceof BeanItemContainer) {
 					Item item = ((BeanItemContainer) container).addBean(newBean);
 					if (((VaadinMatchGrid) this.getView().getContent()).getUnmatchedGrid().getContainerDataSource() instanceof JPAContainer<?>) {
-						((JPAContainer<?>) ((VaadinMatchGrid) this.getView().getContent()).getUnmatchedGrid().getContainerDataSource()).refresh();
+						((JPAContainer<?>) ((VaadinMatchGrid) this.getView().getContent()).getUnmatchedGrid().getContainerDataSource())
+								.refresh();
 					}
-					EntityLineEditorEventBus lineEditorEventBus = this.factory.getPresenterFactory().getEventBusManager().getEventBus(EntityLineEditorEventBus.class);
+					EntityLineEditorEventBus lineEditorEventBus = this.factory.getPresenterFactory().getEventBusManager()
+							.getEventBus(EntityLineEditorEventBus.class);
 					if (lineEditorEventBus != null) {
 						lineEditorEventBus.setItemDataSource(item, container);
 					} else {
@@ -113,41 +115,43 @@ public class MasterSectionPresenter extends BasePresenter<IMasterSectionView, Ma
 			} else {
 				final Component contentComponent = this.factory.createComponent(this.componentModel);
 				if (contentComponent instanceof VaadinMatchGrid) {
-					EntityEditorToolStripButton newEntityButton = ((VaadinMatchGrid) contentComponent).getNewMatchedItemButton();
-					newEntityButton.addListener(new ClickListener() {
+					if (((VaadinMatchGrid) contentComponent).getComponentModel().isDynamic()) {
+						EntityEditorToolStripButton newEntityButton = ((VaadinMatchGrid) contentComponent).getNewMatchedItemButton();
+						newEntityButton.addListener(new ClickListener() {
 
-						@SuppressWarnings({ "unchecked", "rawtypes" })
-						@Override
-						public void buttonClick(ClickEvent event) {
-							assert (MasterSectionPresenter.this.factory != null);
-							assert (MasterSectionPresenter.this.factory.getPresenterFactory() != null);
-							assert (MasterSectionPresenter.this.factory.getPresenterFactory().getEventBusManager() != null);
+							@SuppressWarnings({ "unchecked", "rawtypes" })
+							@Override
+							public void buttonClick(ClickEvent event) {
+								assert (MasterSectionPresenter.this.factory != null);
+								assert (MasterSectionPresenter.this.factory.getPresenterFactory() != null);
+								assert (MasterSectionPresenter.this.factory.getPresenterFactory().getEventBusManager() != null);
 
-							try {
-								BeanItemContainer container = new BeanItemContainer(((VaadinMatchGrid) contentComponent)
-										.getMatchedContainerType());
-								Object bean = ((VaadinMatchGrid) contentComponent).getMatchedContainerType().newInstance();
-								Item item = container.addBean(bean);
-								EntityLineEditorEventBus eventBus = MasterSectionPresenter.this.factory.getPresenterFactory()
-										.getEventBusManager().getEventBus(EntityLineEditorEventBus.class);
-								if (eventBus != null) {
-									eventBus.setNewItemDataSource(item, container);
+								try {
+									BeanItemContainer container = new BeanItemContainer(((VaadinMatchGrid) contentComponent)
+											.getMatchedContainerType());
+									Object bean = ((VaadinMatchGrid) contentComponent).getMatchedContainerType().newInstance();
+									Item item = container.addBean(bean);
+									EntityLineEditorEventBus eventBus = MasterSectionPresenter.this.factory.getPresenterFactory()
+											.getEventBusManager().getEventBus(EntityLineEditorEventBus.class);
+									if (eventBus != null) {
+										eventBus.setNewItemDataSource(item, container);
+									}
+								} catch (IllegalArgumentException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} catch (ClassNotFoundException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} catch (InstantiationException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} catch (IllegalAccessException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
 								}
-							} catch (IllegalArgumentException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							} catch (ClassNotFoundException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							} catch (InstantiationException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							} catch (IllegalAccessException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
 							}
-						}
-					});
+						});
+					}
 				}
 				this.getView().setContent(contentComponent);
 			}

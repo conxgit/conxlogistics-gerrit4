@@ -14,6 +14,8 @@ public interface IASNDAOService {
 
 	public ASN add(ASN record);
 	
+	public ASNLine addLine(ASNLine lines, Long asnId) throws Exception;
+	
 	public ASN addLines(Long asnId, Set<ASNLine> lines) throws Exception;
 	
 	public ASN addLines(ASN asn, Set<ASNLine> lines) throws Exception;
@@ -29,6 +31,8 @@ public interface IASNDAOService {
 	public void delete(ASN record);
 
 	public ASN update(ASN record);
+	
+	public ASNLine update(ASNLine record);
 
 	public ASN get(long id);
 

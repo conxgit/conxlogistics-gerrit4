@@ -27,6 +27,8 @@ import com.conx.logistics.mdm.domain.metamodel.EntityType;
 @Table(name = "sysdsdatasourcefield")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class DataSourceField extends MultitenantBaseEntity {
+	private int ordinal = -1;
+	
 	@ManyToOne
 	private DataSourceField parentDataSourceField;
 	
@@ -53,6 +55,15 @@ public class DataSourceField extends MultitenantBaseEntity {
 		this.parentDataSource = parentDataSource;
 		this.dataType = dataType;
 		this.multiple = false;
+	}
+	
+	public DataSourceField(String name, DataSource parentDataSource, AbstractType dataType, String title, int ordinal) {
+		setName(name);
+		this.title = title;
+		this.parentDataSource = parentDataSource;
+		this.dataType = dataType;
+		this.multiple = false;
+		this.ordinal = ordinal;
 	}
 
 	// ********************* Properties / Attributes ***********************
@@ -1568,6 +1579,14 @@ public class DataSourceField extends MultitenantBaseEntity {
 
 	public void setDependenceExpressions(Set<DataSourceFieldDependenceExpression> dependenceExpressions) {
 		this.dependenceExpressions = dependenceExpressions;
+	}
+
+	public int getOrdinal() {
+		return ordinal;
+	}
+
+	public void setOrdinal(int ordinal) {
+		this.ordinal = ordinal;
 	}
 	
 }

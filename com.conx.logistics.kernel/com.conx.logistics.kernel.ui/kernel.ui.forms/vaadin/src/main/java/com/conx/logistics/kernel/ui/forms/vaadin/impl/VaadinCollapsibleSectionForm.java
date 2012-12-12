@@ -101,13 +101,13 @@ public class VaadinCollapsibleSectionForm extends VaadinForm implements IVaadinF
 					header = addFormSection(fieldSet);
 				}
 				field.setWidth("100%");
-				header.getLayout().addComponent(field);
+				((VaadinFormGridLayout) header.getLayout()).addField(field);
 			}
 		}
 	}
 
 	private VaadinCollapsibleSectionFormSectionHeader addFormSection(FieldSet fieldSet) {
-		VaadinFormGridLayout content = new VaadinFormGridLayout();
+		VaadinFormGridLayout content = new VaadinFormGridLayout(this.componentForm.getColumnsLimit());
 		content.setMargin(false, true, false, true);
 		VaadinCollapsibleSectionFormSectionHeader header = new VaadinCollapsibleSectionFormSectionHeader(fieldSet, content);
 		innerLayout.addComponent(header);
@@ -227,15 +227,16 @@ public class VaadinCollapsibleSectionForm extends VaadinForm implements IVaadinF
 
 	private VaadinCollapsibleSectionFormSectionHeader getFieldHeader(Field field) {
 		FieldSetField fsf = fields.get(field);
-		if (fsf != null) {
-			FieldSet fs = fsf.getFieldSet();
-			if (fs != null) {
-				return headers.get(fs);
+		Collection<FieldSet> fieldSets = this.headers.keySet();
+		for (FieldSet fieldSet : fieldSets) {
+			if (fieldSet.getFieldSetField(getPropertyId(fsf.getDataSourceField())) != null) {
+				return this.headers.get(fieldSet);
 			}
 		}
+
 		return null;
 	}
-
+	
 	public void resetForm() {
 		this.alertPanel.setVisible(false);
 		setItemDataSource(getItemDataSource());

@@ -47,11 +47,11 @@ public abstract class BaseEntity implements Serializable {
     @Column(name = "version")
     private Integer version;
     
-    @ManyToOne(targetEntity = Folder.class, fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @ManyToOne(targetEntity = Folder.class, fetch = FetchType.LAZY, cascade=CascadeType.ALL)
     @JoinColumn
     private Folder docFolder;
     
-    @ManyToOne(targetEntity = Note.class, fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @ManyToOne(targetEntity = Note.class, fetch = FetchType.LAZY, cascade=CascadeType.ALL)
     @JoinColumn
     private Note note;
     

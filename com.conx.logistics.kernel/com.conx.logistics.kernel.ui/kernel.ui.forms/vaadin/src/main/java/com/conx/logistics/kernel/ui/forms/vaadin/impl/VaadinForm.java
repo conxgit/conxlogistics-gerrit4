@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -62,7 +64,10 @@ public class VaadinForm extends Form {
 	// Fields map caches all fields created by the field factory and
 	// strores them by property id
 	private Map<Object, Field> fields;
-	// Expression engine specific fields 
+	private HashMap<Field, Object> propertyIds;
+	private List<Field> fieldOrdinalCache;
+	private HashMap<Field, DataSourceField> dataSourceFieldCache;
+	// Expression engine specific fields
 	private StandardEvaluationContext evaluationContext;
 	private ExpressionParser expressionParser;
 
@@ -82,6 +87,9 @@ public class VaadinForm extends Form {
 
 	public VaadinForm() {
 		this.fields = new HashMap<Object, Field>();
+		this.propertyIds = new HashMap<Field, Object>();
+		this.fieldOrdinalCache = new LinkedList<Field>();
+
 		this.formChangeListeners = new HashSet<IFormChangeListener>();
 		this.fieldValueChangeListener = new ValueChangeListener() {
 			private static final long serialVersionUID = 1L;
@@ -95,8 +103,13 @@ public class VaadinForm extends Form {
 
 	public VaadinForm(Layout formLayout, ConXForm componentModel) {
 		super(formLayout);
-		this.componentModel = componentModel;
+
 		this.fields = new HashMap<Object, Field>();
+		this.propertyIds = new HashMap<Field, Object>();
+		this.fieldOrdinalCache = new LinkedList<Field>();
+		this.dataSourceFieldCache = new HashMap<Field, DataSourceField>();
+
+		this.componentModel = componentModel;
 		this.formChangeListeners = new HashSet<IFormChangeListener>();
 		this.fieldValueChangeListener = new ValueChangeListener() {
 			private static final long serialVersionUID = 1L;
@@ -110,8 +123,13 @@ public class VaadinForm extends Form {
 
 	public VaadinForm(Layout formLayout, ConXForm componentModel, FormFieldFactory fieldFactory) {
 		super(formLayout, fieldFactory);
-		this.componentModel = componentModel;
+
 		this.fields = new HashMap<Object, Field>();
+		this.propertyIds = new HashMap<Field, Object>();
+		this.fieldOrdinalCache = new LinkedList<Field>();
+		this.dataSourceFieldCache = new HashMap<Field, DataSourceField>();
+
+		this.componentModel = componentModel;
 		this.formChangeListeners = new HashSet<IFormChangeListener>();
 		this.fieldValueChangeListener = new ValueChangeListener() {
 			private static final long serialVersionUID = 1L;
@@ -127,7 +145,7 @@ public class VaadinForm extends Form {
 		throw new UnsupportedOperationException("setTitle() is unsupported by this form");
 	}
 
-	private String getPropertyId(DataSourceField dsField) {
+	protected String getPropertyId(DataSourceField dsField) {
 		if (dsField.getJPAPath() != null) {
 			return dsField.getJPAPath();
 		} else {
@@ -184,13 +202,28 @@ public class VaadinForm extends Form {
 				return;
 			}
 
+			// Reset field caches
+			this.fields = new HashMap<Object, Field>();
+			this.propertyIds = new HashMap<Field, Object>();
+			this.dataSourceFieldCache = new HashMap<Field, DataSourceField>();
+			this.fieldOrdinalCache = new LinkedList<Field>();
+
 			HashMap<Object, Field> addedPropertyIds = new HashMap<Object, Field>();
-			// Adds all the properties to this form
+			// Binds all the properties to fields
 			for (final Iterator<?> i = propertyIds.iterator(); i.hasNext();) {
 				final Object id = i.next();
 				final Property property = itemDatasource.getItemProperty(id);
 				if (id != null && property != null) {
 					initField(itemDatasource, id, addedPropertyIds);
+				}
+			}
+
+			// Finally add all the fields to the form layout IN ORDER
+			Object propertyId = null;
+			for (Field field : this.fieldOrdinalCache) {
+				propertyId = this.propertyIds.get(field);
+				if (propertyId != null) {
+					addField(propertyId, field);
 				}
 			}
 		}
@@ -268,7 +301,7 @@ public class VaadinForm extends Form {
 			}
 		}
 	}
-	
+
 	private DependenceExpressionUpdateListener buildDependenceExpresssionListener(DataSourceFieldDependenceExpression dependenceExpression) {
 		return new DependenceExpressionUpdateListener(dependenceExpression);
 	}
@@ -297,21 +330,21 @@ public class VaadinForm extends Form {
 							f.addValidator(new ExpressionBasedValidator(validator.getValidationExpression(), validator.getErrorMessage()));
 						}
 					}
-					
+
 					if (dsField.getDependenceExpressions() != null) {
 						for (DataSourceFieldDependenceExpression expression : dsField.getDependenceExpressions()) {
 							ValueChangeListener dependenceListener = buildDependenceExpresssionListener(expression);
-							
+
 							Object fieldPropertyId;
 							Field field;
 							for (DataSourceField dependeeDsField : expression.getDependees()) {
 								fieldPropertyId = getPropertyId(dependeeDsField);
 								field = getField(fieldPropertyId);
-								
+
 								if (field == null) {
 									field = initField(itemDataSource, fieldPropertyId, addedPropertyIds);
 								}
-								
+
 								if (field != null) {
 									field.addListener(dependenceListener);
 								}
@@ -327,8 +360,30 @@ public class VaadinForm extends Form {
 							throw new MethodException(p, "Nested Parent Properties for Property " + propertyId + " were null.");
 						}
 						clearErrorMessage(f);
+						// Fields used to be added to the form at this point,
+						// but now we will add them to the ordinal cache first
 						this.fields.put(propertyId, f);
-						addField(propertyId, f);
+						this.propertyIds.put(f, propertyId);
+						this.dataSourceFieldCache.put(f, dsField);
+						// Using the ds field's ordinal, put the Field in the
+						// field ordinal cache
+						DataSourceField comparator;
+						int i;
+						for (i = 0; i < this.fieldOrdinalCache.size(); i++) {
+							comparator = this.dataSourceFieldCache.get(this.fieldOrdinalCache.get(i));
+							if (comparator != null) {
+								if (comparator.getOrdinal() > dsField.getOrdinal()) {
+									this.fieldOrdinalCache.add(i, f);
+									break;
+								}
+							}
+						}
+						
+						if (i == this.fieldOrdinalCache.size()) {
+							// Means we have to this field to the end of the list
+							this.fieldOrdinalCache.add(f);
+						}
+						
 						return f;
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -397,7 +452,7 @@ public class VaadinForm extends Form {
 
 	protected class ContainerRefreshListener implements ItemSetChangeListener {
 		private static final long serialVersionUID = 7364596329095103693L;
-		
+
 		private Field childField;
 
 		public ContainerRefreshListener(Field childField) {
@@ -421,10 +476,10 @@ public class VaadinForm extends Form {
 			}
 		}
 	}
-	
+
 	private class DependenceExpressionUpdateListener implements ValueChangeListener {
 		private static final long serialVersionUID = 3740705199870793080L;
-		
+
 		private DataSourceFieldDependenceExpression dependenceExpression;
 
 		public DependenceExpressionUpdateListener(DataSourceFieldDependenceExpression dependenceExpression) {
@@ -433,18 +488,23 @@ public class VaadinForm extends Form {
 
 		@Override
 		public void valueChange(com.vaadin.data.Property.ValueChangeEvent event) {
-			Object value = provideExpressionParser().parseExpression(this.dependenceExpression.getExpression()).getValue(provideEvaluationContext(), this.dependenceExpression.getEvaluationType());
-			Field field = getField(getPropertyId(this.dependenceExpression.getField()));
-			if (field != null && value != null) {
-				field.setValue(String.valueOf(value));
+			try {
+				Object value = provideExpressionParser().parseExpression(this.dependenceExpression.getExpression()).getValue(
+						provideEvaluationContext(), this.dependenceExpression.getEvaluationType());
+				Field field = getField(getPropertyId(this.dependenceExpression.getField()));
+				if (field != null && value != null) {
+					field.setValue(String.valueOf(value));
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
-		
+
 	}
-	
+
 	protected class ValueDependenceListener implements ValueChangeListener {
 		private static final long serialVersionUID = -7197186226450185330L;
-		
+
 		private Container childFieldContainer;
 		private Field childField;
 		private Filter parentFilter;
@@ -557,7 +617,7 @@ public class VaadinForm extends Form {
 	 */
 	private class ExpressionBasedValidator implements Validator {
 		private static final long serialVersionUID = 2613741136955843017L;
-		
+
 		private String expression, errorMessage;
 
 		public ExpressionBasedValidator(String expression, String errorMessage) {
@@ -574,7 +634,15 @@ public class VaadinForm extends Form {
 
 		@Override
 		public boolean isValid(Object value) {
-			return evaluateValidationExpression(this.expression);
+			try {
+				return evaluateValidationExpression(this.expression);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} catch (Error e) {
+				e.printStackTrace();
+			}
+			
+			return false;
 		}
 	}
 }

@@ -3,6 +3,7 @@ package com.conx.logistics.app.whse.domain.warehouse;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -22,11 +23,11 @@ public class Warehouse extends MultitenantBaseEntity {
     @Enumerated(EnumType.STRING)
     private WAREHOUSETYPE whseType;
 
-    @ManyToOne(targetEntity = Address.class)
+    @ManyToOne(targetEntity = Address.class, fetch = FetchType.LAZY)
     @JoinColumn
     private Address address;
 
-    @ManyToOne(targetEntity = Organization.class)
+    @ManyToOne(targetEntity = Organization.class, fetch = FetchType.LAZY)
     @JoinColumn
     private Organization partner;
 }

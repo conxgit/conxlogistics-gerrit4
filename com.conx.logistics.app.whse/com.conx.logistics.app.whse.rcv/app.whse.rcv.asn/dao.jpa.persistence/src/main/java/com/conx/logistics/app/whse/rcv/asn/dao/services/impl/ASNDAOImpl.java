@@ -93,6 +93,14 @@ public class ASNDAOImpl implements IASNDAOService {
 		newRecord.setName(code);
 		newRecord.setCode(code);
 	}
+	
+	private void assignCode(ASNLine newRecord, ASN parentASN) {
+		String format = String.format("%%0%dd", 3);
+		String paddedId = String.format(format, newRecord.getId());
+		String code = parentASN.getCode() + "-ALN" + paddedId;
+		newRecord.setName(code);
+		newRecord.setCode(code);
+	}
 
 	@Override
 	public ASN addLines(Long asnId, Set<ASNLine> lines) throws Exception {
@@ -305,5 +313,22 @@ public class ASNDAOImpl implements IASNDAOService {
 
 			throw e;
 		}
+	}
+
+	@Override
+	public ASNLine addLine(ASNLine line, Long asnId) throws Exception {
+		line = em.merge(line);
+		ASN asn = get(asnId);
+		assert (asn == null) : "The asn did not exist";
+		assignCode(line, asn);
+		line = em.merge(line);
+		asn.getAsnLines().add(line);
+		asn = em.merge(asn);
+		return line;
+	}
+
+	@Override
+	public ASNLine update(ASNLine record) {
+		return em.merge(record);
 	}
 }

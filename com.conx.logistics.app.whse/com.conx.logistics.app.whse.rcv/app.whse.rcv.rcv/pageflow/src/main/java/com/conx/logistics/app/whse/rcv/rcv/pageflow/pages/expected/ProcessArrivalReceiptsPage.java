@@ -10,12 +10,16 @@ import com.conx.logistics.app.whse.rcv.rcv.domain.ArrivalReceiptLine;
 import com.conx.logistics.app.whse.rcv.rcv.domain.ReceiveLine;
 import com.conx.logistics.kernel.datasource.domain.DataSource;
 import com.conx.logistics.kernel.datasource.domain.DataSourceField;
+import com.conx.logistics.kernel.datasource.domain.DataSourceFieldDependenceExpression;
+import com.conx.logistics.kernel.datasource.domain.DataSourceFieldValidator;
+import com.conx.logistics.kernel.datasource.domain.validators.IsGreaterNumberValidator;
 import com.conx.logistics.kernel.pageflow.services.BasePageFlowPage;
 import com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage;
 import com.conx.logistics.kernel.ui.components.domain.attachment.AttachmentEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.editor.MultiLevelEntityEditor;
 import com.conx.logistics.kernel.ui.components.domain.form.CollapsiblePhysicalAttributeConfirmActualsForm;
 import com.conx.logistics.kernel.ui.components.domain.form.ConXCollapseableSectionForm;
+import com.conx.logistics.kernel.ui.components.domain.form.ConXForm;
 import com.conx.logistics.kernel.ui.components.domain.form.FieldSet;
 import com.conx.logistics.kernel.ui.components.domain.form.FieldSetField;
 import com.conx.logistics.kernel.ui.components.domain.form.PhysicalAttributeConfirmActualsFieldSet;
@@ -105,7 +109,9 @@ public class ProcessArrivalReceiptsPage extends BasePageFlowPage implements IMod
 		fieldSet.getFields().add(fsf);
 		basicForm.getFieldSetSet().add(fieldSet);
 
-		CollapsiblePhysicalAttributeConfirmActualsForm weightDimsForm = new CollapsiblePhysicalAttributeConfirmActualsForm(stockItemDs, "Confirm Truck Info");
+		ds = new DataSource("stockItemDS", stockItemType);
+		
+		CollapsiblePhysicalAttributeConfirmActualsForm weightDimsForm = new CollapsiblePhysicalAttributeConfirmActualsForm(ds, "Weight & Dimensions");
 		// Weight FieldSet
 		PhysicalAttributeConfirmActualsFieldSet physicalAttributefieldSet = new PhysicalAttributeConfirmActualsFieldSet();
 		physicalAttributefieldSet.setCaption("Weight");

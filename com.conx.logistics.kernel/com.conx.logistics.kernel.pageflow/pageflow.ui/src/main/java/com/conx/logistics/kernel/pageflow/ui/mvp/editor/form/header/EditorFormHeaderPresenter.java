@@ -11,7 +11,6 @@ import org.vaadin.mvp.presenter.annotation.Presenter;
 import com.conx.logistics.kernel.pageflow.ui.ext.mvp.ILocalizedEventSubscriber;
 import com.conx.logistics.kernel.pageflow.ui.mvp.editor.form.header.view.EditorFormHeaderView;
 import com.conx.logistics.kernel.pageflow.ui.mvp.editor.form.header.view.IEditorFormHeaderView;
-import com.conx.logistics.kernel.pageflow.ui.mvp.lineeditor.section.form.header.EntityLineEditorFormHeaderEventBus;
 import com.vaadin.data.Item;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -94,7 +93,7 @@ public class EditorFormHeaderPresenter extends BasePresenter<IEditorFormHeaderVi
 	@Override
 	public void subscribe(EventBusManager eventBusManager) {
 		this.sectionEventBusManager = eventBusManager;
-		this.sectionEventBusManager.register(EntityLineEditorFormHeaderEventBus.class, getEventBus());
+		this.sectionEventBusManager.register(EditorFormHeaderEventBus.class, this);
 	}
 	
 	public void onEnableValidate() {

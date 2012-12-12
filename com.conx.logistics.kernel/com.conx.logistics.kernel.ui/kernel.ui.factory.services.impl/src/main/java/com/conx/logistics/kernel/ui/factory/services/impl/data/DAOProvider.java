@@ -8,6 +8,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import com.conx.logistics.app.whse.dao.services.ILocationDAOService;
 import com.conx.logistics.app.whse.im.dao.services.IStockItemDAOService;
+import com.conx.logistics.app.whse.rcv.asn.dao.services.IASNDAOService;
 import com.conx.logistics.app.whse.rcv.rcv.dao.services.IArrivalDAOService;
 import com.conx.logistics.app.whse.rcv.rcv.dao.services.IArrivalReceiptDAOService;
 import com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveDAOService;
@@ -59,6 +60,8 @@ public class DAOProvider implements IDAOProvider {
 	private IBaseEntityDAOService baseEntityDAOService;
 //  @Autowired
 	private IFeatureDAOService featureDAOService;
+//  @Autowired
+	private IASNDAOService asnDaoService;
 	
 	public void start() {
 	}
@@ -285,5 +288,15 @@ public class DAOProvider implements IDAOProvider {
 	public void setFeatureDAOService(IFeatureDAOService featureDAOService) {
 		this.provideDaoCache().put(IFeatureDAOService.class, featureDAOService);
 		this.featureDAOService = featureDAOService;
+	}
+
+	public IASNDAOService getAsnDaoService() {
+		return asnDaoService;
+	}
+
+	@Autowired
+	public void setAsnDaoService(IASNDAOService asnDaoService) {
+		this.provideDaoCache().put(IASNDAOService.class, asnDaoService);
+		this.asnDaoService = asnDaoService;
 	}
 }

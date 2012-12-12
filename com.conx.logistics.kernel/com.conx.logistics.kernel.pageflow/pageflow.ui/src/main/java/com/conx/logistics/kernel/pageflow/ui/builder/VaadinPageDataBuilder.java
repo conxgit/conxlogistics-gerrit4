@@ -17,6 +17,9 @@ import org.vaadin.mvp.presenter.PresenterFactory;
 
 import com.conx.logistics.app.whse.im.dao.services.IStockItemDAOService;
 import com.conx.logistics.app.whse.im.domain.stockitem.StockItem;
+import com.conx.logistics.app.whse.rcv.asn.dao.services.IASNDAOService;
+import com.conx.logistics.app.whse.rcv.asn.domain.ASN;
+import com.conx.logistics.app.whse.rcv.asn.domain.ASNLine;
 import com.conx.logistics.app.whse.rcv.rcv.dao.services.IArrivalDAOService;
 import com.conx.logistics.app.whse.rcv.rcv.dao.services.IArrivalReceiptDAOService;
 import com.conx.logistics.app.whse.rcv.rcv.domain.Arrival;
@@ -505,7 +508,7 @@ public class VaadinPageDataBuilder {
 		return paramInstanceMap;
 	}
 
-	// FIXME Add an applyItemDataSource impl for grids
+	// FIXME Add an applyItemDataSource impl for master section grids
 	@SuppressWarnings("unused")
 	private static PluralAttribute provideGridAttribute(Class<?> propertyType, Object bean, IDAOProvider daoProvider) throws Exception {
 		PluralAttribute gridAttribute = null;
@@ -588,7 +591,7 @@ public class VaadinPageDataBuilder {
 							}
 							return result;
 						} else {
-							throw new Exception("saveInstance(StockItem) needs a ReceiveLine and an ArrivalReceipt.");
+							throw new IllegalArgumentException("saveInstance(StockItem) needs a ReceiveLine and an ArrivalReceipt.");
 						}
 					} else if (parentInstances.length == 1) {
 						if (paramInstanceMap.get(ArrivalReceiptLine.class) != null) {
@@ -613,7 +616,7 @@ public class VaadinPageDataBuilder {
 							return result;
 						}
 					} else {
-						throw new Exception("saveInstance(StockItem) needs a ReceiveLine and an ArrivalReceipt OR just an ArrivalReceipt.");
+						throw new IllegalArgumentException("saveInstance(StockItem) needs a ReceiveLine and an ArrivalReceipt OR just an ArrivalReceipt.");
 					}
 				} else {
 					daoProvider.provideByDAOClass(IStockItemDAOService.class).update((StockItem) instance);
@@ -637,10 +640,10 @@ public class VaadinPageDataBuilder {
 							}
 							return result;
 						} else {
-							throw new Exception("saveInstance(Arrival) needs a Receive.");
+							throw new IllegalArgumentException("saveInstance(Arrival) needs a Receive.");
 						}
 					} else {
-						throw new Exception("saveInstance(Arrival) needs a Receive.");
+						throw new IllegalArgumentException("saveInstance(Arrival) needs a Receive.");
 					}
 				} else {
 					daoProvider.provideByDAOClass(IArrivalDAOService.class).update((Arrival) instance);
@@ -664,10 +667,10 @@ public class VaadinPageDataBuilder {
 							}
 							return result;
 						} else {
-							throw new Exception("saveInstance(ArrivalReceipt) needs an Arrival.");
+							throw new IllegalArgumentException("saveInstance(ArrivalReceipt) needs an Arrival.");
 						}
 					} else {
-						throw new Exception("saveInstance(ArrivalReceipt) needs an Arrival.");
+						throw new IllegalArgumentException("saveInstance(ArrivalReceipt) needs an Arrival.");
 					}
 				} else {
 					daoProvider.provideByDAOClass(IArrivalReceiptDAOService.class).update((ArrivalReceipt) instance);
@@ -691,16 +694,43 @@ public class VaadinPageDataBuilder {
 							}
 							return result;
 						} else {
-							throw new Exception("saveInstance(ArrivalReceiptLine) needs an ArrivalReceipt.");
+							throw new IllegalArgumentException("saveInstance(ArrivalReceiptLine) needs an ArrivalReceipt.");
 						}
 					} else {
-						throw new Exception("saveInstance(ArrivalReceiptLine) needs an ArrivalReceipt.");
+						throw new IllegalArgumentException("saveInstance(ArrivalReceiptLine) needs an ArrivalReceipt.");
 					}
 				} else {
 					daoProvider.provideByDAOClass(IArrivalReceiptDAOService.class).updateArrivalReceiptLine((ArrivalReceiptLine) instance);
 				}
+			} else if (instance instanceof ASNLine) {
+				if (((BaseEntity) instance).getId() == null) {
+					if (parentInstances.length == 1) {
+						if (parentInstances[0] instanceof ASN) {
+							DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+							def.setName("pageflow.ui.data");
+							def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+							TransactionStatus status = daoProvider.provideByDAOClass(PlatformTransactionManager.class).getTransaction(def);
+							T result = null;
+							try {
+								result = (T) daoProvider.provideByDAOClass(IASNDAOService.class).addLine((ASNLine) instance, ((ASN) parentInstances[0]).getId());
+								daoProvider.provideByDAOClass(PlatformTransactionManager.class).commit(status);
+							} catch (Exception e) {
+								daoProvider.provideByDAOClass(PlatformTransactionManager.class).rollback(status);
+								e.printStackTrace();
+							}
+							return result;
+						} else {
+							throw new IllegalArgumentException("saveInstance(ASNLine) needs an ASN.");
+						}
+					} else {
+						throw new IllegalArgumentException("saveInstance(ASNLine) needs an ASN.");
+					}
+				} else {
+					return (T) daoProvider.provideByDAOClass(IASNDAOService.class).update((ASNLine) instance);
+				}
 			}
 
+			// If no DAO match was made, just return the unpersisted instance
 			return instance;
 		} else {
 			throw new Exception("The IDAOProvider was null.");
