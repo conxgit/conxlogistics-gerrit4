@@ -150,6 +150,13 @@ public class ProcessDynamicArrivalReceiptsPage extends BasePageFlowPage implemen
 		fsf = new FieldSetField(0, dsField, null);
 		newSIFormFieldSet.getFields().add(fsf);		
 		
+		//--- Product
+		dsField = new DataSourceField("innerPackCount", newStockItemDS, newStockItemDS, stockItemType, "Quantity", null);
+		dsField.setRequired(true);
+		newStockItemDS.getDSFields().add(dsField);
+		fsf = new FieldSetField(0, dsField, null);
+		newSIFormFieldSet.getFields().add(fsf);	
+		
 		ConXSimpleForm newSIForm = new ConXSimpleForm(newStockItemDS);
 		newSIForm.setFieldSet(newSIFormFieldSet);
 		newSIForm.setCaption("Required Fields");
@@ -221,8 +228,10 @@ public class ProcessDynamicArrivalReceiptsPage extends BasePageFlowPage implemen
 		lec.setContent(orgForm);
 		lecc.getLineEditors().add(lec);
 		
+		ds = new DataSource("stockItemDS", stockItemType);
+		
 		//-- LE: StockItem Weight & Dims Form
-		CollapsiblePhysicalAttributeConfirmActualsForm weightDimsForm = new CollapsiblePhysicalAttributeConfirmActualsForm(stockItemDs, "Confirm Truck Info");
+		CollapsiblePhysicalAttributeConfirmActualsForm weightDimsForm = new CollapsiblePhysicalAttributeConfirmActualsForm(ds, "Confirm Truck Info");
 		// Weight FieldSet
 		PhysicalAttributeConfirmActualsFieldSet physicalAttributefieldSet = new PhysicalAttributeConfirmActualsFieldSet();
 		physicalAttributefieldSet.setCaption("Weight");

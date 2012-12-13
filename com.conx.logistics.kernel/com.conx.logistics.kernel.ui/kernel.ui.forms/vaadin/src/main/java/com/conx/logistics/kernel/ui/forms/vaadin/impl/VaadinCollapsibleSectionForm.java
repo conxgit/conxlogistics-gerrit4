@@ -143,6 +143,7 @@ public class VaadinCollapsibleSectionForm extends VaadinForm implements IVaadinF
 	public void setItemDataSource(com.vaadin.data.Item newDataSource, Collection<?> propertyIds) {
 		this.innerLayout.removeAllComponents();
 		this.headers.clear();
+		this.fields.clear();
 		super.setItemDataSource(newDataSource, propertyIds);
 	}
 
@@ -150,6 +151,7 @@ public class VaadinCollapsibleSectionForm extends VaadinForm implements IVaadinF
 	public void setItemDataSource(com.vaadin.data.Item newDataSource) {
 		this.innerLayout.removeAllComponents();
 		this.headers.clear();
+		this.fields.clear();
 		super.setItemDataSource(newDataSource);
 	}
 

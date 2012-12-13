@@ -13,6 +13,10 @@ import javax.persistence.criteria.Root;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.vaadin.mvp.eventbus.EventBusManager;
 import org.vaadin.mvp.presenter.BasePresenter;
 import org.vaadin.mvp.presenter.annotation.Presenter;
@@ -30,6 +34,7 @@ import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
 import com.conx.logistics.kernel.ui.factory.services.data.IDAOProvider;
 import com.conx.logistics.kernel.ui.forms.vaadin.FormMode;
 import com.conx.logistics.mdm.dao.services.IEntityMetadataDAOService;
+import com.conx.logistics.mdm.dao.services.referencenumber.IReferenceNumberDAOService;
 import com.conx.logistics.mdm.domain.BaseEntity;
 import com.conx.logistics.mdm.domain.metadata.DefaultEntityMetadata;
 import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber;
@@ -89,8 +94,23 @@ public class ReferenceNumberEditorPresenter extends BasePresenter<IReferenceNumb
 		Object bean = getBean(item);
 		if (bean instanceof BaseEntity) {
 			this.entity = (BaseEntity) bean;
-			this.defaultMetadata = this.daoProvider.provideByDAOClass(IEntityMetadataDAOService.class).provide(this.entity.getClass());
-
+			assert (this.entity.getId() != null) : "The item data source entity id was null";
+			
+			DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+			def.setName("pageflow.ui.data");
+			def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+			TransactionStatus status = this.daoProvider.provideByDAOClass(PlatformTransactionManager.class).getTransaction(def);
+			
+			this.defaultMetadata = null;
+			try {
+				this.defaultMetadata = this.daoProvider.provideByDAOClass(IEntityMetadataDAOService.class).provide(this.entity.getClass());
+				this.daoProvider.provideByDAOClass(PlatformTransactionManager.class).commit(status);
+			} catch (Exception e) {
+				e.printStackTrace();
+				this.daoProvider.provideByDAOClass(PlatformTransactionManager.class).rollback(status);
+			}
+			assert (this.defaultMetadata != null) : "The item data source entity metadata was null";
+			
 			if (!isInitialized()) {
 				initialize();
 			}
@@ -105,8 +125,7 @@ public class ReferenceNumberEditorPresenter extends BasePresenter<IReferenceNumb
 			public void filtersWillBeAdded(CriteriaBuilder criteriaBuilder, CriteriaQuery<?> query, List<Predicate> predicates) {
 				Root<?> referenceNumberRoot = query.getRoots().iterator().next();
 
-				Path<DefaultEntityMetadata> metaData = referenceNumberRoot.<DefaultEntityMetadata> get("entityMetadata");
-				Path<Long> metaDataId = metaData.get("id");
+				Path<Long> metaDataId = referenceNumberRoot.<DefaultEntityMetadata> get("entityMetadata").get("id");
 				Path<Long> pk = referenceNumberRoot.<Long> get("entityPK");
 				Predicate predicate = criteriaBuilder.and(
 						criteriaBuilder.equal(metaDataId, ReferenceNumberEditorPresenter.this.defaultMetadata.getId()),
@@ -135,17 +154,29 @@ public class ReferenceNumberEditorPresenter extends BasePresenter<IReferenceNumb
 	@Override
 	public void onSaveReferenceNumber(Item item) {
 		this.newEntityItem = null;
+		this.entityContainer.refresh();
 		this.getView().hideDetail();
 	}
 
 	@Override
 	public void onCreateReferenceNumber() {
-		ReferenceNumber referenceNumber = new ReferenceNumber();
-		referenceNumber.setEntityMetadata(this.defaultMetadata);
-		referenceNumber.setEntityPK(this.entity.getId());
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setName("pageflow.ui.data");
+		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+		TransactionStatus status = this.daoProvider.provideByDAOClass(PlatformTransactionManager.class).getTransaction(def);
 		
-		Object newId = this.entityContainer.addEntity(referenceNumber);
-		this.newEntityItem = this.entityContainer.getItem(newId);
+		ReferenceNumber referenceNumber = null;
+		try {
+			referenceNumber = this.daoProvider.provideByDAOClass(IReferenceNumberDAOService.class).add(this.entity.getId(), this.entity.getClass());
+			this.daoProvider.provideByDAOClass(PlatformTransactionManager.class).commit(status);
+		} catch (Exception e) {
+			e.printStackTrace();
+			this.daoProvider.provideByDAOClass(PlatformTransactionManager.class).rollback(status);
+		}
+		
+		assert (referenceNumber != null) : "The new reference number was null";
+		
+		this.newEntityItem = this.entityContainer.getItem(referenceNumber.getId());
 		this.getView().setItemDataSource(newEntityItem, FormMode.CREATING);
 		this.getView().showDetail();
 	}

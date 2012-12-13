@@ -48,7 +48,7 @@ public class AddAsnCarrierInfoPage extends BasePageFlowPage implements
 
 	@Override
 	public String getTaskName() {
-		return "AddAsnCarrierInfoPage";
+		return "Provide Carrier Info";
 	}
 
 	@Override

@@ -36,7 +36,7 @@ public class ConfirmAsnOrgPage extends BasePageFlowPage implements IModelDrivenP
 
 	@Override
 	public String getTaskName() {
-		return "ConfirmAsnOrgPage";
+		return "Confirm Organization";
 	}
 
 	@Override

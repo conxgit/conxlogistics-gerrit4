@@ -15,11 +15,13 @@ import javax.persistence.criteria.Root;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.conx.logistics.common.utils.Validator;
+import com.conx.logistics.mdm.dao.services.IEntityMetadataDAOService;
 import com.conx.logistics.mdm.dao.services.referencenumber.IReferenceNumberDAOService;
+import com.conx.logistics.mdm.domain.BaseEntity;
 import com.conx.logistics.mdm.domain.metadata.DefaultEntityMetadata;
 import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber;
 
@@ -31,7 +33,10 @@ public class ReferenceNumberDAOImpl implements IReferenceNumberDAOService {
      * Spring will inject a managed JPA {@link EntityManager} into this field.
      */
     @PersistenceContext
-    private EntityManager em;	
+    private EntityManager em;
+    
+    @Autowired
+    private IEntityMetadataDAOService entityMetadataDao;
     
 	public void setEm(EntityManager em) {
 		this.em = em;
@@ -99,5 +104,36 @@ public class ReferenceNumberDAOImpl implements IReferenceNumberDAOService {
 	@Override
 	public ReferenceNumber update(ReferenceNumber record) {
 		return em.merge(record);
+	}
+
+	@Override
+	public ReferenceNumber add(Long parentEntityPK, Class<?> parentEntityType) {
+		assert (parentEntityPK != null) : "Parent Entity Id was null.";
+		assert (parentEntityType != null) : "Parent Entity Type was null.";
+		Object parentEntity = em.getReference(parentEntityType, parentEntityPK);
+		assert (parentEntity instanceof BaseEntity) : "Parent Entity was not of type Base Entity.";
+		DefaultEntityMetadata parentEntityMetaData = entityMetadataDao.provide(parentEntityType);
+		assert (parentEntityMetaData != null) : "Could not get parent entity metadata.";
+		ReferenceNumber newRecord = new ReferenceNumber();
+		newRecord.setEntityPK(((BaseEntity) parentEntity).getId());
+		newRecord.setEntityMetadata(parentEntityMetaData);
+		newRecord = em.merge(newRecord);
+		
+		String format = String.format("%%0%dd", 3);
+		String paddedId = String.format(format, newRecord.getId());
+		String code = ((BaseEntity) parentEntity).getCode() + "-RN" + paddedId;
+		newRecord.setName(code);
+		newRecord.setCode(code);
+		newRecord = em.merge(newRecord);
+		
+		return newRecord;
+	}
+
+	public IEntityMetadataDAOService getEntityMetadataDao() {
+		return entityMetadataDao;
+	}
+
+	public void setEntityMetadataDao(IEntityMetadataDAOService entityMetadataDao) {
+		this.entityMetadataDao = entityMetadataDao;
 	}
 }

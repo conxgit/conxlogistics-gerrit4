@@ -1,5 +1,6 @@
 package com.conx.logistics.app.whse.rcv.asn.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -27,7 +28,7 @@ public class ASNLine extends MultitenantBaseEntity {
     @JoinColumn
     private Product product;
     
-    @ManyToOne(targetEntity = ASN.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = ASN.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn
     private ASN parentASN;    
     

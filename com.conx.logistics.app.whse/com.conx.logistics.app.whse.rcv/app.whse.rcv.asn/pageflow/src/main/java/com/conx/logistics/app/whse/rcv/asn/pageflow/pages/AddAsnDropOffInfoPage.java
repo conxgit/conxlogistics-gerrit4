@@ -48,7 +48,7 @@ public class AddAsnDropOffInfoPage extends BasePageFlowPage implements
 
 	@Override
 	public String getTaskName() {
-		return "AddAsnDropOffInfoPage";
+		return "Provide Drop-Off Info";
 	}
 
 	@Override

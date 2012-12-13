@@ -48,7 +48,7 @@ public class AddAsnPickUpInfoPage extends BasePageFlowPage implements
 
 	@Override
 	public String getTaskName() {
-		return "AddAsnPickUpInfoPage";
+		return "Provide Pick-Up Info";
 	}
 
 	@Override
@@ -160,16 +160,12 @@ public class AddAsnPickUpInfoPage extends BasePageFlowPage implements
 		attachmentsFormLineEditor.setOrdinal(3);
 		asnLineLineEditorContainer.getLineEditors().add(
 				attachmentsFormLineEditor);
-		LineEditorComponent referenceNumbersFormLineEditor = new LineEditorComponent(
-				"addasnpickup-referencenumbersasnlinelineeditor",
+		LineEditorComponent referenceNumbersFormLineEditor = new LineEditorComponent("addasnpickup-referencenumbersasnlinelineeditor",
 				"Reference Numbers", asnLineLineEditorContainer);
-		referenceNumbersFormLineEditor
-				.setContent(buildReferenceNumbersEditor());
+		referenceNumbersFormLineEditor.setContent(buildReferenceNumbersEditor());
 		referenceNumbersFormLineEditor.setOrdinal(4);
-		asnLineLineEditorContainer.getLineEditors().add(
-				referenceNumbersFormLineEditor);
-		LineEditorComponent notesFormLineEditor = new LineEditorComponent(
-				"addasnpickup-notesasnlinelineeditor", "Notes",
+		asnLineLineEditorContainer.getLineEditors().add(referenceNumbersFormLineEditor);
+		LineEditorComponent notesFormLineEditor = new LineEditorComponent("addasnpickup-notesasnlinelineeditor", "Notes",
 				asnLineLineEditorContainer);
 		notesFormLineEditor.setContent(buildNotesEditor());
 		notesFormLineEditor.setOrdinal(5);

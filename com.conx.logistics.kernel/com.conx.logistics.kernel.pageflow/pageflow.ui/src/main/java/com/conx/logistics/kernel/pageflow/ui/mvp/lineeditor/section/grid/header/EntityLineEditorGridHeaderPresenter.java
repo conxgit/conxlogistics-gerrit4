@@ -99,6 +99,6 @@ public class EntityLineEditorGridHeaderPresenter extends BasePresenter<IEntityLi
 	@Override
 	public void subscribe(EventBusManager eventBusManager) {
 		this.sectionEventBusManager = eventBusManager;
-		this.sectionEventBusManager.register(EntityLineEditorGridHeaderEventBus.class, getEventBus());
+		this.sectionEventBusManager.register(EntityLineEditorGridHeaderEventBus.class, this);
 	}
 }

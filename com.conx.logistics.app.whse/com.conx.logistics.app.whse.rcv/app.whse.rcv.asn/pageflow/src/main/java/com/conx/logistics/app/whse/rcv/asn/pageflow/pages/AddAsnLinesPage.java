@@ -53,7 +53,7 @@ public class AddAsnLinesPage extends BasePageFlowPage implements IModelDrivenPag
 
 	@Override
 	public String getTaskName() {
-		return "AddAsnLinesPage";
+		return "Add ASN Lines";
 	}
 
 	@Override

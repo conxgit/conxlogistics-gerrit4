@@ -13,6 +13,7 @@ import org.drools.runtime.process.WorkItem;
 import org.drools.runtime.process.WorkItemManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -30,6 +31,7 @@ public class AcceptASNWIH implements WorkItemHandler {
 	@PersistenceContext
 	private EntityManager em;
 
+	@Autowired
 	private PlatformTransactionManager globalJtaTransactionManager;
 
 	public void setGlobalJtaTransactionManager(PlatformTransactionManager globalJtaTransactionManager) {
@@ -45,6 +47,8 @@ public class AcceptASNWIH implements WorkItemHandler {
 
 		Map<String, Object> output = new HashMap<String, Object>();
 		try {
+			asnIn = em.find(ASN.class, asnIn.getId());
+			
 			if (asnIn.getPickup() != null) {
 				asnIn.setPickup(em.merge(asnIn.getPickup()));
 			}

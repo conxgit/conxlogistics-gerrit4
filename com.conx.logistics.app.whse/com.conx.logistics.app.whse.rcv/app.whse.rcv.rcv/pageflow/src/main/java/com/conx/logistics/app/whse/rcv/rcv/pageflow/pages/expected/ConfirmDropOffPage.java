@@ -15,9 +15,13 @@ import com.conx.logistics.kernel.ui.components.domain.form.ConfirmActualsFieldSe
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.LineEditorContainerComponent;
 import com.conx.logistics.kernel.ui.components.domain.masterdetail.MasterDetailComponent;
+import com.conx.logistics.kernel.ui.components.domain.note.NoteEditorComponent;
 import com.conx.logistics.kernel.ui.components.domain.page.TaskPage;
+import com.conx.logistics.kernel.ui.components.domain.referencenumber.ReferenceNumberEditorComponent;
 import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.conx.logistics.mdm.domain.metamodel.EntityType;
+import com.conx.logistics.mdm.domain.note.NoteItem;
+import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber;
 
 public class ConfirmDropOffPage extends BasePageFlowPage implements IModelDrivenPageFlowPage {
 
@@ -26,6 +30,66 @@ public class ConfirmDropOffPage extends BasePageFlowPage implements IModelDriven
 	@Override
 	public String getTaskName() {
 		return "Confirm Drop Off";
+	}
+	
+	private ReferenceNumberEditorComponent buildReferenceNumbersEditor() {
+		EntityType referenceNumberType = new EntityType("Reference Number",
+				ReferenceNumber.class, null, null, null, "mdmreferencenumber");
+		DataSource referenceNumberDs = new DataSource("referenceNumberDS",
+				referenceNumberType);
+		DataSourceField referenceNumberDsField = new DataSourceField("name",
+				referenceNumberDs, referenceNumberDs, referenceNumberType,
+				"Name", null);
+		referenceNumberDsField.setHidden(false);
+		referenceNumberDs.getDSFields().add(referenceNumberDsField);
+		referenceNumberDsField = new DataSourceField("dateCreated",
+				referenceNumberDs, referenceNumberDs, referenceNumberType,
+				"Date Created", null);
+		referenceNumberDsField.setHidden(false);
+		referenceNumberDs.getDSFields().add(referenceNumberDsField);
+		referenceNumberDsField = new DataSourceField("parentReferenceNumber",
+				referenceNumberDs, referenceNumberDs, referenceNumberType,
+				"Parent Reference Number", null);
+		referenceNumberDsField.setValueXPath("name");
+		referenceNumberDsField.setHidden(false);
+		referenceNumberDs.getDSFields().add(referenceNumberDsField);
+		referenceNumberDsField = new DataSourceField("value",
+				referenceNumberDs, referenceNumberDs, referenceNumberType,
+				"Value", null);
+		referenceNumberDsField.setHidden(false);
+		referenceNumberDs.getDSFields().add(referenceNumberDsField);
+		referenceNumberDsField = new DataSourceField("type", referenceNumberDs,
+				referenceNumberDs, referenceNumberType, "Type", null);
+		referenceNumberDsField.setValueXPath("name");
+		referenceNumberDsField.setHidden(false);
+		referenceNumberDs.getDSFields().add(referenceNumberDsField);
+
+		return new ReferenceNumberEditorComponent(referenceNumberDs);
+	}
+
+	private NoteEditorComponent buildNotesEditor() {
+		EntityType noteType = new EntityType("Note Item", NoteItem.class, null,
+				null, null, "mdmnoteitem");
+		DataSource noteDs = new DataSource("noteDS", noteType);
+		DataSourceField noteDsField = new DataSourceField("name", noteDs,
+				noteDs, noteType, "Name", null);
+		noteDsField.setHidden(false);
+		noteDs.getDSFields().add(noteDsField);
+		noteDsField = new DataSourceField("dateCreated", noteDs, noteDs,
+				noteType, "Date Created", null);
+		noteDsField.setHidden(false);
+		noteDs.getDSFields().add(noteDsField);
+		noteDsField = new DataSourceField("noteType", noteDs, noteDs, noteType,
+				"Type", null);
+		noteDsField.setValueXPath("name");
+		noteDsField.setHidden(false);
+		noteDs.getDSFields().add(noteDsField);
+		noteDsField = new DataSourceField("content", noteDs, noteDs, noteType,
+				"Content", null);
+		noteDsField.setHidden(false);
+		noteDs.getDSFields().add(noteDsField);
+
+		return new NoteEditorComponent(noteDs);
 	}
 
 	@Override
@@ -112,7 +176,19 @@ public class ConfirmDropOffPage extends BasePageFlowPage implements IModelDriven
 			AttachmentEditorComponent truckInfoAttachmentEditor = new AttachmentEditorComponent(feDs);
 			LineEditorComponent truckInfoAttachmentLineEditor = new LineEditorComponent("truckinfoattachmentlineeditor", "Attachments", lineEditorContainer);
 			truckInfoAttachmentLineEditor.setContent(truckInfoAttachmentEditor);
+			truckInfoAttachmentLineEditor.setOrdinal(3);
 			lineEditorContainer.getLineEditors().add(truckInfoAttachmentLineEditor);
+			
+			LineEditorComponent referenceNumbersFormLineEditor = new LineEditorComponent("addasnpickup-referencenumbersasnlinelineeditor",
+					"Reference Numbers", lineEditorContainer);
+			referenceNumbersFormLineEditor.setContent(buildReferenceNumbersEditor());
+			referenceNumbersFormLineEditor.setOrdinal(4);
+			lineEditorContainer.getLineEditors().add(referenceNumbersFormLineEditor);
+			LineEditorComponent notesFormLineEditor = new LineEditorComponent("addasnpickup-notesasnlinelineeditor", "Notes",
+					lineEditorContainer);
+			notesFormLineEditor.setContent(buildNotesEditor());
+			notesFormLineEditor.setOrdinal(5);
+			lineEditorContainer.getLineEditors().add(notesFormLineEditor);
 			
 			MasterDetailComponent masterDetailComponent = new MasterDetailComponent("confirmtruckinfoformmasterdetail", "Confirm Truck Info Form Master Detail Component");
 			masterDetailComponent.setMasterComponent(truckInfoForm);

@@ -1,77 +1,58 @@
 package com.conx.logistics.app.whse.rcv.asn.workitems;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.persistence.EntityManagerFactory;
 
 import org.drools.process.instance.WorkItemHandler;
 import org.drools.runtime.process.WorkItem;
 import org.drools.runtime.process.WorkItemManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.jndi.JndiTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.conx.logistics.app.whse.rcv.asn.dao.services.IASNDAOService;
 import com.conx.logistics.app.whse.rcv.asn.domain.ASN;
 
 public class AcceptASNLinesWIH implements WorkItemHandler {
-	private static final Logger logger = LoggerFactory.getLogger(AcceptASNLinesWIH.class);
-	
-	private EntityManagerFactory conxlogisticsEMF;
-	private JndiTemplate jndiTemplate;
+	@Autowired
 	private IASNDAOService asnDao;
+	@Autowired
+	private PlatformTransactionManager kernelSystemTransManager;
 
 	public void setAsnDao(IASNDAOService asnDao) {
 		this.asnDao = asnDao;
 	}
 	
-	public void setConxlogisticsEMF(EntityManagerFactory conxlogisticsEMF) {
-		this.conxlogisticsEMF = conxlogisticsEMF;
-	}
-
-	public void setJndiTemplate(JndiTemplate jndiTemplate) {
-		this.jndiTemplate = jndiTemplate;
-	}
 	@Override
 	public void executeWorkItem(WorkItem workItem, WorkItemManager manager) {
-
+		Map<String, Object> parameters = workItem.getParameters();
+		
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setName("whse.app.page.sk");
+		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+		TransactionStatus status = this.kernelSystemTransManager.getTransaction(def);
+		
+		ASN asn = null;
 		try {
-//			ASN asnIn = (ASN)workItem.getParameter("asnIn");
-
-			//asn = this.asnDao.update(asn);
-			
-			//Map<String, Object> output = new HashMap<String, Object>();
-			//output.put("asnParamsOut",asnParamsIn);
-			Map<String, Object> parameters = workItem.getParameters();
-			if (parameters.get("asnIn") != null) {
-				Map<String, Object> results = new HashMap<String, Object>();
-				results.put("asnOut", parameters.get("asnIn"));
-				manager.completeWorkItem(workItem.getId(), results);
-			} else {
-				manager.completeWorkItem(workItem.getId(), null);
-			}
-			//WIUtils.waitTillCompleted(workItem,1000L);
+			asn = this.asnDao.get(((ASN) parameters.get("asnIn")).getId());
+			this.kernelSystemTransManager.commit(status);
+		} catch (Exception e) {
+			this.kernelSystemTransManager.rollback(status);
+			e.printStackTrace();
+			manager.abortWorkItem(workItem.getId());
 		}
-		catch (Exception e)
-		{
-			StringWriter sw = new StringWriter();
-			e.printStackTrace(new PrintWriter(sw));
-			String stacktrace = sw.toString();
-			logger.error(stacktrace);
-			
-			throw new IllegalStateException("AcceptASNLinesWIH:\r\n"+stacktrace, e);
-		}	
-		catch (Error e)
-		{
-			StringWriter sw = new StringWriter();
-			e.printStackTrace(new PrintWriter(sw));
-			String stacktrace = sw.toString();
-			logger.error(stacktrace);
-			
-			throw new IllegalStateException("AcceptASNLinesWIH:\r\n"+stacktrace, e);			
+		
+		//Map<String, Object> output = new HashMap<String, Object>();
+		//output.put("asnParamsOut",asnParamsIn);
+		
+		if (parameters.get("asnIn") != null) {
+			Map<String, Object> results = new HashMap<String, Object>();
+			results.put("asnOut", asn);
+			manager.completeWorkItem(workItem.getId(), results);
+		} else {
+			manager.completeWorkItem(workItem.getId(), null);
 		}
 	}
 

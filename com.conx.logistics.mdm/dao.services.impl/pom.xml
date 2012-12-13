@@ -54,7 +54,14 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>org.springframework.context</artifactId>
 			<scope>provided</scope>
-		</dependency>			
+		</dependency>
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>
+				com.conx.logistics.kernel.metamodel.dao.services
+			</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

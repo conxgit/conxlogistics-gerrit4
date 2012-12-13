@@ -12,12 +12,15 @@ import javax.persistence.TypedQuery;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
 import com.conx.logistics.mdm.dao.services.note.INoteDAOService;
 import com.conx.logistics.mdm.domain.BaseEntity;
 import com.conx.logistics.mdm.domain.constants.NoteTypeCustomCONSTANTS;
+import com.conx.logistics.mdm.domain.metamodel.EntityType;
 import com.conx.logistics.mdm.domain.note.Note;
 import com.conx.logistics.mdm.domain.note.NoteItem;
 import com.conx.logistics.mdm.domain.note.NoteType;
@@ -31,6 +34,9 @@ public class NoteDAOImpl implements INoteDAOService {
 	 */
 	@PersistenceContext
 	private EntityManager em;
+	
+	@Autowired
+	private IEntityTypeDAOService entityTypeDao;
 
 	public void setEm(EntityManager em) {
 		this.em = em;
@@ -161,5 +167,36 @@ public class NoteDAOImpl implements INoteDAOService {
 		}
 		
 		return baseEntity;
+	}
+
+	@Override
+	public NoteItem add(Long parentEntityPK, Class<?> parentType) throws Exception {
+		assert (parentEntityPK != null) : "Parent Entity Id was null.";
+		assert (parentType != null) : "Parent Entity Type was null.";
+		Object parentEntity = em.getReference(parentType, parentEntityPK);
+		assert (parentEntity instanceof BaseEntity) : "Parent Entity was not of type Base Entity.";
+		EntityType parentEntityType = entityTypeDao.provide(parentType);
+		assert (parentEntityType != null) : "Could not get parent entity metadata.";
+		NoteItem newRecord = new NoteItem();
+		newRecord.setOwnerEntityId(((BaseEntity) parentEntity).getId());
+		newRecord.setOwnerEntityTypeId(parentEntityType.getId());
+		newRecord = em.merge(newRecord);
+		
+		String format = String.format("%%0%dd", 3);
+		String paddedId = String.format(format, newRecord.getId());
+		String code = ((BaseEntity) parentEntity).getCode() + "-NI" + paddedId;
+		newRecord.setName(code);
+		newRecord.setCode(code);
+		newRecord = em.merge(newRecord);
+		
+		return newRecord;
+	}
+
+	public IEntityTypeDAOService getEntityTypeDao() {
+		return entityTypeDao;
+	}
+
+	public void setEntityTypeDao(IEntityTypeDAOService entityTypeDao) {
+		this.entityTypeDao = entityTypeDao;
 	}
 }

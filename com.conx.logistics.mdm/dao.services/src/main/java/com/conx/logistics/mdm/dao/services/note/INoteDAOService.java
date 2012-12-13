@@ -15,6 +15,8 @@ public interface INoteDAOService {
 
 	public Note add(Note record);
 	
+	public NoteItem add(Long parentEntityPK, Class<?> parentEntityType) throws Exception;
+	
 	public BaseEntity provideNoteForEntity(BaseEntity baseEntity);
 	
 	public Note addNoteItem(Long noteId, NoteItem noteItem);

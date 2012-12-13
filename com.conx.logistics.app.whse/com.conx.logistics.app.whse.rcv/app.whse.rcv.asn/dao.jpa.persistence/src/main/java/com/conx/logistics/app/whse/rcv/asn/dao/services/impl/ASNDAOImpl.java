@@ -58,7 +58,7 @@ public class ASNDAOImpl implements IASNDAOService {
 
 	@Override
 	public ASN get(long id) {
-		return em.getReference(ASN.class, id);
+		return em.find(ASN.class, id);
 	}
 
 	@Override
@@ -321,6 +321,7 @@ public class ASNDAOImpl implements IASNDAOService {
 		ASN asn = get(asnId);
 		assert (asn == null) : "The asn did not exist";
 		assignCode(line, asn);
+		line.setParentASN(asn);
 		line = em.merge(line);
 		asn.getAsnLines().add(line);
 		asn = em.merge(asn);

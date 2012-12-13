@@ -35,8 +35,8 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 
 @Presenter(view = EntityLineEditorGridView.class)
-public class EntityLineEditorGridPresenter extends BasePresenter<IEntityLineEditorGridView, EntityLineEditorGridEventBus> implements IEditListener, ILineEditorSectionContentPresenter,
-		IConfigurablePresenter, ISelectListener {
+public class EntityLineEditorGridPresenter extends BasePresenter<IEntityLineEditorGridView, EntityLineEditorGridEventBus> implements
+		IEditListener, ILineEditorSectionContentPresenter, IConfigurablePresenter, ISelectListener {
 	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 	private boolean initialized = false;
 	private BeanItemContainer<?> entityContainer;
@@ -77,8 +77,11 @@ public class EntityLineEditorGridPresenter extends BasePresenter<IEntityLineEdit
 			if (!isInitialized()) {
 				initialize();
 			}
-			this.sectionEventBusManager.fireAnonymousEvent("enableCreate");
-			this.sectionEventBusManager.fireAnonymousEvent("enablePrint");
+
+			if (this.tableComponent.getRecordEditor() != null) {
+				this.sectionEventBusManager.fireAnonymousEvent("enableCreate");
+				this.sectionEventBusManager.fireAnonymousEvent("enablePrint");
+			}
 		} else {
 			this.getView().setContainerDataSource(null);
 		}
@@ -109,12 +112,13 @@ public class EntityLineEditorGridPresenter extends BasePresenter<IEntityLineEdit
 			this.entityContainer.removeAllItems();
 			Method[] methods = this.bean.getClass().getMethods();
 			for (Method method : methods) {
-				if (method.getName().toLowerCase().contains("get") && method.getName().toLowerCase().contains(attribute.getName().toLowerCase())) {
+				if (method.getName().toLowerCase().contains("get")
+						&& method.getName().toLowerCase().contains(attribute.getName().toLowerCase())) {
 					if (Collection.class.isAssignableFrom(method.getReturnType())) {
 						Collection<?> result = (Collection<?>) method.invoke(this.bean);
 						for (Object resultItem : result) {
 							if (this.entityClass.isAssignableFrom(resultItem.getClass())) {
-								((BeanItemContainer) this.entityContainer).addBean(bean);
+								((BeanItemContainer) this.entityContainer).addBean(resultItem);
 							}
 						}
 						return;
@@ -162,32 +166,34 @@ public class EntityLineEditorGridPresenter extends BasePresenter<IEntityLineEdit
 
 	@Override
 	public void onEdit(Item item) {
-		MultiLevelEditorEventBus ownerEditorEventBus = this.factory.getPresenterFactory().getEventBusManager().getEventBus(MultiLevelEditorEventBus.class);
-		ownerEditorEventBus.renderEditor(this.tableComponent.getRecordEditor(), item, this.entityContainer);
+		MultiLevelEditorEventBus ownerEditorEventBus = this.factory.getPresenterFactory().getEventBusManager()
+				.getEventBus(MultiLevelEditorEventBus.class);
+		if (ownerEditorEventBus != null) {
+			ownerEditorEventBus.renderEditor(this.tableComponent.getRecordEditor(), item, this.entityContainer);
+		} else {
+			throw new UnsupportedOperationException("Cannot edit an sub-entity with outside a multi-level editor.");
+		}
 	}
 
 	@Override
 	public void onSelect(Item item) {
 		this.selectedItem = item;
-		this.sectionEventBusManager.fireAnonymousEvent("enableEdit");
-		this.sectionEventBusManager.fireAnonymousEvent("enableDelete");
+		if (this.tableComponent.getRecordEditor() != null) {
+			this.sectionEventBusManager.fireAnonymousEvent("enableEdit");
+			this.sectionEventBusManager.fireAnonymousEvent("enableDelete");
+		}
 	}
 
 	public void onCreate() throws Exception {
-		try {
-			doCreate();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void doCreate() throws InstantiationException, IllegalAccessException, Exception {
-		Object newInstance = VaadinPageDataBuilder.saveInstance(this.entityClass.newInstance(), this.daoProvider, this.bean) ;
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Item item = ((BeanItemContainer) this.entityContainer).addBean(newInstance);
 		if (this.tableComponent.getRecordEditor() != null) {
-			MultiLevelEditorEventBus eventBus = this.factory.getPresenterFactory().getEventBusManager().getEventBus(MultiLevelEditorEventBus.class);
+			Object newInstance = VaadinPageDataBuilder.saveInstance(this.entityClass.newInstance(), this.daoProvider, this.bean);
+			@SuppressWarnings({ "unchecked", "rawtypes" })
+			Item item = ((BeanItemContainer) this.entityContainer).addBean(newInstance);
+			MultiLevelEditorEventBus eventBus = this.factory.getPresenterFactory().getEventBusManager()
+					.getEventBus(MultiLevelEditorEventBus.class);
 			eventBus.renderEditor(this.tableComponent.getRecordEditor(), item, this.entityContainer);
+		} else {
+			throw new UnsupportedOperationException("Cannot create a new entity with no record editor.");
 		}
 	}
 
@@ -207,11 +213,18 @@ public class EntityLineEditorGridPresenter extends BasePresenter<IEntityLineEdit
 
 	public void onPrint() {
 		// TODO implement printing
+		throw new UnsupportedOperationException("Printing has not yet been implemented.");
 	}
 
 	@Override
 	public void subscribe(EventBusManager eventBusManager) {
 		this.sectionEventBusManager = eventBusManager;
-		this.sectionEventBusManager.register(EntityLineEditorGridEventBus.class, getEventBus());
+		this.sectionEventBusManager.register(EntityLineEditorGridEventBus.class, this);
+
+		// Ensure that the header is setup correctly
+		if (this.tableComponent.getRecordEditor() == null) {
+			this.sectionEventBusManager.fireAnonymousEvent("disableCreate");
+			this.sectionEventBusManager.fireAnonymousEvent("disableEdit");
+		}
 	}
 }

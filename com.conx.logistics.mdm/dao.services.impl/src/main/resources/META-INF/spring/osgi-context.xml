@@ -14,8 +14,10 @@
 	
 	<!-- KERNEL.TM Transaction Manager -->
 	<osgi:reference id="globalTransactionManager" interface="javax.transaction.TransactionManager" filter="(module=KERNEL.TM)">
-	</osgi:reference>	
+	</osgi:reference>
 	
+	<osgi:reference id="entityTypeDao" interface="com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService">
+	</osgi:reference>
 			
 	<!-- export internal interfaces -->
 	<osgi:service ref="addressDao" interface="com.conx.logistics.mdm.dao.services.IAddressDAOService"/>

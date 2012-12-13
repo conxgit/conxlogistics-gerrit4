@@ -223,6 +223,7 @@ public class VaadinForm extends Form {
 			for (Field field : this.fieldOrdinalCache) {
 				propertyId = this.propertyIds.get(field);
 				if (propertyId != null) {
+					VaadinFormFieldAugmenter.augment(field, this.fieldValueChangeListener);
 					addField(propertyId, field);
 				}
 			}
@@ -353,7 +354,6 @@ public class VaadinForm extends Form {
 					}
 
 					try {
-						VaadinFormFieldAugmenter.augment(f, this.fieldValueChangeListener);
 						addedPropertyIds.put(propertyId, f);
 						bindPropertyToField(propertyId, p, f);
 						if (isNestedParentPropertyNull(f)) {
