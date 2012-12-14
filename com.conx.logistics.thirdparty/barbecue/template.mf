@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Build-Jdk: 1.6.0_29
+Built-By: Developer
+Bundle-Version: 1.5.beta1
+Tool: Bundlor 1.0.0.RELEASE
+Bundle-ManifestVersion: 2
+Created-By: Apache Maven
+Bundle-SymbolicName: barbecue
+Archiver-Version: Plexus Archiver
+Import-Package: javax.portlet;version="0",
+ javax.servlet;version="0",
+ javax.servlet.http;version="0",
+ org.jdom;version="0",
+ org.jdom.output;version="0"
+Fragment-Host: net.sf.jasperreports.engine
