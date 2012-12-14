@@ -496,7 +496,7 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 		rcvLine_.setArrivedInnerPackCount(arrivedReceiveLineInnerPackCount);
 		int remainingInnerPackCount = expectedReceiveLineInnerPackCount - arrivedReceiveLineInnerPackCount;
 		rcvLine_.setRemainingInnerPackCount(remainingInnerPackCount);
-		if (remainingInnerPackCount == 0) {
+		if (remainingInnerPackCount <= 0) {
 			rcvLine_.setStatus(RECEIVELINESTATUS.ARRIVED);
 		} else {
 			rcvLine_.setStatus(RECEIVELINESTATUS.ARRIVING);
@@ -595,6 +595,7 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 
 	@Override
 	public StockItem addDynamicStockItem(StockItem newRecord, Long arrivalReceiptPK, Long arrivalReceiptLinePK) throws Exception {
+		assert (newRecord != null) : "The record was null.";
 		ArrivalReceipt parentArrivalReceipt = em.getReference(ArrivalReceipt.class, arrivalReceiptPK);
 		assert Validator.isNotNull(parentArrivalReceipt);
 		ArrivalReceiptLine parentArrivalReceiptLine = em.getReference(ArrivalReceiptLine.class, arrivalReceiptLinePK);
@@ -604,10 +605,9 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 		defaultReceive = receiveDAOService.provideDefault();
 
 		ReceiveLine receiveLine = new ReceiveLine();
-		receiveLine.setExpectedInnerPackCount(1);
 		receiveLine.setProduct(this.productDAOService.provideDefaultProduct());
 		receiveLine.setStatus(RECEIVELINESTATUS.ARRIVING);
-		receiveLine.setExpectedInnerPackCount(newRecord.getGroupSize());
+		receiveLine.setExpectedInnerPackCount(newRecord.getGroupSize() >= 1 ? newRecord.getGroupSize() : 1);
 		receiveLine = receiveLineDAOService.add(receiveLine, defaultReceive.getId());
 
 		ReceiveLineStockItemSet itemSet = provideStockItemSet(receiveLine, parentArrivalReceipt, parentArrivalReceiptLine);

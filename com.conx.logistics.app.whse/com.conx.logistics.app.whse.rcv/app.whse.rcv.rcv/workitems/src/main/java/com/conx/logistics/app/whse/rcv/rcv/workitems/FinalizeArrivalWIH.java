@@ -5,6 +5,9 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+
 import org.drools.process.instance.WorkItemHandler;
 import org.drools.runtime.process.WorkItem;
 import org.drools.runtime.process.WorkItemManager;
@@ -31,10 +34,16 @@ public class FinalizeArrivalWIH implements WorkItemHandler {
 	
 	@Autowired
 	private PlatformTransactionManager kernelSystemTransManager;
+	
+	@Autowired
+	private EntityManagerFactory emf;
+	
+	private EntityManager em;
 
 	@Override
 	public void executeWorkItem(WorkItem workItem, WorkItemManager manager) {
 		Arrival arrival = null;
+		em = emf.createEntityManager();
 		
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setName("whse.app.page.sk");
@@ -42,6 +51,8 @@ public class FinalizeArrivalWIH implements WorkItemHandler {
 		TransactionStatus status = this.kernelSystemTransManager.getTransaction(def);
 		try {
 			Arrival arvl = (Arrival)workItem.getParameter("arrivalIn");
+			arvl.setActualDropOff(em.merge(arvl.getActualDropOff()));
+			arvl.setActualPickUp(em.merge(arvl.getActualPickUp()));
 			arvl = arrivalDAOService.update(arvl);
 			this.kernelSystemTransManager.commit(status);
 			

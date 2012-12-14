@@ -111,6 +111,7 @@ public class VaadinMatchGrid extends VerticalLayout {
 					}
 					this.matchedAlertPanel.setAlertType(AlertType.SUCCESS);
 					this.matchedAlertPanel.setMessage(message);
+					this.matchedAlertPanel.setVisible(true);
 				} else {
 					String message = "";
 					if (item.getItemProperty("name") != null && item.getItemProperty("name").getValue() != null) {
@@ -154,7 +155,6 @@ public class VaadinMatchGrid extends VerticalLayout {
 		}
 		this.unmatchedAlertPanel.setAlertType(AlertType.SUCCESS);
 		this.unmatchedAlertPanel.setMessage(message);
-		this.updateMatchedItemCount();
 	}
 
 	private void unhideMatchableItem(Item matchedItem) throws Exception {
@@ -178,6 +178,7 @@ public class VaadinMatchGrid extends VerticalLayout {
 				}
 				this.matchedAlertPanel.setAlertType(AlertType.ERROR);
 				this.matchedAlertPanel.setMessage(message);
+				this.matchedAlertPanel.setVisible(true);
 				throw new Exception(message);
 			}
 		}
@@ -188,10 +189,6 @@ public class VaadinMatchGrid extends VerticalLayout {
 		this.matchedGrid.getContainerDataSource().removeItem(((BeanItem) item).getBean());
 		unhideMatchableItem(item);
 		this.unmatchButton.setEnabled(false);
-		this.unmatchedAlertPanel.setAlertType(AlertType.SUCCESS);
-		this.unmatchedAlertPanel.setMessage(this.componentModel.getUnmatchedDataSource().getEntityType().getName()
-				+ " was replaced successfully.");
-		this.updateMatchedItemCount();
 		onUnmatch(item);
 	}
 
@@ -326,29 +323,13 @@ public class VaadinMatchGrid extends VerticalLayout {
 	public void setUnMatchedContainer(Container container) {
 		this.unmatchedGrid.setContainerDataSource(container);
 		this.unmatchedGrid.setVisibleColumns(this.componentModel.getUnmatchedDataSource().getVisibleFieldNames().toArray(new String[0]));
-//		if (container instanceof JPAContainer<?>) {
-//			if (((JPAContainer<?>) container).getEntityClass().isAssignableFrom(ReceiveLine.class)) {
-//				if (itemBean instanceof ArrivalReceiptLine) {
-//					final Receive rcv = ((ArrivalReceiptLine) itemBean).getParentArrivalReceipt().getParentArrival().getReceive();
-//					((JPAContainer<?>) container).getEntityProvider().setQueryModifierDelegate(new DefaultQueryModifierDelegate() {
-//						@Override
-//						public void filtersWillBeAdded(CriteriaBuilder criteriaBuilder, CriteriaQuery<?> query, List<Predicate> predicates) {
-//							if (criteriaBuilder != null && query != null && predicates != null) {
-//								Root<?> root = query.getRoots().iterator().next();
-//								Path<?> rcvId = root.get("parentReceive").get("id");
-//								predicates.add(criteriaBuilder.equal(rcvId, rcv.getId()));
-//							}
-//						}
-//					});
-//				}
-//			}
-//
-//		}
+		this.unmatchedGrid.setColumnTitles(this.componentModel.getUnmatchedDataSource().getVisibleFieldTitles().toArray(new String[0]));
 	}
 
 	public void setMatchedContainer(Container container) {
 		this.matchedGrid.setContainerDataSource(container);
 		this.matchedGrid.setVisibleColumns(this.componentModel.getMatchedDataSource().getVisibleFieldNames().toArray(new String[0]));
+		this.matchedGrid.setColumnTitles(this.componentModel.getMatchedDataSource().getVisibleFieldTitles().toArray(new String[0]));
 	}
 
 	public interface IMatchListener {
@@ -368,18 +349,12 @@ public class VaadinMatchGrid extends VerticalLayout {
 	public void addParentConsumptionFilter(Filter filter) throws Exception {
 		if (this.unmatchedGrid.getContainerDataSource() instanceof JPAContainer<?>) {
 			((JPAContainer<?>) this.unmatchedGrid.getContainerDataSource()).addContainerFilter(filter);
+			((JPAContainer<?>) this.unmatchedGrid.getContainerDataSource()).applyFilters();
 		} else if (this.unmatchedGrid.getContainerDataSource() instanceof BeanItemContainer<?>) {
 			((BeanItemContainer<?>) this.unmatchedGrid.getContainerDataSource()).addContainerFilter(filter);
 		} else {
 			throw new Exception("Could not add consumption filter, the parent grid container was invalid.");
 		}
-	}
-
-	private void updateMatchedItemCount() {
-		this.matchedAlertPanel.setAlertType(AlertType.INFO);
-		this.matchedAlertPanel.setMessage(this.matchedGrid.getContainerDataSource().size() + " "
-				+ this.componentModel.getMatchedDataSource().getEntityType().getName() + "(s) have been matched.");
-		this.matchedAlertPanel.setVisible(true);
 	}
 
 	public EntityEditorToolStripButton getNewMatchedItemButton() {
@@ -391,7 +366,7 @@ public class VaadinMatchGrid extends VerticalLayout {
 	}
 	
 	public EntityEditorGrid getUnmatchedGrid() {
-		return matchedGrid;
+		return unmatchedGrid;
 	}
 	
 	public boolean isDynamic() {

@@ -44,6 +44,9 @@ public class DataSource extends MultitenantBaseEntity {
 	@OneToMany(mappedBy = "parentDataSource", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<DataSourceField> dSfields = new HashSet<DataSourceField>();
 
+	@Transient
+	private Set<String> visibleFieldCaptions;
+
 	public EntityType getEntityType() {
 		return entityType;
 	}
@@ -93,6 +96,28 @@ public class DataSource extends MultitenantBaseEntity {
 		}
 
 		return this.foreignKeyPath;
+	}
+	
+	public Set<String> getVisibleFieldTitles() {
+		if (this.visibleFieldCaptions == null) {
+			this.visibleFieldCaptions = new HashSet<String>();
+			
+			Set<DataSourceField> dsFields = getAllDSFields();
+			for (DataSourceField dsf : dsFields) {
+				if (!dsf.getHidden()) {
+					if (dsf.getTitle() != null) {
+						this.visibleFieldCaptions.add(dsf.getTitle());
+					} else {
+						if (dsf.isNestedAttribute()) {
+							this.visibleFieldCaptions.add(dsf.getJPAPath());
+						} else {
+							this.visibleFieldCaptions.add(dsf.getName());
+						}
+					}
+				}
+			}
+		}
+		return this.visibleFieldCaptions;
 	}
 
 	public Set<String> getVisibleFieldNames() {

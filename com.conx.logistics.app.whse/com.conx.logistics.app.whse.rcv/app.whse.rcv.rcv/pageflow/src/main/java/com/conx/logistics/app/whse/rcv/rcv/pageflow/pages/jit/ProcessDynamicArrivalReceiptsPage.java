@@ -10,6 +10,7 @@ import com.conx.logistics.app.whse.rcv.rcv.domain.ArrivalReceiptLine;
 import com.conx.logistics.app.whse.rcv.rcv.domain.ReceiveLine;
 import com.conx.logistics.kernel.datasource.domain.DataSource;
 import com.conx.logistics.kernel.datasource.domain.DataSourceField;
+import com.conx.logistics.kernel.datasource.domain.validators.IsGreaterNumberValidator;
 import com.conx.logistics.kernel.pageflow.services.BasePageFlowPage;
 import com.conx.logistics.kernel.pageflow.services.IModelDrivenPageFlowPage;
 import com.conx.logistics.kernel.ui.components.domain.attachment.AttachmentEditorComponent;
@@ -145,6 +146,7 @@ public class ProcessDynamicArrivalReceiptsPage extends BasePageFlowPage implemen
 		
 		//--- Product
 		dsField = new DataSourceField("groupSize", newStockItemDS, newStockItemDS, stockItemType, "Group Size", null);
+		dsField.getValidators().add(new IsGreaterNumberValidator(dsField, 0));
 		dsField.setRequired(true);
 		newStockItemDS.getDSFields().add(dsField);
 		fsf = new FieldSetField(0, dsField, null);
@@ -152,6 +154,7 @@ public class ProcessDynamicArrivalReceiptsPage extends BasePageFlowPage implemen
 		
 		//--- Product
 		dsField = new DataSourceField("innerPackCount", newStockItemDS, newStockItemDS, stockItemType, "Quantity", null);
+		dsField.getValidators().add(new IsGreaterNumberValidator(dsField, 0));
 		dsField.setRequired(true);
 		newStockItemDS.getDSFields().add(dsField);
 		fsf = new FieldSetField(0, dsField, null);

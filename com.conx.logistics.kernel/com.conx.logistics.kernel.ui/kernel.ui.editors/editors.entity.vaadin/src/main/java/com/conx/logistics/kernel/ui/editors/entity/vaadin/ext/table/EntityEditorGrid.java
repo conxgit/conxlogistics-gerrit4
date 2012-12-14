@@ -119,6 +119,10 @@ public class EntityEditorGrid extends VerticalLayout implements FilterDecorator,
 	public void setVisibleColumns(Object[] visibleColumnIds) {
 		this.grid.setVisibleColumns(visibleColumnIds);
 	}
+	
+	public void setColumnTitles(String[] columnTitles) {
+		this.grid.setColumnHeaders(columnTitles);
+	}
 
 	public interface IEditListener {
 		public void onEdit(Item item);
