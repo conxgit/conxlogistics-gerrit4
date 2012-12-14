@@ -1,0 +1,4 @@
+Bundle-ManifestVersion: 2
+Bundle-Version: 1.0.0
+Bundle-Name: ConX Kernel Reporting Services Jasperreports Impl
+Bundle-SymbolicName: com.conx.logistics.reporting.jasperreports.service.impl
