@@ -1,0 +1,103 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>com.conx.logistics.reporting.jasperreports</artifactId>
+		<groupId>com.conx.logistics</groupId>
+		<version>1.0.0</version>
+		<relativePath>..</relativePath>
+	</parent>
+	<artifactId>com.conx.logistics.reporting.jasperreports.web.service</artifactId>
+	<packaging>war</packaging>
+	<dependencies>
+		<!-- ConX -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.reporting.remote.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>		
+
+		<!-- Common : jasperreports -->
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>4.7.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.lowagie.text</groupId>
+			<artifactId>com.springsource.com.lowagie.text</artifactId>
+			<version>2.0.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>com.springsource.org.codehaus.groovy</artifactId>
+			<version>1.7.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>com.springsource.antlr</artifactId>
+			<version>2.7.7</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>org.springframework.osgi.extensions.annotation</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>org.springframework.spring-library</artifactId>
+			<type>libd</type>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.springsource.bundlor</groupId>
+				<artifactId>com.springsource.bundlor.maven</artifactId>
+				<inherited>true</inherited>
+				<configuration>
+					<failOnWarnings>true</failOnWarnings>
+					<!-- used to properly set-up versions for system packages -->
+					<osgiProfilePath>${basedir}/../../../java6-server.profile</osgiProfilePath>
+					<bundleVersion>${project.version}</bundleVersion>
+					<!-- point to a different output path - so manifest will be regenerated 
+						on each build and can be eyeballed if desired. Also for eclipse use, where 
+						manifest is always needed -->
+					<outputPath>${basedir}/src/main/webapp</outputPath>
+				</configuration>
+				<executions>
+					<execution>
+						<!-- <phase>none</phase> -->
+						<id>build-manifest</id>
+						<goals>
+							<goal>bundlor</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.1-beta-1</version>
+				<configuration>
+					<packagingExcludes>WEB-INF/lib/**</packagingExcludes>
+					<archive>
+						<manifestFile>src/main/webapp/META-INF/MANIFEST.MF</manifestFile>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

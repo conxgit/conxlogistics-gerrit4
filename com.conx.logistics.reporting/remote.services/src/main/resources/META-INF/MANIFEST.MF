@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Export-Package: com.conx.logistics.reporting.remote.services;version="
+ 1.0.0"
+Bundle-Version: 1.0.0
+Tool: Bundlor 1.0.0.RELEASE
+Bundle-Name: ConX Kernel Reporting Services
+Bundle-ManifestVersion: 2
+Import-Package: javax.persistence;version="0",org.osgi.framework;versi
+ on="0"
+Bundle-SymbolicName: com.conx.logistics.reporting.remote.services
+

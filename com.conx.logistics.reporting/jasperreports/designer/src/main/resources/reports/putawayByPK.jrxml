@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="putawayByPK" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="Times New Roman" fontSize="50" isBold="true" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="jrpPutawayId" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+     whputaway.`id` AS whputaway_id,
+     whputaway.`activ` AS whputaway_activ,
+     whputaway.`code` AS whputaway_code,
+     whputaway.`date_created` AS whputaway_date_created,
+     whputaway.`date_last_updated` AS whputaway_date_last_updated,
+     whputaway.`description` AS whputaway_description,
+     whputaway.`external_code` AS whputaway_external_code,
+     whputaway.`external_name` AS whputaway_external_name,
+     whputaway.`external_ref_id` AS whputaway_external_ref_id,
+     whputaway.`name` AS whputaway_name,
+     whputaway.`portal_id` AS whputaway_portal_id,
+     whputaway.`ref_id` AS whputaway_ref_id,
+     whputaway.`version` AS whputaway_version,
+     whputaway.`status` AS whputaway_status,
+     whputaway.`company` AS whputaway_company,
+     whputaway.`task` AS whputaway_task,
+     whlocation.`id` AS whlocation_id,
+     whlocation.`activ` AS whlocation_activ,
+     whlocation.`code` AS whlocation_code,
+     whlocation.`date_created` AS whlocation_date_created,
+     whlocation.`date_last_updated` AS whlocation_date_last_updated,
+     whlocation.`description` AS whlocation_description,
+     whlocation.`external_code` AS whlocation_external_code,
+     whlocation.`external_name` AS whlocation_external_name,
+     whlocation.`external_ref_id` AS whlocation_external_ref_id,
+     whlocation.`name` AS whlocation_name,
+     whlocation.`portal_id` AS whlocation_portal_id,
+     whlocation.`ref_id` AS whlocation_ref_id,
+     whlocation.`version` AS whlocation_version,
+     whlocation.`loc_col` AS whlocation_loc_col,
+     whlocation.`loc_level` AS whlocation_loc_level,
+     whlocation.`loc_row` AS whlocation_loc_row,
+     whlocation.`company` AS whlocation_company,
+     whlocation.`warehouse` AS whlocation_warehouse,
+     whstock_item.`code` AS whstock_item_code,
+     whstock_item.`name` AS whstock_item_name
+FROM
+     `whputaway` whputaway INNER JOIN `whputaway_stock_item` whputaway_stock_item ON whputaway.`id` = whputaway_stock_item.`put_away`
+     INNER JOIN `whlocation` whlocation ON whputaway_stock_item.`old_location` = whlocation.`id`
+     AND whlocation.`id` = whputaway_stock_item.`new_location`
+     INNER JOIN `whstock_item` whstock_item ON whputaway_stock_item.`stock_item` = whstock_item.`id`
+     AND whlocation.`id` = whstock_item.`location`
+WHERE
+     whputaway.`id` = $P{jrpPutawayId}]]>
+	</queryString>
+	<field name="whputaway_id" class="java.lang.Long"/>
+	<field name="whputaway_activ" class="java.lang.Boolean"/>
+	<field name="whputaway_code" class="java.lang.String"/>
+	<field name="whputaway_date_created" class="java.sql.Timestamp"/>
+	<field name="whputaway_date_last_updated" class="java.sql.Timestamp"/>
+	<field name="whputaway_description" class="java.lang.String"/>
+	<field name="whputaway_external_code" class="java.lang.String"/>
+	<field name="whputaway_external_name" class="java.lang.String"/>
+	<field name="whputaway_external_ref_id" class="java.lang.String"/>
+	<field name="whputaway_name" class="java.lang.String"/>
+	<field name="whputaway_portal_id" class="java.lang.String"/>
+	<field name="whputaway_ref_id" class="java.lang.String"/>
+	<field name="whputaway_version" class="java.lang.Integer"/>
+	<field name="whputaway_status" class="java.lang.String"/>
+	<field name="whputaway_company" class="java.lang.Long"/>
+	<field name="whputaway_task" class="java.lang.Long"/>
+	<field name="whlocation_id" class="java.lang.Long"/>
+	<field name="whlocation_activ" class="java.lang.Boolean"/>
+	<field name="whlocation_code" class="java.lang.String"/>
+	<field name="whlocation_date_created" class="java.sql.Timestamp"/>
+	<field name="whlocation_date_last_updated" class="java.sql.Timestamp"/>
+	<field name="whlocation_description" class="java.lang.String"/>
+	<field name="whlocation_external_code" class="java.lang.String"/>
+	<field name="whlocation_external_name" class="java.lang.String"/>
+	<field name="whlocation_external_ref_id" class="java.lang.String"/>
+	<field name="whlocation_name" class="java.lang.String"/>
+	<field name="whlocation_portal_id" class="java.lang.String"/>
+	<field name="whlocation_ref_id" class="java.lang.String"/>
+	<field name="whlocation_version" class="java.lang.Integer"/>
+	<field name="whlocation_loc_col" class="java.lang.Integer"/>
+	<field name="whlocation_loc_level" class="java.lang.String"/>
+	<field name="whlocation_loc_row" class="java.lang.Integer"/>
+	<field name="whlocation_company" class="java.lang.Long"/>
+	<field name="whlocation_warehouse" class="java.lang.Long"/>
+	<field name="whstock_item_code" class="java.lang.String"/>
+	<field name="whstock_item_name" class="java.lang.String"/>
+	<group name="whlocation_code">
+		<groupExpression><![CDATA[$F{whlocation_code}]]></groupExpression>
+		<groupHeader>
+			<band height="26">
+				<textField>
+					<reportElement x="6" y="6" width="238" height="20"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA["Location "+$F{whlocation_code}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="27">
+				<line>
+					<reportElement x="1" y="3" width="799" height="1"/>
+					<graphicElement>
+						<pen lineStyle="Double"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="28" splitType="Stretch">
+			<staticText>
+				<reportElement x="6" y="8" width="323" height="20"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Putaway Walksheet]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="97" splitType="Stretch">
+			<textField>
+				<reportElement x="662" y="64" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{whputaway_code}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="6" y="63" width="76" height="20"/>
+				<textElement/>
+				<text><![CDATA[Completed By:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="80" y="74" width="119" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="244" y="62" width="178" height="20"/>
+				<textElement/>
+				<text><![CDATA[Date Completed (dd-MMM-yyyy):]]></text>
+			</staticText>
+			<line>
+				<reportElement x="400" y="74" width="119" height="1"/>
+			</line>
+			<componentElement>
+				<reportElement x="642" y="14" width="140" height="50"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128" drawText="false" checksumRequired="false" barHeight="60">
+					<jr:codeExpression><![CDATA["1234"]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="34" splitType="Stretch">
+			<staticText>
+				<reportElement x="165" y="7" width="164" height="20"/>
+				<textElement/>
+				<text><![CDATA[Stock Item]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="628" y="7" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Done]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="6" y="7" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Locartion /Stop]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="29" width="799" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Double"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="35" splitType="Stretch">
+			<frame>
+				<reportElement style="Row" mode="Opaque" x="0" y="0" width="802" height="15"/>
+				<line>
+					<reportElement x="0" y="4" width="100" height="1"/>
+				</line>
+			</frame>
+			<textField>
+				<reportElement x="165" y="1" width="143" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{whstock_item_code}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="628" y="4" width="14" height="14"/>
+			</rectangle>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="23" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="802" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="27" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="-21" y="1" width="843" height="24" forecolor="#D0B48E" backcolor="#F2EBDF"/>
+				<textField evaluationTime="Report">
+					<reportElement style="Column header" x="783" y="1" width="40" height="20" forecolor="#736343"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="Column header" x="703" y="1" width="80" height="20" forecolor="#736343"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField pattern="EEEEE dd MMMMM yyyy">
+					<reportElement style="Column header" x="22" y="1" width="197" height="20" forecolor="#736343"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
