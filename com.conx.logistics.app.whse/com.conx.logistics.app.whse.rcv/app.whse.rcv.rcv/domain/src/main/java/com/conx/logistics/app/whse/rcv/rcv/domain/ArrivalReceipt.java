@@ -26,11 +26,11 @@ import com.conx.logistics.mdm.domain.referencenumber.ReferenceNumber;
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 @Table(name="wharrivalreceipt")
 public class ArrivalReceipt extends MultitenantBaseEntity {
-    @ManyToOne(targetEntity = Arrival.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Arrival.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn
     private Arrival parentArrival;
     
-    @OneToOne(targetEntity = CommercialRecord.class, fetch = FetchType.LAZY)
+    @OneToOne(targetEntity = CommercialRecord.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn
     private CommercialRecord commercialRecord;
     

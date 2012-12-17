@@ -11,12 +11,14 @@ import com.conx.logistics.common.utils.Validator;
 import com.conx.logistics.kernel.ui.common.mvp.LaunchableViewEventBus;
 import com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication;
 import com.conx.logistics.kernel.ui.common.mvp.docviewer.DocViewerPresenter;
+import com.conx.logistics.kernel.ui.common.mvp.reportviewer.ReportViewerPresenter;
 import com.conx.logistics.kernel.ui.components.domain.AbstractConXComponent;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
 import com.conx.logistics.kernel.ui.service.contribution.ITaskActionContribution;
 import com.conx.logistics.kernel.ui.service.contribution.IViewContribution;
 import com.conx.logistics.mdm.domain.application.DocViewFeature;
 import com.conx.logistics.mdm.domain.application.Feature;
+import com.conx.logistics.mdm.domain.application.ReportViewFeature;
 import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.conx.logistics.mdm.domain.user.User;
 import com.vaadin.terminal.ThemeResource;
@@ -93,6 +95,32 @@ public class FeatureTabbedView extends TabSheet implements IFeatureView {
 						this.setSelectedTab(view);
 					} else {
 						rc = new ThemeResource("icons/mimetype/attachment-generic.png");
+						Tab tab = addTab(view, feature.getName(), rc);
+						this.setSelectedTab(view);
+						tab.setClosable(true);
+						viewCache.put(feature, view);
+					}
+				}
+			} else if (feature instanceof ReportViewFeature) {
+				currentFeature = feature;
+				Component view = viewCache.get(feature);
+				ThemeResource rc = null;
+				if (view == null) {
+					IPresenterFactory pf = this.app.getPresenterFactory();
+					ReportViewerPresenter viewPresenter = (ReportViewerPresenter) pf.createPresenter(ReportViewerPresenter.class);
+					viewPresenter.getEventBus().viewReport(((ReportViewFeature) feature).getReportUrl());
+					view = (Component) viewPresenter.getView();
+
+					rc = new ThemeResource("toolstrip/img/label.png");
+					Tab tab = addTab((Component) viewPresenter.getView(), feature.getCaption(), rc);
+					tab.setClosable(true);
+					this.setSelectedTab(view);
+					viewCache.put(feature, view);
+				} else {
+					if (getTab(view) != null) {
+						this.setSelectedTab(view);
+					} else {
+						rc = new ThemeResource("toolstrip/img/label.png");
 						Tab tab = addTab(view, feature.getName(), rc);
 						this.setSelectedTab(view);
 						tab.setClosable(true);

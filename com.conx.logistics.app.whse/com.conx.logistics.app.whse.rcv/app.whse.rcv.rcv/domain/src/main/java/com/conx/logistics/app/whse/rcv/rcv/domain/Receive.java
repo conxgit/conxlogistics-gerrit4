@@ -149,7 +149,7 @@ public class Receive extends MultitenantBaseEntity {
     private Date dateLastImportUpdated;
 
 
-    @OneToOne(targetEntity = ASN.class, fetch = FetchType.LAZY)
+    @OneToOne(targetEntity = ASN.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn
     private ASN asn;
 

@@ -294,19 +294,15 @@ public class ProcessArrivalReceiptsPage extends BasePageFlowPage implements IMod
 		arrivalReceiptDsField.setHidden(false);
 		arrivalReceiptDs.getDSFields().add(arrivalReceiptDsField);
 		arrivalReceiptDsField = new DataSourceField("commercialRecord", arrivalReceiptDs, arrivalReceiptDs, arrivalReceiptType, "Commercial Record", null);
-		arrivalReceiptDsField.setValueXPath("name");
 		arrivalReceiptDsField.setHidden(false);
 		arrivalReceiptDs.getDSFields().add(arrivalReceiptDsField);
 		arrivalReceiptDsField = new DataSourceField("consignee", arrivalReceiptDs, arrivalReceiptDs, arrivalReceiptType, "ModifiedDate", null);
-		arrivalReceiptDsField.setValueXPath("name");
 		arrivalReceiptDsField.setHidden(false);
 		arrivalReceiptDs.getDSFields().add(arrivalReceiptDsField);
 		arrivalReceiptDsField = new DataSourceField("shipper", arrivalReceiptDs, arrivalReceiptDs, arrivalReceiptType, "Mime Type", null);
-		arrivalReceiptDsField.setValueXPath("name");
 		arrivalReceiptDsField.setHidden(false);
 		arrivalReceiptDs.getDSFields().add(arrivalReceiptDsField);
 		arrivalReceiptDsField = new DataSourceField("shippedFrom", arrivalReceiptDs, arrivalReceiptDs, arrivalReceiptType, "Size", null);
-		arrivalReceiptDsField.setValueXPath("name");
 		arrivalReceiptDsField.setHidden(false);
 		arrivalReceiptDs.getDSFields().add(arrivalReceiptDsField);
 

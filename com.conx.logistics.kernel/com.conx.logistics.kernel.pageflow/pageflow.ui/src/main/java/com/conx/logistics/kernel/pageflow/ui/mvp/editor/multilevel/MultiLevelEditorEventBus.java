@@ -16,6 +16,8 @@ public interface MultiLevelEditorEventBus extends EventBus {
 	@Event(handlers = { MultiLevelEditorPresenter.class })
 	public void viewDocument(FileEntry viewable);
 	@Event(handlers = { MultiLevelEditorPresenter.class })
+	public void viewDocument(String url, String caption);
+	@Event(handlers = { MultiLevelEditorPresenter.class })
 	public void renderEditor(MasterDetailComponent componentModel);
 	@Event(handlers = { MultiLevelEditorPresenter.class })
 	public void renderEditor(MasterDetailComponent componentModel, Item item, Container itemContainer);

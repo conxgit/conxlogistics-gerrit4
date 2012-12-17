@@ -39,9 +39,9 @@ import com.conx.logistics.kernel.ui.service.contribution.IViewContribution;
 import com.conx.logistics.mdm.dao.services.IEntityMetadataDAOService;
 import com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService;
 import com.conx.logistics.mdm.domain.user.User;
+import com.conx.logistics.reporting.remote.services.IReportGenerator;
 import com.vaadin.Application;
 import com.vaadin.addon.jpacontainer.JPAContainer;
-import com.vaadin.addon.jpacontainer.JPAContainerFactory;
 import com.vaadin.addon.jpacontainer.util.EntityManagerPerRequestHelper;
 import com.vaadin.terminal.gwt.server.HttpServletRequestListener;
 
@@ -73,6 +73,8 @@ public class MainMVPApplication extends Application implements IMainApplication,
 	private IEntityManagerFactoryManager entityManagerFactoryManager;
 	@Autowired
 	private UserTransaction userTransaction;
+	@Autowired
+	private IReportGenerator reportingGenerator;
 
 	@Override
 	public void init() {
@@ -490,5 +492,24 @@ public class MainMVPApplication extends Application implements IMainApplication,
 
 	public void setUserTransaction(UserTransaction userTransaction) {
 		this.userTransaction = userTransaction;
+	}
+
+	public IReportGenerator getReportingGenerator() {
+		return reportingGenerator;
+	}
+
+	public void setReportingGenerator(IReportGenerator reportingGenerator) {
+		this.reportingGenerator = reportingGenerator;
+	}
+
+	@Override
+	public String getReportingUrl() {
+		assert (this.reportingGenerator != null) : "The reporting service was null";
+		String baseUrl = getURL().getProtocol() + "://" + getURL().getHost();
+		if (getURL().getPort() != -1) {
+			baseUrl += ":" + getURL().getPort();
+		}
+		
+		return this.reportingGenerator.getUrlPathForPDFGenerator(baseUrl);
 	}
 }

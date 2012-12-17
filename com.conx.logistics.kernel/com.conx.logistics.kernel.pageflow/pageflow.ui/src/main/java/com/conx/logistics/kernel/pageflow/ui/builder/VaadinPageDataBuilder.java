@@ -241,6 +241,7 @@ public class VaadinPageDataBuilder {
 				: (item instanceof BeanItem<?>) ? ((BeanItem) item).getBean() : null;
 		((VaadinMatchGrid) component).setItemBean(itemBean);
 		((VaadinMatchGrid) component).setDaoProvider(daoProvider);
+		((VaadinMatchGrid) component).setFactory(presenterFactory);
 
 		final BeanItemContainer<BaseEntity> matchedContainer = (BeanItemContainer<BaseEntity>) containerProvider
 				.createBeanContainer(((VaadinMatchGrid) component).getMatchedContainerType());

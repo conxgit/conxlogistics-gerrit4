@@ -153,12 +153,19 @@ public class ProcessDynamicArrivalReceiptsPage extends BasePageFlowPage implemen
 		newSIFormFieldSet.getFields().add(fsf);		
 		
 		//--- Product
-		dsField = new DataSourceField("innerPackCount", newStockItemDS, newStockItemDS, stockItemType, "Quantity", null);
+		dsField = new DataSourceField("innerPackCount", newStockItemDS, newStockItemDS, stockItemType, "Inner Pack Count", null);
 		dsField.getValidators().add(new IsGreaterNumberValidator(dsField, 0));
 		dsField.setRequired(true);
 		newStockItemDS.getDSFields().add(dsField);
 		fsf = new FieldSetField(0, dsField, null);
 		newSIFormFieldSet.getFields().add(fsf);	
+		
+//		dsField = new DataSourceField("innerPackUnit", newStockItemDS, newStockItemDS, stockItemType, "Inner Pack Unit", null);
+//		dsField.getValidators().add(new IsGreaterNumberValidator(dsField, 0));
+//		dsField.setRequired(true);
+//		newStockItemDS.getDSFields().add(dsField);
+//		fsf = new FieldSetField(0, dsField, null);
+//		newSIFormFieldSet.getFields().add(fsf);	
 		
 		ConXSimpleForm newSIForm = new ConXSimpleForm(newStockItemDS);
 		newSIForm.setFieldSet(newSIFormFieldSet);
@@ -413,19 +420,15 @@ public class ProcessDynamicArrivalReceiptsPage extends BasePageFlowPage implemen
 		arrivalReceiptDsField.setHidden(false);
 		arrivalReceiptDs.getDSFields().add(arrivalReceiptDsField);
 		arrivalReceiptDsField = new DataSourceField("commercialRecord", arrivalReceiptDs, arrivalReceiptDs, arrivalReceiptType, "Commercial Record", null);
-		arrivalReceiptDsField.setValueXPath("name");
 		arrivalReceiptDsField.setHidden(false);
 		arrivalReceiptDs.getDSFields().add(arrivalReceiptDsField);
 		arrivalReceiptDsField = new DataSourceField("consignee", arrivalReceiptDs, arrivalReceiptDs, arrivalReceiptType, "ModifiedDate", null);
-		arrivalReceiptDsField.setValueXPath("name");
 		arrivalReceiptDsField.setHidden(false);
 		arrivalReceiptDs.getDSFields().add(arrivalReceiptDsField);
 		arrivalReceiptDsField = new DataSourceField("shipper", arrivalReceiptDs, arrivalReceiptDs, arrivalReceiptType, "Mime Type", null);
-		arrivalReceiptDsField.setValueXPath("name");
 		arrivalReceiptDsField.setHidden(false);
 		arrivalReceiptDs.getDSFields().add(arrivalReceiptDsField);
 		arrivalReceiptDsField = new DataSourceField("shippedFrom", arrivalReceiptDs, arrivalReceiptDs, arrivalReceiptType, "Size", null);
-		arrivalReceiptDsField.setValueXPath("name");
 		arrivalReceiptDsField.setHidden(false);
 		arrivalReceiptDs.getDSFields().add(arrivalReceiptDsField);
 

@@ -21,10 +21,13 @@ public interface IWarehouseApplicationDAOService {
 	// ========= Receiving ASN :: Search ASN Feature
 	public static final String WAREHOUSE_APP_RECEIVING_ASN_SEARCH_NAME = "Search";
 	public static final String WAREHOUSE_APP_RECEIVING_ASN_SEARCH_CODE = "SEARCH_ASN";
+	public static final String WAREHOUSE_APP_RECEIVING_ASN_SEARCH_CAPTION = "Search ASN's";
 
 	// ========= Receiving ASN :: New ASN Feature
 	public static final String WAREHOUSE_APP_RECEIVING_ASN_NEW_NAME = "New";
 	public static final String WAREHOUSE_APP_RECEIVING_ASN_NEW_CODE = "NEW_ASN";
+	public static final String WAREHOUSE_APP_RECEIVING_ASN_NEW_CAPTION = "New ASN";
+	public static final String WAREHOUSE_APP_RECEIVING_ASN_NEW_ICON_URL = "toolstrip/img/task.png";
 
 	// ==== Receiving Receive Featureset
 	public static final String WAREHOUSE_APP_RECEIVING_RCV_NAME = "Receives";
@@ -46,12 +49,14 @@ public interface IWarehouseApplicationDAOService {
 	// ========= Receiving ARVL :: Search Arrivals Feature
 	public static final String WAREHOUSE_APP_RECEIVING_ARVL_SEARCH_NAME = "Search";
 	public static final String WAREHOUSE_APP_RECEIVING_ARVL_SEARCH_CODE = "SEARCH_ARVL";
+	public static final String WAREHOUSE_APP_RECEIVING_ARVL_SEARCH_CAPTION = "Search Arrivals";
 	public static final String WAREHOUSE_APP_RECEIVING_ARVL_SEARCH_COMPONENT = "searchArrivals";
 
 	// ========= Receiving ARVL :: New Arrival Feature
 	public static final String WAREHOUSE_APP_RECEIVING_ARVL_NEW_NAME = "New";
 	public static final String WAREHOUSE_APP_RECEIVING_ARVL_NEW_CODE = "NEW_ARVL";
-	
+	public static final String WAREHOUSE_APP_RECEIVING_ARVL_NEW_CAPTION = "New Arrival";
+	public static final String WAREHOUSE_APP_RECEIVING_ARVL_NEW_ICON_URL = "toolstrip/img/task.png";
 	
 	// ==== IM Featureset
 	public static final String WAREHOUSE_APP_IM_NAME = "Inventory Management";

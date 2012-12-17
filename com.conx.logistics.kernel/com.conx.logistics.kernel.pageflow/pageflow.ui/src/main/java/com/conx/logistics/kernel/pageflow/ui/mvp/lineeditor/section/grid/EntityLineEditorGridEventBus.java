@@ -24,5 +24,8 @@ public interface EntityLineEditorGridEventBus extends EventBus {
 	public void print();
 	
 	@Event(handlers = { EntityLineEditorGridPresenter.class })
+	public void report();
+	
+	@Event(handlers = { EntityLineEditorGridPresenter.class })
 	public void setItemDataSource(Item item);
 }

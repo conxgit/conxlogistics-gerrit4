@@ -11,21 +11,29 @@ import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.vaadin.ui.Field.ValueChangeEvent;
 
 public interface WarehouseEventBus extends StartableApplicationEventBus {
-  @Event(handlers = { WarehousePresenter.class })
-  public void start(MainMVPApplication app);
-	  
-  @Event(handlers = { WarehousePresenter.class })
-  public void selectMenu(ValueChangeEvent event);
+	@Override
+	@Event(handlers = { WarehousePresenter.class })
+	public void start(MainMVPApplication app);
 
-  @Event(handlers = { WarehousePresenter.class })
-  public void openModule(Class<? extends BasePresenter<?, ? extends EventBus>> presenterClass);
-  
-  @Event(handlers = { WarehousePresenter.class })
-  public void openFeatureView(Feature feature);  
-  
-  @Event(handlers = { WarehousePresenter.class })
-  public void closeFeatureView(Feature feature);
-  
-  @Event(handlers = { WarehousePresenter.class })
-  public void openDocument(FileEntry fileEntry);   
+	@Event(handlers = { WarehousePresenter.class })
+	public void selectMenu(ValueChangeEvent event);
+
+	@Event(handlers = { WarehousePresenter.class })
+	public void openModule(Class<? extends BasePresenter<?, ? extends EventBus>> presenterClass);
+
+	@Override
+	@Event(handlers = { WarehousePresenter.class })
+	public void openFeatureView(Feature feature);
+
+	@Override
+	@Event(handlers = { WarehousePresenter.class })
+	public void closeFeatureView(Feature feature);
+
+	@Override
+	@Event(handlers = { WarehousePresenter.class })
+	public void openDocument(FileEntry fileEntry);
+
+	@Override
+	@Event(handlers = { WarehousePresenter.class })
+	public void openDocument(String url, String caption);
 }

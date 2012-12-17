@@ -20,7 +20,7 @@ public interface IRemoteDocumentRepository {
 	 * Folder API
 	 * 
 	 */
-	public Folder provideFolderForEntity(BaseEntity entity) throws Exception;
+	public BaseEntity provideFolderForEntity(BaseEntity entity) throws Exception;
 	
 	public Folder getFolderById(String folderId)  throws Exception;
 	

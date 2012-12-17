@@ -19,9 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.conx.logistics.app.whse.rcv.rcv.dao.services.IArrivalDAOService;
-import com.conx.logistics.app.whse.rcv.rcv.dao.services.IReceiveDAOService;
 import com.conx.logistics.app.whse.rcv.rcv.domain.Arrival;
-import com.conx.logistics.app.whse.rcv.rcv.domain.Receive;
 import com.conx.logistics.kernel.ui.factory.services.data.IDAOProvider;
 
 @Transactional
@@ -45,7 +43,6 @@ public class CreateNewDynaArrivalWIH implements WorkItemHandler {
 	public void executeWorkItem(WorkItem workItem, WorkItemManager manager) {
 		try
 		{
-			Receive rcv = new Receive();
 			Arrival arrival = new Arrival();
 
 			DefaultTransactionDefinition def = new DefaultTransactionDefinition();
@@ -54,10 +51,8 @@ public class CreateNewDynaArrivalWIH implements WorkItemHandler {
 			TransactionStatus status = this.kernelSystemTransManager
 					.getTransaction(def);
 			try {
-				rcv = this.daoProvider.provideByDAOClass(
-						IReceiveDAOService.class).add(rcv);
 				arrival = this.daoProvider.provideByDAOClass(
-						IArrivalDAOService.class).add(arrival, rcv);
+						IArrivalDAOService.class).add(arrival, null);
 				this.kernelSystemTransManager.commit(status);
 			} catch (Exception e) {
 				StringWriter sw = new StringWriter();

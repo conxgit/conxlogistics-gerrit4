@@ -438,16 +438,16 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 		stockItem.setDocFolder(fldr);
 
 		stockItem = (StockItem) update(stockItem);
-		
+
 		String arrvlItemName = null;
 		String format = String.format("%%0%dd", 3);
 		String paddedId = String.format(format, stockItem.getId());
 		arrvlItemName = parentRcvLineName + "-SKI" + paddedId;
-		
+
 		stockItem.setName(arrvlItemName);
 		stockItem.setCode(arrvlItemName);
 		stockItem = em.merge(stockItem);
-				
+
 		log.debug("Created Stock Item[" + stockItem.getName() + "]...");
 
 		itemSet.getStockItems().add(stockItem);
@@ -505,15 +505,15 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 
 		// -- Update owners
 		updateOwnerReceive(rcvLine_);
-		updateOwnerArrival(itemSet.getArrival());
+		updateOwnerArrival(itemSet.getArrival(), rcvLine_.getParentReceive());
 	}
 
-	private void updateOwnerArrival(Arrival arrival) {
-		Receive ownerRcv = arrival.getReceive();
-		if (ownerRcv.getStatus() == RECEIVESTATUS.ARRIVED) {
+	private void updateOwnerArrival(Arrival arrival, Receive parentReceive) {
+		assert (parentReceive != null) : "The parent receive of the arrival was null.";
+		if (parentReceive.getStatus() == RECEIVESTATUS.ARRIVED) {
 			arrival.setArrvlStatus(ARRIVALSTATUS.ARRIVED);
 			arrival = arrivalDAOService.update(arrival);
-		}
+		}	
 	}
 
 	private void updateOwnerReceive(ReceiveLine rcvLine_) throws Exception {
@@ -603,6 +603,9 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 
 		Receive defaultReceive = null;
 		defaultReceive = receiveDAOService.provideDefault();
+		defaultReceive.setConsignee(newRecord.getConsignee());
+		defaultReceive.setShipper(newRecord.getShipper());
+		defaultReceive = em.merge(defaultReceive);
 
 		ReceiveLine receiveLine = new ReceiveLine();
 		receiveLine.setProduct(this.productDAOService.provideDefaultProduct());
@@ -613,5 +616,15 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 		ReceiveLineStockItemSet itemSet = provideStockItemSet(receiveLine, parentArrivalReceipt, parentArrivalReceiptLine);
 		newRecord = processRegularStockItem(newRecord, itemSet);
 		return newRecord;
+	}
+
+	@Override
+	public String getStockItemLabelUrl(StockItem stockItem, String reportingUrl) {
+		assert (reportingUrl != null) : "The reporting url was null.";
+		assert (stockItem != null) : "The stock item was null.";
+		assert (stockItem.getId() != null) : "The stock item was unpersisted (the id was null).";
+		assert (stockItem.getCode() != null) : "The stock item code was null.";
+
+		return reportingUrl + "?PARAM_REPORT_NAME=stockItemSingleLabelByPK&jrpStockItemCode=" + stockItem.getCode();
 	}
 }

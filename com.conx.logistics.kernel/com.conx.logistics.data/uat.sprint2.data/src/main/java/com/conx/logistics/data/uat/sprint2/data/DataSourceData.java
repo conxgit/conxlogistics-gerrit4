@@ -98,7 +98,29 @@ public class DataSourceData {
 
 			if ("innerPackUnit".equals(fld.getName())) {
 				fld.setValueXPath("code");
-			}			
+			}
+			
+			if ("id".equals(fld.getName())) {
+				fld.setTitle("Id");
+			} else if ("code".equals(fld.getName())) {
+				fld.setTitle("Code");
+			} else if ("name".equals(fld.getName())) {
+				fld.setTitle("Name");
+			} else if ("innerPackCount".equals(fld.getName())) {
+				fld.setTitle("Inner Pack Count");
+			} else if ("usedInnerPackCount".equals(fld.getName())) {
+				fld.setTitle("User Inner Pack Count");
+			} else if ("innerPackUnit".equals(fld.getName())) {
+				fld.setTitle("Inner Pack Unit");
+			} else if ("location".equals(fld.getName())) {
+				fld.setTitle("Location");
+			} else if ("status".equals(fld.getName())) {
+				fld.setTitle("Status");
+			} else if ("dateCreated".equals(fld.getName())) {
+				fld.setTitle("Date Created");
+			} else if ("dateLastUpdated".equals(fld.getName())) {
+				fld.setTitle("Date Last Updated");
+			}
 		}
 
 		siDS = dataSourceDAOService.update(siDS);

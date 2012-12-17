@@ -354,6 +354,14 @@ public class VaadinForm extends Form {
 					}
 
 					try {
+						// Field captions should default to ds field title
+						if (dsField.getTitle() != null) {
+							f.setCaption(dsField.getTitle());
+						} else {
+							// The title is null so we have to generate one
+							f.setCaption(createCaption(propertyId.toString()));
+						}
+						// Add property data source to field
 						addedPropertyIds.put(propertyId, f);
 						bindPropertyToField(propertyId, p, f);
 						if (isNestedParentPropertyNull(f)) {
@@ -557,6 +565,30 @@ public class VaadinForm extends Form {
 	 */
 	public Field getField(Object propertyId) {
 		return this.fields.get(propertyId);
+	}
+	
+	/**
+	 * Generates a human-readable caption from a property id.
+	 * 
+	 * @param propertyId
+	 * @return caption
+	 */
+	private String createCaption(String propertyId) {
+		String simpleName = propertyId, title = "";
+		String[] sections = simpleName.split("(?=\\p{Upper})");
+		boolean isFirst = true;
+		for (String section : sections) {
+			if (!isFirst) {
+				if (section.length() > 1) {
+					title += " ";
+				}
+			}
+			title += section;
+			if (!"".equals(section)) {
+				isFirst = false;
+			}
+		}
+		return title;
 	}
 
 	/**

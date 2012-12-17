@@ -117,18 +117,6 @@ public class EntityTypeDAOImpl implements IEntityTypeDAOService {
 			q.setParameter("entityJavaSimpleType", entityClass.getSimpleName());
 			res = (Long) q.getSingleResult();
 		} catch (NoResultException e) {
-		} catch (Exception e) {
-			StringWriter sw = new StringWriter();
-			e.printStackTrace(new PrintWriter(sw));
-			String stacktrace = sw.toString();
-			logger.error(stacktrace);
-			throw e;
-		} catch (Error e) {
-			StringWriter sw = new StringWriter();
-			e.printStackTrace(new PrintWriter(sw));
-			String stacktrace = sw.toString();
-			logger.error(stacktrace);
-			throw e;
 		}
 
 		return res;

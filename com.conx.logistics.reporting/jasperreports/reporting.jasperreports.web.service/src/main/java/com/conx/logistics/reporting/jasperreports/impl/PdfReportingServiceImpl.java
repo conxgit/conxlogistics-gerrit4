@@ -139,4 +139,9 @@ public class PdfReportingServiceImpl implements IReportGenerator{
 			}
 		}
 	}
+
+	@Override
+	public String getUrlPathForPDFGenerator(String serverUrl) {
+		return serverUrl.endsWith("/") ? serverUrl + "reporting/pdfgen" : serverUrl + "/reporting/pdfgen";
+	}
 }

@@ -1,7 +1,6 @@
 package com.conx.logistics.app.whse.dao.services.impl;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +12,6 @@ import com.conx.logistics.app.whse.dao.services.IWarehouseApplicationDAOService;
 import com.conx.logistics.common.utils.Validator;
 import com.conx.logistics.kernel.system.dao.services.application.IApplicationDAOService;
 import com.conx.logistics.kernel.system.dao.services.application.IFeatureDAOService;
-import com.conx.logistics.kernel.system.dao.services.application.IFeatureSetDAOService;
 import com.conx.logistics.mdm.domain.application.Application;
 import com.conx.logistics.mdm.domain.application.Feature;
 
@@ -24,21 +22,12 @@ public class WahouseApplicationDAOImpl implements IWarehouseApplicationDAOServic
 	/**
 	 * Spring will inject a managed JPA {@link EntityManager} into this field.
 	 */
-	@PersistenceContext
-	private EntityManager em;
 
 	@Autowired
 	private IFeatureDAOService featureDaoService;
 
 	@Autowired
-	private IFeatureSetDAOService featureSetDaoService;
-
-	@Autowired
 	private IApplicationDAOService applicationDaoService;
-
-	public void setEm(EntityManager em) {
-		this.em = em;
-	}
 
 	@Override
 	public Application provideApplicationMetadata() {
@@ -62,6 +51,28 @@ public class WahouseApplicationDAOImpl implements IWarehouseApplicationDAOServic
 			warehouseFeatureSet.setName(IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_NAME);
 			warehouseFeatureSet = featureDaoService.addFeature(warehouseFeatureSet);
 			cpApp.getFeatures().add(warehouseFeatureSet);
+			
+			/*
+			 * Receives
+			 */
+			// Receive Feature Set
+			Feature receiveFeatureSet = new Feature(cpApp, warehouseFeatureSet, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_CODE);
+			receiveFeatureSet.setName(IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_NAME);
+			receiveFeatureSet.setFeatureSet(true);
+			receiveFeatureSet = featureDaoService.addFeature(receiveFeatureSet);
+			warehouseFeatureSet.getChildFeatures().add(receiveFeatureSet);
+
+			// Receive Search Feature
+			Feature searchReceiveFeature = new Feature(cpApp, receiveFeatureSet, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_SEARCH_CODE);
+			searchReceiveFeature.setName(WAREHOUSE_APP_RECEIVING_RCV_SEARCH_NAME);
+			searchReceiveFeature.setCaption("Receives");
+			searchReceiveFeature.setIconUrl("breadcrumb/img/conx-bread-crumb-grid-highlighted.png");
+			searchReceiveFeature.setComponentModelCode(IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_SEARCH_COMPONENT);
+			searchReceiveFeature = featureDaoService.addFeature(searchReceiveFeature);
+			receiveFeatureSet.getChildFeatures().add(searchReceiveFeature);
+			
+			// Update Receive Feature Set
+			receiveFeatureSet = featureDaoService.updateFeature(receiveFeatureSet);
 
 			/*
 			 * ASNs
@@ -84,46 +95,16 @@ public class WahouseApplicationDAOImpl implements IWarehouseApplicationDAOServic
 			Feature newAsnFeature = new Feature(cpApp, asnFeatureSet, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_ASN_NEW_CODE);
 			newAsnFeature.setName(WAREHOUSE_APP_RECEIVING_ASN_NEW_NAME);
 			newAsnFeature.setTaskFeature(true);
-			newAsnFeature.setOnCompletionFeature(searchAsnFeature);
+			newAsnFeature.setOnCompletionFeature(searchReceiveFeature);
 			newAsnFeature.setCode("whse.rcv.asn.CreateNewASNByOrgV1.0");
 			newAsnFeature.setExternalCode("KERNEL.PAGEFLOW.STARTTASK");
+			newAsnFeature.setCaption(WAREHOUSE_APP_RECEIVING_ASN_NEW_CAPTION);
+			newAsnFeature.setIconUrl(WAREHOUSE_APP_RECEIVING_ASN_NEW_ICON_URL);
 			newAsnFeature = featureDaoService.addFeature(newAsnFeature);
 			asnFeatureSet.getChildFeatures().add(newAsnFeature);
 
 			// Update ASN Feature Set
 			asnFeatureSet = featureDaoService.updateFeature(asnFeatureSet);
-
-			/*
-			 * Receives
-			 */
-			// Receive Feature Set
-			Feature receiveFeatureSet = new Feature(cpApp, warehouseFeatureSet, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_CODE);
-			receiveFeatureSet.setName(IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_NAME);
-			receiveFeatureSet.setFeatureSet(true);
-			receiveFeatureSet = featureDaoService.addFeature(receiveFeatureSet);
-			warehouseFeatureSet.getChildFeatures().add(receiveFeatureSet);
-
-			// Receive Search Feature
-			Feature searchReceiveFeature = new Feature(cpApp, receiveFeatureSet, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_SEARCH_CODE);
-			searchReceiveFeature.setName(WAREHOUSE_APP_RECEIVING_RCV_SEARCH_NAME);
-			searchReceiveFeature.setCaption("Receives");
-			searchReceiveFeature.setIconUrl("breadcrumb/img/conx-bread-crumb-grid-highlighted.png");
-			searchReceiveFeature.setComponentModelCode(IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_SEARCH_COMPONENT);
-			searchReceiveFeature = featureDaoService.addFeature(searchReceiveFeature);
-			receiveFeatureSet.getChildFeatures().add(searchReceiveFeature);
-
-			// Receive New Feature
-			/*Feature newReceiveFeature = new Feature(cpApp, smfs, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_RCV_NEW_CODE);
-			newReceiveFeature.setName(WAREHOUSE_APP_RECEIVING_RCV_NEW_NAME);
-			newReceiveFeature.setTaskFeature(true);
-			newReceiveFeature.setOnCompletionFeature(searchReceiveFeature);
-			newReceiveFeature.setCode("whse.rcv.asn.CreateNewRCVByOrgV1.0");
-			newReceiveFeature.setExternalCode("KERNEL.PAGEFLOW.STARTTASK");
-			newReceiveFeature = featureDaoService.addFeature(newReceiveFeature);
-			receiveFeatureSet.getChildFeatures().add(newReceiveFeature);*/
-			
-			// Update Receive Feature Set
-			receiveFeatureSet = featureDaoService.updateFeature(receiveFeatureSet);
 
 			/*
 			 * Arrivals
@@ -134,7 +115,6 @@ public class WahouseApplicationDAOImpl implements IWarehouseApplicationDAOServic
 			arrivalFeatureSet.setFeatureSet(true);
 			arrivalFeatureSet = featureDaoService.addFeature(arrivalFeatureSet);
 			warehouseFeatureSet.getChildFeatures().add(arrivalFeatureSet);
-			
 			
 			// Arrival Search Feature
 			Feature searchArrivalFeature = new Feature(cpApp, arrivalFeatureSet, IWarehouseApplicationDAOService.WAREHOUSE_APP_RECEIVING_ARVL_SEARCH_CODE);
@@ -152,13 +132,13 @@ public class WahouseApplicationDAOImpl implements IWarehouseApplicationDAOServic
 			newArrivalFeature.setOnCompletionFeature(searchArrivalFeature);
 			newArrivalFeature.setCode("whse.rcv.arrivalproc.ProcessCarrierArrivalV1.0");
 			newArrivalFeature.setExternalCode("KERNEL.PAGEFLOW.STARTTASK");
+			newArrivalFeature.setCaption(WAREHOUSE_APP_RECEIVING_ARVL_NEW_CAPTION);
+			newArrivalFeature.setIconUrl(WAREHOUSE_APP_RECEIVING_ARVL_NEW_ICON_URL);
 			newArrivalFeature = featureDaoService.addFeature(newArrivalFeature);
 			arrivalFeatureSet.getChildFeatures().add(newArrivalFeature);
 			
 			// Update Arrival Feature Set
 			arrivalFeatureSet = featureDaoService.updateFeature(arrivalFeatureSet);
-			
-			
 
 			/**
 			 * IM Featureset

@@ -15,6 +15,7 @@ public class EntityLineEditorGridHeaderView extends VerticalLayout implements IE
 	private EntityEditorToolStripButton editButton;
 	private EntityEditorToolStripButton deleteButton;
 	private EntityEditorToolStripButton printButton;
+	private EntityEditorToolStripButton reportButton;
 	
 	@UiField
 	VerticalLayout mainLayout;
@@ -36,6 +37,9 @@ public class EntityLineEditorGridHeaderView extends VerticalLayout implements IE
 		
 		this.printButton = this.toolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_PRINT_PNG);
 		this.printButton.setEnabled(false);
+		
+		this.reportButton = this.toolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_REPORT_PNG);
+		this.reportButton.setEnabled(false);
 	}
 	
 	@Override
@@ -101,6 +105,21 @@ public class EntityLineEditorGridHeaderView extends VerticalLayout implements IE
 	@Override
 	public boolean isPrintEnabled() {
 		return this.printButton.isEnabled();
+	}
+	
+	@Override
+	public void setReportEnabled(boolean isEnabled) {
+		this.reportButton.setEnabled(isEnabled);
+	}
+
+	@Override
+	public boolean isReportEnabled() {
+		return this.reportButton.isEnabled();
+	}
+
+	@Override
+	public void addReportListener(ClickListener listener) {
+		this.reportButton.addListener(listener);
 	}
 	
 }

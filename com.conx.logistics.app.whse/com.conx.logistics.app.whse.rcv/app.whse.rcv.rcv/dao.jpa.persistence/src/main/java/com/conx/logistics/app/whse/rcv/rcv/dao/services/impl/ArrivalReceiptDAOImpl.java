@@ -62,13 +62,13 @@ public class ArrivalReceiptDAOImpl implements IArrivalReceiptDAOService {
 			newRecord.setName(name);
 			newRecord.setCode(name);
 			newRecord.setOwnerEntityId(parentArrivalId);
+			newRecord = em.merge(newRecord);
+			newRecord.setParentArrival(parentArrvl);
+			newRecord = em.merge(newRecord);
 		} else {
 			newRecord = existingRecord;
 		}
 		
-		newRecord.setParentArrival(parentArrvl);
-		
-		newRecord = em.merge(newRecord);
 		return newRecord;
 	}
 

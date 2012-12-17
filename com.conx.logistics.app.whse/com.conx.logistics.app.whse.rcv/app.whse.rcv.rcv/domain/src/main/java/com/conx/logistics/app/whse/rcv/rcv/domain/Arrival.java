@@ -62,7 +62,7 @@ public class Arrival extends MultitenantBaseEntity {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<ArrivalReceipt> receipts = new java.util.HashSet<ArrivalReceipt>();
     
-    @OneToOne(targetEntity = Receive.class, fetch = FetchType.LAZY)
+    @OneToOne(targetEntity = Receive.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn
     private Receive receive;
 

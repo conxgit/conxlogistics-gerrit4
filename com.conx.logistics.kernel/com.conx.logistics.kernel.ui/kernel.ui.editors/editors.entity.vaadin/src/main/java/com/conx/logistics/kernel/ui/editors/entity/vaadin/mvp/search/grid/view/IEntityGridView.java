@@ -10,6 +10,7 @@ import com.vaadin.data.Item;
 public interface IEntityGridView  extends IEntityEditorComponentView {
 	public void setContainerDataSource(Container container);
 	public void setVisibleColumns(Object[] columnIds);
+	public void setVisibleColumnNames(String[] columnNames);
 	public void addEditListener(IEditListener listener);
 	public void addSelectListener(ISelectListener listener);
 	public void addDepletedListener(IDepletedListener listener);

@@ -56,6 +56,9 @@
 	
 	<osgi:reference id="remoteDocumentRepository" cardinality="1..1" interface="com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository">
 		<!-- <osgi:listener ref="mainApp" bind-method="bindRemoteDocumentRepository" unbind-method="unbindRemoteDocumentRepository"/> -->
+	</osgi:reference>
+	
+	<osgi:reference id="reportingService" cardinality="1..1" interface="com.conx.logistics.reporting.remote.services.IReportGenerator">
 	</osgi:reference>	
 	
 	<osgi:reference id="folderDAOService" cardinality="1..1" interface="com.conx.logistics.mdm.dao.services.documentlibrary.IFolderDAOService">

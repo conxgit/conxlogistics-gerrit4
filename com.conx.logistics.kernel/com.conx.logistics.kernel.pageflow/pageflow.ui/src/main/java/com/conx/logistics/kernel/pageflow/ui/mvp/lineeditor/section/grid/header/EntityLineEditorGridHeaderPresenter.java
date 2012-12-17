@@ -54,6 +54,14 @@ public class EntityLineEditorGridHeaderPresenter extends BasePresenter<IEntityLi
 				EntityLineEditorGridHeaderPresenter.this.sectionEventBusManager.fireAnonymousEvent("print");
 			}
 		});
+		this.getView().addReportListener(new ClickListener() {
+			private static final long serialVersionUID = -99023801L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				EntityLineEditorGridHeaderPresenter.this.sectionEventBusManager.fireAnonymousEvent("report");
+			}
+		});
 	}
 
 	public boolean isInitialized() {

@@ -71,4 +71,9 @@ public class EntityGridView extends VerticalLayout implements IEntityGridView {
 	public void addDepletedListener(IDepletedListener listener) {
 		this.grid.addDepletedListener(listener);
 	}
+
+	@Override
+	public void setVisibleColumnNames(String[] columnNames) {
+		this.grid.setColumnTitles(columnNames);
+	}
 }

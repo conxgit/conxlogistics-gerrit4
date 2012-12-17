@@ -47,10 +47,12 @@ public class EntityGridPresenter extends ConfigurableBasePresenter<IEntityGridVi
 
 	private void initialize() {
 		String[] visibleFieldNames = this.tableComponent.getDataSource().getVisibleFieldNames().toArray(new String[0]);
-
+		String[] visibleFieldTitles = this.tableComponent.getDataSource().getVisibleFieldTitles().toArray(new String[0]);
+		
 		this.getView().init();
 		this.getView().setContainerDataSource(this.entityContainer);
 		this.getView().setVisibleColumns(visibleFieldNames);
+		this.getView().setVisibleColumnNames(visibleFieldTitles);
 		this.getView().addEditListener(this);
 		this.getView().addSelectListener(this);
 		this.getView().addDepletedListener(this);

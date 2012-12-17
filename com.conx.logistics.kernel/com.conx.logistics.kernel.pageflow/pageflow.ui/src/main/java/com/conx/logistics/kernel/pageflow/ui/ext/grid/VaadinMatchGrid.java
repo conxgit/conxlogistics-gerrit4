@@ -5,7 +5,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.vaadin.mvp.presenter.PresenterFactory;
+
+import com.conx.logistics.app.whse.im.dao.services.IStockItemDAOService;
+import com.conx.logistics.app.whse.im.domain.stockitem.StockItem;
 import com.conx.logistics.kernel.pageflow.ui.builder.VaadinPageDataBuilder;
+import com.conx.logistics.kernel.pageflow.ui.mvp.editor.multilevel.MultiLevelEditorEventBus;
 import com.conx.logistics.kernel.ui.components.domain.table.EntityMatchGrid;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.EntityEditorToolStrip;
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.EntityEditorToolStrip.EntityEditorToolStripButton;
@@ -14,7 +19,10 @@ import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityEditor
 import com.conx.logistics.kernel.ui.factory.services.data.IDAOProvider;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormAlertPanel;
 import com.conx.logistics.kernel.ui.forms.vaadin.impl.VaadinFormAlertPanel.AlertType;
+import com.conx.logistics.kernel.ui.service.contribution.IMainApplication;
 import com.conx.logistics.kernel.ui.vaadin.common.ConXVerticalSplitPanel;
+import com.conx.logistics.mdm.domain.BaseEntity;
+import com.vaadin.Application;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.data.Container;
@@ -35,6 +43,7 @@ public class VaadinMatchGrid extends VerticalLayout {
 	private EntityEditorToolStripButton newMatchedItemButton;
 	private EntityEditorToolStripButton unmatchButton;
 	private EntityEditorToolStripButton matchButton;
+	private EntityEditorToolStripButton reportButton;
 	private EntityEditorGrid unmatchedGrid;
 	private Item unmatchedGridItem;
 	private EntityEditorGrid matchedGrid;
@@ -47,6 +56,7 @@ public class VaadinMatchGrid extends VerticalLayout {
 	private VaadinFormAlertPanel matchedAlertPanel;
 	private Object itemBean;
 	private IDAOProvider daoProvider;
+	private PresenterFactory factory;
 
 	public VaadinMatchGrid(EntityMatchGrid componentModel) {
 		this.componentModel = componentModel;
@@ -223,7 +233,9 @@ public class VaadinMatchGrid extends VerticalLayout {
 		this.unmatchedToolStrip.setTitle(this.componentModel.getUnmatchedDataSource().getEntityType().getName() + "s");
 		this.matchButton = this.unmatchedToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_MATCH_PNG);
 		this.matchButton.setEnabled(false);
-
+		this.reportButton = this.matchedToolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_REPORT_PNG);
+		this.reportButton.setEnabled(false);
+		
 		this.unmatchButton.addListener(new ClickListener() {
 			private static final long serialVersionUID = 1L;
 
@@ -238,6 +250,16 @@ public class VaadinMatchGrid extends VerticalLayout {
 				} catch (Exception e) {
 					VaadinMatchGrid.this.unmatchButton.setComponentError(new UserError(e.getMessage()));
 					e.printStackTrace();
+				}
+			}
+		});
+		this.reportButton.addListener(new ClickListener() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				if (VaadinMatchGrid.this.matchedGridItem != null) {
+					onReport(VaadinMatchGrid.this.matchedGridItem);
 				}
 			}
 		});
@@ -272,6 +294,7 @@ public class VaadinMatchGrid extends VerticalLayout {
 			public void onSelect(Item item) {
 				VaadinMatchGrid.this.matchedGridItem = item;
 				VaadinMatchGrid.this.unmatchButton.setEnabled(true);
+				VaadinMatchGrid.this.reportButton.setEnabled(true);
 			}
 		});
 
@@ -375,5 +398,53 @@ public class VaadinMatchGrid extends VerticalLayout {
 
 	public void setDaoProvider(IDAOProvider daoProvider) {
 		this.daoProvider = daoProvider;
+	}
+	
+	public PresenterFactory getFactory() {
+		return factory;
+	}
+
+	public void setFactory(PresenterFactory factory) {
+		this.factory = factory;
+	}
+	
+	/**
+	 * This event is fired when the reporting button is clicked.
+	 * 
+	 * @param item item datasource
+	 */
+	public void onReport(Item item) {
+		assert (factory != null) : "The factory was null";
+		assert (item instanceof JPAContainerItem || item instanceof BeanItem) : "The item must be a JPAContainerItem or BeanItem";
+		MultiLevelEditorEventBus ownerEditorEventBus = this.factory.getEventBusManager()
+				.getEventBus(MultiLevelEditorEventBus.class);
+		if (ownerEditorEventBus != null) {
+			Object entity = (item instanceof JPAContainerItem) ? ((JPAContainerItem<?>) item).getEntity() : ((BeanItem<?>) item).getBean();
+			assert (entity instanceof BaseEntity) : "The item's bean must be of type BaseEntity";
+			String url = getReportUrlForEntity((BaseEntity) entity);
+			assert (url != null) : "The URL could not be generated for this item";
+			ownerEditorEventBus.viewDocument(url, "Label (" + ((BaseEntity) entity).getName() + ")");
+		} else {
+			throw new UnsupportedOperationException("Cannot view a report outside a multi-level editor.");
+		}
+	}
+	
+	/**
+	 * Gets the full, browser compatible url of the report for the provided entity.
+	 * FIXME THIS CURRENTLY ONLY WORKS FOR STOCK ITEMS.
+	 * 
+	 * @param entity to get the report url for
+	 * @return report url for entity
+	 */
+	private String getReportUrlForEntity(BaseEntity entity) {
+		Application app = getApplication();
+		if (app instanceof IMainApplication) {
+			String baseUrl = ((IMainApplication) app).getReportingUrl();
+			if (entity instanceof StockItem) {
+				return this.daoProvider.provideByDAOClass(IStockItemDAOService.class).getStockItemLabelUrl((StockItem) entity, baseUrl);
+			}
+		}
+		
+		return null;
 	}
 }

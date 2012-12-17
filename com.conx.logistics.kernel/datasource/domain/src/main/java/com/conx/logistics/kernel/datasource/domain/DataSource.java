@@ -3,6 +3,8 @@ package com.conx.logistics.kernel.datasource.domain;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,17 +29,20 @@ public class DataSource extends MultitenantBaseEntity {
 	private DataSource superDataSource = null;
 
 	@Transient
-	private Set<String> visibleFieldNames = null;
+	private Set<String> nestedFieldNames = null;
 
 	@Transient
-	private Set<String> nestedFieldNames = null;
+	private Set<String> visibleFieldNames = null;
 
 	@Transient
 	private String foreignKeyPath = null;
 
 	@Transient
 	private Map<String, DataSourceField> dataSourceFieldMap = null;
-	
+
+	@Transient
+	private Map<String, DataSourceField> visibleDataSourceFieldMap = null;
+
 	@ManyToOne
 	private EntityType entityType;
 
@@ -45,7 +50,7 @@ public class DataSource extends MultitenantBaseEntity {
 	private Set<DataSourceField> dSfields = new HashSet<DataSourceField>();
 
 	@Transient
-	private Set<String> visibleFieldCaptions;
+	private List<String> visibleFieldTitles;
 
 	public EntityType getEntityType() {
 		return entityType;
@@ -97,33 +102,39 @@ public class DataSource extends MultitenantBaseEntity {
 
 		return this.foreignKeyPath;
 	}
-	
-	public Set<String> getVisibleFieldTitles() {
-		if (this.visibleFieldCaptions == null) {
-			this.visibleFieldCaptions = new HashSet<String>();
-			
-			Set<DataSourceField> dsFields = getAllDSFields();
-			for (DataSourceField dsf : dsFields) {
-				if (!dsf.getHidden()) {
-					if (dsf.getTitle() != null) {
-						this.visibleFieldCaptions.add(dsf.getTitle());
-					} else {
-						if (dsf.isNestedAttribute()) {
-							this.visibleFieldCaptions.add(dsf.getJPAPath());
+
+	public List<String> getVisibleFieldTitles() {
+		if (this.visibleFieldTitles == null) {
+			this.visibleFieldTitles = new LinkedList<String>();
+			Set<String> visibleFieldNames = getVisibleFieldNames();
+			Map<String, DataSourceField> fieldMap = this.visibleDataSourceFieldMap;
+
+			DataSourceField dsf = null;
+			for (String visibleFieldName : visibleFieldNames) {
+				dsf = fieldMap.get(visibleFieldName);
+				if (dsf != null) {
+					if (!dsf.getHidden()) {
+						if (dsf.getTitle() != null) {
+							this.visibleFieldTitles.add(dsf.getTitle());
 						} else {
-							this.visibleFieldCaptions.add(dsf.getName());
+							if (dsf.isNestedAttribute()) {
+								this.visibleFieldTitles.add(dsf.getJPAPath());
+							} else {
+								this.visibleFieldTitles.add(dsf.getName());
+							}
 						}
 					}
 				}
 			}
 		}
-		return this.visibleFieldCaptions;
+		return this.visibleFieldTitles;
 	}
 
 	public Set<String> getVisibleFieldNames() {
 		if (visibleFieldNames == null) {
 			visibleFieldNames = new HashSet<String>();
 			nestedFieldNames = new HashSet<String>();
+			visibleDataSourceFieldMap = new HashMap<String, DataSourceField>();
 			Set<DataSourceField> dsFields = getAllDSFields();
 			String derivedFieldName;
 			for (DataSourceField dsf : dsFields) {
@@ -132,16 +143,18 @@ public class DataSource extends MultitenantBaseEntity {
 						derivedFieldName = dsf.getJPAPath();
 						nestedFieldNames.add(derivedFieldName);
 						visibleFieldNames.add(derivedFieldName);
+						visibleDataSourceFieldMap.put(derivedFieldName, dsf);
 					} else {
 						derivedFieldName = dsf.getName();
 						visibleFieldNames.add(dsf.getName());
+						visibleDataSourceFieldMap.put(derivedFieldName, dsf);
 					}
 				}
 			}
 		}
 		return visibleFieldNames;
 	}
-	
+
 	private Map<String, DataSourceField> provideDataSourceFieldMap() {
 		if (dataSourceFieldMap == null) {
 			dataSourceFieldMap = new HashMap<String, DataSourceField>();
@@ -152,7 +165,7 @@ public class DataSource extends MultitenantBaseEntity {
 		}
 		return this.dataSourceFieldMap;
 	}
-	
+
 	public Map<String, DataSourceField> provideSuperDataSourceFieldMap() {
 		if (dataSourceFieldMap == null) {
 			dataSourceFieldMap = new HashMap<String, DataSourceField>();
@@ -163,7 +176,7 @@ public class DataSource extends MultitenantBaseEntity {
 		}
 		return this.dataSourceFieldMap;
 	}
-	
+
 	public DataSourceField getInherittedField(String dsFieldName) {
 		Map<String, DataSourceField> fieldMap = provideDataSourceFieldMap();
 		DataSourceField field = fieldMap.get(dsFieldName);

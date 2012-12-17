@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.conx.logistics.app.whse.rcv.rcv.dao.services.IArrivalDAOService;
 import com.conx.logistics.app.whse.rcv.rcv.domain.Arrival;
 import com.conx.logistics.app.whse.rcv.rcv.domain.ArrivalReceipt;
+import com.conx.logistics.app.whse.rcv.rcv.domain.DropOff;
+import com.conx.logistics.app.whse.rcv.rcv.domain.Pickup;
 import com.conx.logistics.app.whse.rcv.rcv.domain.Receive;
 import com.conx.logistics.kernel.documentlibrary.remote.services.IRemoteDocumentRepository;
 import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
@@ -88,6 +90,20 @@ public class ArrivalDAOImpl implements IArrivalDAOService {
 
 	@Override
 	public Arrival add(Arrival arvl, Receive parentReceive) throws Exception {
+		assert(arvl != null) : "The arrival was null.";
+		
+		if (arvl.getActualPickUp() == null) {
+			arvl.setActualPickUp(em.merge(new Pickup()));
+		} else {
+			arvl.setActualPickUp(em.merge(arvl.getActualPickUp()));
+		}
+		
+		if (arvl.getActualDropOff() == null) {
+			arvl.setActualDropOff(em.merge(new DropOff()));
+		} else {
+			arvl.setActualDropOff(em.merge(arvl.getActualDropOff()));
+		}
+		
 		arvl.setReceive(parentReceive);
 		arvl = em.merge(arvl);
 		assignCode(arvl, parentReceive);

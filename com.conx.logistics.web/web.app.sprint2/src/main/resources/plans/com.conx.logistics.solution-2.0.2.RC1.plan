@@ -140,8 +140,13 @@
 	<artifact type="bundle" name="com.conx.logistics.kernel.bpm.impl.jbpm.bpmserver" version="1.0.0"/>
 	
 	<!-- kernel : Pageflow -->
-	<!-- <artifact type="bundle" name="com.conx.logistics.kernel.pageflow.ui" version="1.0.0"/> -->
+	<artifact type="bundle" name="com.conx.logistics.kernel.pageflow.ui" version="1.0.0"/>
 	<artifact type="bundle" name="com.conx.logistics.kernel.pageflow.engine" version="1.0.0"/>
+	
+	<!-- Reporting Services -->
+	<artifact type="bundle" name="com.conx.logistics.reporting.remote.services" version="1.0.0"/>
+	<artifact type="bundle" name="com.conx.logistics.reporting.jasperreports.service.impl" version="1.0.0"/>
+	<artifact type="bundle" name="com.conx.logistics.reporting.jasperreports.web.service" version="1.0.0"/>
 	
 	<!-- Sprint #2 Test Data -->	
 	<artifact type="bundle" name="com.conx.logistics.data.uat.sprint2.data" version="1.0.0"/>

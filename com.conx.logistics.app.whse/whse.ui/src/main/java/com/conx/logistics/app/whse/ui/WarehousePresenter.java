@@ -14,6 +14,7 @@ import com.conx.logistics.kernel.ui.common.mvp.MainMVPApplication;
 import com.conx.logistics.kernel.ui.common.mvp.view.feature.FeatureTabbedView;
 import com.conx.logistics.mdm.domain.application.DocViewFeature;
 import com.conx.logistics.mdm.domain.application.Feature;
+import com.conx.logistics.mdm.domain.application.ReportViewFeature;
 import com.conx.logistics.mdm.domain.documentlibrary.FileEntry;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalSplitPanel;
@@ -71,6 +72,10 @@ public class WarehousePresenter extends BasePresenter<IWarehouseView, WarehouseE
 
 	public void onOpenDocument(FileEntry fileEntry) {
 		fv.setFeature(new DocViewFeature(fileEntry));
+	}
+	
+	public void onOpenDocument(String url, String caption) {
+		fv.setFeature(new ReportViewFeature(url, caption));
 	}
 
 	@Override

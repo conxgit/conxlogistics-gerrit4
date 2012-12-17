@@ -91,26 +91,32 @@ public class AttachmentEditorPresenter extends BasePresenter<IAttachmentEditorVi
 		} else if (item instanceof EntityItem) {
 			entity = (BaseEntity) ((EntityItem<?>) item).getEntity();
 		}
+		
+		assert (entity != null) : "The entity of the item data source was null.";
 
-		if (entity != null) {
+		if (entity.getDocFolder() == null) {
 			DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 			def.setName("pageflow.ui.data");
 			def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 			TransactionStatus status = this.daoProvider.provideByDAOClass(PlatformTransactionManager.class).getTransaction(def);
 			
 			try {
-				this.docFolder = this.daoProvider.provideByDAOClass(IRemoteDocumentRepository.class).provideFolderForEntity(entity);
+				entity = this.daoProvider.provideByDAOClass(IRemoteDocumentRepository.class).provideFolderForEntity(entity);
+				this.docFolder = entity.getDocFolder();
 				this.daoProvider.provideByDAOClass(PlatformTransactionManager.class).commit(status);
 			} catch (Exception e) {
 				e.printStackTrace();
 				this.daoProvider.provideByDAOClass(PlatformTransactionManager.class).rollback(status);
 			}
-
-			if (!initialized) {
-				initialize();
-			}
-			updateQueryFilter();
+		} else {
+			this.docFolder = entity.getDocFolder();
 		}
+		
+		if (!initialized && this.docFolder != null) {
+			initialize();
+		}
+		
+		updateQueryFilter();
 	}
 
 	private void updateQueryFilter() {

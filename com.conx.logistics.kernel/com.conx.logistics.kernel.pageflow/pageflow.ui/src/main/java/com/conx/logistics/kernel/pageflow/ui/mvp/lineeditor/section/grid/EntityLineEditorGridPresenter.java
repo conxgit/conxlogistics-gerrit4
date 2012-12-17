@@ -11,6 +11,8 @@ import org.vaadin.mvp.eventbus.EventBusManager;
 import org.vaadin.mvp.presenter.BasePresenter;
 import org.vaadin.mvp.presenter.annotation.Presenter;
 
+import com.conx.logistics.app.whse.im.dao.services.IStockItemDAOService;
+import com.conx.logistics.app.whse.im.domain.stockitem.StockItem;
 import com.conx.logistics.kernel.metamodel.dao.services.IEntityTypeDAOService;
 import com.conx.logistics.kernel.pageflow.services.IPageComponent;
 import com.conx.logistics.kernel.pageflow.ui.builder.VaadinPageDataBuilder;
@@ -26,13 +28,18 @@ import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityEditor
 import com.conx.logistics.kernel.ui.editors.entity.vaadin.ext.table.EntityEditorGrid.ISelectListener;
 import com.conx.logistics.kernel.ui.factory.services.IEntityEditorFactory;
 import com.conx.logistics.kernel.ui.factory.services.data.IDAOProvider;
+import com.conx.logistics.kernel.ui.service.contribution.IMainApplication;
+import com.conx.logistics.mdm.domain.BaseEntity;
 import com.conx.logistics.mdm.domain.metamodel.EntityType;
 import com.conx.logistics.mdm.domain.metamodel.EntityTypeAttribute;
 import com.conx.logistics.mdm.domain.metamodel.PluralAttribute;
+import com.vaadin.Application;
+import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.ui.Component;
 
 @Presenter(view = EntityLineEditorGridView.class)
 public class EntityLineEditorGridPresenter extends BasePresenter<IEntityLineEditorGridView, EntityLineEditorGridEventBus> implements
@@ -174,6 +181,26 @@ public class EntityLineEditorGridPresenter extends BasePresenter<IEntityLineEdit
 			throw new UnsupportedOperationException("Cannot edit an sub-entity with outside a multi-level editor.");
 		}
 	}
+	
+	/**
+	 * This event is fired when the reporting button is clicked.
+	 * 
+	 * @param item
+	 */
+	public void onReport(Item item) {
+		assert (item instanceof JPAContainerItem || item instanceof BeanItem) : "The item must be a JPAContainerItem or BeanItem";
+		MultiLevelEditorEventBus ownerEditorEventBus = this.factory.getPresenterFactory().getEventBusManager()
+				.getEventBus(MultiLevelEditorEventBus.class);
+		if (ownerEditorEventBus != null) {
+			Object entity = (item instanceof JPAContainerItem) ? ((JPAContainerItem<?>) item).getEntity() : ((BeanItem<?>) item).getBean();
+			assert (entity instanceof BaseEntity) : "The item's bean must be of type BaseEntity";
+			String url = getReportUrlForEntity((BaseEntity) entity);
+			assert (url != null) : "The URL could not be generated for this item";
+			ownerEditorEventBus.viewDocument(url, "Label (" + ((BaseEntity) entity).getName() + ")");
+		} else {
+			throw new UnsupportedOperationException("Cannot edit an sub-entity with outside a multi-level editor.");
+		}
+	}
 
 	@Override
 	public void onSelect(Item item) {
@@ -193,13 +220,19 @@ public class EntityLineEditorGridPresenter extends BasePresenter<IEntityLineEdit
 					.getEventBus(MultiLevelEditorEventBus.class);
 			eventBus.renderEditor(this.tableComponent.getRecordEditor(), item, this.entityContainer);
 		} else {
-			throw new UnsupportedOperationException("Cannot create a new entity with no record editor.");
+			throw new UnsupportedOperationException("Cannot view a report outside a multi-level editor.");
 		}
 	}
 
 	public void onEdit() {
 		if (this.selectedItem != null) {
 			onEdit(this.selectedItem);
+		}
+	}
+	
+	public void onReport() {
+		if (this.selectedItem != null) {
+			onReport(this.selectedItem);
 		}
 	}
 
@@ -226,5 +259,24 @@ public class EntityLineEditorGridPresenter extends BasePresenter<IEntityLineEdit
 			this.sectionEventBusManager.fireAnonymousEvent("disableCreate");
 			this.sectionEventBusManager.fireAnonymousEvent("disableEdit");
 		}
+	}
+	
+	/**
+	 * Gets the full, browser compatible url of the report for the provided entity.
+	 * FIXME THIS CURRENTLY ONLY WORKS FOR STOCK ITEMS.
+	 * 
+	 * @param entity to get the report url for
+	 * @return report url for entity
+	 */
+	private String getReportUrlForEntity(BaseEntity entity) {
+		Application app = ((Component) this.getView()).getApplication();
+		if (app instanceof IMainApplication) {
+			String baseUrl = ((IMainApplication) app).getReportingUrl();
+			if (entity instanceof StockItem) {
+				return this.daoProvider.provideByDAOClass(IStockItemDAOService.class).getStockItemLabelUrl((StockItem) entity, baseUrl);
+			}
+		}
+		
+		return null;
 	}
 }

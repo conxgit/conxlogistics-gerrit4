@@ -41,10 +41,9 @@ public class FolderDAOImpl implements IFolderDAOService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Folder> getAll() {
-		return em.createQuery("select o from com.conx.logistics.mdm.domain.documentlibrary.Folder o record by o.id")
-				.getResultList();
+		return em.createQuery("select o from com.conx.logistics.mdm.domain.documentlibrary.Folder o record by o.id").getResultList();
 	}
-	
+
 	private Folder getByName(String name) throws Exception {
 		try {
 			Query query = em.createQuery("select o from com.conx.logistics.mdm.domain.documentlibrary.Folder o WHERE o.name = :name");
@@ -54,10 +53,11 @@ public class FolderDAOImpl implements IFolderDAOService {
 			return null;
 		}
 	}
-	
+
 	private Folder getByFolderId(Long folderId) throws Exception {
 		try {
-			Query query = em.createQuery("select o from com.conx.logistics.mdm.domain.documentlibrary.Folder o WHERE o.folderId = :folderId");
+			Query query = em
+					.createQuery("select o from com.conx.logistics.mdm.domain.documentlibrary.Folder o WHERE o.folderId = :folderId");
 			query.setParameter("folderId", folderId);
 			return (Folder) query.getSingleResult();
 		} catch (NoResultException e) {
@@ -68,7 +68,7 @@ public class FolderDAOImpl implements IFolderDAOService {
 	@Override
 	public Folder getByFolderIdOrName(Long folderId, String name) {
 		assert (folderId != null || name != null) : "Both parameters were null.";
-		
+
 		if (folderId != null) {
 			try {
 				return getByFolderId(folderId);
@@ -82,7 +82,7 @@ public class FolderDAOImpl implements IFolderDAOService {
 				return null;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -133,13 +133,16 @@ public class FolderDAOImpl implements IFolderDAOService {
 	@Override
 	public FileEntry addFileEntry(Long folderId, DocType attachmentType, FileEntry fileEntry) {
 		Folder res = getByFolderIdOrName(folderId, null);
-		attachmentType = em.merge(attachmentType);
-		fileEntry.setDocType(attachmentType);
-		fileEntry.setFolder(res);
-		fileEntry = em.merge(fileEntry);
-		res.getFiles().add(fileEntry);
-		res = em.merge(res);
-		return fileEntry;
+		if (res != null) {
+			attachmentType = em.merge(attachmentType);
+			fileEntry.setDocType(attachmentType);
+			fileEntry.setFolder(res);
+			fileEntry = em.merge(fileEntry);
+			res.getFiles().add(fileEntry);
+			res = em.merge(res);
+			return fileEntry;
+		}
+		return null;
 	}
 
 	@Override

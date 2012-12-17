@@ -19,4 +19,13 @@ public interface IStockItemDAOService {
 	public StockItem addDynamicStockItem(StockItem newRecord, Long arrivalReceiptPK, Long arrivalReceiptLinePK) throws Exception;
 	
 	public StockItem addOneOfGroup(StockItem newRecord, Long receiveLinePK, Long arrivalReceiptPK, Long arrivalReceiptLinePK) throws Exception;
+
+	/**
+	 * Gets the label url for a stock item given the reporting url.
+	 * 
+	 * @param stockItem
+	 * @param reportingUrl url of the reporting web service
+	 * @return the url of the stock item label
+	 */
+	public String getStockItemLabelUrl(StockItem stockItem, String reportingUrl);
 }
