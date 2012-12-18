@@ -16,4 +16,7 @@ public interface IEntityGridHeaderView  extends IEntityEditorComponentView {
 	public void addPrintListener(ClickListener listener);
 	public void setPrintEnabled(boolean isEnabled);
 	public boolean isPrintEnabled();
+	public void addReportListener(ClickListener listener);
+	public void setReportEnabled(boolean isEnabled);
+	public boolean isReportEnabled();
 }

@@ -73,6 +73,14 @@ public class EntityGridHeaderPresenter extends ConfigurableBasePresenter<IEntity
 				entityEditorEventListener.printGrid();
 			}
 		});
+		this.getView().addReportListener(new ClickListener() {
+			private static final long serialVersionUID = -99023801L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				entityEditorEventListener.reportItem();
+			}
+		});
 	}
 
 	public boolean isInitialized() {
@@ -94,11 +102,13 @@ public class EntityGridHeaderPresenter extends ConfigurableBasePresenter<IEntity
 		this.getView().setEditEnabled(true);
 		this.getView().setDeleteEnabled(true);
 		this.getView().setPrintEnabled(true);
+		this.getView().setReportEnabled(true);
 	}
 	
 	public void onItemsDepleted() {
 		this.getView().setEditEnabled(false);
 		this.getView().setDeleteEnabled(false);
 		this.getView().setPrintEnabled(false);
+		this.getView().setReportEnabled(false);
 	}
 }

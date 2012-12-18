@@ -15,6 +15,7 @@ public class EntityGridHeaderView extends VerticalLayout implements IEntityGridH
 	private EntityEditorToolStripButton editButton;
 	private EntityEditorToolStripButton deleteButton;
 	private EntityEditorToolStripButton printButton;
+	private EntityEditorToolStripButton reportButton;
 	
 	@UiField
 	VerticalLayout mainLayout;
@@ -29,7 +30,7 @@ public class EntityGridHeaderView extends VerticalLayout implements IEntityGridH
 		this.toolStrip = new EntityEditorToolStrip();
 		
 		this.createButton = this.toolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_CREATE_PNG);
-		this.createButton.setEnabled(true);
+		this.createButton.setEnabled(false);
 		
 		this.editButton = this.toolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_EDIT_PNG);
 		this.editButton.setEnabled(false);
@@ -39,6 +40,9 @@ public class EntityGridHeaderView extends VerticalLayout implements IEntityGridH
 		
 		this.printButton = this.toolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_PRINT_PNG);
 		this.printButton.setEnabled(false);
+		
+		this.reportButton = this.toolStrip.addToolStripButton(EntityEditorToolStrip.TOOLSTRIP_IMG_REPORT_PNG);
+		this.reportButton.setEnabled(false);
 		
 		this.mainLayout.addComponent(this.toolStrip);
 	}
@@ -101,6 +105,21 @@ public class EntityGridHeaderView extends VerticalLayout implements IEntityGridH
 	@Override
 	public boolean isPrintEnabled() {
 		return this.printButton.isEnabled();
+	}
+
+	@Override
+	public void addReportListener(ClickListener listener) {
+		this.reportButton.addListener(listener);
+	}
+
+	@Override
+	public void setReportEnabled(boolean isEnabled) {
+		this.reportButton.setEnabled(isEnabled);
+	}
+
+	@Override
+	public boolean isReportEnabled() {
+		return this.reportButton.isEnabled();
 	}
 	
 }

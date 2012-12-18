@@ -34,6 +34,8 @@ public interface EntityLineEditorSectionEventBus extends AbstractEntityEditorEve
 	@Event(handlers = { EntityLineEditorGridPresenter.class })
 	public void deleteItem();
 	@Event(handlers = { EntityLineEditorGridPresenter.class })
+	public void reportItem();
+	@Event(handlers = { EntityLineEditorGridPresenter.class })
 	public void printGrid();
 	
 	@Event(handlers = { EntityLineEditorGridHeaderPresenter.class })

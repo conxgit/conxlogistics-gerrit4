@@ -2,6 +2,7 @@ package com.conx.logistics.kernel.ui.forms.vaadin.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,7 @@ import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.AbstractTextField;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.DateField;
 import com.vaadin.ui.DefaultFieldFactory;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.Form;
@@ -107,6 +109,8 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 		Class<?> type = item.getItemProperty(propertyId).getType();
 		if (Enum.class.isAssignableFrom(type)) {
 			return createEnumSelect(item, type, propertyId, uiContext);
+		} else if (Date.class.isAssignableFrom(type)) {
+			return createDateSelect(item, type, propertyId, uiContext);
 		}
 		Field field = super.createField(item, propertyId, uiContext);
 		if (field instanceof TextField) {
@@ -192,6 +196,12 @@ public class VaadinBeanFieldFactory extends DefaultFieldFactory {
 		nativeSelect.setWidth("100%");
 		nativeSelect.setPropertyDataSource(item.getItemProperty(propertyId));
 		return nativeSelect;
+	}
+	
+	private Field createDateSelect(Item item, Class<?> type, Object propertyId, Component uiContext) {
+		final DateField df = new DateField();
+        df.setResolution(DateField.RESOLUTION_MIN);
+        return df;
 	}
 
 	@SuppressWarnings("rawtypes")

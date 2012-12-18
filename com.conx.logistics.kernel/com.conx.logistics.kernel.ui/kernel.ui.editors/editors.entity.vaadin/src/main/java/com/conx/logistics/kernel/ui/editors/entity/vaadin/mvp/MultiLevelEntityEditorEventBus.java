@@ -38,6 +38,8 @@ public interface MultiLevelEntityEditorEventBus extends AbstractEntityEditorEven
 	@Event(handlers = { MultiLevelEntityEditorPresenter.class })
 	public void editItem(Item item, MasterDetailComponent componentModel);
 	@Event(handlers = { MultiLevelEntityEditorPresenter.class })
+	public void reportItem(Object itemEntity);
+	@Event(handlers = { MultiLevelEntityEditorPresenter.class })
 	public void showPresenter(ConfigurableBasePresenter<?, ? extends EventBus> presenter);
 	@Event(handlers = { MultiLevelEntityEditorPresenter.class })
 	public void setItemDataSource(Item item);
@@ -48,6 +50,8 @@ public interface MultiLevelEntityEditorEventBus extends AbstractEntityEditorEven
 	public void editItem();
 	@Event(handlers = { EntityGridPresenter.class })
 	public void deleteItem();
+	@Event(handlers = { EntityGridPresenter.class })
+	public void reportItem();
 	@Event(handlers = { EntityGridPresenter.class })
 	public void printGrid();
 	

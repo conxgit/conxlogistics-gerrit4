@@ -21,6 +21,7 @@ import com.vaadin.addon.jpacontainer.EntityItem;
 import com.vaadin.addon.jpacontainer.JPAContainer;
 import com.vaadin.addon.jpacontainer.JPAContainerItem;
 import com.vaadin.data.Item;
+import com.vaadin.data.util.BeanItem;
 
 @Presenter(view = EntityGridView.class)
 public class EntityGridPresenter extends ConfigurableBasePresenter<IEntityGridView, EntityGridEventBus> implements IEditListener, ISelectListener, IDepletedListener {
@@ -124,6 +125,18 @@ public class EntityGridPresenter extends ConfigurableBasePresenter<IEntityGridVi
 		Item item = this.getView().getSelectedItem();
 		if (this.tableComponent != null && this.tableComponent.getRecordEditor() != null && item != null) {
 			entityEditorEventListener.editItem(item, this.tableComponent.getRecordEditor());
+		}
+	}
+	
+	public void onReportItem() {
+		Item item = this.getView().getSelectedItem();
+		if (this.tableComponent != null && item != null) {
+			assert (item instanceof BeanItem || item instanceof JPAContainerItem) : "The item was not compatible.";
+			if (item instanceof BeanItem) {
+				entityEditorEventListener.reportItem(((BeanItem<?>) item).getBean());
+			} else if (item instanceof JPAContainerItem) {
+				entityEditorEventListener.reportItem(((JPAContainerItem<?>) item).getEntity());
+			}
 		}
 	}
 
