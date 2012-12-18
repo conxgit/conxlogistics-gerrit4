@@ -110,6 +110,8 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 	}
 
 	private ReceiveLineStockItemSet getStockItemSetByReceiveLine(Long receiveLinePK) throws Exception {
+		assert (receiveLinePK != null) : "The receive line id was null.";
+		
 		Query q = em
 				.createQuery("select o from com.conx.logistics.app.whse.rcv.rcv.domain.ReceiveLineStockItemSet o WHERE o.receiveLine.id = :receiveLineId");
 		q.setParameter("receiveLineId", receiveLinePK);
@@ -161,180 +163,6 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 		return newRecord;
 	}
 
-	/*
-	 * public StockItem addOneOfGroup(StockItem newRecord) { if
-	 * (Validator.isNotNull(newRecord.getReceiveLine())) { try { newRecord =
-	 * processRegularStockItem(newRecord); } catch (Exception e) { StringWriter
-	 * sw = new StringWriter(); e.printStackTrace(new PrintWriter(sw)); String
-	 * stacktrace = sw.toString(); log.warn(stacktrace); } }
-	 * 
-	 * return newRecord; }
-	 */
-
-	// public StockItem addManyWithOneLabel(StockItem newRecord) {
-	// // --Naming
-	// // Process arrival item
-	// if (Validator.isNotNull(newRecord.getReceiveLine()))// This item belongs
-	// // to a rcv
-	// {
-	// try {
-	// ReceiveLine rcvLine = newRecord.getReceiveLine();
-	//
-	// newRecord = (StockItem) em.merge(newRecord);
-	//
-	// newRecord = processRegularStockItem(newRecord);
-	//
-	// // -- Create Portal folder assoc. with this Arrvl
-	// /**
-	// * Create a folder dedicated to this item
-	// */
-	// try {
-	// /*
-	// * HttpPrincipal lepUser =
-	// * LiferayHTTPRemotingUtil.getHttpPrincipal(); DLFolder
-	// * itemFolder = DLFolderServiceHttp.addFolder(lepUser,
-	// * LPEPropsValues.GROUP_ID,
-	// * LPEPropsValues._DOCLIB_ARRIVALS_FOLDERID,//Parent Folder
-	// * Long.toString(newRecord.getId()),
-	// * Long.toString(newRecord.getId()), new ServiceContext());
-	// * newRecord.setDlFolderId(itemFolder.getFolderId());
-	// */
-	// } catch (Exception e) {
-	// StringWriter sw = new StringWriter();
-	// e.printStackTrace(new PrintWriter(sw));
-	// String stacktrace = sw.toString();
-	// log.warn(stacktrace);
-	// } catch (Error e) {
-	// StringWriter sw = new StringWriter();
-	// e.printStackTrace(new PrintWriter(sw));
-	// String stacktrace = sw.toString();
-	// log.error(e.getMessage(), stacktrace);
-	// }
-	// } catch (Exception e) {
-	// StringWriter sw = new StringWriter();
-	// e.printStackTrace(new PrintWriter(sw));
-	// String stacktrace = sw.toString();
-	// log.warn(stacktrace);
-	// }
-	// }
-	//
-	// return newRecord;
-	// }
-
-	//
-	// public Double getExpectedProdTotalWeightInLbs(ReceiveLine receiveLine)
-	// {
-	// if (receiveLine.getProduct().getWeight() != null)
-	// {
-	// Double ttl = UnitConversionUtil.convertWeight(getProduct().getWeight(),
-	// WEIGHTUNIT.valueOf(getProduct().getWeightUnit().getCode()),
-	// WEIGHTUNIT.LB);
-	// if (getExpectedInnerPackCount() != null)
-	// ttl = ttl*getExpectedInnerPackCount();
-	// return ttl;
-	// }
-	// else
-	// return 0.0;
-	// }
-	//
-	// public Double WHReceiveLine.getExpectedProdTotalVolumeInCFs()
-	// {
-	// if (getProduct().getVolume() != null)
-	// {
-	// Double ttl =
-	// UnitConversionUtil.convertDimension(getProduct().getVolume(),
-	// DIMUNIT.valueOf(getProduct().getVolUnit().getCode()), DIMUNIT.CF);
-	// if (getExpectedInnerPackCount() != null)
-	// ttl = ttl*getExpectedInnerPackCount();
-	// return ttl;
-	// }
-	// else
-	// return 0.0;
-	// }
-	//
-	// public Double WHReceiveLine.getExpectedProdTotalWeight()
-	// {
-	// if (getProduct().getWeight() != null)
-	// {
-	// Double ttl = getProduct().getWeight();
-	// if (getExpectedInnerPackCount() != null)
-	// ttl = ttl*getExpectedInnerPackCount();
-	// return ttl;
-	// }
-	// else
-	// return 0.0;
-	// }
-	//
-	// public Double WHReceiveLine.getExpectedProdTotalVolume()
-	// {
-	// if (getProduct().getVolume() != null)
-	// {
-	// Double ttl = getProduct().getVolume();
-	// if (getExpectedInnerPackCount() != null)
-	// ttl = ttl*getExpectedInnerPackCount();
-	// return ttl;
-	// }
-	// else
-	// return 0.0;
-	// }
-	//
-	// /**
-	// * I've got 5 things, create label for 1 of 5, 2 of 5 ... 5 of 5
-	// * @param newRecord
-	// * @return
-	// */
-	// public List<StockItem> addManyAsGroup(StockItem newRecord) {
-	// List<StockItem> newStockItems = new ArrayList<StockItem>();
-	//
-	// // --Naming
-	// // Process arrival item
-	// if (Validator.isNotNull(newRecord.getReceiveLine()))// This item belongs
-	// // to a rcv
-	// {
-	// try {
-	// ReceiveLine rcvLine = newRecord.getReceiveLine();
-	// int rcvLineStockCount = rcvLine.getExpectedInnerPackCount();
-	// int rcvLineArrvdStockCount = Validator.isNotNull(rcvLine
-	// .getArrivedInnerPackCount()) ? rcvLine
-	// .getArrivedInnerPackCount() : 0;
-	// int reqdStockCount = rcvLineArrvdStockCount
-	// - rcvLineArrvdStockCount;
-	//
-	// StockItem newGrpStockItem = null;
-	// Double guessedWeight = rcvLine.getExpectedProdTotalWeightInLbs() /
-	// rcvLineStockCount;
-	// Double guessedVol = rcvLine.getExpectedProdTotalVolumeInCFs()
-	// / rcvLineStockCount;
-	// for (int i = rcvLineArrvdStockCount + 1; i <= rcvLineStockCount; i++) {
-	// newGrpStockItem = new StockItem();
-	// newGrpsetStockCount(1);
-	// newGrpsetReceiveLine(rcvLine);
-	// newGrpsetArrival(newRecord.getArrival());
-	// newGrpsetArrivalReceipt(newRecord.getArrivalReceipt());
-	// newGrpsetRcvLineGroupIndex(i);
-	// newGrpsetRcvLineGroupSize(rcvLineStockCount);
-	// newGrpsetWeight(guessedWeight);
-	// newGrpsetVolume(guessedVol);
-	// newGrpsetLocation(LocationData.provideTBD());
-	//
-	// newGrpStockItem = (StockItem) newGrpmerge();
-	//
-	// newGrpStockItem = processRegularStockItem(newGrpStockItem);
-	//
-	// newStockItems.add(newGrpStockItem);
-	// }
-	//
-	// } catch (Exception e) {
-	// StringWriter sw = new StringWriter();
-	// e.printStackTrace(new PrintWriter(sw));
-	// String stacktrace = sw.toString();
-	// log.warn(stacktrace);
-	// }
-	// }
-	//
-	// return newStockItems;
-	// }
-	//
 	private StockItem processRegularStockItem(StockItem stockItem, ReceiveLineStockItemSet itemSet) throws Exception {
 		assert (itemSet.getReceiveLine() != null);
 		assert (itemSet.getArrival() != null);
@@ -535,25 +363,19 @@ public class StockItemDAOServiceImpl implements IStockItemDAOService {
 
 	@Override
 	public StockItem update(StockItem record) throws Exception {
-		// -- Check if Unit Conversion is in effect
-		/*
-		 * ProductUnitConversion uc = record.getReceivedStockUnitConvesion();
-		 * String siStockUnit = uc.getParentPackUnit().getCode(); String
-		 * siExpectedStockUnit = record.getReceiveLine().getProduct()
-		 * .getCode(); if (!Validator.equals(siStockUnit, siExpectedStockUnit))
-		 * { Double convFactor = uc.getQuantityInParentPack(); Integer
-		 * stockCount = record.getStockCount(); record.setStockCount(stockCount
-		 * * convFactor.intValue()); }
-		 */
-		// Product.updateProductAvailability(record.getProduct());
+		assert (record != null) : "The record was null.";
+		// Persist the non-null Stock Item
 		record = em.merge(record);
 		ReceiveLineStockItemSet itemSet = getStockItemSetByStockItem(record.getId());
 		if (itemSet != null) {
 			if (itemSet.getStockItems().size() == 1) {
 				// Only perform this update if this is the only StockItem for
 				// the whole Receive
-				Receive receive = itemSet.getArrivalReceipt().getParentArrival().getReceive();
+				Receive receive = itemSet.getReceiveLine().getParentReceive();
+				assert (receive != null) : "The Receive Line Stock Item Set for this Stock Item had a null Receive.";
 				if (receive.getRcvLines().size() == 1) {
+					// If this Stock Item belongs to the only Receive Line in this Receive,
+					// it is okay to assume is shipper and consignee are the same as the Stock Item's
 					if (record.getShipper() != null) {
 						receive.setShipper(record.getShipper());
 					}
