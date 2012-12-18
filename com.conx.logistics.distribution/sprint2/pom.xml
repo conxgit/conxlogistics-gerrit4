@@ -158,7 +158,8 @@
 							    <filelist dir="plugins">
 							      <file name="com.conx.logistics.reporting.remote.services-1.0.0.jar"/>
 							      <file name="com.conx.logistics.reporting.jasperreports.service.impl-1.0.0.jar"/>
-							    </filelist>
+							      <file name="com.conx.logistics.reporting.jasperreports.web.service-1.0.0.war"/>
+						    	</filelist>
 							  </copy>			
 							  <copy todir="${virgo.repository.base}/conx/tms">
 							    <filelist dir="plugins">
@@ -170,6 +171,7 @@
 							      <file name="com.conx.logistics.app.whse.ui-1.0.0.jar"/>
 							      <file name="com.conx.logistics.kernel.system.ui-1.0.0.jar"/>
 							      <file name="com.conx.logistics.kernel.ui.common-1.0.0.jar"/>
+							      <file name="com.conx.logistics.kernel.ui.vaadin.common.addon-1.0.0.jar"/>
 							      <file name="com.conx.logistics.kernel.ui.editors.entity.vaadin-1.0.0.jar"/>
 							      <file name="com.conx.logistics.kernel.ui.factory.services.impl-1.0.0.jar"/>
 							      <file name="com.conx.logistics.kernel.ui.factory.services-1.0.0.jar"/>
@@ -566,6 +568,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.kernel.ui.vaadin.common.addon</artifactId>
+			<version>1.0.0</version>
+		</dependency>		
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
 			<artifactId>com.conx.logistics.kernel.ui.common</artifactId>
 			<version>1.0.0</version>
 		</dependency>
@@ -645,6 +652,25 @@
 			<version>1.0.0</version>
 		</dependency>	
 		
+		
+		<!-- Reporting Services -->
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.reporting.remote.services</artifactId>
+			<version>1.0.0</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.reporting.jasperreports.service.impl</artifactId>
+			<version>1.0.0</version>
+		</dependency>		
+		<dependency>
+			<groupId>com.conx.logistics</groupId>
+			<artifactId>com.conx.logistics.reporting.jasperreports.web.service</artifactId>
+			<version>1.0.0</version>
+			<type>war</type>
+		</dependency>				
+
 		<!-- Sprint #2 Web Application -->	
 		<dependency>
 			<groupId>com.conx.logistics</groupId>

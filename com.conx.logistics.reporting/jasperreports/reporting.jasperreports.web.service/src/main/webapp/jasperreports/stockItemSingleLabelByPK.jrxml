@@ -2,9 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="stockItemSingleLabelByPK" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="afb4b626-8e3d-4810-bed6-c71b83c336f4">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="151"/>
+	<property name="ireport.y" value="18"/>
 	<parameter name="jrpStockItemId" class="java.lang.String">
-		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA['RCV000003-RL005-SKI001']]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT
@@ -73,24 +73,22 @@ FROM
      LEFT OUTER JOIN  `whreceiveline` wh ON whreceivelinestockitemset.`receiveLine_id` = wh.`id`
      LEFT OUTER JOIN `wharrivalreceiptline` wharrival_receipt_line ON wh.`id` = wharrival_receipt_line.`receiveLine_id`
      LEFT OUTER JOIN `wharrivalreceipt` wharrival_receipt ON wharrival_receipt_line.`parentArrivalReceipt_id` = wharrival_receipt.`id`
-     LEFT OUTER JOIN `reforganization` ShipperOrg ON wharrival_receipt.`shipper_id` = ShipperOrg.`id`
-     LEFT OUTER JOIN `reforganization` ConsigneeOrg ON wharrival_receipt.`consignee_id` = ConsigneeOrg.`id`
+     LEFT OUTER JOIN `reforganization` ShipperOrg ON whstock_item.`shipper_id` = ShipperOrg.`id`
+     LEFT OUTER JOIN `reforganization` ConsigneeOrg ON whstock_item.`consignee_id` = ConsigneeOrg.`id`
      LEFT OUTER JOIN `sysmmtype` OrgType ON OrgType.`entityJavaSimpleType` = "Organization"
      LEFT OUTER JOIN `refaddresstype` MainAddressType ON MainAddressType.`code` = "MAIN"
      LEFT OUTER JOIN `refaddresstypeaddress` ConsigneeOrgAddressType ON MainAddressType.id = ConsigneeOrgAddressType.`type_id`
      AND  OrgType.id = ConsigneeOrgAddressType.`ownerEntityTypeId`
      AND  ConsigneeOrg.id = ConsigneeOrgAddressType.`ownerEntityId`
-     LEFT OUTER JOIN `refaddress` ConsigneeOrgAddress ON OrgType.id = ConsigneeOrgAddressType.`address_id`
+     LEFT OUTER JOIN `refaddress` ConsigneeOrgAddress ON ConsigneeOrgAddress.id = ConsigneeOrgAddressType.`address_id`
      LEFT OUTER JOIN `refcountry` ConsigneeOrgAddressCountry ON ConsigneeOrgAddress.`country_id` = ConsigneeOrgAddressCountry.`id`
      LEFT OUTER JOIN `refunloco` ConsigneeOrgAddressUnloco ON ConsigneeOrgAddress.`unloco_id` = ConsigneeOrgAddressUnloco.`id`
-     AND ConsigneeOrgAddressCountry.`id` = ConsigneeOrgAddressUnloco.`country_id`
      LEFT OUTER JOIN `refaddresstypeaddress` ShipperOrgAddressType ON MainAddressType.id = ShipperOrgAddressType.`type_id`
      AND  OrgType.id = ShipperOrgAddressType.`ownerEntityTypeId`
      AND  ConsigneeOrg.id = ShipperOrgAddressType.`ownerEntityId`
-     LEFT OUTER JOIN `refaddress` ShipperOrgAddress ON OrgType.id = ShipperOrgAddressType.`address_id`
+     LEFT OUTER JOIN `refaddress` ShipperOrgAddress ON ShipperOrgAddress.id = ShipperOrgAddressType.`address_id`
      LEFT OUTER JOIN `refcountry` ShipperOrgAddressCountry ON ShipperOrgAddress.`country_id` = ShipperOrgAddressCountry.`id`
      LEFT OUTER JOIN `refunloco` ShipperOrgAddressUnloco ON ShipperOrgAddress.`unloco_id` = ShipperOrgAddressUnloco.`id`
-     AND ShipperOrgAddressCountry.`id` = ShipperOrgAddressUnloco.`country_id`
      LEFT OUTER JOIN `refweightunit` WeightUnit ON whstock_item.`weightUnit_id` = WeightUnit.`id`
      LEFT OUTER JOIN `refdimunit` DimUnit ON whstock_item.`widthUnit_id` = DimUnit.`id`
      LEFT OUTER JOIN `refdimunit` VolUnit ON whstock_item.`volumeUnit_id` = VolUnit.`id`
@@ -98,7 +96,7 @@ FROM
 
 
 WHERE
-     whstock_item.`id` = $P{jrpStockItemId}]]>
+     whstock_item.`code` = $P{jrpStockItemId}]]>
 	</queryString>
 	<field name="whstock_item_id" class="java.lang.Long"/>
 	<field name="whstock_item_code" class="java.lang.String"/>
